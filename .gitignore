@@ -1,0 +1,10 @@
+# Local runtime configuration
+assets/js/00-runtime-config.js
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Local logs
+*.log
