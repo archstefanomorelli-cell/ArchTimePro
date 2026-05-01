@@ -17,6 +17,7 @@ Stato: avviata.
 - Aggiunte guide `docs/deploy-statico.md` e `docs/qa-beta.md`.
 - Aggiunta workflow GitHub Pages in `.github/workflows/pages.yml`.
 - Aggiunto `.nojekyll` per pubblicazione statica corretta su GitHub Pages.
+- Impostato il deploy GitHub Pages in modalita beta/test per consentire link Stripe test.
 
 ## Configurazione ambienti
 

@@ -24,7 +24,7 @@ Non pubblicare documentazione interna se il provider non consente esclusioni sem
 
 Prima del deploy creare `assets/js/00-runtime-config.js` partendo da `assets/js/00-runtime-config.example.js`.
 
-Valori richiesti:
+Valori richiesti per produzione vera:
 
 - `environment: 'production'`
 - Supabase URL produzione
@@ -32,6 +32,8 @@ Valori richiesti:
 - link Stripe live, non test
 
 L'app blocca l'avvio se trova placeholder o link Stripe test in produzione.
+
+Per una beta pubblica con link Stripe test, usare temporaneamente `environment: 'development'` nella workflow GitHub Pages.
 
 ## Provider consigliati
 

@@ -47,7 +47,7 @@ jobs:
           cat > dist/assets/js/00-runtime-config.js <<EOF
           // Arch Time Pro - production runtime configuration
           window.ARCH_TIME_CONFIG = {
-              environment: 'production',
+              environment: 'development',
               supabaseUrl: '${SUPABASE_URL}',
               supabaseKey: '${SUPABASE_PUBLISHABLE_KEY}',
               stripeLinks: {
