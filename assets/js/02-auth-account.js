@@ -228,6 +228,75 @@ function switchAuthTab(mode) {
             document.getElementById('header-logo').classList.remove('force-hide'); 
         }
 
+        function ownerOnboardingKey() {
+            return userProfile?.studio_id ? `archtime-owner-onboarding:${userProfile.studio_id}` : '';
+        }
+
+        function shouldShowOwnerOnboarding() {
+            if (!userProfile || !studioData) return false;
+            if (!(userProfile.is_owner || userProfile.role === 'admin')) return false;
+            const key = ownerOnboardingKey();
+            return key && localStorage.getItem(key) !== 'done';
+        }
+
+        function markOwnerOnboardingDone() {
+            const key = ownerOnboardingKey();
+            if (key) localStorage.setItem(key, 'done');
+        }
+
+        function openOwnerOnboarding() {
+            const modal = document.getElementById('modal-owner-onboarding');
+            if (!modal) return;
+
+            document.getElementById('onboarding-studio-name').value = studioData?.name || '';
+            document.getElementById('onboarding-business-type').value = currentBusinessType;
+            document.getElementById('onboarding-project-name').value = '';
+            document.getElementById('onboarding-project-client').value = '';
+            document.getElementById('onboarding-project-budget').value = '';
+            modal.classList.remove('force-hide');
+            lucide.createIcons();
+        }
+
+        function closeOwnerOnboarding(markDone = true) {
+            document.getElementById('modal-owner-onboarding')?.classList.add('force-hide');
+            if (markDone) markOwnerOnboardingDone();
+        }
+
+        async function saveOnboardingIdentity() {
+            const name = document.getElementById('onboarding-studio-name').value.trim();
+            const businessType = document.getElementById('onboarding-business-type').value;
+
+            if (!name) return await appAlert("Attenzione", "Inserisci il nome dello spazio di lavoro.", "danger");
+            if (!['studio', 'impresa'].includes(businessType)) return await appAlert("Attenzione", "Seleziona un settore valido.", "danger");
+
+            await supabaseClient.from('studios').update({ name, business_type: businessType }).eq('id', userProfile.studio_id);
+            if (studioData) {
+                studioData.name = name;
+                studioData.business_type = businessType;
+            }
+
+            document.getElementById('account-studio-name').value = name;
+            applyTheme(businessType);
+            renderNewProjectUI();
+            await appAlert("Fatto", "Identità salvata.", "success");
+        }
+
+        function prepareFirstProjectFromOnboarding() {
+            const name = document.getElementById('onboarding-project-name').value.trim();
+            const client = document.getElementById('onboarding-project-client').value.trim();
+            const budget = document.getElementById('onboarding-project-budget').value;
+            const defaults = THEMES[currentBusinessType].defaultCatalog.slice(0, 3);
+
+            document.getElementById('new-proj-name').value = name || THEMES[currentBusinessType].demoProject;
+            document.getElementById('new-proj-client').value = client || THEMES[currentBusinessType].demoClient;
+            document.getElementById('new-proj-budget').value = budget || '';
+            newProjectTasks = defaults.length > 0 ? defaults : ['Generico'];
+            renderNewProjectUI();
+            switchAppTab('manage');
+            closeOwnerOnboarding(true);
+            document.getElementById('new-proj-name')?.focus();
+        }
+
         async function checkUser() {
             const { data: { user } } = await supabaseClient.auth.getUser();
             if(user) {
@@ -340,6 +409,7 @@ function switchAuthTab(mode) {
                 renderCatalogAndTemplatesUI(); 
                 await checkAndGenerateDemoData(); 
                 applyPlanLimitsUI(); 
+                if (shouldShowOwnerOnboarding()) setTimeout(openOwnerOnboarding, 500);
             }
             await restoreCloudTimer();
         }

@@ -137,6 +137,41 @@ Percorso usato:
 - Le entry devono essere modificabili/eliminabili solo da owner/admin, salvo decisione prodotto diversa.
 - Il bucket `studio-logos` deve accettare upload solo da utenti autenticati del relativo studio.
 
+## Stato verifica beta
+
+Verificato su Supabase durante Fase 2:
+
+- `profiles_select`: limitata a `studio_id = get_my_studio_id()`.
+- `profiles_update`: aggiunto `WITH CHECK` coerente con utente corrente o admin dello studio.
+- `profiles_delete`: limitata ad admin dello stesso studio.
+- `projects_select`: limitata allo studio corrente.
+- `projects_insert`: rafforzata con `is_admin()` e `studio_id = get_my_studio_id()`.
+- `projects_update`: rafforzata con `is_admin()` in `USING` e `WITH CHECK`.
+- `projects_delete`: limitata ad admin dello stesso studio.
+- `entries_insert`: consente inserimento nello studio corrente.
+- `entries_update`: rafforzata con `is_admin()` in `USING` e `WITH CHECK`.
+- `entries_delete`: rafforzata via SQL Editor con `is_admin()` e studio corrente.
+- `expenses_insert`: gia limitata ad admin dello stesso studio.
+- `expenses_delete`: gia limitata ad admin dello stesso studio.
+- `studios_select`: limitata a `id = get_my_studio_id()`.
+- `studios_update`: aggiunto `WITH CHECK` coerente con admin dello studio corrente.
+- `studio-logos`: bucket pubblico, upload/update admin-only.
+
+## RPC rafforzate
+
+Aggiornate durante Fase 2:
+
+- `kick_user_from_studio(user_to_kick)`: ora richiede utente autenticato, admin, stesso studio, non consente auto-rimozione e non rimuove owner.
+- `delete_user_account()`: ora impedisce a un owner con altri membri nello studio di eliminare l'account prima del trasferimento proprieta.
+- `create_studio_from_limbo(studio_name, b_type)`: ora richiede utente autenticato, nome non vuoto, `b_type` valido e profilo senza studio.
+
+## Rischi residui backend
+
+- `entries_select` permette ancora agli utenti dello stesso studio di leggere righe che includono `rate`.
+- `expenses_select` permette ancora agli utenti dello stesso studio di leggere righe che includono importi.
+- Supabase RLS lavora per riga, non per colonna: per proteggere davvero i costi dallo staff servono view/RPC dedicate o separazione dei dati economici in tabelle admin-only.
+- `entries_insert` riceve ancora `rate` dal frontend: per produzione robusta il costo va calcolato lato database/RPC.
+
 ## Auth e redirect
 
 - Site URL impostato sul dominio finale.

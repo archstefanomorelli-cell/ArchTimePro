@@ -18,6 +18,13 @@ Stato: avviata.
 - Aggiunta workflow GitHub Pages in `.github/workflows/pages.yml`.
 - Aggiunto `.nojekyll` per pubblicazione statica corretta su GitHub Pages.
 - Impostato il deploy GitHub Pages in modalita beta/test per consentire link Stripe test.
+- Pubblicata beta su GitHub Pages con workflow verde.
+- Verificato QA funzionale beta online: landing, login, configurazione studio, progetti, timer, registro, spese, margini, PDF, team, account e billing test.
+- Rafforzate policy Supabase su `projects`, `entries`, `studios` e `profiles`.
+- Rafforzate RPC Supabase delicate: `kick_user_from_studio`, `delete_user_account`, `create_studio_from_limbo`.
+- Verificato bucket Storage `studio-logos` con upload/update admin-only.
+- Aggiunto onboarding guidato owner/admin al primo accesso locale per identita e primo lavoro.
+- Rimosso l'ultimo handler inline residuo dalla modale modifica attivita.
 
 ## Configurazione ambienti
 
@@ -59,5 +66,6 @@ Creare `assets/js/00-runtime-config.js` partendo da `assets/js/00-runtime-config
 
 ## Prossimi passi
 
-- Configurare i secrets GitHub per il deploy Pages.
-- Eseguire QA beta su dominio pubblico.
+- Testare online onboarding guidato owner/admin dopo nuovo deploy GitHub Pages.
+- Separare lato backend i dati economici da `entries`/`expenses` per impedire lettura API da staff.
+- Preparare passaggio a produzione vera: Stripe live e `environment: 'production'`.

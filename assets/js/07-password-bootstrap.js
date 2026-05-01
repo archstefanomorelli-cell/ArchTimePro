@@ -29,6 +29,9 @@
             bindClick('btn-save-team-edit', saveTeamMemberEdit);
             bindClick('btn-close-account', closeAccountModal);
             bindClick('btn-save-studio-name', saveStudioName);
+            bindClick('btn-skip-onboarding', () => closeOwnerOnboarding(true));
+            bindClick('btn-save-onboarding-identity', saveOnboardingIdentity);
+            bindClick('btn-prepare-first-project', prepareFirstProjectFromOnboarding);
             bindClick('btn-open-catalog-account', openCatalogModal);
             bindClick('btn-export-user-data', exportUserData);
             bindClick('btn-delete-account', deleteAccount);
@@ -67,6 +70,7 @@
             document.getElementById('manual-start')?.addEventListener('change', calculateManualHours);
             document.getElementById('manual-end')?.addEventListener('change', calculateManualHours);
             document.getElementById('edit-entry-user')?.addEventListener('change', updateEditCost);
+            document.getElementById('edit-entry-hours')?.addEventListener('input', updateEditCost);
             document.getElementById('edit-entry-project')?.addEventListener('change', updateEditTaskDropdown);
 
             document.querySelectorAll('[data-action="logout"]').forEach(button => {

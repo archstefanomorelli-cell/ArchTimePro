@@ -2,6 +2,8 @@
 
 Checklist minima prima di invitare utenti esterni.
 
+Stato: primo ciclo funzionale online completato su GitHub Pages.
+
 ## Browser e device
 
 - Chrome desktop
@@ -11,53 +13,63 @@ Checklist minima prima di invitare utenti esterni.
 
 ## Marketing e accesso
 
-- `index.html` si carica senza errori console.
-- CTA principali aprono `app.html`.
-- `guida.html`, `privacy.html`, `termini.html` sono raggiungibili.
-- Prezzi Starter/Premium sono leggibili su mobile.
+- `index.html` si carica senza errori console. Verificato.
+- CTA principali aprono `app.html`. Verificato.
+- `guida.html`, `privacy.html`, `termini.html` sono raggiungibili. Verificato.
+- Prezzi Starter/Premium sono leggibili su mobile. Da verificare su device reali.
 
 ## Onboarding
 
-- Creazione account owner studio tecnico.
+- Creazione account owner studio tecnico. Verificato.
 - Creazione account owner impresa edile.
-- Creazione studio da utente in limbo.
-- Join collaboratore con codice studio.
+- Creazione/configurazione studio. Verificato.
+- Join collaboratore con codice studio. Verificato.
 - Reset password da email.
 
 ## Operativita
 
-- Creazione lavoro/cantiere con budget.
-- Aggiunta attivita da catalogo.
+- Creazione lavoro/cantiere con budget. Verificato.
+- Aggiunta attivita da catalogo. Verificato.
 - Creazione template Premium.
 - Blocco template su Starter.
-- Avvio/stop timer.
-- Inserimento ore manuale.
-- Modifica/eliminazione voce registro da admin.
-- Verifica vista staff senza dati economici riservati.
+- Avvio/stop timer. Verificato.
+- Inserimento ore manuale. Verificato.
+- Modifica voce registro da admin. Verificato.
+- Verifica vista staff senza dati economici riservati. Verificato lato UI.
 
 ## Report e dati
 
-- Dettaglio lavoro/cantiere.
-- Aggiunta spesa.
-- PDF progetto Premium.
-- PDF cumulativo Premium.
-- PDF team Premium.
-- Export JSON account.
+- Dettaglio lavoro/cantiere. Verificato.
+- Aggiunta/eliminazione spesa. Verificato.
+- Margini aggiornati da spese. Verificato.
+- PDF progetto Premium. Verificato.
+- PDF cumulativo Premium. Verificato.
+- PDF team Premium. Verificato.
+- Export JSON account. Verificato.
 
 ## Team e account
 
-- Invito collaboratore.
+- Invito/join collaboratore. Verificato.
 - Modifica costo orario.
 - Cambio ruolo staff/admin/inattivo.
 - Trasferimento owner.
-- Upload logo.
-- Cambio nome studio/impresa.
+- Upload logo. Verificato.
+- Cambio nome studio/impresa. Verificato.
 
 ## Piano e billing
 
-- Upgrade Starter -> Premium.
-- Accesso Customer Portal.
+- Upgrade Starter -> Premium / billing test. Verificato apertura link.
+- Accesso Customer Portal. Verificato apertura link.
 - Blocco funzioni Premium su Starter.
+
+## Note prodotto emerse
+
+- Dopo la prima registrazione owner serve onboarding guidato per configurare subito spazio di lavoro, settore e primo lavoro/cantiere.
+- La protezione dei costi staff va rinforzata anche lato API, non solo lato UI.
+
+## Nuovo test da eseguire
+
+- Onboarding guidato owner/admin: apertura una tantum, salvataggio identita, preparazione primo lavoro e compilazione form progetto.
 
 ## Criterio uscita beta
 
