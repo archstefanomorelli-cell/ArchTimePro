@@ -461,10 +461,10 @@
                     </div>
                     <div class="space-y-3">
                         <input type="text" id="onboarding-studio-name" placeholder="Nome studio o impresa" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all">
-                        <select id="onboarding-business-type" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all appearance-none">
-                            <option value="studio">Studio Tecnico</option>
-                            <option value="impresa">Impresa Edile</option>
-                        </select>
+                        <div class="bg-white border border-slate-200 rounded-xl p-3">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Settore scelto</p>
+                            <p id="onboarding-business-label" class="text-sm font-black text-slate-800">Studio Tecnico</p>
+                        </div>
                         <button id="btn-save-onboarding-identity" class="w-full bg-white border border-slate-200 text-slate-700 py-3 rounded-xl font-bold hover:bg-slate-50 transition-all shadow-sm text-sm flex items-center justify-center gap-2"><i data-lucide="save" class="w-4 h-4"></i> Salva identità</button>
                     </div>
                 </div>

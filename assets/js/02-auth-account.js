@@ -249,7 +249,7 @@ function switchAuthTab(mode) {
             if (!modal) return;
 
             document.getElementById('onboarding-studio-name').value = studioData?.name || '';
-            document.getElementById('onboarding-business-type').value = currentBusinessType;
+            document.getElementById('onboarding-business-label').innerText = currentBusinessType === 'impresa' ? 'Impresa Edile' : 'Studio Tecnico';
             document.getElementById('onboarding-project-name').value = '';
             document.getElementById('onboarding-project-client').value = '';
             document.getElementById('onboarding-project-budget').value = '';
@@ -264,15 +264,13 @@ function switchAuthTab(mode) {
 
         async function saveOnboardingIdentity() {
             const name = document.getElementById('onboarding-studio-name').value.trim();
-            const businessType = document.getElementById('onboarding-business-type').value;
+            const businessType = studioData?.business_type || currentBusinessType || 'studio';
 
             if (!name) return await appAlert("Attenzione", "Inserisci il nome dello spazio di lavoro.", "danger");
-            if (!['studio', 'impresa'].includes(businessType)) return await appAlert("Attenzione", "Seleziona un settore valido.", "danger");
 
-            await supabaseClient.from('studios').update({ name, business_type: businessType }).eq('id', userProfile.studio_id);
+            await supabaseClient.from('studios').update({ name }).eq('id', userProfile.studio_id);
             if (studioData) {
                 studioData.name = name;
-                studioData.business_type = businessType;
             }
 
             document.getElementById('account-studio-name').value = name;

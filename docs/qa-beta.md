@@ -69,7 +69,7 @@ Stato: primo ciclo funzionale online completato su GitHub Pages.
 
 ## Nuovo test da eseguire
 
-- Onboarding guidato owner/admin: apertura una tantum, salvataggio identita, preparazione primo lavoro e compilazione form progetto.
+- Onboarding guidato owner/admin: apertura una tantum, settore mostrato come scelta gia effettuata, salvataggio identita, preparazione primo lavoro e compilazione form progetto.
 
 ## Criterio uscita beta
 

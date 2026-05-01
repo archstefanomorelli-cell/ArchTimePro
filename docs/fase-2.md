@@ -24,6 +24,7 @@ Stato: avviata.
 - Rafforzate RPC Supabase delicate: `kick_user_from_studio`, `delete_user_account`, `create_studio_from_limbo`.
 - Verificato bucket Storage `studio-logos` con upload/update admin-only.
 - Aggiunto onboarding guidato owner/admin al primo accesso locale per identita e primo lavoro.
+- Rifinito onboarding: il settore scelto in registrazione viene mostrato ma non richiesto di nuovo.
 - Rimosso l'ultimo handler inline residuo dalla modale modifica attivita.
 
 ## Configurazione ambienti
