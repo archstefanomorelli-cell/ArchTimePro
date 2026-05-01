@@ -84,10 +84,10 @@
             if (!entry.startTime || !entry.endTime) return '';
 
             if (variant === 'mobile') {
-                return `<div class="text-[9px] text-slate-400 font-medium text-right mt-1.5 whitespace-nowrap">dalle ${entry.startTime}<br>alle ${entry.endTime}</div>`;
+                return `<div class="text-[9px] text-slate-400 font-medium text-right mt-1.5 whitespace-nowrap">${entry.startTime} - ${entry.endTime}</div>`;
             }
 
-            return `<div class="text-[10px] text-slate-400 font-medium mt-1 whitespace-nowrap">dalle ${entry.startTime} alle ${entry.endTime}</div>`;
+            return `<div class="text-[10px] text-slate-400 font-medium mt-1 whitespace-nowrap">${entry.startTime} - ${entry.endTime}</div>`;
         }
 
         function renderEntryDesktopRow(entry, index) {
