@@ -46,6 +46,7 @@ La protezione completa deve essere anche lato backend:
 
 ## Legal e compliance
 
+- Riscritte `privacy.html` e `termini.html` con grafica coerente a landing/guida e testi beta piu completi.
 - Rivedere `privacy.html` e `termini.html` con dati definitivi del titolare.
 - Validare testi con consulente legale/commercialista.
 - Verificare trattamento dati Supabase, Stripe e hosting GitHub Pages.

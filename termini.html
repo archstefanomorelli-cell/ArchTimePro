@@ -3,48 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Termini di Servizio - Arch Time Pro</title>
+    <meta name="theme-color" content="#ffffff">
+    <title>Termini di Servizio | Arch Time Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #0f172a; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #ffffff; color: #0f172a; -webkit-font-smoothing: antialiased; }
+        .bg-grid { background-image: radial-gradient(#e2e8f0 1px, transparent 1px); background-size: 30px 30px; }
     </style>
 </head>
-<body class="p-6 lg:p-12">
-    <div class="max-w-3xl mx-auto bg-white p-8 md:p-12 rounded-3xl shadow-sm border border-slate-200">
-        <h1 class="text-3xl font-black mb-6 text-slate-900">Termini di Servizio</h1>
-        <p class="text-sm font-bold text-blue-600 mb-8 uppercase tracking-wider">Ultimo aggiornamento: Aprile 2026</p>
-        
-        <div class="space-y-8 text-sm leading-relaxed text-slate-600">
-            <div>
-                <h2 class="text-lg font-bold text-slate-900 mb-2">1. Accettazione dei Termini</h2>
-                <p>Utilizzando Arch Time Pro, accetti di essere vincolato dai presenti Termini di Servizio. Il software è un gestionale B2B (Business to Business) destinato esclusivamente all'uso professionale da parte di studi e liberi professionisti.</p>
-            </div>
-            
-            <div>
-                <h2 class="text-lg font-bold text-slate-900 mb-2">2. Descrizione del Servizio</h2>
-                <p>Arch Time Pro è uno strumento software in cloud (SaaS) per il monitoraggio dei tempi e dei costi di commessa. Il Titolare si riserva il diritto di rilasciare aggiornamenti, modificare o migliorare le funzionalità della piattaforma per garantire sempre il miglior servizio possibile.</p>
-            </div>
-
-            <div>
-                <h2 class="text-lg font-bold text-slate-900 mb-2">3. Abbonamenti e Pagamenti</h2>
-                <p>L'accesso alle funzionalità complete per gli Amministratori (Manager) avviene tramite un piano di abbonamento gestito dal circuito sicuro Stripe. L'abbonamento si rinnova automaticamente alla scadenza. L'utente può annullare il rinnovo in qualsiasi momento dal proprio portale clienti. Non sono previsti rimborsi per periodi di fatturazione parzialmente utilizzati.</p>
-            </div>
-
-            <div>
-                <h2 class="text-lg font-bold text-slate-900 mb-2">4. Responsabilità dei dati</h2>
-                <p>L'utente è l'unico responsabile della correttezza dei dati (progetti, ore lavorate, tariffe) inseriti nella piattaforma. Garantiamo backup costanti e l'uso di infrastrutture server di livello enterprise (Supabase), tuttavia il Titolare non è responsabile per danni indiretti derivanti dall'uso o dall'impossibilità di usare il servizio.</p>
-            </div>
-
-            <div>
-                <h2 class="text-lg font-bold text-slate-900 mb-2">5. Sospensione dell'account</h2>
-                <p>Ci riserviamo il diritto di sospendere o chiudere l'account di qualsiasi utente che violi palesemente i presenti termini, tenti di manomettere il software o compia azioni fraudolente.</p>
+<body class="selection:bg-indigo-100 selection:text-indigo-900">
+    <header class="fixed top-0 w-full bg-white/70 backdrop-blur-xl border-b border-slate-100 z-50 transition-all">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html" class="flex items-center">
+                <span class="text-xl font-black tracking-tighter text-slate-900 uppercase">Arch <span class="text-indigo-600">Time</span> Pro</span>
+            </a>
+            <div class="flex items-center gap-6">
+                <nav class="hidden md:flex gap-8">
+                    <a href="guida.html" class="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors">Il Metodo</a>
+                    <a href="privacy.html" class="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors">Privacy</a>
+                </nav>
+                <a href="app.html" class="bg-slate-900 text-white text-xs font-black uppercase tracking-widest px-5 py-3 rounded-xl hover:bg-indigo-600 transition-all shadow-lg active:scale-95">Accedi</a>
             </div>
         </div>
+    </header>
 
-        <div class="mt-12 pt-6 border-t border-slate-100">
-            <a href="index.html" class="inline-flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-blue-600 transition">&larr; Torna all'applicazione</a>
+    <main>
+        <section class="relative pt-36 pb-16 lg:pt-44 lg:pb-20 overflow-hidden bg-grid">
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[520px] bg-indigo-50/70 rounded-full blur-[120px] -z-10"></div>
+            <div class="max-w-5xl mx-auto px-6">
+                <div class="max-w-3xl">
+                    <div class="inline-flex items-center px-4 py-2 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-[11px] font-black uppercase tracking-[0.2em] mb-7 shadow-sm">
+                        Condizioni d'uso
+                    </div>
+                    <h1 class="text-5xl lg:text-7xl font-black tracking-tighter leading-[0.95] mb-7 text-slate-950">Termini di Servizio</h1>
+                    <p class="text-lg lg:text-xl text-slate-500 font-medium leading-relaxed max-w-2xl">Le condizioni che regolano l'accesso e l'utilizzo di Arch Time Pro come servizio SaaS per studi tecnici e imprese edili.</p>
+                    <p class="text-xs font-black text-indigo-600 uppercase tracking-[0.2em] mt-8">Ultimo aggiornamento: Maggio 2026</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-16 lg:py-20 bg-white">
+            <div class="max-w-5xl mx-auto px-6 grid lg:grid-cols-[280px_1fr] gap-10">
+                <aside class="lg:sticky lg:top-28 h-fit">
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6">
+                        <h2 class="text-sm font-black text-slate-900 uppercase tracking-wider mb-4">Uso professionale</h2>
+                        <div class="space-y-4 text-sm text-slate-600 leading-relaxed">
+                            <p>Arch Time Pro e pensato per uso B2B: studi, professionisti, imprese e team tecnici.</p>
+                            <p>L'utente resta responsabile dei dati operativi e contabili inseriti nella piattaforma.</p>
+                        </div>
+                    </div>
+                </aside>
+
+                <div class="space-y-5">
+                    <article class="bg-white border border-slate-200 rounded-2xl p-6 lg:p-8 shadow-sm">
+                        <h2 class="text-xl font-black text-slate-900 mb-3">1. Accettazione dei termini</h2>
+                        <p class="text-sm text-slate-600 leading-relaxed">Usando Arch Time Pro accetti i presenti Termini di Servizio. Se utilizzi il servizio per conto di uno studio, impresa o organizzazione, dichiari di avere l'autorizzazione necessaria.</p>
+                    </article>
+
+                    <article class="bg-white border border-slate-200 rounded-2xl p-6 lg:p-8 shadow-sm">
+                        <h2 class="text-xl font-black text-slate-900 mb-3">2. Descrizione del servizio</h2>
+                        <p class="text-sm text-slate-600 leading-relaxed">Arch Time Pro e una piattaforma cloud per monitorare lavori, cantieri, ore, collaboratori, costi, spese, margini e report. Il servizio puo essere aggiornato, modificato o migliorato nel tempo.</p>
+                    </article>
+
+                    <article class="bg-white border border-slate-200 rounded-2xl p-6 lg:p-8 shadow-sm">
+                        <h2 class="text-xl font-black text-slate-900 mb-3">3. Account e responsabilita dell'utente</h2>
+                        <p class="text-sm text-slate-600 leading-relaxed">L'utente e responsabile della sicurezza delle credenziali, della correttezza dei dati inseriti e delle autorizzazioni concesse ai collaboratori. Le informazioni su tariffe, budget, ore e spese devono essere verificate dall'utente prima di essere usate per decisioni operative, fiscali o commerciali.</p>
+                    </article>
+
+                    <article class="bg-white border border-slate-200 rounded-2xl p-6 lg:p-8 shadow-sm">
+                        <h2 class="text-xl font-black text-slate-900 mb-3">4. Abbonamenti e pagamenti</h2>
+                        <p class="text-sm text-slate-600 leading-relaxed">Le funzionalita a pagamento sono gestite tramite Stripe. Gli abbonamenti possono rinnovarsi automaticamente secondo il piano scelto. L'utente puo gestire o annullare il rinnovo tramite il portale clienti, quando disponibile.</p>
+                    </article>
+
+                    <article class="bg-white border border-slate-200 rounded-2xl p-6 lg:p-8 shadow-sm">
+                        <h2 class="text-xl font-black text-slate-900 mb-3">5. Limiti del servizio</h2>
+                        <p class="text-sm text-slate-600 leading-relaxed">Arch Time Pro fornisce strumenti di organizzazione e analisi, ma non sostituisce consulenza fiscale, legale, contabile o professionale. Il titolare non e responsabile per decisioni prese esclusivamente sulla base dei dati inseriti o calcolati nella piattaforma.</p>
+                    </article>
+
+                    <article class="bg-white border border-slate-200 rounded-2xl p-6 lg:p-8 shadow-sm">
+                        <h2 class="text-xl font-black text-slate-900 mb-3">6. Uso corretto</h2>
+                        <p class="text-sm text-slate-600 leading-relaxed">Non e consentito usare il servizio per attivita illecite, tentativi di accesso non autorizzato, manomissione, scraping abusivo, violazione di sistemi o caricamento di contenuti dannosi. In caso di abuso, l'accesso puo essere sospeso o revocato.</p>
+                    </article>
+
+                    <article class="bg-white border border-slate-200 rounded-2xl p-6 lg:p-8 shadow-sm">
+                        <h2 class="text-xl font-black text-slate-900 mb-3">7. Disponibilita e modifiche</h2>
+                        <p class="text-sm text-slate-600 leading-relaxed">Il servizio viene fornito con l'obiettivo di garantire continuita e affidabilita, ma possono verificarsi manutenzioni, aggiornamenti o interruzioni tecniche. Le funzionalita possono evolvere nel tempo per migliorare sicurezza, prestazioni e valore del prodotto.</p>
+                    </article>
+
+                    <article class="bg-white border border-slate-200 rounded-2xl p-6 lg:p-8 shadow-sm">
+                        <h2 class="text-xl font-black text-slate-900 mb-3">8. Recesso, sospensione e cancellazione</h2>
+                        <p class="text-sm text-slate-600 leading-relaxed">L'utente puo richiedere la cancellazione dell'account secondo le modalita disponibili nell'app o scrivendo a <a href="mailto:arch.stefanomorelli@gmail.com" class="text-indigo-600 font-bold hover:underline">arch.stefanomorelli@gmail.com</a>. Alcuni dati possono essere conservati quando necessario per obblighi tecnici, fiscali o legali.</p>
+                    </article>
+
+                    <div class="bg-amber-50 border border-amber-100 rounded-2xl p-5 text-sm text-amber-900 leading-relaxed">
+                        <strong>Nota:</strong> questi termini sono una bozza operativa per la beta. Prima del lancio commerciale vanno verificati con un consulente legale.
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-950 py-16 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+        <div class="max-w-5xl mx-auto px-6 relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
+            <span class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">ARCH TIME PRO &copy; 2026</span>
+            <div class="flex gap-8 text-xs font-bold text-slate-400 uppercase tracking-widest">
+                <a href="index.html" class="hover:text-indigo-400 transition-colors">Home</a>
+                <a href="guida.html" class="hover:text-indigo-400 transition-colors">Guida</a>
+                <a href="privacy.html" class="hover:text-indigo-400 transition-colors">Privacy</a>
+            </div>
         </div>
-    </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+    </script>
 </body>
 </html>
