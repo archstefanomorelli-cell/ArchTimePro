@@ -1,26 +1,66 @@
 // Arch Time Pro - 04-projects.js
 // ================= GESTIONE PROGETTI =================
 
+        function isAdminUser() {
+            return document.body.classList.contains('is-admin');
+        }
+
+        function projectSelectColumns() {
+            return isAdminUser() ? '*' : 'id,studio_id,name,client,tasks,is_archived';
+        }
+
+        function entrySelectColumns() {
+            return isAdminUser() ? '*' : 'id,studio_id,project_id,project_name,task,duration,user_email,user_name,notes,created_at';
+        }
+
+        async function fetchRpcList(fnName) {
+            const { data, error } = await supabaseClient.rpc(fnName);
+            if (error) {
+                console.warn(`RPC ${fnName} non disponibile, uso fallback client.`, error.message);
+                return null;
+            }
+            return data || [];
+        }
+
         async function fetchProjects() { 
-            const { data } = await supabaseClient.from('projects').select('*').order('name'); 
-            projects = data || []; 
+            const rpcData = await fetchRpcList('get_projects_for_app');
+            if (rpcData) {
+                projects = rpcData.sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
+            } else {
+                const { data } = await supabaseClient.from('projects').select(projectSelectColumns()).order('name'); 
+                projects = data || [];
+            }
             renderProjects(); 
-            if(document.body.classList.contains('is-admin')) renderStrategicCharts(); 
+            if(isAdminUser()) renderStrategicCharts(); 
         }
         
         async function fetchEntries() { 
-            const { data } = await supabaseClient.from('entries').select('*').order('created_at', { ascending: false }).limit(2000); 
-            entries = data || []; 
+            const rpcData = await fetchRpcList('get_entries_for_app');
+            if (rpcData) {
+                entries = rpcData.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 2000);
+            } else {
+                const { data } = await supabaseClient.from('entries').select(entrySelectColumns()).order('created_at', { ascending: false }).limit(2000); 
+                entries = data || [];
+            }
             renderEntries(); 
             renderProjects(); 
-            if(document.body.classList.contains('is-admin')) renderStrategicCharts(); 
+            if(isAdminUser()) renderStrategicCharts(); 
         }
         
         async function fetchExpenses() { 
-            const { data } = await supabaseClient.from('expenses').select('*').order('created_at', { ascending: false }); 
-            expenses = data || []; 
+            if (!isAdminUser()) {
+                expenses = [];
+                return;
+            }
+            const rpcData = await fetchRpcList('get_expenses_for_app');
+            if (rpcData) {
+                expenses = rpcData.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            } else {
+                const { data } = await supabaseClient.from('expenses').select('*').order('created_at', { ascending: false }); 
+                expenses = data || [];
+            }
             renderProjects(); 
-            if(userProfile && document.body.classList.contains('is-admin')) renderStrategicCharts(); 
+            if(userProfile && isAdminUser()) renderStrategicCharts(); 
         }
 
 

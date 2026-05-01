@@ -169,8 +169,20 @@ Aggiornate durante Fase 2:
 
 - `entries_select` permette ancora agli utenti dello stesso studio di leggere righe che includono `rate`.
 - `expenses_select` permette ancora agli utenti dello stesso studio di leggere righe che includono importi.
+- `projects_select` permette ancora agli utenti dello stesso studio di leggere righe che includono `budget`.
 - Supabase RLS lavora per riga, non per colonna: per proteggere davvero i costi dallo staff servono view/RPC dedicate o separazione dei dati economici in tabelle admin-only.
 - `entries_insert` riceve ancora `rate` dal frontend: per produzione robusta il costo va calcolato lato database/RPC.
+
+## Script Fase 3
+
+Preparato `docs/sql/phase-3-secure-data-access.sql`.
+
+Lo script:
+
+- crea `get_projects_for_app()`;
+- crea `get_entries_for_app()`;
+- crea `get_expenses_for_app()`;
+- limita le select dirette di `projects`, `entries`, `expenses` agli admin dopo conferma deploy.
 
 ## Auth e redirect
 

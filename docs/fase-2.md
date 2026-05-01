@@ -2,7 +2,7 @@
 
 Obiettivo: preparare Arch Time Pro per un deploy controllato, con configurazione separata per sviluppo e produzione.
 
-Stato: avviata.
+Stato: beta completata.
 
 ## Completato
 
@@ -67,6 +67,11 @@ Creare `assets/js/00-runtime-config.js` partendo da `assets/js/00-runtime-config
 
 ## Prossimi passi
 
-- Testare online onboarding guidato owner/admin dopo nuovo deploy GitHub Pages.
 - Separare lato backend i dati economici da `entries`/`expenses` per impedire lettura API da staff.
 - Preparare passaggio a produzione vera: Stripe live e `environment: 'production'`.
+
+## Esito
+
+- Fase 2 beta chiusa: deploy, configurazione ambiente, QA online, onboarding e hardening Supabase iniziale sono completati.
+- Per produzione commerciale restano: Stripe live, testi legali definitivi e separazione backend dei dati economici staff/admin.
+- Prossimo fronte aperto in `docs/fase-3.md`.
