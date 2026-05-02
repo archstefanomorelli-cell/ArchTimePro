@@ -265,7 +265,7 @@
                 
                 document.getElementById('timer-display').innerText = "00:00:00"; 
                 document.getElementById('timer-notes').value = ""; 
-                document.getElementById('btn-text').innerText = "AVVIA ORA"; 
+                document.getElementById('btn-text').innerText = "Avvia ora"; 
                 document.getElementById('btn-icon').setAttribute("data-lucide", "play-circle"); 
                 document.getElementById('btn-toggle-timer').classList.replace('bg-red-500', 'bg-slate-900'); 
                 document.getElementById('btn-toggle-timer').classList.replace('hover:bg-red-600', 'hover:bg-slate-800');

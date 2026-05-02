@@ -67,7 +67,7 @@
 
         function toggleInactiveMembers() {
             showInactiveMembers = !showInactiveMembers;
-            document.getElementById('label-toggle-inactive').innerText = showInactiveMembers ? "Nascondi Inattivi" : "Mostra Inattivi";
+            document.getElementById('label-toggle-inactive').innerText = showInactiveMembers ? "Nascondi inattivi" : "Mostra inattivi";
             document.getElementById('icon-toggle-inactive').setAttribute("data-lucide", showInactiveMembers ? "eye" : "eye-off");
             renderProfiles();
         }

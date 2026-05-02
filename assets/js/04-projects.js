@@ -653,7 +653,7 @@
                 profitCard.classList.add('bg-red-50'); 
                 document.getElementById('kpi-profit').classList.replace('text-slate-800', 'text-red-600'); 
             } else { 
-                profitLabel.innerText = "Utile (Archiviati)"; 
+                profitLabel.innerText = "Utile archiviati"; 
                 profitCard.classList.replace('border-red-200', 'border-emerald-100'); 
                 profitCard.classList.remove('bg-red-50'); 
                 profitCard.classList.add('bg-emerald-50/60'); 

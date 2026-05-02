@@ -36,7 +36,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
-    <link rel="stylesheet" href="assets/app.css">
+    <link rel="stylesheet" href="assets/app.css?v=phase3-ui-2026-05-02">
 </head>
 <body class="text-slate-800 pb-20 lg:pb-0">
 
@@ -98,10 +98,10 @@
                             <div id="trial-info-container" class="force-hide mt-4 p-3.5 bg-primary-50 border border-primary-100 rounded-xl flex gap-3 items-start"><i data-lucide="gift" class="w-5 h-5 text-primary-600 shrink-0"></i><p class="text-xs text-primary-900 leading-relaxed"><strong class="font-black">15 giorni di prova gratuita!</strong><br>Nessuna carta richiesta.</p></div>
                         </div>
                         <div id="invite-code-container" class="force-hide">
-                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Codice Invito Manager</label>
+                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Codice invito manager</label>
                             <input type="text" id="invite-code-input" placeholder="Incolla codice" class="w-full border border-primary-200 bg-primary-50/30 rounded-xl p-3.5 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all">
                         </div>
-                            <input type="text" id="full-name" placeholder="Nome e cognome" class="w-full border border-slate-200 rounded-xl p-3.5 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all bg-white">
+                        <input type="text" id="full-name" placeholder="Nome e cognome" class="w-full border border-slate-200 rounded-xl p-3.5 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all bg-white">
                     </div>
                     
                     <input type="email" id="email" placeholder="Email professionale" class="w-full border border-slate-200 rounded-xl p-3.5 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all bg-white">
@@ -141,7 +141,7 @@
                 <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200">
                     <h3 class="text-sm font-black text-slate-800 mb-3 flex items-center gap-2"><i data-lucide="link" class="w-4 h-4 text-primary-500"></i> Unisciti a uno Studio</h3>
                     <div class="flex gap-2">
-                        <input type="text" id="limbo-invite-code" placeholder="Incolla Codice Invito" class="flex-1 border border-slate-200 rounded-xl p-3 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all bg-white">
+                        <input type="text" id="limbo-invite-code" placeholder="Incolla codice invito" class="flex-1 border border-slate-200 rounded-xl p-3 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all bg-white">
                         <button id="btn-limbo-join" class="bg-primary-600 text-white px-5 rounded-xl font-bold hover:bg-primary-700 transition-all shadow-sm active:scale-95 shrink-0 text-sm">Entra</button>
                     </div>
                 </div>
@@ -153,7 +153,7 @@
                 </div>
 
                 <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                    <h3 class="text-sm font-black text-slate-800 mb-3 flex items-center gap-2"><i data-lucide="briefcase" class="w-4 h-4 text-amber-500"></i> Crea il tuo Spazio di Lavoro</h3>
+                    <h3 class="text-sm font-black text-slate-800 mb-3 flex items-center gap-2"><i data-lucide="briefcase" class="w-4 h-4 text-amber-500"></i> Crea il tuo spazio di lavoro</h3>
                     <div class="flex gap-2 mb-3">
                         <label class="flex-1 flex items-center justify-center gap-2 p-2.5 bg-slate-50 rounded-lg border border-slate-200 cursor-pointer hover:border-primary-300 transition-all relative has-[:checked]:bg-white has-[:checked]:border-primary-500 has-[:checked]:ring-1 has-[:checked]:ring-primary-500">
                             <input type="radio" name="limbo-business-type" value="studio" checked class="sr-only">
@@ -164,8 +164,8 @@
                             <span class="text-xs font-bold text-slate-700">Impresa Edile</span>
                         </label>
                     </div>
-                    <input type="text" id="limbo-studio-name" placeholder="Nome della tua Azienda" class="w-full border border-slate-200 rounded-xl p-3 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all mb-3 bg-slate-50">
-                    <button id="btn-limbo-create" class="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold hover:bg-slate-800 transition-all active:scale-[0.98] shadow-sm flex justify-center items-center gap-2">Diventa Manager</button>
+                    <input type="text" id="limbo-studio-name" placeholder="Nome della tua azienda" class="w-full border border-slate-200 rounded-xl p-3 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all mb-3 bg-slate-50">
+                    <button id="btn-limbo-create" class="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold hover:bg-slate-800 transition-all active:scale-[0.98] shadow-sm flex justify-center items-center gap-2">Diventa manager</button>
                 </div>
             </div>
             
@@ -178,7 +178,7 @@
     <div id="paywall-container" class="force-hide fixed inset-0 z-[200] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
         <div class="bg-white border border-slate-200 rounded-2xl p-8 max-w-md w-full text-center shadow-xl">
             <div class="w-16 h-16 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-red-100"><i data-lucide="lock" class="w-8 h-8"></i></div>
-            <h2 class="text-2xl font-black text-slate-900 mb-2 tracking-tight">Abbonamento Scaduto</h2>
+            <h2 class="text-2xl font-black text-slate-900 mb-2 tracking-tight">Abbonamento scaduto</h2>
             <p class="text-slate-500 text-sm mb-8 leading-relaxed">L'abbonamento per questo Spazio di Lavoro è scaduto. Attiva un piano per continuare a lavorare.</p>
             
             <div class="flex flex-col gap-3 mb-6">
@@ -214,7 +214,7 @@
                     <span id="plan-badge" class="admin-only force-hide text-[9px] px-2 py-0.5 rounded-md border border-slate-200 bg-slate-50 text-slate-500 font-bold uppercase tracking-wider ml-1 sm:ml-2 hidden sm:inline-block"></span>
                 </div>
                 <div class="flex items-center gap-2 lg:gap-4 shrink-0">
-                    <button id="btn-header-pdf" class="admin-only text-[10px] lg:text-xs font-bold text-slate-600 hover:text-primary-600 flex items-center gap-1.5 bg-white border border-slate-200 hover:border-primary-200 hover:bg-primary-50 lg:border-transparent lg:bg-transparent lg:hover:bg-transparent px-2.5 py-1.5 lg:p-0 rounded-lg transition-all shadow-sm lg:shadow-none"><i data-lucide="file-text" class="w-4 h-4"></i> <span class="hidden lg:inline">PDF REPORT</span></button>
+                    <button id="btn-header-pdf" class="admin-only text-[10px] lg:text-xs font-bold text-slate-600 hover:text-primary-600 flex items-center gap-1.5 bg-white border border-slate-200 hover:border-primary-200 hover:bg-primary-50 lg:border-transparent lg:bg-transparent lg:hover:bg-transparent px-2.5 py-1.5 lg:p-0 rounded-lg transition-all shadow-sm lg:shadow-none"><i data-lucide="file-text" class="w-4 h-4"></i> <span class="hidden lg:inline">Report PDF</span></button>
                     <div class="hidden lg:block h-6 w-[1px] bg-slate-200 admin-only mx-2"></div>
                     
                     <button id="btn-open-account" class="flex items-center gap-2 border border-transparent hover:border-slate-200 hover:bg-slate-50 p-1.5 lg:px-3 lg:py-1.5 rounded-xl transition-all group">
@@ -229,7 +229,7 @@
             
             <div class="lg:col-span-4 flex flex-col gap-6 lg:gap-8">
                 
-                <section class="bg-slate-100 border border-slate-200/80 rounded-2xl p-6 shadow-md mobile-tab active" data-tab="operate">
+                <section class="app-panel bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mobile-tab active" data-tab="operate">
                     <div>
                         <div class="flex justify-between items-center mb-6">
                             <h2 class="text-lg font-black text-slate-800 tracking-tight flex items-center gap-2"><i data-lucide="clock" class="text-primary-500 w-5 h-5"></i> Timer</h2>
@@ -241,27 +241,27 @@
                             <div><input type="text" id="timer-notes" placeholder="Aggiungi una nota (opzionale)" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white shadow-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all text-slate-700 placeholder:text-slate-400"></div>
                         </div>
                         <div class="mt-8 mb-8"><div id="timer-display" class="text-5xl lg:text-6xl font-black tracking-tighter text-center text-slate-800 tabular-nums">00:00:00</div></div>
-                        <button id="btn-toggle-timer" class="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold text-base shadow-sm hover:bg-slate-800 transition-all active:scale-[0.98] flex justify-center items-center gap-2"><i data-lucide="play-circle" id="btn-icon" class="w-5 h-5"></i> <span id="btn-text">AVVIA ORA</span></button>
+                        <button id="btn-toggle-timer" class="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold text-base shadow-sm hover:bg-slate-800 transition-all active:scale-[0.98] flex justify-center items-center gap-2"><i data-lucide="play-circle" id="btn-icon" class="w-5 h-5"></i> <span id="btn-text">Avvia ora</span></button>
                     </div>
                 </section>
 
-                <section class="bg-slate-100 border border-slate-200/80 rounded-2xl p-6 shadow-md admin-only mobile-tab relative overflow-visible" data-tab="manage">
-                    <h2 id="lbl-new-project" class="text-lg font-black text-slate-800 tracking-tight mb-6 flex items-center gap-2"><i data-lucide="folder-plus" class="text-primary-500 w-5 h-5"></i> Nuovo Progetto</h2>
+                <section class="app-panel bg-white border border-slate-200 rounded-2xl p-6 shadow-sm admin-only mobile-tab relative overflow-visible" data-tab="manage">
+                    <h2 id="lbl-new-project" class="text-lg font-black text-slate-800 tracking-tight mb-6 flex items-center gap-2"><i data-lucide="folder-plus" class="text-primary-500 w-5 h-5"></i> Nuovo progetto</h2>
                     <div class="space-y-4">
-                        <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Nome</label><input type="text" id="new-proj-name" placeholder="Nome Lavoro" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white shadow-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all text-slate-700"></div>
-                        <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Cliente</label><input type="text" id="new-proj-client" placeholder="Nome Cliente" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white shadow-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all text-slate-700"></div>
-                        <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Budget Assegnato</label><div class="flex gap-2 bg-white shadow-sm p-3 rounded-xl border border-slate-200 focus-within:border-primary-500 focus-within:ring-4 focus-within:ring-primary-500/10 transition-all"><span class="text-slate-400 font-bold text-sm">€</span><input type="number" id="new-proj-budget" placeholder="0.00" class="bg-transparent w-full outline-none text-sm font-bold text-slate-800"></div></div>
+                        <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Nome</label><input type="text" id="new-proj-name" placeholder="Nome lavoro" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white shadow-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all text-slate-700"></div>
+                        <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Cliente</label><input type="text" id="new-proj-client" placeholder="Nome cliente" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white shadow-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all text-slate-700"></div>
+                        <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Budget assegnato</label><div class="flex gap-2 bg-white shadow-sm p-3 rounded-xl border border-slate-200 focus-within:border-primary-500 focus-within:ring-4 focus-within:ring-primary-500/10 transition-all"><span class="text-slate-400 font-bold text-sm">€</span><input type="number" id="new-proj-budget" placeholder="0.00" class="bg-transparent w-full outline-none text-sm font-bold text-slate-800"></div></div>
                         
                         <div class="pt-5 mt-2 border-t border-slate-200">
                             <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-2 ml-1">Flusso di lavoro</label>
                             <div class="flex gap-2 mb-3">
-                                <select id="new-proj-template" class="flex-1 border border-slate-200 rounded-xl p-3 text-sm bg-white shadow-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all appearance-none cursor-pointer text-slate-700"><option value="" selected disabled>Scegli un Template</option></select>
+                                <select id="new-proj-template" class="flex-1 border border-slate-200 rounded-xl p-3 text-sm bg-white shadow-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all appearance-none cursor-pointer text-slate-700"><option value="" selected disabled>Scegli un template</option></select>
                                 <button id="btn-manage-templates" class="bg-white shadow-sm border border-slate-200 text-slate-500 hover:text-primary-600 hover:border-primary-200 hover:bg-primary-50 px-3.5 rounded-xl transition-all flex items-center justify-center" title="Gestisci Template"><i data-lucide="layers" class="w-4 h-4"></i></button>
                             </div>
                             
                             <div class="bg-white border border-slate-200 rounded-xl p-3.5 shadow-sm">
                                 <div class="flex justify-between items-center mb-2.5">
-                                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Attività Incluse</span>
+                                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Attività incluse</span>
                                     <button id="btn-open-new-task-builder" class="bg-white text-slate-500 hover:text-primary-600 border border-slate-200 hover:border-primary-200 hover:bg-primary-50 p-1.5 rounded-md transition-all shadow-sm" title="Aggiungi Attività">
                                         <i data-lucide="plus" class="w-3.5 h-3.5"></i>
                                     </button>
@@ -273,7 +273,7 @@
                     </div>
                 </section>
 
-                <section class="bg-slate-100 border border-slate-200/80 rounded-2xl p-6 shadow-md admin-only mobile-tab" data-tab="manage">
+                <section class="app-panel bg-white border border-slate-200 rounded-2xl p-6 shadow-sm admin-only mobile-tab" data-tab="manage">
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-lg font-black text-slate-800 tracking-tight flex items-center gap-2"><i data-lucide="users" class="text-primary-500 w-5 h-5"></i> Team</h2>
                         <div class="flex gap-2">
@@ -287,7 +287,7 @@
                     <div class="flex justify-start">
                         <button id="btn-toggle-inactive" class="text-[9px] font-bold uppercase tracking-wider text-slate-400 hover:text-primary-600 transition-colors flex items-center gap-1.5">
                             <i data-lucide="eye-off" class="w-3 h-3" id="icon-toggle-inactive"></i>
-                            <span id="label-toggle-inactive">Mostra Inattivi</span>
+                            <span id="label-toggle-inactive">Mostra inattivi</span>
                         </button>
                     </div>
                 </section>
@@ -296,14 +296,14 @@
             <div class="lg:col-span-8 flex flex-col gap-6 lg:gap-8">
                 
                 <section class="admin-only mobile-tab" data-tab="analyze">
-                    <h2 class="text-lg lg:text-xl font-black text-slate-800 tracking-tight pl-1 mb-4">Salute Finanziaria</h2>
+                    <h2 class="text-lg lg:text-xl font-black text-slate-800 tracking-tight pl-1 mb-4">Salute finanziaria</h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                         <div class="bg-primary-50/60 border border-primary-100 rounded-2xl p-5 shadow-sm relative overflow-hidden">
                             <div class="absolute inset-0 z-0 pointer-events-none">
                                 <i data-lucide="trending-up" class="absolute -right-4 -bottom-4 w-24 h-24 text-primary-200 opacity-60"></i>
                             </div>
                             <div class="relative z-10">
-                                <h3 class="text-[11px] font-bold uppercase text-slate-500 tracking-wider mb-1">Margine (Attivi)</h3>
+                                <h3 class="text-[11px] font-bold uppercase text-slate-500 tracking-wider mb-1">Margine attivi</h3>
                                 <div id="kpi-margin" class="text-2xl lg:text-3xl font-black text-primary-600 truncate tracking-tight transition-colors duration-500">€ 0.00</div>
                             </div>
                         </div>
@@ -312,7 +312,7 @@
                                 <i data-lucide="pie-chart" class="absolute -right-4 -bottom-4 w-24 h-24 text-emerald-200 opacity-60"></i>
                             </div>
                             <div class="relative z-10">
-                                <h3 id="label-profit" class="text-[11px] font-bold uppercase text-slate-500 tracking-wider mb-1 transition-colors duration-500">Utile (Archiviati)</h3>
+                                <h3 id="label-profit" class="text-[11px] font-bold uppercase text-slate-500 tracking-wider mb-1 transition-colors duration-500">Utile archiviati</h3>
                                 <div id="kpi-profit" class="text-2xl lg:text-3xl font-black text-slate-800 truncate tracking-tight">€ 0.00</div>
                             </div>
                         </div>
@@ -321,20 +321,20 @@
                                 <i data-lucide="flame" class="absolute -right-4 -bottom-4 w-24 h-24 text-orange-200 opacity-60"></i>
                             </div>
                             <div class="relative z-10">
-                                <h3 class="text-[11px] font-bold uppercase text-slate-500 tracking-wider mb-1">Top Burner (Attivi)</h3>
+                                <h3 class="text-[11px] font-bold uppercase text-slate-500 tracking-wider mb-1">Costo più alto</h3>
                                 <div id="kpi-burner" class="text-lg font-bold text-slate-800 mt-2 truncate">-</div>
                             </div>
                         </div>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm"><h3 class="text-[11px] font-bold uppercase text-slate-500 tracking-wider mb-4">Budget vs Costi Totali</h3><div class="relative w-full h-48 lg:h-64"><canvas id="chart-global"></canvas></div></div>
+                        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm"><h3 class="text-[11px] font-bold uppercase text-slate-500 tracking-wider mb-4">Budget vs costi totali</h3><div class="relative w-full h-48 lg:h-64"><canvas id="chart-global"></canvas></div></div>
                         <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm"><h3 class="text-[11px] font-bold uppercase text-slate-500 tracking-wider mb-4">Distribuzione Attività</h3><div class="relative w-full h-48 lg:h-64"><canvas id="chart-tasks-dist"></canvas></div></div>
                     </div>
                 </section>
 
                 <section class="admin-only mobile-tab active" data-tab="operate">
                     <div class="flex justify-between items-center mb-4 pl-1">
-                        <h2 id="lbl-active-projects" class="text-lg lg:text-xl font-black text-slate-800 tracking-tight">Progetti Attivi</h2>
+                        <h2 id="lbl-active-projects" class="text-lg lg:text-xl font-black text-slate-800 tracking-tight">Progetti attivi</h2>
                         <button id="toggle-archived-btn" class="text-[10px] font-bold uppercase tracking-wider bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm text-slate-500 hover:text-primary-600 hover:border-primary-200 hover:bg-primary-50 transition-all">Archivio</button>
                     </div>
                     <div id="projects-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
@@ -404,7 +404,7 @@
                 </div>
                 <div class="flex gap-2 pt-4 mt-2 border-t border-slate-100">
                     <button id="btn-delete-team" class="bg-white text-slate-500 border border-slate-200 hover:bg-red-50 hover:text-red-600 hover:border-red-200 px-4 py-3.5 rounded-xl transition-colors shadow-sm flex items-center justify-center shrink-0" title="Sgancia dallo Studio"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                    <button id="btn-save-team-edit" class="flex-1 bg-slate-900 text-white py-3.5 rounded-xl font-bold shadow-sm hover:bg-slate-800 transition-all active:scale-[0.98]">Salva Modifiche</button>
+                    <button id="btn-save-team-edit" class="flex-1 bg-slate-900 text-white py-3.5 rounded-xl font-bold shadow-sm hover:bg-slate-800 transition-all active:scale-[0.98]">Salva modifiche</button>
                 </div>
             </div>
         </div>
@@ -449,7 +449,7 @@
             <div class="border-t border-slate-100 mt-5 pt-4 text-center flex flex-col gap-2">
                 <button id="btn-export-user-data" class="text-[10px] font-bold uppercase tracking-wider text-primary-500 hover:text-primary-700 py-1.5 px-4 rounded-lg transition-all flex items-center justify-center gap-1.5 mx-auto mb-2"><i data-lucide="download" class="w-3.5 h-3.5"></i> Esporta i miei dati (JSON)</button>
                 <button data-action="logout" class="text-[11px] font-bold uppercase tracking-wider text-slate-500 hover:text-slate-800 py-2 px-4 rounded-lg transition-all flex items-center justify-center gap-1.5 mx-auto"><i data-lucide="log-out" class="w-3.5 h-3.5"></i> Esci dall'account</button>
-                <button id="btn-delete-account" class="text-[10px] font-bold uppercase tracking-wider text-red-400 hover:text-red-600 py-1.5 px-4 rounded-lg transition-all flex items-center justify-center gap-1.5 mx-auto mt-2"><i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> Elimina Definitivamente Account</button>
+                <button id="btn-delete-account" class="text-[10px] font-bold uppercase tracking-wider text-red-400 hover:text-red-600 py-1.5 px-4 rounded-lg transition-all flex items-center justify-center gap-1.5 mx-auto mt-2"><i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> Elimina definitivamente account</button>
             </div>
         </div>
     </div>
@@ -610,7 +610,7 @@
                     <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Ore</label><input type="number" step="0.1" id="edit-entry-hours" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all"></div>
                     <div class="admin-only"><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Costo (€)</label><input type="number" step="0.01" id="edit-entry-cost" readonly class="w-full border border-slate-200 bg-slate-50 text-slate-500 font-bold rounded-xl p-3 text-sm outline-none"></div>
                 </div>
-                <button id="btn-save-entry-edit" class="w-full bg-slate-900 text-white py-3.5 mt-4 rounded-xl font-bold shadow-sm hover:bg-slate-800 transition-all active:scale-[0.98]">Salva Modifiche</button>
+                <button id="btn-save-entry-edit" class="w-full bg-slate-900 text-white py-3.5 mt-4 rounded-xl font-bold shadow-sm hover:bg-slate-800 transition-all active:scale-[0.98]">Salva modifiche</button>
             </div>
         </div>
     </div>
@@ -627,13 +627,13 @@
                 <div class="pt-5 mt-2 border-t border-slate-100">
                     <div class="bg-white border border-slate-200 rounded-xl p-3.5 shadow-sm">
                         <div class="flex justify-between items-center mb-2.5">
-                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Attività Incluse</span>
+                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Attività incluse</span>
                             <button id="btn-open-edit-task-builder" class="text-[10px] font-bold text-primary-600 hover:text-primary-700 bg-white border border-slate-200 hover:border-primary-200 hover:bg-primary-50 px-2 py-1 rounded-md transition-all flex items-center gap-1 shadow-sm"><i data-lucide="settings" class="w-3 h-3"></i> Configura</button>
                         </div>
                         <div id="edit-proj-selected-tasks" class="flex flex-wrap gap-1.5 min-h-[28px]"></div>
                     </div>
                 </div>
-                <button id="btn-save-project-edit" class="w-full bg-slate-900 text-white py-3.5 mt-4 rounded-xl font-bold shadow-sm hover:bg-slate-800 transition-all active:scale-[0.98]">Salva Modifiche</button>
+                <button id="btn-save-project-edit" class="w-full bg-slate-900 text-white py-3.5 mt-4 rounded-xl font-bold shadow-sm hover:bg-slate-800 transition-all active:scale-[0.98]">Salva modifiche</button>
             </div>
         </div>
     </div>
@@ -714,11 +714,11 @@
         <button id="btn-accept-cookies" class="bg-primary-600 text-white text-xs font-bold uppercase tracking-wider px-6 py-3 rounded-xl hover:bg-primary-500 transition-colors shadow-sm shrink-0 whitespace-nowrap active:scale-95">Ho capito</button>
     </div>
     <script src="assets/js/00-runtime-config.js?v=phase3-2026-05-01"></script>
-    <script src="assets/js/01-core.js?v=phase3-2026-05-01"></script>
+    <script src="assets/js/01-core.js?v=phase3-ui-2026-05-02"></script>
     <script src="assets/js/02-auth-account.js?v=phase3-mobile-2026-05-02"></script>
-    <script src="assets/js/03-team.js?v=phase3-2026-05-01"></script>
-    <script src="assets/js/04-projects.js?v=phase3-2026-05-01"></script>
-    <script src="assets/js/05-time-entries.js?v=phase3-2026-05-01"></script>
+    <script src="assets/js/03-team.js?v=phase3-ui-2026-05-02"></script>
+    <script src="assets/js/04-projects.js?v=phase3-ui-2026-05-02"></script>
+    <script src="assets/js/05-time-entries.js?v=phase3-ui-2026-05-02"></script>
     <script src="assets/js/06-reports.js?v=phase3-2026-05-01"></script>
     <script src="assets/js/07-password-bootstrap.js?v=phase3-2026-05-01"></script>
 </body>

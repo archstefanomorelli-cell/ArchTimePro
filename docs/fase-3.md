@@ -34,6 +34,7 @@ Stato: avviata.
 - Aggiunto audit pre-dominio in `docs/pre-dominio-audit.md`.
 - Aggiunta guida setup dominio `archtimepro.it` in `docs/setup-archtimepro-it.md`.
 - Rifinita esperienza mobile di login/registrazione e scroll onboarding owner.
+- Seconda passata UI interna: pannelli operativi più puliti, microtesti meno urlati, cache-busting CSS/JS aggiornato.
 
 ## Sicurezza dati economici
 
