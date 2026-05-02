@@ -15,8 +15,9 @@ Stato: ciclo funzionale online completato su GitHub Pages, incluso hardening RPC
 
 - `index.html` si carica senza errori console. Verificato.
 - CTA principali aprono `app.html`. Verificato.
-- `guida.html`, `privacy.html`, `termini.html` sono raggiungibili. Verificato.
+- `guida.html`, `privacy.html`, `termini.html`, `feedback.html`, `sicurezza.html` sono raggiungibili. Verificato.
 - Prezzi Starter/Premium sono leggibili su mobile. Da verificare su device reali.
+- La pagina registrazione di `app.html` mostra link a Termini, Privacy e Sicurezza economica. Da verificare online dopo deploy.
 
 ## Onboarding
 
@@ -68,15 +69,18 @@ Stato: ciclo funzionale online completato su GitHub Pages, incluso hardening RPC
 
 - Dopo la prima registrazione owner serve onboarding guidato per configurare subito spazio di lavoro, settore e primo lavoro/cantiere.
 - La protezione dei costi staff va rinforzata anche lato API, non solo lato UI.
+- I tester temono che il gestore tecnico del database possa leggere dati economici: gestire con pagina sicurezza e roadmap Privacy Economica Avanzata.
 
 ## Test Fase 3 eseguiti
 
 - Onboarding guidato owner/admin: apertura una tantum, settore mostrato come scelta gia effettuata, salvataggio identita, preparazione primo lavoro e compilazione form progetto. Verificato.
 - Timer e inserimento manuale dopo `create_entry_for_app`. Verificato admin/staff.
+- Pagine pubbliche Fase 3: feedback e sicurezza aggiunte al workflow Pages. Da verificare online dopo deploy.
 
 ## Criterio uscita beta
 
 - Nessun errore console bloccante.
 - Nessun flusso core interrotto.
 - Nessun dato cross-studio visibile.
-- Nessun link test in produzione.
+- Nessuna promessa privacy piu forte della protezione realmente implementata.
+- Nessun link test in produzione, quando si passa a dominio/email/Stripe live.

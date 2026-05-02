@@ -25,6 +25,8 @@ Stato: avviata.
 - Aggiunta checklist regression RLS/RPC in `docs/regression-rls-rpc.md`.
 - Aggiunta pagina pubblica `sicurezza.html` per spiegare sicurezza beta e roadmap Privacy Economica Avanzata.
 - Aggiunto documento tecnico `docs/privacy-economica-avanzata.md`.
+- Aggiunto link a Sicurezza e Privacy Economica nella registrazione app.
+- Aggiunta checklist lancio beta controllata in `docs/beta-launch-checklist.md`.
 
 ## Sicurezza dati economici
 
@@ -79,6 +81,7 @@ Nota beta aggiornata:
 - Raccogliere feedback da 3-5 utenti target.
 - Prioritizzare bug bloccanti.
 - Valutare miglioramenti UX su onboarding, dashboard, report e team.
+- Usare `docs/beta-launch-checklist.md` per inviti, classificazione feedback e criteri di passaggio allo step successivo.
 
 ## Stato pre-dominio
 
