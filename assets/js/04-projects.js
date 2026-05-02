@@ -84,18 +84,22 @@
             const costExp = expenses.filter(expense => expense.project_id === project.id).reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
             const totalCost = costHrs + costExp;
             const budget = Number(project.budget || 0);
-            const percent = budget > 0 ? (totalCost / budget * 100) : 0;
+            const margin = budget - totalCost;
+            const percent = budget > 0 ? (totalCost / budget * 100) : (totalCost > 0 ? 100 : 0);
+            const isOverBudget = margin < 0;
+            const isCritical = !isOverBudget && percent > 90;
+            const isWarning = !isOverBudget && percent > 75;
 
             return {
                 totalCost,
                 budget,
                 percent,
-                margin: budget - totalCost,
-                barClass: percent > 90 ? 'bg-red-500' : (percent > 75 ? 'bg-amber-400' : 'bg-primary-500'),
-                statusLabel: percent > 100 ? 'Fuori budget' : (percent > 90 ? 'Critico' : (percent > 75 ? 'Da monitorare' : 'In controllo')),
-                statusIcon: percent > 100 ? 'octagon-alert' : (percent > 90 ? 'alert-triangle' : (percent > 75 ? 'circle-alert' : 'check-circle-2')),
-                statusClass: percent > 100 ? 'bg-red-50 text-red-700 border-red-200' : (percent > 90 ? 'bg-red-50 text-red-700 border-red-200' : (percent > 75 ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200')),
-                marginClass: budget - totalCost < 0 ? 'text-red-600' : 'text-emerald-600'
+                margin,
+                barClass: isOverBudget || isCritical ? 'bg-red-500' : (isWarning ? 'bg-amber-400' : 'bg-primary-500'),
+                statusLabel: isOverBudget ? 'Fuori budget' : (isCritical ? 'Critico' : (isWarning ? 'Da monitorare' : 'In controllo')),
+                statusIcon: isOverBudget ? 'octagon-alert' : (isCritical ? 'alert-triangle' : (isWarning ? 'circle-alert' : 'check-circle-2')),
+                statusClass: isOverBudget || isCritical ? 'bg-red-50 text-red-700 border-red-200' : (isWarning ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200'),
+                marginClass: margin < 0 ? 'text-red-600' : 'text-emerald-600'
             };
         }
 
