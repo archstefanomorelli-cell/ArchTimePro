@@ -38,6 +38,7 @@ Stato: avviata.
 - Rifinite le card KPI della dashboard economica con colori più leggibili e terza card "Progetto più oneroso".
 - Passata UI estesa su card progetto, registro attività, dettaglio progetto, navigazione mobile e modali account/team.
 - Aggiunti empty state guidati, micro-animazioni sobrie, badge critici con icone e report PDF più curati.
+- Rifinitura finale UI: header interno, grafici dashboard, microbottoni, form nuovo progetto guidato e box riepilogo PDF.
 
 ## Sicurezza dati economici
 

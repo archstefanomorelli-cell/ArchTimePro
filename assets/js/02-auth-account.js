@@ -373,6 +373,10 @@ function switchAuthTab(mode) {
                     }
 
                     document.getElementById('user-display').innerText = profile.full_name;
+                    const headerStudioName = document.getElementById('header-studio-name');
+                    const headerUserRole = document.getElementById('header-user-role');
+                    if (headerStudioName) headerStudioName.innerText = studioData?.name || 'Spazio di lavoro';
+                    if (headerUserRole) headerUserRole.innerText = profile.is_owner ? 'Owner' : (profile.role === 'admin' ? 'Admin' : 'Collaboratore');
                     document.getElementById('auth-container').classList.add('force-hide'); 
                     document.getElementById('app-container').classList.remove('force-hide');
                     initApp();

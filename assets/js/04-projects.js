@@ -724,18 +724,38 @@
             
             const theme = THEMES[currentBusinessType];
             Chart.defaults.font.family = "'Inter', sans-serif";
+            Chart.defaults.color = '#64748b';
+            const chartTooltip = {
+                backgroundColor: '#0f172a',
+                titleFont: { weight: 'bold', size: 12 },
+                bodyFont: { weight: 'bold', size: 11 },
+                padding: 10,
+                cornerRadius: 10,
+                displayColors: false
+            };
             
             if(charts.global) charts.global.destroy();
             charts.global = new Chart(document.getElementById('chart-global'), { 
                 type: 'bar', 
                 data: { 
-                    labels: ['Portafoglio Attivo'], 
+                    labels: ['Portafoglio attivo'], 
                     datasets: [ 
-                        { label: 'Costi (Ore+Spese)', data: [totalSpent], backgroundColor: theme.chartMainColor, borderRadius: 6 }, 
-                        { label: 'Budget', data: [totalBudget], backgroundColor: '#f1f5f9', hoverBackgroundColor: '#e2e8f0', borderRadius: 6 } 
+                        { label: 'Costi ore e spese', data: [totalSpent], backgroundColor: theme.chartMainColor, borderRadius: 8, barThickness: 38 }, 
+                        { label: 'Budget', data: [totalBudget], backgroundColor: '#e2e8f0', hoverBackgroundColor: '#cbd5e1', borderRadius: 8, barThickness: 38 } 
                     ]
                 }, 
-                options: { responsive: true, maintainAspectRatio: false } 
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { grid: { display: false }, ticks: { font: { size: 10, weight: 'bold' } } },
+                        y: { grid: { color: '#f1f5f9' }, ticks: { callback: value => formatMoney(value, 0), font: { size: 10 } } }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { usePointStyle: true, pointStyle: 'circle', boxWidth: 8, font: { size: 10, weight: 'bold' } } },
+                        tooltip: chartTooltip
+                    }
+                } 
             });
             
             const taskStats = {}; 
@@ -753,11 +773,14 @@
                 type: 'doughnut', 
                 data: { 
                     labels: taskLabelsWithPerc, 
-                    datasets: [{ data: topTasks.map(t=>t[1]), backgroundColor: theme.chartPalette, borderWidth: 0 }]
+                    datasets: [{ data: topTasks.map(t=>t[1]), backgroundColor: theme.chartPalette, borderWidth: 3, borderColor: '#ffffff', hoverOffset: 4 }]
                 }, 
                 options: { 
                     responsive: true, maintainAspectRatio: false, cutout: '75%', 
-                    plugins: { legend: { position: 'right', labels: { boxWidth: 10, font: { size: 10, weight: 'bold' } } } } 
+                    plugins: {
+                        legend: { position: 'right', labels: { usePointStyle: true, pointStyle: 'circle', boxWidth: 8, font: { size: 10, weight: 'bold' } } },
+                        tooltip: chartTooltip
+                    } 
                 } 
             });
         }

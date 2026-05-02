@@ -77,6 +77,18 @@
             }
         }
 
+        function drawPdfSummaryBox(doc, x, y, label, value, color = [15, 23, 42]) {
+            doc.setDrawColor(226, 232, 240);
+            doc.setFillColor(248, 250, 252);
+            doc.roundedRect(x, y, 52, 18, 2, 2, 'FD');
+            doc.setFontSize(7);
+            doc.setTextColor(100, 116, 139);
+            doc.text(label, x + 4, y + 6);
+            doc.setFontSize(11);
+            doc.setTextColor(...color);
+            doc.text(String(value), x + 4, y + 13);
+        }
+
         function getEntryPdfParts(entry) {
             const rawNotes = entry.notes || '';
             const match = rawNotes.match(/^\[(\d{2}:\d{2}) - (\d{2}:\d{2})\]\s*/);
@@ -148,13 +160,15 @@
             doc.setFontSize(10); doc.setTextColor(...THEMES[currentBusinessType].pdfColor); doc.text('Report progetto', 14, startY);
             doc.setFontSize(22); doc.setTextColor(15, 23, 42); doc.text(p.name, 14, startY + 10); doc.setFontSize(12); doc.setTextColor(100, 116, 139); doc.text(`Cliente: ${p.client || 'Interno'}`, 14, startY + 18);
             const totalHours = pEntries.reduce((s,e) => s + Number(e.duration), 0); const totalHrsCost = pEntries.reduce((s,e) => s + Number(e.rate), 0); const totalExp = pExpenses.reduce((s,ex) => s + Number(ex.amount), 0);
-            doc.setFontSize(10); doc.setTextColor(15, 23, 42); doc.text(`Totale: ${pdfMoney(totalHrsCost+totalExp)} | Ore: ${pdfMoney(totalHrsCost)} (${formatTime(totalHours)}) | Spese: ${pdfMoney(totalExp)}`, 14, startY + 29);
+            drawPdfSummaryBox(doc, 14, startY + 26, 'Totale', pdfMoney(totalHrsCost + totalExp), [15, 23, 42]);
+            drawPdfSummaryBox(doc, 72, startY + 26, 'Ore', `${formatTime(totalHours)} / ${pdfMoney(totalHrsCost)}`, THEMES[currentBusinessType].pdfColor);
+            drawPdfSummaryBox(doc, 130, startY + 26, 'Spese', pdfMoney(totalExp), [217, 119, 6]);
             
             const pdfColor = THEMES[currentBusinessType].pdfColor;
-            doc.setFontSize(12); doc.setTextColor(...pdfColor); doc.text("Registro ore", 14, startY + 40);
+            doc.setFontSize(12); doc.setTextColor(...pdfColor); doc.text("Registro ore", 14, startY + 54);
             
             doc.autoTable({ 
-                startY: startY + 44, 
+                startY: startY + 58, 
                 head: [['Data', 'Team', 'Attività', 'Ore', 'Costo']], 
                 body: pEntries.map(e => entryPdfRow(e, true)), 
                 ...pdfTableOptions(pdfColor)
@@ -201,7 +215,8 @@
             const totalH = filE.reduce((sum, ent) => sum + Number(ent.duration), 0); const totalC = filE.reduce((sum, ent) => sum + Number(ent.rate), 0);
             doc.setDrawColor(226, 232, 240); doc.line(14, startY+40, 196, startY+40);
             doc.setFontSize(12); doc.setTextColor(15, 23, 42); doc.text(`Riepilogo globale`, 14, startY + 55);
-            doc.setFontSize(10); doc.text(`Ore totali: ${formatTime(totalH)}`, 14, startY + 63); doc.text(`Valore economico: ${pdfMoney(totalC)}`, 14, startY + 70);
+            drawPdfSummaryBox(doc, 14, startY + 60, 'Ore totali', formatTime(totalH), pdfColor);
+            drawPdfSummaryBox(doc, 72, startY + 60, 'Valore economico', pdfMoney(totalC), [15, 23, 42]);
 
             const projLabel = currentBusinessType === 'impresa' ? 'Cantiere' : 'Progetto';
 
@@ -210,9 +225,10 @@
                 doc.addPage(); let pY = 20; if(logoData) { doc.addImage(logoData.url, 'PNG', 14, 10, (logoData.width/logoData.height)*8, 8); pY = 28; }
                 doc.setFontSize(18); doc.setTextColor(...pdfColor); doc.text(p?p.name:"Eliminato", 14, pY);
                 doc.setFontSize(10); doc.setTextColor(100, 116, 139); doc.text(`Cliente: ${p?p.client:'-'} | Periodo: ${s} / ${e}`, 14, pY+7);
-                doc.text(`Ore Periodo: ${formatTime(pE.reduce((sum,ent)=>sum+Number(ent.duration),0))} | Valore: ${pdfMoney(pE.reduce((sum,ent)=>sum+Number(ent.rate),0))}`, 14, pY+13);
+                drawPdfSummaryBox(doc, 14, pY + 12, 'Ore periodo', formatTime(pE.reduce((sum,ent)=>sum+Number(ent.duration),0)), pdfColor);
+                drawPdfSummaryBox(doc, 72, pY + 12, 'Valore', pdfMoney(pE.reduce((sum,ent)=>sum+Number(ent.rate),0)), [15, 23, 42]);
                 doc.autoTable({ 
-                    startY: pY+20, 
+                    startY: pY+36, 
                     head: [['Data', 'Team', 'Attività', 'Ore', 'Costo']], 
                     body: pE.map(ent => entryPdfRow(ent, true)), 
                     ...pdfTableOptions(pdfColor)
@@ -265,9 +281,10 @@
 
                 doc.setFontSize(10); doc.setTextColor(...pdfColor); doc.text('Report team', 14, currentY);
                 doc.setFontSize(18); doc.setTextColor(15, 23, 42); doc.text(`Collaboratore: ${uname}`, 14, currentY + 10);
-                doc.setFontSize(10); doc.setTextColor(100, 116, 139); doc.text(`Totale periodo: ${formatTime(uTotalH)} | Costo totale: ${pdfMoney(uTotalC)}`, 14, currentY+17);
+                drawPdfSummaryBox(doc, 14, currentY + 16, 'Ore periodo', formatTime(uTotalH), pdfColor);
+                drawPdfSummaryBox(doc, 72, currentY + 16, 'Costo totale', pdfMoney(uTotalC), [15, 23, 42]);
 
-                currentY += 25;
+                currentY += 40;
                 const projLabel = currentBusinessType === 'impresa' ? 'Cantiere' : 'Progetto';
                 const projectsForUser = [...new Set(uEntries.map(ent => ent.project_name))].sort();
 
