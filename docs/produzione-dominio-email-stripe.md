@@ -66,6 +66,8 @@ https://dominio/app.html*
 
 ## App production mode
 
+- Rimuovere o sostituire il `robots.txt` beta che blocca l'indicizzazione.
+- Rimuovere i meta `noindex, nofollow` dalle pagine pubbliche quando il dominio definitivo e i testi legali sono pronti.
 - Modificare workflow GitHub Pages:
 
 ```js
