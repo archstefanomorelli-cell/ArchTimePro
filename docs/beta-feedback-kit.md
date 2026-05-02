@@ -71,7 +71,7 @@ La cifratura economica lato cliente, pensata per rendere budget, costi, spese e 
 
 ## Come segnalare bug
 
-Per ogni bug chiedere:
+Usare il modulo nella pagina feedback. Per ogni bug chiedere:
 
 - Cosa stavi facendo?
 - Che pagina/sezione era aperta?

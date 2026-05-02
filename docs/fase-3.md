@@ -28,6 +28,8 @@ Stato: avviata.
 - Aggiunto link a Sicurezza e Privacy Economica nella registrazione app.
 - Aggiunta checklist lancio beta controllata in `docs/beta-launch-checklist.md`.
 - Aggiunto registro feedback beta in `docs/beta-feedback-log.md`.
+- Aggiunto modulo feedback pubblico su `feedback.html` con salvataggio su Supabase.
+- Aggiunto script SQL `docs/sql/phase-3-beta-feedback.sql` per tabella `beta_feedback` insert-only.
 
 ## Sicurezza dati economici
 
@@ -84,6 +86,7 @@ Nota beta aggiornata:
 - Valutare miglioramenti UX su onboarding, dashboard, report e team.
 - Usare `docs/beta-launch-checklist.md` per inviti, classificazione feedback e criteri di passaggio allo step successivo.
 - Usare `docs/beta-feedback-log.md` per consolidare evidenze, priorità e decisioni.
+- Eseguire `docs/sql/phase-3-beta-feedback.sql` in Supabase prima di testare il modulo pubblico.
 
 ## Stato pre-dominio
 

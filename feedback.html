@@ -6,6 +6,7 @@
     <meta name="theme-color" content="#ffffff">
     <title>Feedback Beta | Arch Time Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
@@ -55,8 +56,8 @@
                         <a href="app.html" class="inline-flex items-center justify-center gap-3 bg-indigo-600 text-white text-sm font-black uppercase tracking-widest px-7 py-4 rounded-xl hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-500/20 active:scale-95">
                             Prova la beta <i data-lucide="arrow-right" class="w-5 h-5"></i>
                         </a>
-                        <a href="mailto:arch.stefanomorelli@gmail.com?subject=Feedback%20beta%20Arch%20Time%20Pro" class="inline-flex items-center justify-center gap-3 bg-white text-slate-900 border border-slate-200 text-sm font-black uppercase tracking-widest px-7 py-4 rounded-xl hover:bg-slate-50 transition-all shadow-sm active:scale-95">
-                            Invia feedback <i data-lucide="mail" class="w-5 h-5"></i>
+                        <a href="#feedback-form" class="inline-flex items-center justify-center gap-3 bg-white text-slate-900 border border-slate-200 text-sm font-black uppercase tracking-widest px-7 py-4 rounded-xl hover:bg-slate-50 transition-all shadow-sm active:scale-95">
+                            Scrivi feedback <i data-lucide="message-square-text" class="w-5 h-5"></i>
                         </a>
                     </div>
                 </div>
@@ -104,26 +105,55 @@
             </div>
         </section>
 
-        <section class="py-16 lg:py-20 bg-slate-50 border-y border-slate-200">
+        <section id="feedback-form" class="py-16 lg:py-20 bg-slate-50 border-y border-slate-200">
             <div class="max-w-4xl mx-auto px-6">
                 <div class="text-center mb-10">
-                    <h2 class="text-3xl lg:text-4xl font-black text-slate-900 tracking-tight mb-4">Come segnalare un problema</h2>
-                    <p class="text-slate-500 font-medium">Più il messaggio è preciso, più velocemente possiamo correggere.</p>
+                    <h2 class="text-3xl lg:text-4xl font-black text-slate-900 tracking-tight mb-4">Lascia il tuo feedback</h2>
+                    <p class="text-slate-500 font-medium">Più il messaggio è preciso, più velocemente possiamo migliorare il prodotto.</p>
                 </div>
                 <div class="bg-white border border-slate-200 rounded-2xl p-6 lg:p-8 shadow-sm">
-                    <div class="grid md:grid-cols-2 gap-4 text-sm text-slate-600">
-                        <div class="flex gap-3"><i data-lucide="check" class="w-5 h-5 text-indigo-600 shrink-0"></i><span>Cosa stavi facendo?</span></div>
-                        <div class="flex gap-3"><i data-lucide="check" class="w-5 h-5 text-indigo-600 shrink-0"></i><span>Che pagina era aperta?</span></div>
-                        <div class="flex gap-3"><i data-lucide="check" class="w-5 h-5 text-indigo-600 shrink-0"></i><span>Hai visto un messaggio di errore?</span></div>
-                        <div class="flex gap-3"><i data-lucide="check" class="w-5 h-5 text-indigo-600 shrink-0"></i><span>Usavi desktop o mobile?</span></div>
-                        <div class="flex gap-3"><i data-lucide="check" class="w-5 h-5 text-indigo-600 shrink-0"></i><span>Quale browser?</span></div>
-                        <div class="flex gap-3"><i data-lucide="check" class="w-5 h-5 text-indigo-600 shrink-0"></i><span>Puoi allegare uno screenshot?</span></div>
-                    </div>
-                    <div class="mt-8">
-                        <a href="mailto:arch.stefanomorelli@gmail.com?subject=Bug%20beta%20Arch%20Time%20Pro" class="inline-flex items-center justify-center gap-3 bg-slate-900 text-white text-sm font-black uppercase tracking-widest px-7 py-4 rounded-xl hover:bg-indigo-600 transition-all shadow-lg active:scale-95">
-                            Segnala bug <i data-lucide="send" class="w-5 h-5"></i>
-                        </a>
-                    </div>
+                    <form id="beta-feedback-form" class="space-y-5">
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="feedback-name" class="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400 block mb-2">Nome</label>
+                                <input id="feedback-name" name="name" type="text" maxlength="120" autocomplete="name" class="w-full border border-slate-200 rounded-xl p-3.5 text-sm outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all" placeholder="Facoltativo">
+                            </div>
+                            <div>
+                                <label for="feedback-email" class="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400 block mb-2">Email</label>
+                                <input id="feedback-email" name="email" type="email" maxlength="160" autocomplete="email" class="w-full border border-slate-200 rounded-xl p-3.5 text-sm outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all" placeholder="Facoltativa">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="feedback-profile" class="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400 block mb-2">Profilo</label>
+                            <select id="feedback-profile" name="profile" class="w-full border border-slate-200 rounded-xl p-3.5 text-sm outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all bg-white">
+                                <option value="">Seleziona profilo</option>
+                                <option value="studio_tecnico">Studio tecnico</option>
+                                <option value="impresa_edile">Impresa edile</option>
+                                <option value="collaboratore">Collaboratore</option>
+                                <option value="altro">Altro</option>
+                            </select>
+                        </div>
+
+                        <div class="hidden" aria-hidden="true">
+                            <label for="feedback-company">Azienda</label>
+                            <input id="feedback-company" name="company" type="text" tabindex="-1" autocomplete="off">
+                        </div>
+
+                        <div>
+                            <label for="feedback-message" class="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400 block mb-2">Feedback</label>
+                            <textarea id="feedback-message" name="message" required minlength="10" maxlength="3000" rows="7" class="w-full border border-slate-200 rounded-xl p-3.5 text-sm outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all resize-y" placeholder="Racconta cosa hai provato, cosa non era chiaro, eventuali bug o cosa ti servirebbe per usarla davvero."></textarea>
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
+                            <p class="text-xs text-slate-500 leading-relaxed max-w-xl">Il feedback viene salvato nella lista beta interna. Non inserire dati economici reali o informazioni riservate.</p>
+                            <button id="feedback-submit" type="submit" class="inline-flex items-center justify-center gap-3 bg-slate-900 text-white text-sm font-black uppercase tracking-widest px-7 py-4 rounded-xl hover:bg-indigo-600 transition-all shadow-lg active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed">
+                                Invia feedback
+                            </button>
+                        </div>
+
+                        <div id="feedback-form-status" class="hidden" role="status" aria-live="polite"></div>
+                    </form>
                 </div>
             </div>
         </section>
@@ -143,6 +173,8 @@
         </div>
     </footer>
 
+    <script src="assets/js/00-runtime-config.js?v=phase3-feedback-2026-05-02"></script>
+    <script src="assets/js/08-public-feedback.js?v=phase3-feedback-2026-05-02"></script>
     <script>
         lucide.createIcons();
     </script>

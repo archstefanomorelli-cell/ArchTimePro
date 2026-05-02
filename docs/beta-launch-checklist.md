@@ -72,6 +72,15 @@ https://TUO-UTENTE.github.io/ArchTimePro/sicurezza.html
 - La dashboard comunica valore?
 - Il report PDF sembra spendibile con cliente, DL o amministrazione?
 - I timori sui dati economici calano dopo la pagina sicurezza?
+- Riesce a inviare un feedback dal modulo senza usare email?
+
+## Prima di inviare il link feedback
+
+- Eseguire in Supabase `docs/sql/phase-3-beta-feedback.sql`.
+- Pubblicare il sito con workflow Pages verde.
+- Aprire `feedback.html`.
+- Inviare un feedback di prova.
+- Verificare che la riga compaia nella tabella Supabase `beta_feedback`.
 
 ## Priorita feedback
 
