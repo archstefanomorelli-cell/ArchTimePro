@@ -44,8 +44,8 @@ La UI staff non mostra costi e margini. Dopo il primo hardening di Fase 3, il fr
 Nota beta aggiornata:
 
 - Durante la beta i dati economici sono protetti tra utenti, ruoli e studi tramite Supabase RLS, RPC dedicate e controlli applicativi.
-- Questa protezione impedisce ai tester e ai collaboratori di vedere dati non autorizzati, ma non e ancora una cifratura end-to-end dei valori economici.
-- Prima del lancio commerciale e prevista una "Privacy Economica Avanzata" con cifratura lato cliente dei campi sensibili, in modo che budget, costi, spese e margini siano illeggibili anche al gestore tecnico del database.
+- Questa protezione impedisce ai tester e ai collaboratori di vedere dati non autorizzati, ma non è ancora una cifratura end-to-end dei valori economici.
+- Prima del lancio commerciale è prevista una "Privacy Economica Avanzata" con cifratura lato cliente dei campi sensibili, in modo che budget, costi, spese e margini siano illeggibili anche al gestore tecnico del database.
 
 ### Stato backend dopo test
 
@@ -54,7 +54,7 @@ Nota beta aggiornata:
 - `get_expenses_for_app()` fornisce spese solo admin.
 - `create_entry_for_app(...)` crea ore calcolando `rate` lato database.
 - Le select dirette di `projects`, `entries`, `expenses` sono state strette agli admin.
-- L'inserimento diretto in `entries` e stato stretto agli admin dopo conferma del funzionamento RPC.
+- L'inserimento diretto in `entries` è stato stretto agli admin dopo conferma del funzionamento RPC.
 
 ### Rischio residuo
 

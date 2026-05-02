@@ -7,7 +7,7 @@ function switchAuthTab(mode) {
             document.getElementById('signup-fields').classList.toggle('force-hide', !isSignupMode); 
             document.getElementById('signup-legal').classList.toggle('force-hide', !isSignupMode);
             
-            document.getElementById('btn-auth').innerText = isSignupMode ? "Crea Account Utente" : "Accedi ora"; 
+            document.getElementById('btn-auth').innerText = isSignupMode ? "Crea account" : "Accedi ora"; 
 
             const contextCopy = document.getElementById('auth-context-copy');
             if (contextCopy) {
@@ -65,7 +65,7 @@ function switchAuthTab(mode) {
                 const code = document.getElementById('invite-code-input').value.trim();
                 
                 if(isStaff && !code) return await appAlert("Attenzione", "Inserisci il codice invito!", "danger");
-                if(!fullName) return await appAlert("Attenzione", "Inserisci il tuo Nome e Cognome.", "danger");
+                if(!fullName) return await appAlert("Attenzione", "Inserisci il tuo nome e cognome.", "danger");
                 
                 const { error } = await supabaseClient.auth.signUp({ 
                     email, password, 

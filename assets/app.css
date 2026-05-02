@@ -41,7 +41,6 @@
         .locked-feature { opacity: 0.5; cursor: pointer; position: relative; }
 
         @media (max-width: 640px) {
-            body { padding-bottom: 0; }
             .auth-panel { align-items: flex-start; }
             .auth-card { margin-top: 1rem; margin-bottom: 1rem; }
             #auth-container input,
