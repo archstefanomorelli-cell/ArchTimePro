@@ -93,3 +93,4 @@ environment: 'production'
 - Policy rimborso chiara.
 - Backup Supabase verificato.
 - QA mobile completato.
+- Roadmap privacy economica confermata: prima del lancio commerciale decidere se attivare cifratura lato cliente per budget, costi, spese e margini, cosi da renderli non leggibili dal gestore tecnico del database.

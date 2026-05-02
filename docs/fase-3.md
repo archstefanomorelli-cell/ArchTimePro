@@ -30,6 +30,12 @@ Stato: avviata.
 
 La UI staff non mostra costi e margini. Dopo il primo hardening di Fase 3, il frontend staff non richiede piu budget, rate o spese.
 
+Nota beta aggiornata:
+
+- Durante la beta i dati economici sono protetti tra utenti, ruoli e studi tramite Supabase RLS, RPC dedicate e controlli applicativi.
+- Questa protezione impedisce ai tester e ai collaboratori di vedere dati non autorizzati, ma non e ancora una cifratura end-to-end dei valori economici.
+- Prima del lancio commerciale e prevista una "Privacy Economica Avanzata" con cifratura lato cliente dei campi sensibili, in modo che budget, costi, spese e margini siano illeggibili anche al gestore tecnico del database.
+
 ### Stato backend dopo test
 
 - `get_projects_for_app()` fornisce dati filtrati: budget solo admin.

@@ -44,6 +44,12 @@ Prova a usare Arch Time Pro come se dovessi gestire una commessa reale:
 9. Invita o simula un collaboratore.
 10. Racconta cosa non e chiaro.
 
+## Nota privacy beta
+
+Durante la beta i dati sono isolati tra studi, utenti e ruoli tramite policy Supabase, RPC dedicate e controlli applicativi. I collaboratori non vedono budget, costi e margini riservati alla direzione.
+
+La cifratura economica lato cliente, pensata per rendere budget, costi, spese e margini non leggibili nemmeno al gestore tecnico del database, e prevista nella roadmap prima del lancio commerciale.
+
 ## Domande feedback
 
 - In quale punto hai capito meglio il valore del prodotto?
