@@ -428,8 +428,8 @@
 
         function renderProjectDetailHeader(project) {
             return `
-            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 lg:mb-8 gap-4 lg:pr-20">
-                <div>
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-6 lg:mb-8 gap-4 pr-12 lg:pr-14">
+                <div class="min-w-0">
                     <h2 class="text-2xl lg:text-3xl font-black text-slate-800 mb-1 leading-tight pr-8 tracking-tight">${escapeHtml(project.name)}</h2>
                     <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">${escapeHtml(project.client || 'Interno')}</p>
                 </div>
