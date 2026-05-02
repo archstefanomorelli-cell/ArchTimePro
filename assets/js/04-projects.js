@@ -624,7 +624,7 @@
         function renderStrategicCharts() {
             if(!document.body.classList.contains('is-admin')) return;
             const activeProjects = projects.filter(p => !p.is_archived);
-            let totalBudget = 0, totalSpent = 0; let totalTaskHours = 0;
+            let totalBudget = 0, totalSpent = 0, projectSpend = {}; let totalTaskHours = 0;
             
             activeProjects.forEach(p => { 
                 totalBudget += (p.budget || 0); 
@@ -632,6 +632,7 @@
                 const costExp = expenses.filter(ex => ex.project_id === p.id).reduce((s, ex) => s + Number(ex.amount || 0), 0); 
                 const pSpent = costHrs + costExp; 
                 totalSpent += pSpent; 
+                projectSpend[p.name] = pSpent; 
             });
             
             const archivedBudget = projects.filter(p => p.is_archived).reduce((s,p) => s + p.budget, 0); 
@@ -674,15 +675,9 @@
             if (margin < 0) marginEl.classList.replace('text-primary-600', 'text-red-500'); 
             else marginEl.classList.replace('text-red-500', 'text-primary-600');
             
-            const taskSpend = {};
-            entries.filter(e => activeProjects.find(p => p.id === e.project_id)).forEach(entry => {
-                const taskName = entry.task || 'Altro';
-                taskSpend[taskName] = (taskSpend[taskName] || 0) + Number(entry.rate || 0);
-            });
-            
             let topBurner = "-", maxSpent = 0; 
-            for(let name in taskSpend) {
-                if(taskSpend[name] > maxSpent) { maxSpent = taskSpend[name]; topBurner = name; } 
+            for(let name in projectSpend) {
+                if(projectSpend[name] > maxSpent) { maxSpent = projectSpend[name]; topBurner = name; } 
             }
             document.getElementById('kpi-burner').innerText = topBurner;
             
