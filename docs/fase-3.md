@@ -31,6 +31,7 @@ Stato: avviata.
 - Aggiunto modulo feedback pubblico su `feedback.html` con salvataggio su Supabase.
 - Aggiunto script SQL `docs/sql/phase-3-beta-feedback.sql` per tabella `beta_feedback` insert-only.
 - Aggiunto `robots.txt` e meta `noindex,nofollow` alle pagine pubbliche per evitare indicizzazione della beta GitHub Pages.
+- Aggiunto audit pre-dominio in `docs/pre-dominio-audit.md`.
 
 ## Sicurezza dati economici
 
