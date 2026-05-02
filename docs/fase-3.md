@@ -19,6 +19,10 @@ Stato: avviata.
 - Verificato online staff dopo hardening RPC: login, progetti, timer, inserimento ore e registro funzionanti senza costi/margini visibili.
 - Verificato timer e inserimento manuale dopo `create_entry_for_app` per admin e staff.
 - Rifinita visualizzazione fasce orarie nel registro attivita in formato compatto `HH:MM - HH:MM`.
+- Aggiunto beta feedback kit in `docs/beta-feedback-kit.md`.
+- Aggiunta checklist produzione dominio/email/Stripe in `docs/produzione-dominio-email-stripe.md`.
+- Aggiunta guida troubleshooting in `docs/troubleshooting.md`.
+- Aggiunta checklist regression RLS/RPC in `docs/regression-rls-rpc.md`.
 
 ## Sicurezza dati economici
 
@@ -67,3 +71,20 @@ La UI staff non mostra costi e margini. Dopo il primo hardening di Fase 3, il fr
 - Raccogliere feedback da 3-5 utenti target.
 - Prioritizzare bug bloccanti.
 - Valutare miglioramenti UX su onboarding, dashboard, report e team.
+
+## Stato pre-dominio
+
+Tutto cio che non dipende da dominio, email personalizzata e Stripe live e stato preparato:
+
+- beta online funzionante;
+- sicurezza dati economici rafforzata;
+- documentazione QA e troubleshooting pronta;
+- kit feedback tester pronto;
+- checklist produzione pronta.
+
+Restano bloccati dal dominio/email:
+
+- Stripe live;
+- email mittente definitiva;
+- redirect Supabase definitivi;
+- validazione finale privacy/termini con dati fiscali definitivi.
