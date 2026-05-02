@@ -53,16 +53,22 @@
             </div>
         </div>
 
-        <div class="w-full lg:w-1/2 min-h-screen flex items-center justify-center p-6 bg-slate-50 lg:bg-white relative">
-            <div class="w-full max-w-md p-8 bg-white border border-slate-200 lg:border-none shadow-sm lg:shadow-none rounded-2xl">
-                <div class="text-center mb-8 lg:hidden"><h2 class="text-3xl font-black text-slate-900 tracking-tight">Arch Time Pro</h2></div>
+        <div class="w-full lg:w-1/2 min-h-screen flex items-center justify-center p-4 sm:p-6 bg-slate-50 lg:bg-white relative auth-panel">
+            <div class="w-full max-w-md p-5 sm:p-8 bg-white border border-slate-200 lg:border-none shadow-sm lg:shadow-none rounded-2xl auth-card">
+                <div class="text-center mb-6 lg:hidden">
+                    <h2 class="text-3xl font-black text-slate-900 tracking-tight">Arch Time Pro</h2>
+                    <p class="text-xs text-slate-500 font-bold mt-2 uppercase tracking-wider">Ore, costi e margini in un unico spazio</p>
+                </div>
                 <div class="flex p-1 bg-slate-100 rounded-xl mb-8 border border-slate-200">
                     <button id="tab-login" class="flex-1 py-2.5 text-sm font-bold rounded-lg bg-white shadow-sm text-slate-900 transition-all border border-slate-200/50">Accedi</button>
                     <button id="tab-signup" class="flex-1 py-2.5 text-sm font-bold text-slate-500 hover:text-slate-700 transition-all">Nuovo Utente</button>
                 </div>
+                <div id="auth-context-copy" class="mb-5 bg-primary-50 border border-primary-100 rounded-xl p-3.5 text-xs text-primary-900 leading-relaxed">
+                    <strong class="font-black">Accesso beta.</strong> Entra nel tuo spazio di lavoro oppure crea un account di prova gratuito.
+                </div>
                 <div class="space-y-4">
                     <div id="signup-fields" class="force-hide space-y-4">
-                        <div class="p-5 bg-slate-50 rounded-xl border border-slate-200">
+                        <div class="p-4 sm:p-5 bg-slate-50 rounded-xl border border-slate-200">
                             <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-3">Tipo di Account</label>
                             <div class="space-y-3">
                                 <div>
@@ -106,7 +112,7 @@
                         <button id="btn-forgot-password" class="text-[10px] font-bold text-slate-400 hover:text-primary-600 transition-colors uppercase tracking-wider">Password dimenticata?</button>
                     </div>
                     
-                    <div id="signup-legal" class="force-hide mt-4 mb-2">
+                    <div id="signup-legal" class="force-hide mt-4 mb-2 bg-slate-50 border border-slate-200 rounded-xl p-3.5">
                         <label class="flex items-start gap-2.5 cursor-pointer group">
                             <input type="checkbox" id="accept-terms" class="mt-0.5 w-4 h-4 text-primary-600 border-slate-300 rounded focus:ring-primary-500 transition-all cursor-pointer">
                             <span class="text-[10px] text-slate-500 leading-tight">
@@ -449,7 +455,7 @@
     </div>
 
     <div id="modal-owner-onboarding" class="force-hide fixed inset-0 z-[300] modal flex items-center justify-center p-4">
-        <div class="w-full max-w-lg p-6 lg:p-8 shadow-xl border border-slate-200 rounded-2xl relative bg-white">
+        <div class="w-full max-w-lg p-5 lg:p-8 shadow-xl border border-slate-200 rounded-2xl relative bg-white max-h-[92vh] overflow-y-auto">
             <button id="btn-skip-onboarding" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
             <div class="mb-6">
                 <div class="w-12 h-12 bg-primary-50 text-primary-600 rounded-2xl flex items-center justify-center mb-4 border border-primary-100"><i data-lucide="sparkles" class="w-6 h-6"></i></div>
@@ -709,7 +715,7 @@
     </div>
     <script src="assets/js/00-runtime-config.js?v=phase3-2026-05-01"></script>
     <script src="assets/js/01-core.js?v=phase3-2026-05-01"></script>
-    <script src="assets/js/02-auth-account.js?v=phase3-2026-05-01"></script>
+    <script src="assets/js/02-auth-account.js?v=phase3-mobile-2026-05-02"></script>
     <script src="assets/js/03-team.js?v=phase3-2026-05-01"></script>
     <script src="assets/js/04-projects.js?v=phase3-2026-05-01"></script>
     <script src="assets/js/05-time-entries.js?v=phase3-2026-05-01"></script>

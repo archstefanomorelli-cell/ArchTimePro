@@ -8,6 +8,13 @@ function switchAuthTab(mode) {
             document.getElementById('signup-legal').classList.toggle('force-hide', !isSignupMode);
             
             document.getElementById('btn-auth').innerText = isSignupMode ? "Crea Account Utente" : "Accedi ora"; 
+
+            const contextCopy = document.getElementById('auth-context-copy');
+            if (contextCopy) {
+                contextCopy.innerHTML = isSignupMode
+                    ? '<strong class="font-black">Nuovo spazio beta.</strong> Scegli Manager per creare uno studio/impresa, oppure Collaboratore se hai ricevuto un codice invito.'
+                    : '<strong class="font-black">Bentornato.</strong> Accedi per registrare ore, controllare lavori e consultare i dati del tuo spazio.';
+            }
             
             let forgotLink = document.getElementById('forgot-link-container');
             if(forgotLink) forgotLink.classList.toggle('force-hide', isSignupMode);

@@ -33,6 +33,7 @@ Stato: avviata.
 - Aggiunto `robots.txt` e meta `noindex,nofollow` alle pagine pubbliche per evitare indicizzazione della beta GitHub Pages.
 - Aggiunto audit pre-dominio in `docs/pre-dominio-audit.md`.
 - Aggiunta guida setup dominio `archtimepro.it` in `docs/setup-archtimepro-it.md`.
+- Rifinita esperienza mobile di login/registrazione e scroll onboarding owner.
 
 ## Sicurezza dati economici
 

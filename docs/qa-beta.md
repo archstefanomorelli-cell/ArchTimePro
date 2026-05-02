@@ -30,7 +30,7 @@ Stato: ciclo funzionale online completato su GitHub Pages, incluso hardening RPC
 ## Operativita
 
 - Creazione lavoro/cantiere con budget. Verificato.
-- Aggiunta attivita da catalogo. Verificato.
+- Aggiunta attività da catalogo. Verificato.
 - Creazione template Premium.
 - Blocco template su Starter.
 - Avvio/stop timer. Verificato.
@@ -73,14 +73,16 @@ Stato: ciclo funzionale online completato su GitHub Pages, incluso hardening RPC
 
 ## Test Fase 3 eseguiti
 
-- Onboarding guidato owner/admin: apertura una tantum, settore mostrato come scelta gia effettuata, salvataggio identita, preparazione primo lavoro e compilazione form progetto. Verificato.
+- Onboarding guidato owner/admin: apertura una tantum, settore mostrato come scelta già effettuata, salvataggio identità, preparazione primo lavoro e compilazione form progetto. Verificato.
 - Timer e inserimento manuale dopo `create_entry_for_app`. Verificato admin/staff.
 - Pagine pubbliche Fase 3: feedback e sicurezza aggiunte al workflow Pages. Da verificare online dopo deploy.
+- Login/registrazione mobile: card più compatta, testo guida dinamico e link sicurezza visibile nella registrazione. Da verificare online dopo deploy.
+- Onboarding owner mobile: modale con scroll interno. Da verificare online dopo deploy.
 
 ## Criterio uscita beta
 
 - Nessun errore console bloccante.
 - Nessun flusso core interrotto.
 - Nessun dato cross-studio visibile.
-- Nessuna promessa privacy piu forte della protezione realmente implementata.
+- Nessuna promessa privacy più forte della protezione realmente implementata.
 - Nessun link test in produzione, quando si passa a dominio/email/Stripe live.
