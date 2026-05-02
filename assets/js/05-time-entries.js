@@ -95,18 +95,18 @@
 
             return `
 <tr class="${item.bgClass} hover:bg-slate-100 border-b border-slate-100 transition-colors">
-    <td class="p-5 font-bold text-slate-500 text-xs whitespace-nowrap">${item.dateLabel}</td>
-    <td class="p-5 text-center whitespace-nowrap"><span class="bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wider">${item.userName}</span></td>
-    <td class="p-5 text-center font-black text-slate-800 tracking-tight w-full">${item.projectName}</td>
-    <td class="p-5 min-w-[150px]"><div class="text-xs font-bold text-slate-600">${item.taskName}</div><div class="text-[11px] text-slate-400 mt-0.5 break-words">${item.notes}</div></td>
-    <td class="p-5 whitespace-nowrap">
-        <div class="font-mono font-black text-primary-600">${item.duration}</div>
+    <td class="px-5 py-4 font-bold text-slate-500 text-xs whitespace-nowrap">${item.dateLabel}</td>
+    <td class="px-5 py-4 text-center whitespace-nowrap"><span class="bg-white border border-slate-200 text-slate-600 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm">${item.userName}</span></td>
+    <td class="px-5 py-4 text-center font-black text-slate-900 tracking-tight w-full">${item.projectName}</td>
+    <td class="px-5 py-4 min-w-[170px]"><div class="inline-flex text-[11px] font-black text-primary-700 bg-primary-50 border border-primary-100 rounded-full px-2.5 py-1">${item.taskName}</div><div class="text-[11px] text-slate-400 mt-1.5 break-words">${item.notes}</div></td>
+    <td class="px-5 py-4 whitespace-nowrap">
+        <div class="inline-flex items-center justify-center font-mono font-black text-primary-700 bg-primary-50 border border-primary-100 px-2.5 py-1 rounded-lg">${item.duration}</div>
         ${renderEntryTimeRange(item)}
     </td>
-    <td class="p-5 text-center admin-only whitespace-nowrap">
+    <td class="px-5 py-4 text-center admin-only whitespace-nowrap">
         <span class="font-mono text-slate-400 text-sm font-bold">${item.rate}</span>
     </td>
-    <td class="p-5 text-right admin-only whitespace-nowrap">
+    <td class="px-5 py-4 text-right admin-only whitespace-nowrap">
         <div class="flex justify-end gap-2 items-center">
             ${renderEntryActions(item.id, 'w-4 h-4', 'text-slate-300 hover:text-primary-600 p-1.5 hover:bg-white rounded-lg transition-colors')}
         </div>
@@ -118,22 +118,22 @@
             const item = getEntryDisplayData(entry, index);
 
             return `
-                <div class="p-5 border-b border-slate-100 ${item.bgClass}">
+                <div class="m-3 p-4 border border-slate-200 rounded-2xl bg-white shadow-sm">
                     <div class="flex justify-between mb-3">
                         <div>
                             <div class="flex gap-2 mb-1.5">
-                                <span class="text-[9px] font-bold text-slate-600 bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded-md uppercase tracking-wider whitespace-nowrap">${item.userName}</span>
+                                <span class="text-[9px] font-bold text-slate-600 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-full uppercase tracking-wider whitespace-nowrap">${item.userName}</span>
                                 <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5 whitespace-nowrap">${item.dateLabel}</span>
                             </div>
                             <h4 class="font-black text-sm text-slate-800 tracking-tight">${item.projectName}</h4>
                         </div>
                         <div class="flex flex-col items-end whitespace-nowrap">
-                            <span class="font-mono font-black text-primary-600 bg-primary-50 border border-primary-100 px-2 py-1 rounded-lg h-fit">${item.duration}</span>
+                            <span class="font-mono font-black text-primary-700 bg-primary-50 border border-primary-100 px-2.5 py-1 rounded-lg h-fit">${item.duration}</span>
                             ${renderEntryTimeRange(item, 'mobile')}
                         </div>
                     </div>
                     <div class="flex flex-col gap-3">
-                        <div class="max-w-[90%]"><span class="text-xs text-slate-600 font-bold">${item.taskName}</span><div class="text-[11px] text-slate-400 mt-0.5 break-words">${item.notes}</div></div>
+                        <div class="max-w-[90%]"><span class="inline-flex text-[11px] text-primary-700 bg-primary-50 border border-primary-100 rounded-full px-2.5 py-1 font-black">${item.taskName}</span><div class="text-[11px] text-slate-400 mt-1.5 break-words">${item.notes}</div></div>
                         <div class="admin-only flex justify-between border-t border-slate-200 pt-3">
                             <span class="font-mono text-slate-500 font-bold text-xs whitespace-nowrap">Costo: ${item.rate}</span>
                             <div class="flex gap-2">

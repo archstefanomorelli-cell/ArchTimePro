@@ -36,6 +36,7 @@ Stato: avviata.
 - Rifinita esperienza mobile di login/registrazione e scroll onboarding owner.
 - Seconda passata UI interna: pannelli operativi più puliti, microtesti meno urlati, cache-busting CSS/JS aggiornato.
 - Rifinite le card KPI della dashboard economica con colori più leggibili e terza card "Progetto più oneroso".
+- Passata UI estesa su card progetto, registro attività, dettaglio progetto, navigazione mobile e modali account/team.
 
 ## Sicurezza dati economici
 

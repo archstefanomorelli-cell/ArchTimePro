@@ -90,7 +90,11 @@
                 totalCost,
                 budget,
                 percent,
-                barClass: percent > 90 ? 'bg-red-500' : (percent > 75 ? 'bg-amber-400' : 'bg-primary-500')
+                margin: budget - totalCost,
+                barClass: percent > 90 ? 'bg-red-500' : (percent > 75 ? 'bg-amber-400' : 'bg-primary-500'),
+                statusLabel: percent > 100 ? 'Fuori budget' : (percent > 90 ? 'Critico' : (percent > 75 ? 'Da monitorare' : 'In controllo')),
+                statusClass: percent > 100 ? 'bg-red-50 text-red-700 border-red-200' : (percent > 90 ? 'bg-red-50 text-red-700 border-red-200' : (percent > 75 ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200')),
+                marginClass: budget - totalCost < 0 ? 'text-red-600' : 'text-emerald-600'
             };
         }
 
@@ -99,10 +103,15 @@
             const projectId = escapeAttr(project.id);
 
             return `
-                <div data-ui-action="show-project-detail" data-project-id="${projectId}" class="bg-white border border-slate-200 p-5 lg:p-6 shadow-sm hover:shadow-md rounded-2xl cursor-pointer relative group transition-shadow ${project.is_archived ? 'is-archived' : ''}">
-                    <div class="flex justify-between items-start mb-4">
-                        <div>
-                            <h3 class="font-black text-slate-800 text-base lg:text-lg tracking-tight">${escapeHtml(project.name)}</h3>
+                <div data-ui-action="show-project-detail" data-project-id="${projectId}" class="bg-white border border-slate-200 p-5 lg:p-6 shadow-sm hover:shadow-md hover:border-primary-200 rounded-2xl cursor-pointer relative group transition-all ${project.is_archived ? 'is-archived' : ''}">
+                    <div class="absolute top-0 left-0 right-0 h-1 ${summary.barClass} rounded-t-2xl"></div>
+                    <div class="flex justify-between items-start gap-3 mb-5">
+                        <div class="min-w-0">
+                            <div class="flex flex-wrap items-center gap-2 mb-1.5">
+                                <span class="text-[9px] font-black uppercase tracking-wider border px-2 py-0.5 rounded-full ${summary.statusClass}">${summary.statusLabel}</span>
+                                ${project.is_archived ? '<span class="text-[9px] font-black uppercase tracking-wider border px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border-slate-200">Archiviato</span>' : ''}
+                            </div>
+                            <h3 class="font-black text-slate-900 text-base lg:text-lg tracking-tight truncate">${escapeHtml(project.name)}</h3>
                             <p class="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">${escapeHtml(project.client || 'Interno')}</p>
                         </div>
                         <div class="admin-only opacity-100 lg:opacity-0 group-hover:opacity-100 flex gap-1 bg-white lg:bg-transparent rounded-lg shadow-sm lg:shadow-none p-1 lg:p-0">
@@ -110,12 +119,26 @@
                             <button data-ui-action="delete-project" data-project-id="${projectId}" class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         </div>
                     </div>
-                    <div class="flex justify-between text-[10px] uppercase font-bold tracking-wider text-slate-500 mb-2">
-                        <span>Speso: ${formatMoney(summary.totalCost, 0)}</span>
-                        <span>Target: ${formatMoney(summary.budget, 0)}</span>
+                    <div class="grid grid-cols-3 gap-2 mb-4">
+                        <div>
+                            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Speso</p>
+                            <p class="text-xs font-black text-slate-800 mt-0.5">${formatMoney(summary.totalCost, 0)}</p>
+                        </div>
+                        <div>
+                            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Budget</p>
+                            <p class="text-xs font-black text-slate-800 mt-0.5">${formatMoney(summary.budget, 0)}</p>
+                        </div>
+                        <div>
+                            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Margine</p>
+                            <p class="text-xs font-black ${summary.marginClass} mt-0.5">${formatMoney(summary.margin, 0)}</p>
+                        </div>
                     </div>
-                    <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                        <div class="${summary.barClass} h-full transition-all duration-1000" style="width: ${Math.min(summary.percent, 100)}%"></div>
+                    <div class="flex justify-between text-[10px] uppercase font-bold tracking-wider text-slate-500 mb-2">
+                        <span>Avanzamento costi</span>
+                        <span>${Math.round(summary.percent)}%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                        <div class="${summary.barClass} h-full transition-all duration-1000 rounded-full" style="width: ${Math.min(summary.percent, 100)}%"></div>
                     </div>
                 </div>`;
         }
@@ -427,19 +450,23 @@
         }
 
         function renderProjectDetailHeader(project) {
+            const summary = getProjectCostSummary(project);
             return `
-            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-6 lg:mb-8 gap-4 pr-12 lg:pr-14">
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 lg:p-6 mb-6 lg:mb-8 pr-14">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-4">
                 <div class="min-w-0">
+                    <span class="inline-flex text-[9px] font-black uppercase tracking-wider border px-2 py-0.5 rounded-full mb-3 ${summary.statusClass}">${summary.statusLabel}</span>
                     <h2 class="text-2xl lg:text-3xl font-black text-slate-800 mb-1 leading-tight pr-8 tracking-tight">${escapeHtml(project.name)}</h2>
                     <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">${escapeHtml(project.client || 'Interno')}</p>
                 </div>
                 ${renderProjectDetailActions(project)}
+            </div>
             </div>`;
         }
 
         function metricCardHtml(label, valueHtml, colorClass = 'text-slate-800') {
             return `
-                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col justify-center">
+                <div class="bg-white p-4 rounded-xl border border-slate-200 flex flex-col justify-center shadow-sm min-h-[92px]">
                     <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">${escapeHtml(label)}</p>
                     <p class="text-lg lg:text-xl font-black ${colorClass} mt-1 tracking-tight">${valueHtml}</p>
                 </div>`;
@@ -451,11 +478,11 @@
             const rateClass = data.effectiveRate > 0 ? 'text-emerald-500' : 'text-red-500';
 
             return `
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 lg:gap-4 mb-8">
-                ${metricCardHtml('Spesa Totale', `${formatMoney(data.totalSpent, 0)} ${budgetHint}`, 'text-primary-600')}
-                ${metricCardHtml('Costo Team', `${formatMoney(data.totalHoursCost, 0)} ${hoursHint}`)}
-                ${metricCardHtml('Spese Extra', formatMoney(data.totalExpenses, 0), 'text-amber-600')}
-                ${metricCardHtml('Resa Oraria', `${formatMoney(data.effectiveRate, 2)} <span class="text-[10px] text-slate-400">/h</span>`, rateClass)}
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 lg:gap-4 mb-8 bg-slate-50 border border-slate-200 rounded-2xl p-3">
+                ${metricCardHtml('Spesa totale', `${formatMoney(data.totalSpent, 0)} ${budgetHint}`, 'text-primary-600')}
+                ${metricCardHtml('Costo team', `${formatMoney(data.totalHoursCost, 0)} ${hoursHint}`)}
+                ${metricCardHtml('Spese extra', formatMoney(data.totalExpenses, 0), 'text-amber-600')}
+                ${metricCardHtml('Resa oraria', `${formatMoney(data.effectiveRate, 2)} <span class="text-[10px] text-slate-400">/h</span>`, rateClass)}
             </div>`;
         }
 
@@ -478,8 +505,8 @@
             }).join('');
 
             return `
-                    <div>
-                        <h3 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200 pb-2 mb-4 flex items-center gap-1.5"><i data-lucide="layers" class="w-3.5 h-3.5"></i> Per Attività (Ore)</h3>
+                    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+                        <h3 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200 pb-2 mb-4 flex items-center gap-1.5"><i data-lucide="layers" class="w-3.5 h-3.5"></i> Per attività (ore)</h3>
                         <div class="space-y-4">${rows}</div>
                     </div>`;
         }
@@ -495,8 +522,8 @@
                             </div>`).join('');
 
             return `
-                    <div>
-                        <h3 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200 pb-2 mb-4 flex items-center gap-1.5"><i data-lucide="users" class="w-3.5 h-3.5"></i> Per Membro Team</h3>
+                    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+                        <h3 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200 pb-2 mb-4 flex items-center gap-1.5"><i data-lucide="users" class="w-3.5 h-3.5"></i> Per membro team</h3>
                         <div class="space-y-3">${rows}</div>
                     </div>`;
         }
@@ -521,8 +548,8 @@
 
         function renderExpensesPanel(expensesList, projectId) {
             return `
-                <div class="admin-only bg-slate-50 rounded-2xl p-5 border border-slate-200">
-                    <h3 class="text-[11px] font-bold text-slate-600 uppercase tracking-wider border-b border-slate-200 pb-3 mb-4 flex items-center gap-2"><i data-lucide="receipt" class="w-4 h-4 text-amber-500"></i> Spese Vive</h3>
+                <div class="admin-only bg-slate-50 rounded-2xl p-5 border border-slate-200 shadow-sm">
+                    <h3 class="text-[11px] font-bold text-slate-600 uppercase tracking-wider border-b border-slate-200 pb-3 mb-4 flex items-center gap-2"><i data-lucide="receipt" class="w-4 h-4 text-amber-500"></i> Spese vive</h3>
                     <div class="flex gap-2 mb-6">
                         <input type="text" id="exp-desc" placeholder="Es. Oneri o Materiali" class="flex-1 border border-slate-200 rounded-xl p-3 text-xs outline-none focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 transition-all bg-white">
                         <div class="w-24 relative flex items-center">

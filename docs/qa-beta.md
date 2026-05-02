@@ -79,6 +79,7 @@ Stato: ciclo funzionale online completato su GitHub Pages, incluso hardening RPC
 - Login/registrazione mobile: card più compatta, testo guida dinamico e link sicurezza visibile nella registrazione. Da verificare online dopo deploy.
 - UI interna: verificare dashboard, timer, gestione progetti, team, modali di modifica e navigazione mobile dopo la rifinitura grafica.
 - Dashboard economica: verificare colori KPI, stati utile/perdita e card "Progetto più oneroso" su dati reali.
+- UI app: verificare card progetto, registro attività desktop/mobile, dettaglio progetto, nav mobile e modali account/team.
 - Onboarding owner mobile: modale con scroll interno. Da verificare online dopo deploy.
 
 ## Criterio uscita beta
