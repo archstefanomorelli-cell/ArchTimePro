@@ -420,7 +420,7 @@
                 : `<button data-ui-action="export-project-pdf" data-project-id="${projectId}" class="text-xs font-bold bg-white text-primary-600 border border-slate-200 px-3.5 py-2.5 rounded-xl hover:border-primary-200 hover:bg-primary-50 flex items-center justify-center gap-2 shadow-sm transition-all"><i data-lucide="file-text" class="w-4 h-4"></i> Esporta in PDF</button>`;
 
             return `
-                <div class="admin-only w-full lg:w-auto lg:mr-12 flex flex-col sm:flex-row gap-2">
+                <div class="admin-only w-full lg:w-auto flex flex-col sm:flex-row gap-2">
                     <button data-ui-action="edit-project" data-project-id="${projectId}" class="text-xs font-bold bg-white text-slate-600 border border-slate-200 px-3.5 py-2.5 rounded-xl hover:bg-slate-50 flex items-center justify-center gap-2 shadow-sm transition-all"><i data-lucide="edit" class="w-4 h-4"></i> Modifica</button>
                     ${pdfButton}
                 </div>`;
@@ -428,7 +428,7 @@
 
         function renderProjectDetailHeader(project) {
             return `
-            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 lg:mb-8 gap-4">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 lg:mb-8 gap-4 lg:pr-20">
                 <div>
                     <h2 class="text-2xl lg:text-3xl font-black text-slate-800 mb-1 leading-tight pr-8 tracking-tight">${escapeHtml(project.name)}</h2>
                     <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">${escapeHtml(project.client || 'Interno')}</p>
