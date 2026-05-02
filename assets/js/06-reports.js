@@ -56,18 +56,40 @@
             }
         }
 
+        function getEntryPdfParts(entry) {
+            const rawNotes = entry.notes || '';
+            const match = rawNotes.match(/^\[(\d{2}:\d{2}) - (\d{2}:\d{2})\]\s*/);
+            const notes = match ? rawNotes.replace(match[0], '') : rawNotes;
+
+            return {
+                notes,
+                timeRange: match ? `${match[1]} - ${match[2]}` : ''
+            };
+        }
+
         function getEntryPdfTaskLabel(entry) {
-            let displayNotes = entry.notes || '';
-            const match = displayNotes.match(/^\[(\d{2}:\d{2}) - (\d{2}:\d{2})\]\s*/);
-            if(match) displayNotes = displayNotes.replace(match[0], '') + `\n(${match[1]} - ${match[2]})`;
-            return displayNotes ? `${entry.task}\n(${displayNotes})` : entry.task;
+            const parts = getEntryPdfParts(entry);
+            return parts.notes ? `${entry.task}\n(${parts.notes})` : entry.task;
+        }
+
+        function getEntryPdfHoursLabel(entry) {
+            const parts = getEntryPdfParts(entry);
+            const duration = formatTime(Number(entry.duration));
+            return parts.timeRange ? `${duration}\n${parts.timeRange}` : duration;
+        }
+
+        function getEntryPdfHoursCell(entry) {
+            const label = getEntryPdfHoursLabel(entry);
+            return label.includes('\n')
+                ? { content: label, styles: { fontStyle: 'italic', textColor: [71, 85, 105] } }
+                : label;
         }
 
         function entryPdfRow(entry, includeUser = true) {
             const row = [
                 new Date(entry.created_at).toLocaleDateString(),
                 getEntryPdfTaskLabel(entry),
-                formatTime(Number(entry.duration)),
+                getEntryPdfHoursCell(entry),
                 pdfMoney(entry.rate)
             ];
 
@@ -112,12 +134,7 @@
             doc.autoTable({ 
                 startY: startY + 44, 
                 head: [['Data', 'Team', 'Attività', 'Ore', 'Costo']], 
-                body: pEntries.map(e => {
-                    let dispNotes = e.notes || '';
-                    const match = dispNotes.match(/^\[(\d{2}:\d{2}) - (\d{2}:\d{2})\]\s*/);
-                    if(match) dispNotes = dispNotes.replace(match[0], '') + `\n(${match[1]} - ${match[2]})`;
-                    return [new Date(e.created_at).toLocaleDateString(), e.user_name, dispNotes ? `${e.task}\n(${dispNotes})` : e.task, formatTime(Number(e.duration)), pdfMoney(e.rate)];
-                }), 
+                body: pEntries.map(e => entryPdfRow(e, true)), 
                 ...pdfTableOptions(pdfColor)
             });
 
