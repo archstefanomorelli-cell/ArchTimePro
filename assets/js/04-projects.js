@@ -93,6 +93,7 @@
                 margin: budget - totalCost,
                 barClass: percent > 90 ? 'bg-red-500' : (percent > 75 ? 'bg-amber-400' : 'bg-primary-500'),
                 statusLabel: percent > 100 ? 'Fuori budget' : (percent > 90 ? 'Critico' : (percent > 75 ? 'Da monitorare' : 'In controllo')),
+                statusIcon: percent > 100 ? 'octagon-alert' : (percent > 90 ? 'alert-triangle' : (percent > 75 ? 'circle-alert' : 'check-circle-2')),
                 statusClass: percent > 100 ? 'bg-red-50 text-red-700 border-red-200' : (percent > 90 ? 'bg-red-50 text-red-700 border-red-200' : (percent > 75 ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200')),
                 marginClass: budget - totalCost < 0 ? 'text-red-600' : 'text-emerald-600'
             };
@@ -108,7 +109,7 @@
                     <div class="flex justify-between items-start gap-3 mb-5">
                         <div class="min-w-0">
                             <div class="flex flex-wrap items-center gap-2 mb-1.5">
-                                <span class="text-[9px] font-black uppercase tracking-wider border px-2 py-0.5 rounded-full ${summary.statusClass}">${summary.statusLabel}</span>
+                                <span class="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-wider border px-2 py-0.5 rounded-full ${summary.statusClass}"><i data-lucide="${summary.statusIcon}" class="w-3 h-3"></i>${summary.statusLabel}</span>
                                 ${project.is_archived ? '<span class="text-[9px] font-black uppercase tracking-wider border px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border-slate-200">Archiviato</span>' : ''}
                             </div>
                             <h3 class="font-black text-slate-900 text-base lg:text-lg tracking-tight truncate">${escapeHtml(project.name)}</h3>
@@ -146,7 +147,16 @@
         function renderProjects() {
             const container = document.getElementById('projects-list');
             document.getElementById('project-select').innerHTML = projectSelectOptionsHtml();
-            container.innerHTML = getVisibleProjects().map(projectCardHtml).join('');
+            const visibleProjects = getVisibleProjects();
+            container.innerHTML = visibleProjects.length > 0
+                ? visibleProjects.map(projectCardHtml).join('')
+                : richEmptyStateHtml(
+                    showArchived ? 'archive' : 'folder-plus',
+                    showArchived ? 'Nessun progetto archiviato' : 'Nessun progetto attivo',
+                    showArchived ? 'Quando archivierai lavori o cantieri, li ritroverai qui.' : 'Crea il primo lavoro per iniziare a registrare ore, costi e margini.',
+                    showArchived ? '' : 'Crea progetto',
+                    'data-tab="manage" data-ui-action="switch-tab"'
+                );
             lucide.createIcons();
         }
 
@@ -455,7 +465,7 @@
             <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 lg:p-6 mb-6 lg:mb-8 pr-14">
             <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-4">
                 <div class="min-w-0">
-                    <span class="inline-flex text-[9px] font-black uppercase tracking-wider border px-2 py-0.5 rounded-full mb-3 ${summary.statusClass}">${summary.statusLabel}</span>
+                    <span class="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-wider border px-2 py-0.5 rounded-full mb-3 ${summary.statusClass}"><i data-lucide="${summary.statusIcon}" class="w-3 h-3"></i>${summary.statusLabel}</span>
                     <h2 class="text-2xl lg:text-3xl font-black text-slate-800 mb-1 leading-tight pr-8 tracking-tight">${escapeHtml(project.name)}</h2>
                     <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">${escapeHtml(project.client || 'Interno')}</p>
                 </div>
@@ -530,7 +540,7 @@
 
         function renderExpenseRows(expensesList, projectId) {
             if (expensesList.length === 0) {
-                return '<div class="text-center py-6 text-slate-400 text-xs font-bold uppercase tracking-wider">Nessuna spesa registrata.</div>';
+                return richEmptyStateHtml('receipt', 'Nessuna spesa registrata', 'Aggiungi le spese vive per leggere il margine reale del lavoro.');
             }
 
             return expensesList.map(expense => `

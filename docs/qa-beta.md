@@ -80,6 +80,7 @@ Stato: ciclo funzionale online completato su GitHub Pages, incluso hardening RPC
 - UI interna: verificare dashboard, timer, gestione progetti, team, modali di modifica e navigazione mobile dopo la rifinitura grafica.
 - Dashboard economica: verificare colori KPI, stati utile/perdita e card "Progetto più oneroso" su dati reali.
 - UI app: verificare card progetto, registro attività desktop/mobile, dettaglio progetto, nav mobile e modali account/team.
+- Rifiniture finali UI/PDF: verificare empty state, animazioni modali, badge stato progetto e impaginazione PDF.
 - Onboarding owner mobile: modale con scroll interno. Da verificare online dopo deploy.
 
 ## Criterio uscita beta

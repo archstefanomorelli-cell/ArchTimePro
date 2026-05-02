@@ -141,6 +141,8 @@
                         return openEditEntryModal(entryId);
                     case 'delete-entry':
                         return deleteEntry(entryId);
+                    case 'switch-tab':
+                        return switchAppTab(trigger.dataset.tab);
                     case 'generate-pdf-report':
                         return generatePDFReport();
                     default:

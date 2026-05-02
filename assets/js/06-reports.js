@@ -34,10 +34,32 @@
             return formatMoney(value);
         }
 
+        function pdfTableOptions(pdfColor, extra = {}) {
+            return {
+                theme: 'grid',
+                headStyles: { fillColor: pdfColor, textColor: 255, fontStyle: 'bold' },
+                styles: { fontSize: 9, cellPadding: 3, lineColor: [226, 232, 240], lineWidth: 0.1 },
+                alternateRowStyles: { fillColor: [248, 250, 252] },
+                margin: { left: 14, right: 14, bottom: 18 },
+                ...extra
+            };
+        }
+
+        function addPdfFooter(doc) {
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let page = 1; page <= pageCount; page += 1) {
+                doc.setPage(page);
+                doc.setFontSize(8);
+                doc.setTextColor(148, 163, 184);
+                doc.text('Arch Time Pro', 14, 287);
+                doc.text(`Pagina ${page} / ${pageCount}`, 196, 287, { align: 'right' });
+            }
+        }
+
         function getEntryPdfTaskLabel(entry) {
             let displayNotes = entry.notes || '';
             const match = displayNotes.match(/^\[(\d{2}:\d{2}) - (\d{2}:\d{2})\]\s*/);
-            if(match) displayNotes = displayNotes.replace(match[0], '') + `\n(dalle ${match[1]} alle ${match[2]})`;
+            if(match) displayNotes = displayNotes.replace(match[0], '') + `\n(${match[1]} - ${match[2]})`;
             return displayNotes ? `${entry.task}\n(${displayNotes})` : entry.task;
         }
 
@@ -65,7 +87,7 @@
         function populateTeamReportUsers() {
             const userSelect = document.getElementById('team-report-user');
             const activeProfiles = profiles.filter(p => p.role !== 'inactive');
-            userSelect.innerHTML = optionHtml('all', 'Tutto il Team') + activeProfiles.map(pr => optionHtml(pr.full_name, pr.full_name)).join('');
+            userSelect.innerHTML = optionHtml('all', 'Tutto il team') + activeProfiles.map(pr => optionHtml(pr.full_name, pr.full_name)).join('');
         }
 
         async function exportProjectPDF(id) {
@@ -79,29 +101,31 @@
             if(studioData?.logo_url) { try { logoData = await getBase64FromUrl(studioData.logo_url); } catch(err) {} }
             if(logoData) { const imgH = 12; const imgW = (logoData.width/logoData.height)*imgH; doc.addImage(logoData.url, 'PNG', 14, 10, imgW, imgH); startY = 30; }
             
-            doc.setFontSize(22); doc.setTextColor(15, 23, 42); doc.text(p.name, 14, startY); doc.setFontSize(12); doc.setTextColor(100, 116, 139); doc.text(`Cliente: ${p.client || 'Interno'}`, 14, startY + 8);
+            doc.setFontSize(10); doc.setTextColor(...THEMES[currentBusinessType].pdfColor); doc.text('Report progetto', 14, startY);
+            doc.setFontSize(22); doc.setTextColor(15, 23, 42); doc.text(p.name, 14, startY + 10); doc.setFontSize(12); doc.setTextColor(100, 116, 139); doc.text(`Cliente: ${p.client || 'Interno'}`, 14, startY + 18);
             const totalHours = pEntries.reduce((s,e) => s + Number(e.duration), 0); const totalHrsCost = pEntries.reduce((s,e) => s + Number(e.rate), 0); const totalExp = pExpenses.reduce((s,ex) => s + Number(ex.amount), 0);
-            doc.setFontSize(10); doc.setTextColor(15, 23, 42); doc.text(`Totale: €${(totalHrsCost+totalExp).toFixed(2)} | Ore: €${totalHrsCost.toFixed(2)} (${formatTime(totalHours)}) | Spese: €${totalExp.toFixed(2)}`, 14, startY + 18);
+            doc.setFontSize(10); doc.setTextColor(15, 23, 42); doc.text(`Totale: ${pdfMoney(totalHrsCost+totalExp)} | Ore: ${pdfMoney(totalHrsCost)} (${formatTime(totalHours)}) | Spese: ${pdfMoney(totalExp)}`, 14, startY + 29);
             
             const pdfColor = THEMES[currentBusinessType].pdfColor;
-            doc.setFontSize(12); doc.setTextColor(...pdfColor); doc.text("Registro Ore", 14, startY + 28);
+            doc.setFontSize(12); doc.setTextColor(...pdfColor); doc.text("Registro ore", 14, startY + 40);
             
             doc.autoTable({ 
-                startY: startY + 32, 
+                startY: startY + 44, 
                 head: [['Data', 'Team', 'Attività', 'Ore', 'Costo']], 
                 body: pEntries.map(e => {
                     let dispNotes = e.notes || '';
                     const match = dispNotes.match(/^\[(\d{2}:\d{2}) - (\d{2}:\d{2})\]\s*/);
-                    if(match) dispNotes = dispNotes.replace(match[0], '') + `\n(dalle ${match[1]} alle ${match[2]})`;
+                    if(match) dispNotes = dispNotes.replace(match[0], '') + `\n(${match[1]} - ${match[2]})`;
                     return [new Date(e.created_at).toLocaleDateString(), e.user_name, dispNotes ? `${e.task}\n(${dispNotes})` : e.task, formatTime(Number(e.duration)), pdfMoney(e.rate)];
                 }), 
-                theme: 'striped', headStyles: { fillColor: pdfColor }, styles: { fontSize: 9 } 
+                ...pdfTableOptions(pdfColor)
             });
 
             if(pExpenses.length > 0) {
-                const finalY = doc.lastAutoTable.finalY || startY + 50; doc.setFontSize(12); doc.setTextColor(217, 119, 6); doc.text("Spese Extra", 14, finalY + 15);
-                doc.autoTable({ startY: finalY + 19, head: [['Data', 'Da', 'Descrizione', 'Importo']], body: pExpenses.map(ex => [new Date(ex.created_at).toLocaleDateString(), ex.user_name, ex.description, pdfMoney(ex.amount)]), theme: 'striped', headStyles: { fillColor: [245, 158, 11] }, styles: { fontSize: 9 } });
+                const finalY = doc.lastAutoTable.finalY || startY + 50; doc.setFontSize(12); doc.setTextColor(217, 119, 6); doc.text("Spese extra", 14, finalY + 15);
+                doc.autoTable({ startY: finalY + 19, head: [['Data', 'Da', 'Descrizione', 'Importo']], body: pExpenses.map(ex => [new Date(ex.created_at).toLocaleDateString(), ex.user_name, ex.description, pdfMoney(ex.amount)]), ...pdfTableOptions([245, 158, 11]) });
             }
+            addPdfFooter(doc);
             doc.save(`Lavoro_${safeFileName(p.name, 'lavoro')}.pdf`);
         }
 
@@ -130,14 +154,15 @@
             let logoData = null, startY = 30; if(studioData?.logo_url) { try { logoData = await getBase64FromUrl(studioData.logo_url); } catch(err) {} }
             if(logoData) { const imgH = 12; const imgW = (logoData.width/logoData.height)*imgH; doc.addImage(logoData.url, 'PNG', 14, 15, imgW, imgH); startY = 40; }
 
-            doc.setFontSize(26); doc.setTextColor(15, 23, 42); doc.text(studioData?.name||"Azienda", 14, startY);
-            doc.setFontSize(16); doc.setTextColor(15, 23, 42); doc.text(`Rapporto Attività`, 14, startY + 15);
-            doc.setFontSize(12); doc.setTextColor(100, 116, 139); doc.text(`Dal ${start.toLocaleDateString()} al ${end.toLocaleDateString()}`, 14, startY + 23);
+            doc.setFontSize(10); doc.setTextColor(...pdfColor); doc.text('Report generale', 14, startY);
+            doc.setFontSize(26); doc.setTextColor(15, 23, 42); doc.text(studioData?.name||"Azienda", 14, startY + 10);
+            doc.setFontSize(16); doc.setTextColor(15, 23, 42); doc.text(`Rapporto attività`, 14, startY + 25);
+            doc.setFontSize(12); doc.setTextColor(100, 116, 139); doc.text(`Dal ${start.toLocaleDateString()} al ${end.toLocaleDateString()}`, 14, startY + 33);
             
             const totalH = filE.reduce((sum, ent) => sum + Number(ent.duration), 0); const totalC = filE.reduce((sum, ent) => sum + Number(ent.rate), 0);
-            doc.setDrawColor(226, 232, 240); doc.line(14, startY+30, 196, startY+30);
-            doc.setFontSize(12); doc.setTextColor(15, 23, 42); doc.text(`Riepilogo Globale:`, 14, startY + 45);
-            doc.setFontSize(10); doc.text(`Ore Totali: ${formatTime(totalH)}`, 14, startY + 53); doc.text(`Valore Economico: ${pdfMoney(totalC)}`, 14, startY + 60);
+            doc.setDrawColor(226, 232, 240); doc.line(14, startY+40, 196, startY+40);
+            doc.setFontSize(12); doc.setTextColor(15, 23, 42); doc.text(`Riepilogo globale`, 14, startY + 55);
+            doc.setFontSize(10); doc.text(`Ore totali: ${formatTime(totalH)}`, 14, startY + 63); doc.text(`Valore economico: ${pdfMoney(totalC)}`, 14, startY + 70);
 
             const projLabel = currentBusinessType === 'impresa' ? 'Cantiere' : 'Progetto';
 
@@ -151,14 +176,15 @@
                     startY: pY+20, 
                     head: [['Data', 'Team', 'Attività', 'Ore', 'Costo']], 
                     body: pE.map(ent => entryPdfRow(ent, true)), 
-                    theme: 'striped', headStyles: { fillColor: pdfColor }, styles: { fontSize: 9 } 
+                    ...pdfTableOptions(pdfColor)
                 });
             });
+            addPdfFooter(doc);
             doc.save(`Report_${safeFileName(studioData?.name || 'azienda', 'azienda')}_${start.toISOString().split('T')[0]}.pdf`); closeReportModal();
         }
 
         function openTeamReportModal() { 
-            if(activePlan === 'starter') return openUpgradeModal('Report Team PDF');
+            if(activePlan === 'starter') return openUpgradeModal('Report team PDF');
             const { today, firstDay } = getCurrentMonthRange();
             document.getElementById('team-report-start').value = formatDateInputValue(firstDay);
             document.getElementById('team-report-end').value = formatDateInputValue(today);
@@ -198,10 +224,11 @@
                 let currentY = 20; 
                 if(logoData) { doc.addImage(logoData.url, 'PNG', 14, 10, (logoData.width/logoData.height)*8, 8); currentY = 28; } 
 
-                doc.setFontSize(18); doc.setTextColor(...pdfColor); doc.text(`Collaboratore: ${uname}`, 14, currentY);
-                doc.setFontSize(10); doc.setTextColor(100, 116, 139); doc.text(`Totale Periodo: ${formatTime(uTotalH)} | Costo Totale: ${pdfMoney(uTotalC)}`, 14, currentY+7);
+                doc.setFontSize(10); doc.setTextColor(...pdfColor); doc.text('Report team', 14, currentY);
+                doc.setFontSize(18); doc.setTextColor(15, 23, 42); doc.text(`Collaboratore: ${uname}`, 14, currentY + 10);
+                doc.setFontSize(10); doc.setTextColor(100, 116, 139); doc.text(`Totale periodo: ${formatTime(uTotalH)} | Costo totale: ${pdfMoney(uTotalC)}`, 14, currentY+17);
 
-                currentY += 15;
+                currentY += 25;
                 const projLabel = currentBusinessType === 'impresa' ? 'Cantiere' : 'Progetto';
                 const projectsForUser = [...new Set(uEntries.map(ent => ent.project_name))].sort();
 
@@ -219,11 +246,12 @@
                         startY: currentY + 8,
                         head: [['Data', 'Attività', 'Ore', 'Costo']],
                         body: pEntries.map(ent => entryPdfRow(ent, false)),
-                        theme: 'striped', headStyles: { fillColor: pdfColor }, styles: { fontSize: 9 }, margin: { bottom: 15 }
+                        ...pdfTableOptions(pdfColor)
                     });
                     currentY = doc.lastAutoTable.finalY + 12; 
                 });
             });
 
+            addPdfFooter(doc);
             doc.save(`Report_Team_${safeFileName(studioData?.name || 'azienda', 'azienda')}_${start.toISOString().split('T')[0]}.pdf`); closeTeamReportModal();
         }

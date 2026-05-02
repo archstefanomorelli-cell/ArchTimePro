@@ -147,15 +147,19 @@
         function renderEntries() {
             const table = document.getElementById('entries-table-desktop');
             const mobile = document.getElementById('entries-list-mobile');
+            const emptyState = document.getElementById('entries-empty-state');
             const { start, end } = getWeekRange();
             const weekly = getWeeklyEntries(start, end);
 
             document.getElementById('week-display').innerText = `${start.toLocaleDateString('it-IT', {day:'2-digit',month:'short'})} - ${end.toLocaleDateString('it-IT', {day:'2-digit',month:'short',year:'numeric'})}`;
-            document.getElementById('entries-empty-state').classList.toggle('force-hide', weekly.length > 0);
-            table.parentElement.classList.toggle('force-hide', weekly.length === 0);
+            emptyState.innerHTML = richEmptyStateHtml('calendar-clock', 'Nessuna attività questa settimana', 'Avvia il timer o inserisci manualmente le ore per alimentare registro, margini e report.', 'Inserisci ore', 'id="btn-empty-manual-entry"');
+            emptyState.classList.toggle('force-hide', weekly.length > 0);
+            table.classList.toggle('force-hide', weekly.length === 0);
 
             table.innerHTML = weekly.map(renderEntryDesktopRow).join('');
             mobile.innerHTML = weekly.map(renderEntryMobileCard).join('');
+            const emptyManualButton = document.getElementById('btn-empty-manual-entry');
+            if (emptyManualButton) emptyManualButton.onclick = openManualEntry;
             lucide.createIcons();
         }
 

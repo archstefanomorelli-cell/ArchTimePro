@@ -79,7 +79,7 @@ const ARCH_TIME_CONFIG = window.ARCH_TIME_CONFIG || {};
                 catalogDesc: 'Personalizza il vocabolario dello Studio.',
                 activeProjectsTitle: 'Progetti attivi',
                 newProjectTitle: 'Nuovo progetto',
-                templateModalTitle: 'Template Progetti',
+                templateModalTitle: 'Template progetti',
                 defaultCatalog: ["Sopralluogo", "Rilievo", "Progetto Preliminare", "Progetto Definitivo", "Progetto Esecutivo", "Direzione Lavori", "Pratica Comunale", "Computo Metrico", "Riunioni", "Generico"],
                 defaultTemplates: [{name: "Ristrutturazione", tasks: ["Sopralluogo", "Rilievo", "Progetto Preliminare", "Computo Metrico", "Pratica Comunale", "Direzione Lavori"]}],
                 demoProject: 'Villa sul Lago',
@@ -100,7 +100,7 @@ const ARCH_TIME_CONFIG = window.ARCH_TIME_CONFIG || {};
                 catalogDesc: 'Personalizza l\'elenco lavorazioni.',
                 activeProjectsTitle: 'Cantieri attivi',
                 newProjectTitle: 'Nuovo cantiere',
-                templateModalTitle: 'Template Cantieri',
+                templateModalTitle: 'Template cantieri',
                 defaultCatalog: ["Allestimento Cantiere", "Scavi e Demolizioni", "Opere Murarie", "Impianto Idraulico", "Impianto Elettrico", "Posa Pavimenti", "Tinteggiatura", "Cartongesso", "Riunioni", "Generico"],
                 defaultTemplates: [{name: "Ristrutturazione Bagno", tasks: ["Scavi e Demolizioni", "Impianto Idraulico", "Opere Murarie", "Posa Pavimenti", "Tinteggiatura"]}],
                 demoProject: 'Cantiere Via Roma',
@@ -161,6 +161,22 @@ const ARCH_TIME_CONFIG = window.ARCH_TIME_CONFIG || {};
 
         function emptyStateHtml(message) {
             return `<span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider py-1 block">${escapeHtml(message)}</span>`;
+        }
+
+        function richEmptyStateHtml(icon, title, message, actionLabel = '', actionAttrs = '') {
+            const actionHtml = actionLabel
+                ? `<button ${actionAttrs} class="mt-4 bg-slate-900 text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-slate-800 transition-all active:scale-[0.98] shadow-sm">${escapeHtml(actionLabel)}</button>`
+                : '';
+
+            return `
+                <div class="col-span-full bg-white border border-dashed border-slate-300 rounded-2xl p-8 text-center">
+                    <div class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200 text-slate-400 flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="${escapeAttr(icon)}" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-sm font-black text-slate-800 tracking-tight">${escapeHtml(title)}</h3>
+                    <p class="text-xs text-slate-500 font-medium leading-relaxed mt-1 max-w-sm mx-auto">${escapeHtml(message)}</p>
+                    ${actionHtml}
+                </div>`;
         }
 
         function taskTagHtml(task, index, radius = 'rounded-lg') {
