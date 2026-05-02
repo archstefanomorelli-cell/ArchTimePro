@@ -7,7 +7,7 @@ Documento da copiare o inviare ai tester della beta.
 App:
 
 ```text
-https://TUO-UTENTE.github.io/ArchTimePro/app.html?v=6
+https://TUO-UTENTE.github.io/ArchTimePro/app.html?v=7
 ```
 
 Landing:
@@ -48,20 +48,20 @@ Prova a usare Arch Time Pro come se dovessi gestire una commessa reale:
 7. Apri il dettaglio lavoro/cantiere.
 8. Genera un PDF.
 9. Invita o simula un collaboratore.
-10. Racconta cosa non e chiaro.
+10. Racconta cosa non è chiaro.
 
 ## Nota privacy beta
 
 Durante la beta i dati sono isolati tra studi, utenti e ruoli tramite policy Supabase, RPC dedicate e controlli applicativi. I collaboratori non vedono budget, costi e margini riservati alla direzione.
 
-La cifratura economica lato cliente, pensata per rendere budget, costi, spese e margini non leggibili nemmeno al gestore tecnico del database, e prevista nella roadmap prima del lancio commerciale.
+La cifratura economica lato cliente, pensata per rendere budget, costi, spese e margini non leggibili nemmeno al gestore tecnico del database, è prevista nella roadmap prima del lancio commerciale.
 
 ## Domande feedback
 
 - In quale punto hai capito meglio il valore del prodotto?
 - In quale punto ti sei fermato o hai avuto dubbi?
-- Il concetto di margine reale e chiaro?
-- La differenza tra owner/admin e collaboratore e chiara?
+- Il concetto di margine reale è chiaro?
+- La differenza tra owner/admin e collaboratore è chiara?
 - Useresti il timer durante una giornata reale?
 - I report PDF sono utili per clienti, direzione lavori o controllo interno?
 - Cosa manca per usarlo nel tuo studio/impresa?

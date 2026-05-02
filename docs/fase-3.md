@@ -27,6 +27,7 @@ Stato: avviata.
 - Aggiunto documento tecnico `docs/privacy-economica-avanzata.md`.
 - Aggiunto link a Sicurezza e Privacy Economica nella registrazione app.
 - Aggiunta checklist lancio beta controllata in `docs/beta-launch-checklist.md`.
+- Aggiunto registro feedback beta in `docs/beta-feedback-log.md`.
 
 ## Sicurezza dati economici
 
@@ -82,6 +83,7 @@ Nota beta aggiornata:
 - Prioritizzare bug bloccanti.
 - Valutare miglioramenti UX su onboarding, dashboard, report e team.
 - Usare `docs/beta-launch-checklist.md` per inviti, classificazione feedback e criteri di passaggio allo step successivo.
+- Usare `docs/beta-feedback-log.md` per consolidare evidenze, priorità e decisioni.
 
 ## Stato pre-dominio
 

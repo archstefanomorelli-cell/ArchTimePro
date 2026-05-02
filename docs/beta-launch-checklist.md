@@ -60,14 +60,14 @@ https://TUO-UTENTE.github.io/ArchTimePro/sicurezza.html
 - Titolare di studio tecnico.
 - Architetto, geometra, ingegnere o progettista.
 - Piccola impresa edile.
-- Collaboratore che registra ore su piu lavori.
+- Collaboratore che registra ore su più lavori.
 - Persona che oggi usa Excel, note, WhatsApp o memoria personale per tracciare ore e costi.
 
 ## Cosa osservare
 
 - Riesce a registrarsi senza assistenza?
 - Capisce subito cosa creare dopo il primo accesso?
-- Il concetto di margine reale e chiaro?
+- Il concetto di margine reale è chiaro?
 - Il timer viene percepito come utile o fastidioso?
 - La dashboard comunica valore?
 - Il report PDF sembra spendibile con cliente, DL o amministrazione?
@@ -99,14 +99,14 @@ https://TUO-UTENTE.github.io/ArchTimePro/sicurezza.html
 ## Criteri per passare allo step successivo
 
 - Almeno 5 tester target hanno completato il primo flusso.
-- Almeno 3 tester dicono che il problema risolto e reale.
+- Almeno 3 tester dicono che il problema risolto è reale.
 - Nessun P0 aperto.
 - I dubbi privacy sono gestibili con pagina sicurezza e spiegazione prodotto.
 - Le richieste ricorrenti sono state ordinate in backlog.
 
 ## Backlog feedback
 
-Usare questa tabella dopo ogni intervista/test:
+Usare `docs/beta-feedback-log.md` dopo ogni intervista/test. Schema rapido:
 
 ```text
 Tester:
