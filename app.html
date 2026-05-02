@@ -296,39 +296,48 @@
             <div class="lg:col-span-8 flex flex-col gap-6 lg:gap-8">
                 
                 <section class="admin-only mobile-tab" data-tab="analyze">
-                    <h2 class="text-lg lg:text-xl font-black text-slate-800 tracking-tight pl-1 mb-4">Salute finanziaria</h2>
+                    <div class="pl-1 mb-4">
+                        <h2 class="text-lg lg:text-xl font-black text-slate-800 tracking-tight">Salute finanziaria</h2>
+                        <p class="text-xs text-slate-500 font-medium mt-1">Margini, utile e assorbimenti principali.</p>
+                    </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                        <div class="bg-primary-50/60 border border-primary-100 rounded-2xl p-5 shadow-sm relative overflow-hidden">
+                        <div class="bg-gradient-to-br from-primary-50 via-white to-primary-100 border border-primary-200 rounded-2xl p-5 shadow-sm relative overflow-hidden">
+                            <div class="absolute top-0 left-0 right-0 h-1 bg-primary-500"></div>
                             <div class="absolute inset-0 z-0 pointer-events-none">
-                                <i data-lucide="trending-up" class="absolute -right-4 -bottom-4 w-24 h-24 text-primary-200 opacity-60"></i>
+                                <i data-lucide="trending-up" class="absolute -right-4 -bottom-4 w-24 h-24 text-primary-300 opacity-55"></i>
                             </div>
                             <div class="relative z-10">
-                                <h3 class="text-[11px] font-bold uppercase text-slate-500 tracking-wider mb-1">Margine attivi</h3>
+                                <h3 class="text-[11px] font-bold uppercase text-primary-700 tracking-wider mb-1">Margine lavori attivi</h3>
                                 <div id="kpi-margin" class="text-2xl lg:text-3xl font-black text-primary-600 truncate tracking-tight transition-colors duration-500">€ 0.00</div>
+                                <p class="text-[10px] text-slate-500 font-bold mt-2 uppercase tracking-wider">Progetti in corso</p>
                             </div>
                         </div>
-                        <div id="card-profit" class="bg-emerald-50/60 border border-emerald-100 rounded-2xl p-5 shadow-sm relative overflow-hidden transition-all duration-500">
+                        <div id="card-profit" class="bg-gradient-to-br from-emerald-50 via-white to-emerald-100 border border-emerald-200 rounded-2xl p-5 shadow-sm relative overflow-hidden transition-all duration-500">
+                            <div id="profit-card-accent" class="absolute top-0 left-0 right-0 h-1 bg-emerald-500"></div>
                             <div class="absolute inset-0 z-0 pointer-events-none">
-                                <i data-lucide="pie-chart" class="absolute -right-4 -bottom-4 w-24 h-24 text-emerald-200 opacity-60"></i>
+                                <i data-lucide="pie-chart" class="absolute -right-4 -bottom-4 w-24 h-24 text-emerald-300 opacity-55"></i>
                             </div>
                             <div class="relative z-10">
-                                <h3 id="label-profit" class="text-[11px] font-bold uppercase text-slate-500 tracking-wider mb-1 transition-colors duration-500">Utile archiviati</h3>
-                                <div id="kpi-profit" class="text-2xl lg:text-3xl font-black text-slate-800 truncate tracking-tight">€ 0.00</div>
+                                <h3 id="label-profit" class="text-[11px] font-bold uppercase text-emerald-700 tracking-wider mb-1 transition-colors duration-500">Utile archiviati</h3>
+                                <div id="kpi-profit" class="text-2xl lg:text-3xl font-black text-emerald-700 truncate tracking-tight">€ 0.00</div>
+                                <p class="text-[10px] text-slate-500 font-bold mt-2 uppercase tracking-wider">Lavori chiusi</p>
                             </div>
                         </div>
-                        <div class="bg-orange-50/60 border border-orange-100 rounded-2xl p-5 shadow-sm relative overflow-hidden">
+                        <div class="bg-gradient-to-br from-amber-50 via-white to-orange-100 border border-amber-200 rounded-2xl p-5 shadow-sm relative overflow-hidden">
+                            <div class="absolute top-0 left-0 right-0 h-1 bg-amber-500"></div>
                             <div class="absolute inset-0 z-0 pointer-events-none">
-                                <i data-lucide="flame" class="absolute -right-4 -bottom-4 w-24 h-24 text-orange-200 opacity-60"></i>
+                                <i data-lucide="alert-triangle" class="absolute -right-4 -bottom-4 w-24 h-24 text-amber-300 opacity-55"></i>
                             </div>
                             <div class="relative z-10">
-                                <h3 class="text-[11px] font-bold uppercase text-slate-500 tracking-wider mb-1">Costo più alto</h3>
+                                <h3 class="text-[11px] font-bold uppercase text-amber-700 tracking-wider mb-1">Attività più onerosa</h3>
                                 <div id="kpi-burner" class="text-lg font-bold text-slate-800 mt-2 truncate">-</div>
+                                <p class="text-[10px] text-slate-500 font-bold mt-2 uppercase tracking-wider">Assorbimento principale</p>
                             </div>
                         </div>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm"><h3 class="text-[11px] font-bold uppercase text-slate-500 tracking-wider mb-4">Budget vs costi totali</h3><div class="relative w-full h-48 lg:h-64"><canvas id="chart-global"></canvas></div></div>
-                        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm"><h3 class="text-[11px] font-bold uppercase text-slate-500 tracking-wider mb-4">Distribuzione Attività</h3><div class="relative w-full h-48 lg:h-64"><canvas id="chart-tasks-dist"></canvas></div></div>
+                        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm"><h3 class="text-[11px] font-bold uppercase text-slate-500 tracking-wider mb-4">Distribuzione attività</h3><div class="relative w-full h-48 lg:h-64"><canvas id="chart-tasks-dist"></canvas></div></div>
                     </div>
                 </section>
 
@@ -717,7 +726,7 @@
     <script src="assets/js/01-core.js?v=phase3-ui-2026-05-02"></script>
     <script src="assets/js/02-auth-account.js?v=phase3-mobile-2026-05-02"></script>
     <script src="assets/js/03-team.js?v=phase3-ui-2026-05-02"></script>
-    <script src="assets/js/04-projects.js?v=phase3-ui-2026-05-02"></script>
+    <script src="assets/js/04-projects.js?v=phase3-kpi-2026-05-02"></script>
     <script src="assets/js/05-time-entries.js?v=phase3-ui-2026-05-02"></script>
     <script src="assets/js/06-reports.js?v=phase3-2026-05-01"></script>
     <script src="assets/js/07-password-bootstrap.js?v=phase3-2026-05-01"></script>

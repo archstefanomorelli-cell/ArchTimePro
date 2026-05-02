@@ -1,4 +1,4 @@
-// Arch Time Pro - 04-projects.js
+﻿// Arch Time Pro - 04-projects.js
 // ================= GESTIONE PROGETTI =================
 
         function isAdminUser() {
@@ -624,7 +624,7 @@
         function renderStrategicCharts() {
             if(!document.body.classList.contains('is-admin')) return;
             const activeProjects = projects.filter(p => !p.is_archived);
-            let totalBudget = 0, totalSpent = 0, projectSpend = {}; let totalTaskHours = 0;
+            let totalBudget = 0, totalSpent = 0; let totalTaskHours = 0;
             
             activeProjects.forEach(p => { 
                 totalBudget += (p.budget || 0); 
@@ -632,7 +632,6 @@
                 const costExp = expenses.filter(ex => ex.project_id === p.id).reduce((s, ex) => s + Number(ex.amount || 0), 0); 
                 const pSpent = costHrs + costExp; 
                 totalSpent += pSpent; 
-                projectSpend[p.name] = pSpent; 
             });
             
             const archivedBudget = projects.filter(p => p.is_archived).reduce((s,p) => s + p.budget, 0); 
@@ -643,21 +642,31 @@
             const margin = totalBudget - totalSpent;
             const profitCard = document.getElementById('card-profit'); 
             const profitLabel = document.getElementById('label-profit');
+            const profitAccent = document.getElementById('profit-card-accent');
+            const profitValue = document.getElementById('kpi-profit');
             
-            document.getElementById('kpi-profit').innerText = `€ ${profit.toFixed(2)}`;
+            profitValue.innerText = `€ ${profit.toFixed(2)}`;
             
             if (profit < 0) { 
-                profitLabel.innerText = "Perdita (Archiviati)"; 
-                profitCard.classList.replace('border-emerald-100', 'border-red-200'); 
-                profitCard.classList.remove('bg-emerald-50/60'); 
-                profitCard.classList.add('bg-red-50'); 
-                document.getElementById('kpi-profit').classList.replace('text-slate-800', 'text-red-600'); 
+                profitLabel.innerText = "Perdita archiviati"; 
+                profitCard.classList.remove('from-emerald-50', 'to-emerald-100', 'border-emerald-200');
+                profitCard.classList.add('from-red-50', 'to-red-100', 'border-red-200');
+                profitLabel.classList.remove('text-emerald-700');
+                profitLabel.classList.add('text-red-700');
+                profitValue.classList.remove('text-emerald-700');
+                profitValue.classList.add('text-red-600');
+                profitAccent?.classList.remove('bg-emerald-500');
+                profitAccent?.classList.add('bg-red-500');
             } else { 
                 profitLabel.innerText = "Utile archiviati"; 
-                profitCard.classList.replace('border-red-200', 'border-emerald-100'); 
-                profitCard.classList.remove('bg-red-50'); 
-                profitCard.classList.add('bg-emerald-50/60'); 
-                document.getElementById('kpi-profit').classList.replace('text-red-600', 'text-slate-800'); 
+                profitCard.classList.remove('from-red-50', 'to-red-100', 'border-red-200');
+                profitCard.classList.add('from-emerald-50', 'to-emerald-100', 'border-emerald-200');
+                profitLabel.classList.remove('text-red-700');
+                profitLabel.classList.add('text-emerald-700');
+                profitValue.classList.remove('text-red-600');
+                profitValue.classList.add('text-emerald-700');
+                profitAccent?.classList.remove('bg-red-500');
+                profitAccent?.classList.add('bg-emerald-500');
             }
             
             const marginEl = document.getElementById('kpi-margin'); 
@@ -665,9 +674,15 @@
             if (margin < 0) marginEl.classList.replace('text-primary-600', 'text-red-500'); 
             else marginEl.classList.replace('text-red-500', 'text-primary-600');
             
+            const taskSpend = {};
+            entries.filter(e => activeProjects.find(p => p.id === e.project_id)).forEach(entry => {
+                const taskName = entry.task || 'Altro';
+                taskSpend[taskName] = (taskSpend[taskName] || 0) + Number(entry.rate || 0);
+            });
+            
             let topBurner = "-", maxSpent = 0; 
-            for(let name in projectSpend) {
-                if(projectSpend[name] > maxSpent) { maxSpent = projectSpend[name]; topBurner = name; } 
+            for(let name in taskSpend) {
+                if(taskSpend[name] > maxSpent) { maxSpent = taskSpend[name]; topBurner = name; } 
             }
             document.getElementById('kpi-burner').innerText = topBurner;
             

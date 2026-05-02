@@ -78,6 +78,7 @@ Stato: ciclo funzionale online completato su GitHub Pages, incluso hardening RPC
 - Pagine pubbliche Fase 3: feedback e sicurezza aggiunte al workflow Pages. Da verificare online dopo deploy.
 - Login/registrazione mobile: card più compatta, testo guida dinamico e link sicurezza visibile nella registrazione. Da verificare online dopo deploy.
 - UI interna: verificare dashboard, timer, gestione progetti, team, modali di modifica e navigazione mobile dopo la rifinitura grafica.
+- Dashboard economica: verificare colori KPI, stati utile/perdita e card "Attività più onerosa" su dati reali.
 - Onboarding owner mobile: modale con scroll interno. Da verificare online dopo deploy.
 
 ## Criterio uscita beta
