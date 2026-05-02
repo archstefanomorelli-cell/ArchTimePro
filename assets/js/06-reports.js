@@ -35,13 +35,34 @@
         }
 
         function pdfTableOptions(pdfColor, extra = {}) {
+            const extraDidParseCell = extra.didParseCell;
+            const extraDidDrawCell = extra.didDrawCell;
+
             return {
                 theme: 'grid',
                 headStyles: { fillColor: pdfColor, textColor: 255, fontStyle: 'bold' },
                 styles: { fontSize: 9, cellPadding: 3, lineColor: [226, 232, 240], lineWidth: 0.1 },
                 alternateRowStyles: { fillColor: [248, 250, 252] },
                 margin: { left: 14, right: 14, bottom: 18 },
-                ...extra
+                ...extra,
+                didParseCell: (data) => {
+                    if (data.section === 'body' && data.cell.raw?.timeRange) {
+                        data.cell.styles.minCellHeight = 13;
+                    }
+                    if (typeof extraDidParseCell === 'function') extraDidParseCell(data);
+                },
+                didDrawCell: (data) => {
+                    if (data.section === 'body' && data.cell.raw?.timeRange) {
+                        const left = data.cell.x + data.cell.padding('left');
+                        const bottom = data.cell.y + data.cell.height - 3;
+                        data.doc.setFontSize(7);
+                        data.doc.setFont(undefined, 'italic');
+                        data.doc.setTextColor(100, 116, 139);
+                        data.doc.text(data.cell.raw.timeRange, left, bottom);
+                        data.doc.setFont(undefined, 'normal');
+                    }
+                    if (typeof extraDidDrawCell === 'function') extraDidDrawCell(data);
+                }
             };
         }
 
@@ -79,10 +100,11 @@
         }
 
         function getEntryPdfHoursCell(entry) {
-            const label = getEntryPdfHoursLabel(entry);
-            return label.includes('\n')
-                ? { content: label, styles: { fontStyle: 'italic', textColor: [71, 85, 105] } }
-                : label;
+            const parts = getEntryPdfParts(entry);
+            const duration = formatTime(Number(entry.duration));
+            return parts.timeRange
+                ? { content: duration, timeRange: parts.timeRange }
+                : duration;
         }
 
         function entryPdfRow(entry, includeUser = true) {
