@@ -1,28 +1,30 @@
 # Produzione: dominio, email e Stripe live
 
-Checklist da usare quando dominio e email personalizzata saranno disponibili.
+Checklist da usare per il passaggio a `archtimepro.it`, email personalizzata e Stripe live.
 
 ## Dominio
 
-- Scegliere dominio definitivo.
+- Dominio definitivo scelto: `archtimepro.it`.
 - Decidere provider deploy definitivo:
-  - GitHub Pages per continuita beta.
-  - Cloudflare Pages consigliato per header, cache e gestione DNS piu robusta.
-- Collegare dominio al provider scelto.
+  - GitHub Pages per continuità beta.
+  - Cloudflare Pages consigliato per header, cache e gestione DNS più robusta.
+- Collegare `archtimepro.it` al provider scelto.
 - Attendere SSL attivo.
 - Verificare:
-  - `https://dominio/`
-  - `https://dominio/app.html`
-  - `https://dominio/privacy.html`
-  - `https://dominio/termini.html`
-  - `https://dominio/guida.html`
+  - `https://archtimepro.it/`
+  - `https://archtimepro.it/app.html`
+  - `https://archtimepro.it/privacy.html`
+  - `https://archtimepro.it/termini.html`
+  - `https://archtimepro.it/guida.html`
+  - `https://archtimepro.it/feedback.html`
+  - `https://archtimepro.it/sicurezza.html`
 
 ## Email
 
 - Creare email prodotto, per esempio:
-  - `support@dominio`
-  - `privacy@dominio`
-  - `billing@dominio`
+  - `support@archtimepro.it`
+  - `privacy@archtimepro.it`
+  - `billing@archtimepro.it`
 - Aggiornare privacy e termini con email definitive.
 - Configurare eventuale mittente Supabase Auth.
 - Verificare deliverability email:
@@ -35,14 +37,16 @@ Checklist da usare quando dominio e email personalizzata saranno disponibili.
 - Impostare Site URL:
 
 ```text
-https://dominio
+https://archtimepro.it
 ```
 
 - Impostare redirect URL consentiti:
 
 ```text
-https://dominio/app.html
-https://dominio/app.html*
+https://archtimepro.it/app.html
+https://archtimepro.it/app.html*
+https://www.archtimepro.it/app.html
+https://www.archtimepro.it/app.html*
 ```
 
 - Verificare reset password su dominio definitivo.

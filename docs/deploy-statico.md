@@ -1,6 +1,6 @@
 # Deploy statico
 
-Arch Time Pro e una web app statica: puo essere pubblicata su GitHub Pages, Netlify, Cloudflare Pages, Vercel o hosting tradizionale.
+Arch Time Pro è una web app statica: può essere pubblicata su GitHub Pages, Netlify, Cloudflare Pages, Vercel o hosting tradizionale.
 
 ## File da pubblicare
 
@@ -86,8 +86,8 @@ Passi GitHub:
 ## Checklist deploy
 
 - Config produzione compilata.
-- Supabase Auth Site URL impostato sul dominio finale.
-- Redirect password reset verso `https://dominio/app.html`.
+- Supabase Auth Site URL impostato su `https://archtimepro.it`.
+- Redirect password reset verso `https://archtimepro.it/app.html`.
 - Link Stripe live inseriti.
 - `privacy.html` e `termini.html` rivisti con dati legali definitivi.
 - Smoke test completato su dominio pubblico.

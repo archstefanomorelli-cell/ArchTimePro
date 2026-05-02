@@ -1,6 +1,6 @@
 # Fase 3 - Hardening prodotto e produzione
 
-Obiettivo: portare la beta pubblica verso una produzione commerciale piu robusta, con particolare attenzione a sicurezza dati, pagamenti live, compliance e feedback utenti.
+Obiettivo: portare la beta pubblica verso una produzione commerciale più robusta, con particolare attenzione a sicurezza dati, pagamenti live, compliance e feedback utenti.
 
 Stato: avviata.
 
@@ -18,7 +18,7 @@ Stato: avviata.
 - Verificato online admin dopo hardening RPC: progetti, dashboard, registro, dettaglio, spese e PDF funzionanti.
 - Verificato online staff dopo hardening RPC: login, progetti, timer, inserimento ore e registro funzionanti senza costi/margini visibili.
 - Verificato timer e inserimento manuale dopo `create_entry_for_app` per admin e staff.
-- Rifinita visualizzazione fasce orarie nel registro attivita in formato compatto `HH:MM - HH:MM`.
+- Rifinita visualizzazione fasce orarie nel registro attività in formato compatto `HH:MM - HH:MM`.
 - Aggiunto beta feedback kit in `docs/beta-feedback-kit.md`.
 - Aggiunta checklist produzione dominio/email/Stripe in `docs/produzione-dominio-email-stripe.md`.
 - Aggiunta guida troubleshooting in `docs/troubleshooting.md`.
@@ -32,12 +32,13 @@ Stato: avviata.
 - Aggiunto script SQL `docs/sql/phase-3-beta-feedback.sql` per tabella `beta_feedback` insert-only.
 - Aggiunto `robots.txt` e meta `noindex,nofollow` alle pagine pubbliche per evitare indicizzazione della beta GitHub Pages.
 - Aggiunto audit pre-dominio in `docs/pre-dominio-audit.md`.
+- Aggiunta guida setup dominio `archtimepro.it` in `docs/setup-archtimepro-it.md`.
 
 ## Sicurezza dati economici
 
 ### Stato attuale
 
-La UI staff non mostra costi e margini. Dopo il primo hardening di Fase 3, il frontend staff non richiede piu budget, rate o spese.
+La UI staff non mostra costi e margini. Dopo il primo hardening di Fase 3, il frontend staff non richiede più budget, rate o spese.
 
 Nota beta aggiornata:
 
@@ -56,7 +57,7 @@ Nota beta aggiornata:
 
 ### Rischio residuo
 
-- La sicurezza economica ora passa da RPC e policy piu restrittive; resta consigliata una futura separazione fisica dei costi in tabella admin-only per una difesa ancora piu netta.
+- La sicurezza economica ora passa da RPC e policy più restrittive; resta consigliata una futura separazione fisica dei costi in tabella admin-only per una difesa ancora più netta.
 - Le funzioni RPC vanno mantenute sotto controllo quando evolvono schema, piani o ruoli.
 
 ### Target produzione
@@ -75,7 +76,7 @@ Nota beta aggiornata:
 
 ## Legal e compliance
 
-- Riscritte `privacy.html` e `termini.html` con grafica coerente a landing/guida e testi beta piu completi.
+- Riscritte `privacy.html` e `termini.html` con grafica coerente a landing/guida e testi beta più completi.
 - Rivedere `privacy.html` e `termini.html` con dati definitivi del titolare.
 - Validare testi con consulente legale/commercialista.
 - Verificare trattamento dati Supabase, Stripe e hosting GitHub Pages.
@@ -92,7 +93,7 @@ Nota beta aggiornata:
 
 ## Stato pre-dominio
 
-Tutto cio che non dipende da dominio, email personalizzata e Stripe live e stato preparato:
+Tutto ciò che non dipende da dominio, email personalizzata e Stripe live è stato preparato:
 
 - beta online funzionante;
 - sicurezza dati economici rafforzata;
