@@ -14,6 +14,11 @@ Stato: avviata.
 - Aggiunto script SQL `docs/sql/phase-3-secure-data-access.sql` per RPC sicure e lock-down delle select dirette.
 - Preparato `create_entry_for_app` per calcolare `rate` lato database durante inserimento ore.
 - Aggiunto script SQL `docs/sql/phase-3-create-entry-rpc.sql`.
+- Eseguiti gli script SQL Fase 3 in Supabase.
+- Verificato online admin dopo hardening RPC: progetti, dashboard, registro, dettaglio, spese e PDF funzionanti.
+- Verificato online staff dopo hardening RPC: login, progetti, timer, inserimento ore e registro funzionanti senza costi/margini visibili.
+- Verificato timer e inserimento manuale dopo `create_entry_for_app` per admin e staff.
+- Rifinita visualizzazione fasce orarie nel registro attivita in formato compatto `HH:MM - HH:MM`.
 
 ## Sicurezza dati economici
 
@@ -21,22 +26,24 @@ Stato: avviata.
 
 La UI staff non mostra costi e margini. Dopo il primo hardening di Fase 3, il frontend staff non richiede piu budget, rate o spese.
 
+### Stato backend dopo test
+
+- `get_projects_for_app()` fornisce dati filtrati: budget solo admin.
+- `get_entries_for_app()` fornisce dati filtrati: rate solo admin, staff solo proprie entry.
+- `get_expenses_for_app()` fornisce spese solo admin.
+- `create_entry_for_app(...)` crea ore calcolando `rate` lato database.
+- Le select dirette di `projects`, `entries`, `expenses` sono state strette agli admin.
+- L'inserimento diretto in `entries` e stato stretto agli admin dopo conferma del funzionamento RPC.
+
 ### Rischio residuo
 
-La protezione completa deve essere anche lato backend:
-
-- Finche lo script SQL Fase 3 non viene eseguito, `entries_select` consente ancora righe dello stesso studio che contengono `rate`.
-- Finche lo script SQL Fase 3 non viene eseguito, `expenses_select` consente ancora righe dello stesso studio che contengono importi.
-- Finche lo script SQL Fase 3 non viene eseguito, `projects_select` consente ancora righe dello stesso studio che contengono `budget`.
-- Fino al deploy della RPC `create_entry_for_app`, il fallback client puo ancora inviare `rate`.
+- La sicurezza economica ora passa da RPC e policy piu restrittive; resta consigliata una futura separazione fisica dei costi in tabella admin-only per una difesa ancora piu netta.
+- Le funzioni RPC vanno mantenute sotto controllo quando evolvono schema, piani o ruoli.
 
 ### Target produzione
 
-- Eseguire `docs/sql/phase-3-secure-data-access.sql` in Supabase.
-- Eseguire `docs/sql/phase-3-create-entry-rpc.sql` in Supabase dopo il deploy.
-- Verificare staff/admin online dopo il deploy.
-- Verificare inserimento timer/manuale con `rate` calcolato lato database.
-- Valutare separazione dei costi in tabella admin-only.
+- Valutare separazione dei costi in tabella admin-only come hardening futuro.
+- Aggiungere una checklist di regression test dopo ogni modifica RLS/RPC.
 
 ## Pagamenti live
 

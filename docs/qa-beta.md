@@ -2,7 +2,7 @@
 
 Checklist minima prima di invitare utenti esterni.
 
-Stato: primo ciclo funzionale online completato su GitHub Pages.
+Stato: ciclo funzionale online completato su GitHub Pages, incluso hardening RPC Fase 3.
 
 ## Browser e device
 
@@ -36,6 +36,7 @@ Stato: primo ciclo funzionale online completato su GitHub Pages.
 - Inserimento ore manuale. Verificato.
 - Modifica voce registro da admin. Verificato.
 - Verifica vista staff senza dati economici riservati. Verificato lato UI.
+- Verifica staff dopo RPC Fase 3. Verificato.
 
 ## Report e dati
 
@@ -46,6 +47,7 @@ Stato: primo ciclo funzionale online completato su GitHub Pages.
 - PDF cumulativo Premium. Verificato.
 - PDF team Premium. Verificato.
 - Export JSON account. Verificato.
+- Letture admin dopo RPC Fase 3. Verificato.
 
 ## Team e account
 
@@ -67,9 +69,10 @@ Stato: primo ciclo funzionale online completato su GitHub Pages.
 - Dopo la prima registrazione owner serve onboarding guidato per configurare subito spazio di lavoro, settore e primo lavoro/cantiere.
 - La protezione dei costi staff va rinforzata anche lato API, non solo lato UI.
 
-## Nuovo test da eseguire
+## Test Fase 3 eseguiti
 
-- Onboarding guidato owner/admin: apertura una tantum, settore mostrato come scelta gia effettuata, salvataggio identita, preparazione primo lavoro e compilazione form progetto.
+- Onboarding guidato owner/admin: apertura una tantum, settore mostrato come scelta gia effettuata, salvataggio identita, preparazione primo lavoro e compilazione form progetto. Verificato.
+- Timer e inserimento manuale dopo `create_entry_for_app`. Verificato admin/staff.
 
 ## Criterio uscita beta
 

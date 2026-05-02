@@ -165,17 +165,28 @@ Aggiornate durante Fase 2:
 - `delete_user_account()`: ora impedisce a un owner con altri membri nello studio di eliminare l'account prima del trasferimento proprieta.
 - `create_studio_from_limbo(studio_name, b_type)`: ora richiede utente autenticato, nome non vuoto, `b_type` valido e profilo senza studio.
 
+## Stato sicurezza dati economici Fase 3
+
+Verificato dopo deploy e test online:
+
+- `get_projects_for_app()` attiva e usata dal frontend.
+- `get_entries_for_app()` attiva e usata dal frontend.
+- `get_expenses_for_app()` attiva e usata dal frontend.
+- `create_entry_for_app(...)` attiva e usata dal frontend per timer e inserimento manuale.
+- Admin verificato: dashboard, margini, dettaglio progetto, spese e PDF funzionanti.
+- Staff verificato: login, progetti, timer, inserimento ore e registro funzionanti senza costi/margini visibili.
+- Select dirette di `projects`, `entries`, `expenses` strette agli admin.
+- Insert diretto in `entries` stretto agli admin dopo conferma RPC.
+
 ## Rischi residui backend
 
-- `entries_select` permette ancora agli utenti dello stesso studio di leggere righe che includono `rate`.
-- `expenses_select` permette ancora agli utenti dello stesso studio di leggere righe che includono importi.
-- `projects_select` permette ancora agli utenti dello stesso studio di leggere righe che includono `budget`.
-- Supabase RLS lavora per riga, non per colonna: per proteggere davvero i costi dallo staff servono view/RPC dedicate o separazione dei dati economici in tabelle admin-only.
-- Fino al deploy della RPC `create_entry_for_app`, il fallback client puo ancora inviare `rate`.
+- Supabase RLS lavora per riga, non per colonna: la strategia attuale usa RPC per filtrare campi economici verso lo staff.
+- Per produzione ad alta sicurezza resta consigliabile separare fisicamente i costi in tabelle admin-only.
+- Ogni evoluzione di ruoli, piani o schema deve aggiornare anche le RPC Fase 3.
 
 ## Script Fase 3
 
-Preparato `docs/sql/phase-3-secure-data-access.sql`.
+Eseguito `docs/sql/phase-3-secure-data-access.sql`.
 
 Lo script:
 
@@ -184,7 +195,7 @@ Lo script:
 - crea `get_expenses_for_app()`;
 - limita le select dirette di `projects`, `entries`, `expenses` agli admin dopo conferma deploy.
 
-Preparato anche `docs/sql/phase-3-create-entry-rpc.sql`.
+Eseguito anche `docs/sql/phase-3-create-entry-rpc.sql`.
 
 Lo script:
 
