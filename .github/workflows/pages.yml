@@ -39,7 +39,7 @@ jobs:
           set -euo pipefail
           rm -rf dist
           mkdir -p dist/assets
-          cp index.html app.html guida.html privacy.html termini.html feedback.html .nojekyll dist/
+          cp index.html app.html guida.html privacy.html termini.html feedback.html sicurezza.html .nojekyll dist/
           cp assets/app.css dist/assets/app.css
           cp -R assets/js dist/assets/js
           cp -f mockup.png dist/ 2>/dev/null || true

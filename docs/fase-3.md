@@ -23,6 +23,8 @@ Stato: avviata.
 - Aggiunta checklist produzione dominio/email/Stripe in `docs/produzione-dominio-email-stripe.md`.
 - Aggiunta guida troubleshooting in `docs/troubleshooting.md`.
 - Aggiunta checklist regression RLS/RPC in `docs/regression-rls-rpc.md`.
+- Aggiunta pagina pubblica `sicurezza.html` per spiegare sicurezza beta e roadmap Privacy Economica Avanzata.
+- Aggiunto documento tecnico `docs/privacy-economica-avanzata.md`.
 
 ## Sicurezza dati economici
 

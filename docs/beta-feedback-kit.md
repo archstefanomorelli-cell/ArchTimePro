@@ -22,6 +22,12 @@ Pagina feedback:
 https://TUO-UTENTE.github.io/ArchTimePro/feedback.html
 ```
 
+Pagina sicurezza:
+
+```text
+https://TUO-UTENTE.github.io/ArchTimePro/sicurezza.html
+```
+
 ## Chi dovrebbe provarla
 
 - Titolari di studi tecnici.
