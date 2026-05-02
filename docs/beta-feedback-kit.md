@@ -16,6 +16,12 @@ Landing:
 https://TUO-UTENTE.github.io/ArchTimePro/
 ```
 
+Pagina feedback:
+
+```text
+https://TUO-UTENTE.github.io/ArchTimePro/feedback.html
+```
+
 ## Chi dovrebbe provarla
 
 - Titolari di studi tecnici.
