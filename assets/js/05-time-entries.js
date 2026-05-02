@@ -273,7 +273,29 @@
             lucide.createIcons();
         }
 
+        async function createEntryViaRpc(proj, task, hours, customDate = null, notes = "") {
+            const payload = {
+                entry_project_id: proj.id,
+                entry_task: task,
+                entry_duration: hours,
+                entry_notes: notes,
+                entry_created_at: customDate ? new Date(customDate).toISOString() : null
+            };
+            const { error } = await supabaseClient.rpc('create_entry_for_app', payload);
+            if (error) {
+                console.warn('RPC create_entry_for_app non disponibile, uso fallback client.', error.message);
+                return false;
+            }
+            return true;
+        }
+
         async function saveEntry(proj, task, hours, customDate = null, notes = "") {
+            const createdViaRpc = await createEntryViaRpc(proj, task, hours, customDate, notes);
+            if (createdViaRpc) {
+                fetchEntries();
+                return;
+            }
+
             const { data: prof } = await supabaseClient.from('profiles').select('*').eq('id', userProfile.id).single();
             const payload = { project_id: proj.id, project_name: proj.name, task, duration: hours, user_email: userProfile.email, user_name: prof.full_name, rate: (prof ? prof.hourly_cost : 0) * hours, studio_id: userProfile.studio_id, notes: notes };
             if(customDate) payload.created_at = new Date(customDate).toISOString();

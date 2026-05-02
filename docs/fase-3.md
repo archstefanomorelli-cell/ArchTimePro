@@ -12,6 +12,8 @@ Stato: avviata.
   - `expenses` non viene letto dallo staff.
 - Preparato il frontend a usare RPC sicure con fallback client.
 - Aggiunto script SQL `docs/sql/phase-3-secure-data-access.sql` per RPC sicure e lock-down delle select dirette.
+- Preparato `create_entry_for_app` per calcolare `rate` lato database durante inserimento ore.
+- Aggiunto script SQL `docs/sql/phase-3-create-entry-rpc.sql`.
 
 ## Sicurezza dati economici
 
@@ -26,13 +28,14 @@ La protezione completa deve essere anche lato backend:
 - Finche lo script SQL Fase 3 non viene eseguito, `entries_select` consente ancora righe dello stesso studio che contengono `rate`.
 - Finche lo script SQL Fase 3 non viene eseguito, `expenses_select` consente ancora righe dello stesso studio che contengono importi.
 - Finche lo script SQL Fase 3 non viene eseguito, `projects_select` consente ancora righe dello stesso studio che contengono `budget`.
-- `entries_insert` riceve ancora `rate` dal frontend.
+- Fino al deploy della RPC `create_entry_for_app`, il fallback client puo ancora inviare `rate`.
 
 ### Target produzione
 
 - Eseguire `docs/sql/phase-3-secure-data-access.sql` in Supabase.
+- Eseguire `docs/sql/phase-3-create-entry-rpc.sql` in Supabase dopo il deploy.
 - Verificare staff/admin online dopo il deploy.
-- Calcolare `rate` lato database o RPC, usando `hourly_cost` del profilo.
+- Verificare inserimento timer/manuale con `rate` calcolato lato database.
 - Valutare separazione dei costi in tabella admin-only.
 
 ## Pagamenti live
