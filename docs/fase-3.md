@@ -47,6 +47,8 @@ Stato: beta su dominio definitivo attiva.
 - Passata UI estesa su card progetto, registro attività, dettaglio progetto, navigazione mobile e modali account/team.
 - Aggiunti empty state guidati, micro-animazioni sobrie, badge critici con icone e report PDF più curati.
 - Rifinitura finale UI: header interno, grafici dashboard, microbottoni, form nuovo progetto guidato e box riepilogo PDF.
+- Aggiunta modifica spese vive nei dettagli progetto con aggiornamento automatico dei margini.
+- Aggiunto script SQL `docs/sql/phase-3-expense-update-policy.sql` per abilitare update spese admin-only se manca la policy RLS.
 
 ## Sicurezza dati economici
 

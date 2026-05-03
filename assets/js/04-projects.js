@@ -549,12 +549,13 @@
 
             return expensesList.map(expense => `
                         <div class="bg-white p-3 rounded-xl border border-slate-200 flex justify-between items-center shadow-sm group">
-                            <div>
+                            <div class="min-w-0 pr-3">
                                 <p class="text-xs font-bold text-slate-700">${escapeHtml(expense.description)}</p>
                                 <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-1">${new Date(expense.created_at).toLocaleDateString()} • ${escapeHtml(expense.user_name)}</p>
                             </div>
-                            <div class="flex items-center gap-3">
+                            <div class="flex items-center gap-2 shrink-0">
                                 <span class="font-black text-amber-600 text-sm tracking-tight">${formatMoney(expense.amount, 2)}</span>
+                                <button data-ui-action="edit-expense" data-expense-id="${escapeAttr(expense.id)}" data-project-id="${projectId}" class="text-slate-300 hover:text-amber-600 p-1.5 hover:bg-amber-50 rounded-lg transition-colors"><i data-lucide="edit-2" class="w-3.5 h-3.5"></i></button>
                                 <button data-ui-action="delete-expense" data-expense-id="${escapeAttr(expense.id)}" data-project-id="${projectId}" class="text-slate-300 hover:text-red-500 p-1.5 hover:bg-red-50 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
                             </div>
                         </div>`).join('');
@@ -599,6 +600,22 @@
         }
 
         function closeDetail() { document.getElementById('modal-detail').classList.add('force-hide'); }
+
+        function openEditExpenseModal(expenseId, projectId) {
+            const expense = expenses.find(item => item.id === expenseId);
+            if (!expense) return;
+
+            document.getElementById('edit-expense-id').value = expense.id;
+            document.getElementById('edit-expense-project-id').value = projectId || expense.project_id;
+            document.getElementById('edit-expense-desc').value = expense.description || '';
+            document.getElementById('edit-expense-amount').value = Number(expense.amount || 0).toFixed(2);
+            document.getElementById('modal-edit-expense').classList.remove('force-hide');
+            lucide.createIcons();
+        }
+
+        function closeEditExpenseModal() {
+            document.getElementById('modal-edit-expense').classList.add('force-hide');
+        }
 
         function openEditProjectModal(id) {
             const p = projects.find(x => x.id === id); if(!p) return;
@@ -660,6 +677,30 @@
                 await fetchExpenses();
                 showProjectDetail(projectId);
             }
+        }
+
+        async function saveExpenseEdit() {
+            const expenseId = document.getElementById('edit-expense-id').value;
+            const projectId = document.getElementById('edit-expense-project-id').value;
+            const description = document.getElementById('edit-expense-desc').value.trim();
+            const amount = parseFloat(document.getElementById('edit-expense-amount').value);
+
+            if (!description || !amount || amount <= 0) {
+                return await appAlert("Attenzione", "Inserisci una descrizione e un importo valido.", "danger");
+            }
+
+            const { error } = await supabaseClient
+                .from('expenses')
+                .update({ description, amount })
+                .eq('id', expenseId)
+                .eq('studio_id', userProfile.studio_id);
+
+            if (error) return await appAlert("Errore", error.message, "danger");
+
+            closeEditExpenseModal();
+            await fetchExpenses();
+            showProjectDetail(projectId);
+            await appAlert("Fatto", "Spesa aggiornata correttamente.", "success");
         }
         
         function renderStrategicCharts() {

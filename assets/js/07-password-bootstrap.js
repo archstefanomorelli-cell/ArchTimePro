@@ -50,6 +50,8 @@
             bindClick('btn-save-manual-entry', saveManualEntry);
             bindClick('btn-close-edit-entry', closeEditEntryModal);
             bindClick('btn-save-entry-edit', saveEntryEdit);
+            bindClick('btn-close-edit-expense', closeEditExpenseModal);
+            bindClick('btn-save-expense-edit', saveExpenseEdit);
             bindClick('btn-close-edit-project', closeEditProjectModal);
             bindClick('btn-open-edit-task-builder', () => openTaskBuilder('edit'));
             bindClick('btn-save-project-edit', saveModalProjectEdit);
@@ -135,6 +137,8 @@
                         return openEditProjectModal(projectId);
                     case 'add-expense':
                         return addExpense(projectId);
+                    case 'edit-expense':
+                        return openEditExpenseModal(trigger.dataset.expenseId, projectId);
                     case 'delete-expense':
                         return deleteExpense(trigger.dataset.expenseId, projectId);
                     case 'edit-entry':
