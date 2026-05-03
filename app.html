@@ -480,6 +480,28 @@
         </div>
     </div>
 
+    <div id="modal-team-invite" class="force-hide fixed inset-0 z-[200] modal flex items-center justify-center p-4">
+        <div class="w-full max-w-md p-6 lg:p-8 shadow-xl border border-slate-200 rounded-2xl relative bg-white">
+            <button id="btn-close-team-invite" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+            <h2 class="text-lg font-black text-slate-800 tracking-tight mb-1 flex items-center gap-2 pr-10"><i data-lucide="mail-plus" class="text-primary-500 w-5 h-5"></i> Invita collaboratore</h2>
+            <p class="text-xs text-slate-500 font-medium mb-6 pr-10">Invia un link con il codice team già pronto per la registrazione.</p>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Email collaboratore</label>
+                    <input type="email" id="team-invite-email" placeholder="nome@email.it" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all">
+                </div>
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-3">
+                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Codice team</p>
+                    <p id="team-invite-code-preview" class="font-mono text-xs font-black text-slate-700 break-all"></p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <button id="btn-copy-team-invite" class="bg-white text-slate-700 border border-slate-200 py-3 rounded-xl font-bold hover:bg-slate-50 transition-all active:scale-[0.98] flex items-center justify-center gap-2 text-sm"><i data-lucide="copy" class="w-4 h-4"></i> Copia codice</button>
+                    <button id="btn-send-team-invite" class="bg-slate-900 text-white py-3 rounded-xl font-bold shadow-sm hover:bg-slate-800 transition-all active:scale-[0.98] flex items-center justify-center gap-2 text-sm"><i data-lucide="send" class="w-4 h-4"></i> Invia email</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="modal-owner-onboarding" class="force-hide fixed inset-0 z-[300] modal flex items-center justify-center p-4">
         <div class="w-full max-w-lg p-5 lg:p-8 shadow-xl border border-slate-200 rounded-2xl relative bg-white max-h-[92vh] overflow-y-auto">
             <button id="btn-skip-onboarding" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
@@ -759,7 +781,7 @@
     </div>
     <script src="assets/js/00-runtime-config.js?v=phase3-2026-05-01"></script>
     <script src="assets/js/01-core.js?v=phase3-polish-2026-05-02"></script>
-    <script src="assets/js/02-auth-account.js?v=phase3-final-ui-2026-05-02"></script>
+    <script src="assets/js/02-auth-account.js?v=phase3-team-invite-2026-05-03"></script>
     <script src="assets/js/03-team.js?v=phase3-polish-2026-05-02"></script>
     <script src="assets/js/04-projects.js?v=phase3-expense-edit-2026-05-03"></script>
     <script src="assets/js/05-time-entries.js?v=phase3-polish-2026-05-02"></script>

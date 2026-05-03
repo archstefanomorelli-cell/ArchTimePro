@@ -403,9 +403,47 @@ function switchAuthTab(mode) {
             window.scrollTo(0, 0); 
         }
 
+        function getTeamInviteUrl() {
+            return `${window.location.origin}${window.location.pathname}?invite=${encodeURIComponent(userProfile.studio_id)}`;
+        }
+
+        function openTeamInviteModal() {
+            if (!userProfile?.studio_id) return;
+            document.getElementById('team-invite-email').value = '';
+            document.getElementById('team-invite-code-preview').innerText = userProfile.studio_id;
+            document.getElementById('modal-team-invite').classList.remove('force-hide');
+            lucide.createIcons();
+        }
+
+        function closeTeamInviteModal() {
+            document.getElementById('modal-team-invite').classList.add('force-hide');
+        }
+
+        async function copyTeamInviteCode() {
+            await navigator.clipboard.writeText(userProfile.studio_id);
+            await appAlert("Fatto", "Codice invito copiato negli appunti.", "success");
+        }
+
+        async function sendTeamInviteEmail() {
+            const email = document.getElementById('team-invite-email').value.trim();
+            if (!email) return await appAlert("Attenzione", "Inserisci l'email del collaboratore.", "danger");
+
+            const { error } = await supabaseClient.functions.invoke('send-team-invite', {
+                body: {
+                    email,
+                    inviteCode: userProfile.studio_id,
+                    inviteUrl: getTeamInviteUrl()
+                }
+            });
+
+            if (error) return await appAlert("Errore", error.message || "Invio email non riuscito.", "danger");
+
+            closeTeamInviteModal();
+            await appAlert("Invito inviato", "Il collaboratore riceverà una email con link e codice invito.", "success");
+        }
+
         async function generateInviteLink() { 
-            await navigator.clipboard.writeText(userProfile.studio_id); 
-            await appAlert("Fatto", "Codice invito copiato negli appunti! Condividilo col tuo team.", "success"); 
+            openTeamInviteModal();
         }
 
         async function initApp() {

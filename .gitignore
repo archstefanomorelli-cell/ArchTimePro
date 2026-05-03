@@ -8,3 +8,7 @@ Thumbs.db
 
 # Local logs
 *.log
+
+# Local Supabase secrets
+supabase/.env
+supabase/.env.*

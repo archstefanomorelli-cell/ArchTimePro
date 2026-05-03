@@ -20,6 +20,9 @@
             bindClick('btn-create-project', createNewProject);
             bindClick('btn-open-team-report', openTeamReportModal);
             bindClick('btn-generate-invite', generateInviteLink);
+            bindClick('btn-close-team-invite', closeTeamInviteModal);
+            bindClick('btn-copy-team-invite', copyTeamInviteCode);
+            bindClick('btn-send-team-invite', sendTeamInviteEmail);
             bindClick('btn-toggle-inactive', toggleInactiveMembers);
             bindClick('toggle-archived-btn', toggleViewArchived);
             bindClick('btn-prev-week', prevWeek);
