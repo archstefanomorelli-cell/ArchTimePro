@@ -69,10 +69,13 @@ function switchAuthTab(mode) {
                 
                 const { error } = await supabaseClient.auth.signUp({ 
                     email, password, 
-                    options: { data: { full_name: fullName, role: finalRole, is_owner: isOwnerChoice, business_type: businessType, studio_id: isStaff ? code : null } } 
+                    options: {
+                        emailRedirectTo: `${window.location.origin}${window.location.pathname}`,
+                        data: { full_name: fullName, role: finalRole, is_owner: isOwnerChoice, business_type: businessType, studio_id: isStaff ? code : null }
+                    } 
                 });
                 
-                if(error) await appAlert("Errore", error.message, "danger"); else { await appAlert("Ottimo!", "Registrazione OK!", "success"); switchAuthTab('login'); }
+                if(error) await appAlert("Errore", error.message, "danger"); else { await appAlert("Controlla la tua email", "Ti abbiamo inviato un link per confermare la registrazione. Dopo la conferma potrai accedere ad Arch Time Pro.", "success"); switchAuthTab('login'); }
             } else { 
                 const { error } = await supabaseClient.auth.signInWithPassword({ email, password }); 
                 if(error) await appAlert("Errore", "Credenziali errate", "danger"); else checkUser(); 
