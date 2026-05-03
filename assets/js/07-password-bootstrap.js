@@ -179,7 +179,7 @@
             if(!email) return await appAlert("Attenzione", "Inserisci la tua email.", "danger");
             
             const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-                redirectTo: window.location.href 
+                redirectTo: `${window.location.origin}/app.html` 
             });
             
             if(error) return await appAlert("Errore", error.message, "danger");

@@ -1,4 +1,8 @@
 // Arch Time Pro - 02-auth-account.js
+function getAppRedirectUrl() {
+            return `${window.location.origin}/app.html`;
+        }
+
 function switchAuthTab(mode) { 
             isSignupMode = (mode === 'signup'); 
             document.getElementById('tab-login').className = !isSignupMode ? "flex-1 py-2.5 text-sm font-bold rounded-lg bg-white shadow-sm text-slate-900 transition-all border border-slate-200/50" : "flex-1 py-2.5 text-sm font-bold text-slate-500 hover:text-slate-700 transition-all"; 
@@ -70,7 +74,7 @@ function switchAuthTab(mode) {
                 const { error } = await supabaseClient.auth.signUp({ 
                     email, password, 
                     options: {
-                        emailRedirectTo: `${window.location.origin}${window.location.pathname}`,
+                        emailRedirectTo: getAppRedirectUrl(),
                         data: { full_name: fullName, role: finalRole, is_owner: isOwnerChoice, business_type: businessType, studio_id: isStaff ? code : null }
                     } 
                 });
