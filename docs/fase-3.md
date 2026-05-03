@@ -39,7 +39,8 @@ Stato: beta su dominio definitivo attiva.
 - Dominio `www.archtimepro.it` collegato a GitHub Pages con DNS check completato.
 - Certificato HTTPS GitHub Pages completato e `Enforce HTTPS` attivo.
 - Verificato accesso online al dominio definitivo e all'app.
-- Configurata email prodotto `info@archtimepro.it` come mittente SMTP Supabase.
+- Configurata email prodotto `info@archtimepro.it`.
+- Configurato Brevo come SMTP transazionale per Supabase Auth con mittente `info@archtimepro.it`.
 - Rifiniti template Supabase Auth in italiano per conferma registrazione e reset password.
 - Rifinita esperienza mobile di login/registrazione e scroll onboarding owner.
 - Seconda passata UI interna: pannelli operativi più puliti, microtesti meno urlati, cache-busting CSS/JS aggiornato.
@@ -52,6 +53,7 @@ Stato: beta su dominio definitivo attiva.
 - Preparata Edge Function `send-team-invite` per inviare inviti collaboratori via email senza esporre SMTP nel frontend.
 - Aggiunta UI invito collaboratore con email, copia codice e invio tramite Supabase Function.
 - Aggiunto redirect esplicito al dominio definitivo nella registrazione Supabase Auth e messaggio post-signup con conferma email.
+- Risolto blocco Brevo `525 5.7.1 Unauthorized IP address` disattivando/autorizzando il blocco IP e verificato invio email Auth.
 
 ## Sicurezza dati economici
 
@@ -117,6 +119,7 @@ La beta e ora attiva sul dominio definitivo:
 - beta online funzionante su `https://www.archtimepro.it`;
 - HTTPS attivo;
 - email prodotto configurata;
+- conferma registrazione, reset password e invito collaboratore via email verificati;
 - redirect Supabase definitivi pronti/verificati;
 - sicurezza dati economici rafforzata;
 - documentazione QA e troubleshooting pronta;

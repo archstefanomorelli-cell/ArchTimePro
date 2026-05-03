@@ -26,12 +26,13 @@ Checklist da usare per il passaggio a `www.archtimepro.it`, email personalizzata
 - Email prodotto creata e configurata:
   - `info@archtimepro.it`
 - Privacy e termini sono stati aggiornati con email definitiva.
-- SMTP Supabase configurato con mittente `info@archtimepro.it`.
+- Brevo configurato come SMTP transazionale Supabase Auth con mittente `info@archtimepro.it`.
+- Aruba resta casella email prodotto `info@archtimepro.it`.
 - Template Supabase Auth rifiniti in italiano per conferma registrazione e reset password.
-- Verificare deliverability email in beta:
+- Email Auth verificate in beta:
   - conferma registrazione;
   - reset password;
-  - eventuali comunicazioni manuali.
+- invito collaboratore via Edge Function.
 
 ## Supabase Auth
 

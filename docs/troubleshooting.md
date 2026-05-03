@@ -41,6 +41,27 @@ Controlli Supabase:
 - Redirect URL corretti.
 - Console browser per errori Supabase.
 
+## Email Auth non arrivano
+
+Sintomi:
+
+- Utente creato ma resta `waiting for verification`.
+- Reset password non arriva.
+- Nei log Supabase compare `Error sending recovery email`.
+
+Controlli:
+
+- `Authentication -> Providers -> Email`: conferma email attiva solo se desiderata.
+- `Authentication -> URL Configuration`: Site URL e Redirect URLs su `https://www.archtimepro.it`.
+- `Authentication -> SMTP Settings`: Brevo configurato come SMTP transazionale.
+- Verificare che in Brevo il sender `info@archtimepro.it` sia valido.
+- Se il log contiene `525 5.7.1 Unauthorized IP address`, disattivare il blocco IP in Brevo o autorizzare l'IP indicato.
+
+Nota:
+
+- Gli inviti collaboratore usano la Edge Function `send-team-invite`.
+- Conferma registrazione e reset password usano Supabase Auth SMTP.
+
 ## Utente in limbo
 
 Sintomo:
