@@ -1,6 +1,6 @@
 ﻿# Lancio beta controllata
 
-Checklist operativa per invitare tester esterni senza dominio definitivo, email personalizzata e Stripe live.
+Checklist operativa per invitare tester esterni durante la beta su dominio definitivo, con Stripe ancora in modalita test.
 
 ## Obiettivo
 
@@ -17,7 +17,7 @@ Validare se Arch Time Pro risolve un problema reale per studi tecnici e piccole 
 App:
 
 ```text
-https://www.archtimepro.it/app.html?v=7
+https://www.archtimepro.it/app.html
 ```
 
 Pagina feedback:
@@ -46,7 +46,7 @@ Ciao, sto testando Arch Time Pro, una web app per controllare ore, costi, spese 
 Mi aiuteresti provandola per 10-15 minuti come se dovessi gestire una commessa reale?
 
 Link app:
-https://www.archtimepro.it/app.html?v=7
+https://www.archtimepro.it/app.html
 
 Feedback:
 https://www.archtimepro.it/feedback.html

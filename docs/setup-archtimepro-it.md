@@ -1,6 +1,6 @@
 ﻿# Setup dominio www.archtimepro.it
 
-Guida operativa da usare appena il dominio `www.archtimepro.it` risulta attivo e i DNS sono modificabili.
+Guida operativa usata per collegare il dominio `www.archtimepro.it` a GitHub Pages.
 
 ## Obiettivo
 
@@ -36,6 +36,8 @@ www.archtimepro.it
 4. Salvare.
 5. Attendere che GitHub mostri i record DNS richiesti.
 6. Abilitare `Enforce HTTPS` appena disponibile.
+
+Stato aggiornato: DNS check completato, certificato HTTPS completato e `Enforce HTTPS` attivo.
 
 GitHub può creare o richiedere anche un file `CNAME` con:
 

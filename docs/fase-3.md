@@ -2,7 +2,7 @@
 
 Obiettivo: portare la beta pubblica verso una produzione commerciale più robusta, con particolare attenzione a sicurezza dati, pagamenti live, compliance e feedback utenti.
 
-Stato: avviata.
+Stato: beta su dominio definitivo attiva.
 
 ## Completato
 
@@ -36,6 +36,11 @@ Stato: avviata.
 - Dominio canonico definito: `https://www.archtimepro.it`.
 - Email prodotto definita e inserita nei testi legali: `info@archtimepro.it`.
 - Aggiunto file `CNAME` per GitHub Pages e incluso nel workflow di deploy.
+- Dominio `www.archtimepro.it` collegato a GitHub Pages con DNS check completato.
+- Certificato HTTPS GitHub Pages completato e `Enforce HTTPS` attivo.
+- Verificato accesso online al dominio definitivo e all'app.
+- Configurata email prodotto `info@archtimepro.it` come mittente SMTP Supabase.
+- Rifiniti template Supabase Auth in italiano per conferma registrazione e reset password.
 - Rifinita esperienza mobile di login/registrazione e scroll onboarding owner.
 - Seconda passata UI interna: pannelli operativi più puliti, microtesti meno urlati, cache-busting CSS/JS aggiornato.
 - Rifinite le card KPI della dashboard economica con colori più leggibili e terza card "Progetto più oneroso".
@@ -100,19 +105,22 @@ Nota beta aggiornata:
 - Usare `docs/beta-feedback-log.md` per consolidare evidenze, priorità e decisioni.
 - Eseguire `docs/sql/phase-3-beta-feedback.sql` in Supabase prima di testare il modulo pubblico.
 
-## Stato pre-dominio
+## Stato beta dominio definitivo
 
-Tutto ciò che non dipende da dominio, email personalizzata e Stripe live è stato preparato:
+La beta e ora attiva sul dominio definitivo:
 
-- beta online funzionante;
+- beta online funzionante su `https://www.archtimepro.it`;
+- HTTPS attivo;
+- email prodotto configurata;
+- redirect Supabase definitivi pronti/verificati;
 - sicurezza dati economici rafforzata;
 - documentazione QA e troubleshooting pronta;
 - kit feedback tester pronto;
 - checklist produzione pronta.
 
-Restano bloccati dal dominio/email:
+Restano da completare per la produzione commerciale piena:
 
 - Stripe live;
-- email mittente definitiva;
-- redirect Supabase definitivi;
+- passaggio workflow a `environment: 'production'` dopo link Stripe live;
+- rimozione volontaria di `noindex`/`robots.txt` quando si decide di aprire l'indicizzazione;
 - validazione finale privacy/termini con dati fiscali definitivi.

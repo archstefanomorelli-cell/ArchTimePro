@@ -8,8 +8,10 @@ Checklist da usare per il passaggio a `www.archtimepro.it`, email personalizzata
 - Decidere provider deploy definitivo:
   - GitHub Pages per continuità beta.
   - Cloudflare Pages consigliato per header, cache e gestione DNS più robusta.
-- Collegare `www.archtimepro.it` al provider scelto.
-- Attendere SSL attivo.
+- `www.archtimepro.it` collegato a GitHub Pages.
+- DNS check completato.
+- Certificato HTTPS completato.
+- `Enforce HTTPS` attivo.
 - Verificare:
   - `https://www.archtimepro.it/`
   - `https://www.archtimepro.it/app.html`
@@ -21,12 +23,13 @@ Checklist da usare per il passaggio a `www.archtimepro.it`, email personalizzata
 
 ## Email
 
-- Creare e testare email prodotto:
+- Email prodotto creata e configurata:
   - `info@archtimepro.it`
 - Privacy e termini sono stati aggiornati con email definitiva.
-- Configurare eventuale mittente Supabase Auth.
-- Verificare deliverability email:
-  - conferma registrazione, se abilitata;
+- SMTP Supabase configurato con mittente `info@archtimepro.it`.
+- Template Supabase Auth rifiniti in italiano per conferma registrazione e reset password.
+- Verificare deliverability email in beta:
+  - conferma registrazione;
   - reset password;
   - eventuali comunicazioni manuali.
 
@@ -46,8 +49,8 @@ https://www.archtimepro.it/app.html*
 ```
 
 - Verificare reset password su dominio definitivo.
-- Decidere se abilitare conferma email.
-- Rivedere template email in italiano.
+- Conferma email abilitata se confermata nel pannello Supabase.
+- Template email in italiano rivisti.
 
 ## Stripe live
 

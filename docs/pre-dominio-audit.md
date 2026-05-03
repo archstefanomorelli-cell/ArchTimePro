@@ -2,7 +2,7 @@
 
 Data: 2026-05-02
 
-Questo documento fotografa cosa è già pronto prima dell'attivazione operativa di `www.archtimepro.it` e cosa resta bloccato da dominio attivo, email personalizzata e Stripe live.
+Questo documento fotografa lo stato preparato prima dell'attivazione operativa di `www.archtimepro.it`. Il dominio definitivo e l'email prodotto sono ora attivi; restano da completare Stripe live e l'apertura dell'indicizzazione quando si decide il lancio commerciale.
 
 ## Stato generale
 
@@ -97,12 +97,16 @@ Resta per produzione:
 - decidere gestione chiavi;
 - migrare eventuali campi economici sensibili.
 
-## Cosa resta bloccato dal dominio
+## Stato dopo attivazione dominio
 
 - Dominio definitivo attivo e collegato: `www.archtimepro.it`.
-- Email prodotto: support, privacy, billing.
-- Supabase Auth Site URL definitivo.
-- Redirect password reset definitivi.
+- HTTPS attivo su GitHub Pages.
+- Email prodotto attiva: `info@archtimepro.it`.
+- Supabase Auth Site URL definitivo configurato/verificato.
+- Redirect password reset definitivi configurati/verificati.
+
+## Cosa resta per produzione commerciale
+
 - Stripe live Starter/Premium.
 - Customer Portal live.
 - Workflow in `environment: 'production'`.
@@ -115,7 +119,7 @@ Resta per produzione:
 2. Aprire `feedback.html?v=3`.
 3. Inviare un feedback di prova.
 4. Verificare riga in Supabase `beta_feedback`.
-5. Aprire registrazione `app.html?v=7`.
+5. Aprire registrazione `app.html`.
 6. Verificare link a Sicurezza e Privacy Economica.
 7. Provare login admin.
 8. Provare login staff.

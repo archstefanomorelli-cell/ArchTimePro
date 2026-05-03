@@ -7,7 +7,7 @@ Documento da copiare o inviare ai tester della beta.
 App:
 
 ```text
-https://www.archtimepro.it/app.html?v=7
+https://www.archtimepro.it/app.html
 ```
 
 Landing:
