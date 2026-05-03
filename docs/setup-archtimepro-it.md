@@ -1,13 +1,13 @@
-# Setup dominio archtimepro.it
+﻿# Setup dominio www.archtimepro.it
 
-Guida operativa da usare appena il dominio `archtimepro.it` risulta attivo e i DNS sono modificabili.
+Guida operativa da usare appena il dominio `www.archtimepro.it` risulta attivo e i DNS sono modificabili.
 
 ## Obiettivo
 
-Collegare la beta GitHub Pages al dominio:
+Collegare la beta GitHub Pages al dominio canonico:
 
 ```text
-https://archtimepro.it
+https://www.archtimepro.it
 ```
 
 e preparare lo step successivo con email prodotto, Supabase Auth e Stripe live.
@@ -30,7 +30,7 @@ Nel repository GitHub:
 3. In `Custom domain`, inserire:
 
 ```text
-archtimepro.it
+www.archtimepro.it
 ```
 
 4. Salvare.
@@ -40,7 +40,7 @@ archtimepro.it
 GitHub può creare o richiedere anche un file `CNAME` con:
 
 ```text
-archtimepro.it
+www.archtimepro.it
 ```
 
 Se GitHub lo richiede, aggiungerlo nella root del progetto e includerlo nel workflow Pages.
@@ -49,19 +49,17 @@ Se GitHub lo richiede, aggiungerlo nella root del progetto e includerlo nel work
 
 Nel provider dominio configurare i record indicati da GitHub Pages.
 
-Per dominio apex (`archtimepro.it`) GitHub Pages di solito richiede record `A` verso gli IP GitHub Pages e un eventuale `CNAME` per `www`.
+Per `www.archtimepro.it`, GitHub Pages usa normalmente un record `CNAME` sul sottodominio `www`.
 
 Configurazione tipica:
 
 ```text
-archtimepro.it      A      185.199.108.153
-archtimepro.it      A      185.199.109.153
-archtimepro.it      A      185.199.110.153
-archtimepro.it      A      185.199.111.153
-www                 CNAME  TUO-UTENTE.github.io
+www                 CNAME  valore indicato da GitHub Pages
 ```
 
 Nota: usare sempre i valori mostrati da GitHub nel pannello Pages, se diversi.
+
+Opzionale: configurare anche `archtimepro.it` senza `www` come redirect verso `https://www.archtimepro.it`, se il provider dominio lo permette.
 
 ## 4. Verifica propagazione
 
@@ -70,11 +68,11 @@ Dopo la modifica DNS attendere da pochi minuti a qualche ora.
 Verificare:
 
 ```text
-https://archtimepro.it/
-https://archtimepro.it/app.html
-https://archtimepro.it/feedback.html
-https://archtimepro.it/sicurezza.html
-https://archtimepro.it/robots.txt
+https://www.archtimepro.it/
+https://www.archtimepro.it/app.html
+https://www.archtimepro.it/feedback.html
+https://www.archtimepro.it/sicurezza.html
+https://www.archtimepro.it/robots.txt
 ```
 
 Per ora `robots.txt` e `noindex` restano attivi finché la produzione non è pronta.
@@ -86,14 +84,12 @@ Quando il dominio risponde correttamente:
 Impostare Site URL:
 
 ```text
-https://archtimepro.it
+https://www.archtimepro.it
 ```
 
 Impostare redirect URL consentiti:
 
 ```text
-https://archtimepro.it/app.html
-https://archtimepro.it/app.html*
 https://www.archtimepro.it/app.html
 https://www.archtimepro.it/app.html*
 ```
@@ -107,21 +103,13 @@ Poi testare:
 
 ## 6. Email prodotto
 
-Creare almeno:
+Email prodotto attiva:
 
 ```text
-support@archtimepro.it
-privacy@archtimepro.it
-```
-
-Opzionale:
-
-```text
-billing@archtimepro.it
 info@archtimepro.it
 ```
 
-Aggiornare privacy e termini sostituendo l'email personale quando le caselle sono attive.
+Privacy e termini sono stati aggiornati usando `info@archtimepro.it`.
 
 ## 7. Prima di Stripe live
 

@@ -1,4 +1,4 @@
-# Fase 3 - Hardening prodotto e produzione
+﻿# Fase 3 - Hardening prodotto e produzione
 
 Obiettivo: portare la beta pubblica verso una produzione commerciale più robusta, con particolare attenzione a sicurezza dati, pagamenti live, compliance e feedback utenti.
 
@@ -32,7 +32,10 @@ Stato: avviata.
 - Aggiunto script SQL `docs/sql/phase-3-beta-feedback.sql` per tabella `beta_feedback` insert-only.
 - Aggiunto `robots.txt` e meta `noindex,nofollow` alle pagine pubbliche per evitare indicizzazione della beta GitHub Pages.
 - Aggiunto audit pre-dominio in `docs/pre-dominio-audit.md`.
-- Aggiunta guida setup dominio `archtimepro.it` in `docs/setup-archtimepro-it.md`.
+- Aggiunta guida setup dominio `www.archtimepro.it` in `docs/setup-archtimepro-it.md`.
+- Dominio canonico definito: `https://www.archtimepro.it`.
+- Email prodotto definita e inserita nei testi legali: `info@archtimepro.it`.
+- Aggiunto file `CNAME` per GitHub Pages e incluso nel workflow di deploy.
 - Rifinita esperienza mobile di login/registrazione e scroll onboarding owner.
 - Seconda passata UI interna: pannelli operativi più puliti, microtesti meno urlati, cache-busting CSS/JS aggiornato.
 - Rifinite le card KPI della dashboard economica con colori più leggibili e terza card "Progetto più oneroso".

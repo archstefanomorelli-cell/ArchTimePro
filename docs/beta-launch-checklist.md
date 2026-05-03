@@ -1,4 +1,4 @@
-# Lancio beta controllata
+﻿# Lancio beta controllata
 
 Checklist operativa per invitare tester esterni senza dominio definitivo, email personalizzata e Stripe live.
 
@@ -17,25 +17,25 @@ Validare se Arch Time Pro risolve un problema reale per studi tecnici e piccole 
 App:
 
 ```text
-https://TUO-UTENTE.github.io/ArchTimePro/app.html?v=7
+https://www.archtimepro.it/app.html?v=7
 ```
 
 Pagina feedback:
 
 ```text
-https://TUO-UTENTE.github.io/ArchTimePro/feedback.html
+https://www.archtimepro.it/feedback.html
 ```
 
 Pagina sicurezza:
 
 ```text
-https://TUO-UTENTE.github.io/ArchTimePro/sicurezza.html
+https://www.archtimepro.it/sicurezza.html
 ```
 
 Privacy:
 
 ```text
-https://TUO-UTENTE.github.io/ArchTimePro/privacy.html
+https://www.archtimepro.it/privacy.html
 ```
 
 ## Messaggio breve per tester
@@ -46,13 +46,13 @@ Ciao, sto testando Arch Time Pro, una web app per controllare ore, costi, spese 
 Mi aiuteresti provandola per 10-15 minuti come se dovessi gestire una commessa reale?
 
 Link app:
-https://TUO-UTENTE.github.io/ArchTimePro/app.html?v=7
+https://www.archtimepro.it/app.html?v=7
 
 Feedback:
-https://TUO-UTENTE.github.io/ArchTimePro/feedback.html
+https://www.archtimepro.it/feedback.html
 
 Nota sui dati economici:
-https://TUO-UTENTE.github.io/ArchTimePro/sicurezza.html
+https://www.archtimepro.it/sicurezza.html
 ```
 
 ## Profilo tester ideale

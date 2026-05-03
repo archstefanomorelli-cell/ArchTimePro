@@ -1,4 +1,4 @@
-# Beta feedback kit
+﻿# Beta feedback kit
 
 Documento da copiare o inviare ai tester della beta.
 
@@ -7,25 +7,25 @@ Documento da copiare o inviare ai tester della beta.
 App:
 
 ```text
-https://TUO-UTENTE.github.io/ArchTimePro/app.html?v=7
+https://www.archtimepro.it/app.html?v=7
 ```
 
 Landing:
 
 ```text
-https://TUO-UTENTE.github.io/ArchTimePro/
+https://www.archtimepro.it/
 ```
 
 Pagina feedback:
 
 ```text
-https://TUO-UTENTE.github.io/ArchTimePro/feedback.html
+https://www.archtimepro.it/feedback.html
 ```
 
 Pagina sicurezza:
 
 ```text
-https://TUO-UTENTE.github.io/ArchTimePro/sicurezza.html
+https://www.archtimepro.it/sicurezza.html
 ```
 
 ## Chi dovrebbe provarla

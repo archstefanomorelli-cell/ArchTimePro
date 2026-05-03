@@ -1,8 +1,8 @@
-# Audit pre-dominio
+﻿# Audit pre-dominio
 
 Data: 2026-05-02
 
-Questo documento fotografa cosa è già pronto prima dell'attivazione operativa di `archtimepro.it` e cosa resta bloccato da dominio attivo, email personalizzata e Stripe live.
+Questo documento fotografa cosa è già pronto prima dell'attivazione operativa di `www.archtimepro.it` e cosa resta bloccato da dominio attivo, email personalizzata e Stripe live.
 
 ## Stato generale
 
@@ -99,7 +99,7 @@ Resta per produzione:
 
 ## Cosa resta bloccato dal dominio
 
-- Dominio definitivo attivo e collegato: `archtimepro.it`.
+- Dominio definitivo attivo e collegato: `www.archtimepro.it`.
 - Email prodotto: support, privacy, billing.
 - Supabase Auth Site URL definitivo.
 - Redirect password reset definitivi.

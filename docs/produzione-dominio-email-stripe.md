@@ -1,31 +1,29 @@
-# Produzione: dominio, email e Stripe live
+﻿# Produzione: dominio, email e Stripe live
 
-Checklist da usare per il passaggio a `archtimepro.it`, email personalizzata e Stripe live.
+Checklist da usare per il passaggio a `www.archtimepro.it`, email personalizzata e Stripe live.
 
 ## Dominio
 
-- Dominio definitivo scelto: `archtimepro.it`.
+- Dominio definitivo scelto: `www.archtimepro.it`.
 - Decidere provider deploy definitivo:
   - GitHub Pages per continuità beta.
   - Cloudflare Pages consigliato per header, cache e gestione DNS più robusta.
-- Collegare `archtimepro.it` al provider scelto.
+- Collegare `www.archtimepro.it` al provider scelto.
 - Attendere SSL attivo.
 - Verificare:
-  - `https://archtimepro.it/`
-  - `https://archtimepro.it/app.html`
-  - `https://archtimepro.it/privacy.html`
-  - `https://archtimepro.it/termini.html`
-  - `https://archtimepro.it/guida.html`
-  - `https://archtimepro.it/feedback.html`
-  - `https://archtimepro.it/sicurezza.html`
+  - `https://www.archtimepro.it/`
+  - `https://www.archtimepro.it/app.html`
+  - `https://www.archtimepro.it/privacy.html`
+  - `https://www.archtimepro.it/termini.html`
+  - `https://www.archtimepro.it/guida.html`
+  - `https://www.archtimepro.it/feedback.html`
+  - `https://www.archtimepro.it/sicurezza.html`
 
 ## Email
 
-- Creare email prodotto, per esempio:
-  - `support@archtimepro.it`
-  - `privacy@archtimepro.it`
-  - `billing@archtimepro.it`
-- Aggiornare privacy e termini con email definitive.
+- Creare e testare email prodotto:
+  - `info@archtimepro.it`
+- Privacy e termini sono stati aggiornati con email definitiva.
 - Configurare eventuale mittente Supabase Auth.
 - Verificare deliverability email:
   - conferma registrazione, se abilitata;
@@ -37,14 +35,12 @@ Checklist da usare per il passaggio a `archtimepro.it`, email personalizzata e S
 - Impostare Site URL:
 
 ```text
-https://archtimepro.it
+https://www.archtimepro.it
 ```
 
 - Impostare redirect URL consentiti:
 
 ```text
-https://archtimepro.it/app.html
-https://archtimepro.it/app.html*
 https://www.archtimepro.it/app.html
 https://www.archtimepro.it/app.html*
 ```
