@@ -585,11 +585,7 @@
             const rhythm = getProjectRhythmSummary(data.project);
             if (!rhythm) return '';
 
-            const tasks = (data.project.tasks || []).slice().sort((a, b) => {
-                const aStat = data.taskStats[a] || { c: 0 };
-                const bStat = data.taskStats[b] || { c: 0 };
-                return bStat.c - aStat.c;
-            });
+            const tasks = data.project.tasks || [];
             const rows = tasks.map(taskName => {
                 const stat = data.taskStats[taskName] || { h: 0, c: 0 };
                 const status = rhythm.statuses[taskName] || 'todo';

@@ -64,6 +64,7 @@ Stato: beta su dominio definitivo attiva.
 - Aggiunto script SQL `docs/sql/phase-3-project-rhythm.sql` per salvare `task_statuses` sui progetti e aggiornare la RPC `get_projects_for_app`.
 - Inserito "Ritmo progetto" anche nel racconto pubblico della landing come feature distintiva rispetto al semplice timesheet.
 - Compattato il dettaglio progetto unendo stati attività e assorbimento economico in una tabella unica, rimuovendo la duplicazione con la vecchia sezione "Per attività".
+- La tabella compatta delle attività nel dettaglio progetto rispetta l'ordine impostato nel progetto, così resta coerente con il flusso operativo.
 
 ## Sicurezza dati economici
 
