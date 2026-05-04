@@ -103,8 +103,50 @@
             };
         }
 
+        function getProjectTaskStatuses(project) {
+            const rawStatuses = project.task_statuses && typeof project.task_statuses === 'object' ? project.task_statuses : {};
+            const statuses = {};
+            (project.tasks || []).forEach(task => {
+                const savedStatus = rawStatuses[task];
+                const hasTrackedTime = entries.some(entry => entry.project_id === project.id && entry.task === task && Number(entry.duration || 0) > 0);
+                statuses[task] = ['todo', 'doing', 'done'].includes(savedStatus) ? savedStatus : (hasTrackedTime ? 'doing' : 'todo');
+            });
+            return statuses;
+        }
+
+        function getProjectRhythmSummary(project, costSummary = getProjectCostSummary(project)) {
+            const tasks = project.tasks || [];
+            if (!isAdminUser() || tasks.length === 0 || costSummary.budget <= 0) return null;
+
+            const statuses = getProjectTaskStatuses(project);
+            const weights = { todo: 0, doing: 0.5, done: 1 };
+            const operationalPercent = tasks.reduce((sum, task) => sum + (weights[statuses[task]] || 0), 0) / tasks.length * 100;
+            const costPercent = costSummary.percent;
+            const gap = costPercent - operationalPercent;
+            const isOverBudget = costPercent > 100;
+            const isOffPace = !isOverBudget && gap > 25;
+            const isWarning = !isOverBudget && !isOffPace && gap > 10;
+
+            return {
+                statuses,
+                costPercent,
+                operationalPercent,
+                gap,
+                label: isOverBudget ? 'Fuori budget' : (isOffPace ? 'Fuori ritmo' : (isWarning ? 'Da monitorare' : 'Allineato')),
+                description: isOverBudget
+                    ? 'I costi hanno superato il budget disponibile.'
+                    : (isOffPace
+                        ? 'I costi stanno correndo più dell’avanzamento attività.'
+                        : (isWarning ? 'I costi sono leggermente avanti rispetto alle attività.' : 'Costi e attività risultano coerenti.')),
+                barClass: isOverBudget || isOffPace ? 'bg-red-500' : (isWarning ? 'bg-amber-400' : 'bg-emerald-500'),
+                markerClass: isOverBudget || isOffPace ? 'bg-red-700' : (isWarning ? 'bg-amber-700' : 'bg-emerald-700'),
+                statusClass: isOverBudget || isOffPace ? 'bg-red-50 text-red-700 border-red-200' : (isWarning ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200')
+            };
+        }
+
         function projectCardHtml(project) {
             const summary = getProjectCostSummary(project);
+            const rhythm = getProjectRhythmSummary(project, summary);
             const projectId = escapeAttr(project.id);
 
             return `
@@ -145,6 +187,21 @@
                     <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
                         <div class="${summary.barClass} h-full transition-all duration-1000 rounded-full" style="width: ${Math.min(summary.percent, 100)}%"></div>
                     </div>
+                    ${rhythm ? `
+                    <div class="mt-4 pt-4 border-t border-slate-100">
+                        <div class="flex justify-between items-center gap-2 text-[10px] uppercase font-bold tracking-wider text-slate-500 mb-2">
+                            <span>Ritmo progetto</span>
+                            <span class="normal-case tracking-normal font-black ${rhythm.gap > 25 || rhythm.costPercent > 100 ? 'text-red-600' : (rhythm.gap > 10 ? 'text-amber-600' : 'text-emerald-600')}">${rhythm.label}</span>
+                        </div>
+                        <div class="relative w-full bg-slate-100 h-2.5 rounded-full">
+                            <div class="${rhythm.barClass} h-full transition-all duration-1000 rounded-full" style="width: ${Math.min(rhythm.costPercent, 100)}%"></div>
+                            <span class="absolute top-1/2 -translate-y-1/2 w-1 h-4 rounded-full ${rhythm.markerClass} shadow-sm" style="left: calc(${Math.min(rhythm.operationalPercent, 100)}% - 2px)"></span>
+                        </div>
+                        <div class="flex justify-between text-[9px] font-bold text-slate-400 mt-1.5">
+                            <span>Costi ${Math.round(rhythm.costPercent)}%</span>
+                            <span>Attività ${Math.round(rhythm.operationalPercent)}%</span>
+                        </div>
+                    </div>` : ''}
                 </div>`;
         }
 
@@ -525,6 +582,68 @@
                     </div>`;
         }
 
+        function taskStatusButtonHtml(projectId, taskName, value, label, activeValue) {
+            const isActive = activeValue === value;
+            const activeClass = value === 'done'
+                ? 'bg-emerald-600 text-white border-emerald-600'
+                : (value === 'doing' ? 'bg-primary-600 text-white border-primary-600' : 'bg-slate-200 text-slate-700 border-slate-200');
+            const idleClass = 'bg-white text-slate-500 border-slate-200 hover:border-primary-200 hover:text-primary-600';
+
+            return `<button data-ui-action="set-task-status" data-project-id="${escapeAttr(projectId)}" data-task="${escapeAttr(taskName)}" data-status="${value}" class="px-2.5 py-1.5 rounded-lg border text-[10px] font-black uppercase tracking-wider transition-all ${isActive ? activeClass : idleClass}">${label}</button>`;
+        }
+
+        function renderProjectRhythmPanel(data) {
+            const rhythm = getProjectRhythmSummary(data.project);
+            if (!rhythm) return '';
+
+            const tasks = data.project.tasks || [];
+            const rows = tasks.map(taskName => {
+                const stat = data.taskStats[taskName] || { h: 0, c: 0 };
+                const status = rhythm.statuses[taskName] || 'todo';
+                return `
+                    <div class="bg-white border border-slate-200 rounded-xl p-3 shadow-sm">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div class="min-w-0">
+                                <p class="text-xs font-black text-slate-800 truncate">${escapeHtml(taskName)}</p>
+                                <p class="text-[10px] font-bold text-slate-400 mt-1">${formatTime(stat.h)} · ${formatMoney(stat.c, 0)}</p>
+                            </div>
+                            <div class="flex flex-wrap gap-1.5">
+                                ${taskStatusButtonHtml(data.project.id, taskName, 'todo', 'Da fare', status)}
+                                ${taskStatusButtonHtml(data.project.id, taskName, 'doing', 'In corso', status)}
+                                ${taskStatusButtonHtml(data.project.id, taskName, 'done', 'Completata', status)}
+                            </div>
+                        </div>
+                    </div>`;
+            }).join('');
+
+            return `
+                <div class="admin-only bg-white border border-slate-200 rounded-2xl p-5 shadow-sm mb-8">
+                    <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-4 border-b border-slate-100 pb-4 mb-4">
+                        <div>
+                            <h3 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="activity" class="w-3.5 h-3.5"></i> Ritmo progetto</h3>
+                            <p class="text-xs text-slate-500 font-medium mt-1">${rhythm.description}</p>
+                        </div>
+                        <span class="inline-flex items-center justify-center text-[10px] font-black uppercase tracking-wider border px-3 py-1 rounded-full ${rhythm.statusClass}">${rhythm.label}</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 mb-4">
+                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3">
+                            <p class="text-[9px] font-black uppercase tracking-wider text-slate-400">Costi consumati</p>
+                            <p class="text-lg font-black text-slate-800 mt-1">${Math.round(rhythm.costPercent)}%</p>
+                        </div>
+                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3">
+                            <p class="text-[9px] font-black uppercase tracking-wider text-slate-400">Attività avanzate</p>
+                            <p class="text-lg font-black text-slate-800 mt-1">${Math.round(rhythm.operationalPercent)}%</p>
+                        </div>
+                    </div>
+                    <div class="relative w-full bg-slate-100 h-3 rounded-full mb-5">
+                        <div class="${rhythm.barClass} h-full rounded-full" style="width: ${Math.min(rhythm.costPercent, 100)}%"></div>
+                        <span class="absolute top-1/2 -translate-y-1/2 w-1.5 h-5 rounded-full ${rhythm.markerClass} shadow-sm" style="left: calc(${Math.min(rhythm.operationalPercent, 100)}% - 3px)"></span>
+                    </div>
+                    <div class="space-y-2">${rows}</div>
+                    <p class="text-[10px] text-slate-400 font-medium mt-4 leading-relaxed">Indicatore sperimentale: confronta i costi già consumati con lo stato dichiarato delle attività. Serve come allarme operativo, non come percentuale contabile del progetto.</p>
+                </div>`;
+        }
+
         function renderTeamStats(teamStats) {
             const rows = Object.keys(teamStats).map(member => `
                             <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
@@ -582,6 +701,7 @@
             return `
             ${renderProjectDetailHeader(data.project)}
             ${renderProjectMetrics(data)}
+            ${renderProjectRhythmPanel(data)}
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 pb-8 lg:pb-0">
                 <div class="space-y-8">
                     ${renderTaskStats(data.taskStats, data.project.budget)}
@@ -600,6 +720,32 @@
         }
 
         function closeDetail() { document.getElementById('modal-detail').classList.add('force-hide'); }
+
+        async function setTaskStatus(projectId, taskName, status) {
+            const project = projects.find(item => item.id === projectId);
+            if (!project || !['todo', 'doing', 'done'].includes(status)) return;
+
+            const currentStatuses = getProjectTaskStatuses(project);
+            currentStatuses[taskName] = status;
+
+            const { error } = await supabaseClient
+                .from('projects')
+                .update({ task_statuses: currentStatuses })
+                .eq('id', projectId)
+                .eq('studio_id', userProfile.studio_id);
+
+            if (error) {
+                return await appAlert(
+                    'Configurazione richiesta',
+                    'Per salvare lo stato delle attività va prima aggiunta la colonna task_statuses nella tabella projects. Ti preparo lo SQL da eseguire su Supabase.',
+                    'danger'
+                );
+            }
+
+            project.task_statuses = currentStatuses;
+            renderProjects();
+            showProjectDetail(projectId);
+        }
 
         function openEditExpenseModal(expenseId, projectId) {
             const expense = expenses.find(item => item.id === expenseId);

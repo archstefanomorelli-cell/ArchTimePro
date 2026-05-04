@@ -146,6 +146,8 @@
                         return openEditExpenseModal(trigger.dataset.expenseId, projectId);
                     case 'delete-expense':
                         return deleteExpense(trigger.dataset.expenseId, projectId);
+                    case 'set-task-status':
+                        return setTaskStatus(projectId, task, trigger.dataset.status);
                     case 'edit-entry':
                         return openEditEntryModal(entryId);
                     case 'delete-entry':

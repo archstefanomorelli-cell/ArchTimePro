@@ -60,6 +60,8 @@ Stato: beta su dominio definitivo attiva.
 - Risolto blocco Brevo `525 5.7.1 Unauthorized IP address` disattivando/autorizzando il blocco IP e verificato invio email Auth.
 - Forzato redirect conferma registrazione e reset password verso `https://www.archtimepro.it/app.html`.
 - Riposizionata la landing page attorno al payoff "margini chiari, zero gestionale da imparare", valorizzando semplicità, privacy finanziaria, collaboratori gratuiti, report PDF e aderenza a studi tecnici/piccole imprese.
+- Avviato indicatore sperimentale "Ritmo progetto": confronto tra costi consumati e stato delle attività, con barra compatta in dashboard e aggiornamento stati nel dettaglio progetto.
+- Aggiunto script SQL `docs/sql/phase-3-project-rhythm.sql` per salvare `task_statuses` sui progetti e aggiornare la RPC `get_projects_for_app`.
 
 ## Sicurezza dati economici
 
