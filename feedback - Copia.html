@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Feedback Beta | Arch Time Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #ffffff; color: #0f172a; -webkit-font-smoothing: antialiased; }
+        .bg-grid { background-image: radial-gradient(#e2e8f0 1px, transparent 1px); background-size: 30px 30px; }
+    </style>
+</head>
+<body class="selection:bg-indigo-100 selection:text-indigo-900">
+    <header class="fixed top-0 w-full bg-white/70 backdrop-blur-xl border-b border-slate-100 z-50 transition-all">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html" class="flex items-center">
+                <span class="text-xl font-black tracking-tighter text-slate-900 uppercase">Arch <span class="text-indigo-600">Time</span> Pro</span>
+            </a>
+            <div class="flex items-center gap-6">
+                <nav class="hidden md:flex gap-8">
+                    <a href="guida.html" class="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors">Il Metodo</a>
+                    <a href="index.html#prezzi" class="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors">Prezzi</a>
+                </nav>
+                <a href="app.html" class="bg-slate-900 text-white text-xs font-black uppercase tracking-widest px-5 py-3 rounded-xl hover:bg-indigo-600 transition-all shadow-lg active:scale-95">Accedi</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="relative pt-36 pb-16 lg:pt-44 lg:pb-20 overflow-hidden bg-grid">
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[520px] bg-indigo-50/70 rounded-full blur-[120px] -z-10"></div>
+            <div class="max-w-6xl mx-auto px-6 grid lg:grid-cols-[1.1fr_0.9fr] gap-12 items-center">
+                <div>
+                    <div class="inline-flex items-center px-4 py-2 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-[11px] font-black uppercase tracking-[0.2em] mb-7 shadow-sm">
+                        Beta privata
+                    </div>
+                    <h1 class="text-5xl lg:text-7xl font-black tracking-tighter leading-[0.95] mb-7 text-slate-950">
+                        Aiutaci a rifinire Arch Time Pro.
+                    </h1>
+                    <p class="text-lg lg:text-xl text-slate-500 font-medium leading-relaxed max-w-2xl">
+                        Usa l'app come in una commessa reale: crea un lavoro, registra ore e spese, controlla margini e report. Poi raccontaci cosa è stato chiaro, cosa no e cosa ti servirebbe per usarla ogni giorno.
+                    </p>
+                    <div class="mt-7 bg-white border border-indigo-100 rounded-2xl p-5 shadow-sm">
+                        <div class="flex gap-3">
+                            <i data-lucide="shield-check" class="w-5 h-5 text-indigo-600 shrink-0 mt-0.5"></i>
+                            <p class="text-sm text-slate-600 leading-relaxed">
+                                Nota privacy beta: i dati sono isolati tra studi e ruoli tramite Supabase RLS. La cifratura economica lato cliente, per rendere budget, costi e margini illeggibili anche al gestore tecnico del database, è prevista prima del lancio commerciale.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-4 mt-10">
+                        <a href="app.html" class="inline-flex items-center justify-center gap-3 bg-indigo-600 text-white text-sm font-black uppercase tracking-widest px-7 py-4 rounded-xl hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-500/20 active:scale-95">
+                            Prova la beta <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                        </a>
+                        <a href="#feedback-form" class="inline-flex items-center justify-center gap-3 bg-white text-slate-900 border border-slate-200 text-sm font-black uppercase tracking-widest px-7 py-4 rounded-xl hover:bg-slate-50 transition-all shadow-sm active:scale-95">
+                            Scrivi feedback <i data-lucide="message-square-text" class="w-5 h-5"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-2xl p-6 lg:p-8 shadow-2xl shadow-slate-200/60">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-11 h-11 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center border border-indigo-100">
+                            <i data-lucide="clipboard-check" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-black text-slate-900">Test rapido</h2>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">10 minuti bastano</p>
+                        </div>
+                    </div>
+                    <ol class="space-y-3 text-sm text-slate-600 font-medium">
+                        <li class="flex gap-3"><span class="text-indigo-600 font-black">1.</span><span>Crea un account e completa il primo accesso.</span></li>
+                        <li class="flex gap-3"><span class="text-indigo-600 font-black">2.</span><span>Crea un lavoro o cantiere con budget realistico.</span></li>
+                        <li class="flex gap-3"><span class="text-indigo-600 font-black">3.</span><span>Registra una voce con timer o inserimento manuale.</span></li>
+                        <li class="flex gap-3"><span class="text-indigo-600 font-black">4.</span><span>Aggiungi una spesa e controlla come cambiano i margini.</span></li>
+                        <li class="flex gap-3"><span class="text-indigo-600 font-black">5.</span><span>Apri report e dashboard, poi segnala dubbi o blocchi.</span></li>
+                    </ol>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-16 lg:py-24 bg-white">
+            <div class="max-w-6xl mx-auto px-6">
+                <div class="grid lg:grid-cols-3 gap-6">
+                    <article class="bg-slate-50 border border-slate-200 rounded-2xl p-6 shadow-sm">
+                        <i data-lucide="lightbulb" class="w-6 h-6 text-amber-500 mb-5"></i>
+                        <h2 class="text-xl font-black text-slate-900 mb-3">Valore</h2>
+                        <p class="text-sm text-slate-600 leading-relaxed">In quale momento hai capito meglio a cosa serve? Il controllo dei margini ti sembra utile per il tuo lavoro reale?</p>
+                    </article>
+                    <article class="bg-slate-50 border border-slate-200 rounded-2xl p-6 shadow-sm">
+                        <i data-lucide="mouse-pointer-click" class="w-6 h-6 text-indigo-600 mb-5"></i>
+                        <h2 class="text-xl font-black text-slate-900 mb-3">Uso</h2>
+                        <p class="text-sm text-slate-600 leading-relaxed">Dove ti sei fermato? Quale schermata, campo o pulsante non era immediato? Useresti davvero il timer durante la giornata?</p>
+                    </article>
+                    <article class="bg-slate-50 border border-slate-200 rounded-2xl p-6 shadow-sm">
+                        <i data-lucide="wrench" class="w-6 h-6 text-emerald-600 mb-5"></i>
+                        <h2 class="text-xl font-black text-slate-900 mb-3">Mancanze</h2>
+                        <p class="text-sm text-slate-600 leading-relaxed">Cosa manca per adottarla nel tuo studio o nella tua impresa? Report, permessi, export, mobile, flussi interni?</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="feedback-form" class="py-16 lg:py-20 bg-slate-50 border-y border-slate-200">
+            <div class="max-w-4xl mx-auto px-6">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl lg:text-4xl font-black text-slate-900 tracking-tight mb-4">Lascia il tuo feedback</h2>
+                    <p class="text-slate-500 font-medium">Più il messaggio è preciso, più velocemente possiamo migliorare il prodotto.</p>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-2xl p-6 lg:p-8 shadow-sm">
+                    <form id="beta-feedback-form" class="space-y-5">
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="feedback-name" class="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400 block mb-2">Nome</label>
+                                <input id="feedback-name" name="name" type="text" maxlength="120" autocomplete="name" class="w-full border border-slate-200 rounded-xl p-3.5 text-sm outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all" placeholder="Facoltativo">
+                            </div>
+                            <div>
+                                <label for="feedback-email" class="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400 block mb-2">Email</label>
+                                <input id="feedback-email" name="email" type="email" maxlength="160" autocomplete="email" class="w-full border border-slate-200 rounded-xl p-3.5 text-sm outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all" placeholder="Facoltativa">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="feedback-profile" class="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400 block mb-2">Profilo</label>
+                            <select id="feedback-profile" name="profile" class="w-full border border-slate-200 rounded-xl p-3.5 text-sm outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all bg-white">
+                                <option value="">Seleziona profilo</option>
+                                <option value="studio_tecnico">Studio tecnico</option>
+                                <option value="impresa_edile">Impresa edile</option>
+                                <option value="collaboratore">Collaboratore</option>
+                                <option value="altro">Altro</option>
+                            </select>
+                        </div>
+
+                        <div class="hidden" aria-hidden="true">
+                            <label for="feedback-company">Azienda</label>
+                            <input id="feedback-company" name="company" type="text" tabindex="-1" autocomplete="off">
+                        </div>
+
+                        <div>
+                            <label for="feedback-message" class="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400 block mb-2">Feedback</label>
+                            <textarea id="feedback-message" name="message" required minlength="10" maxlength="3000" rows="7" class="w-full border border-slate-200 rounded-xl p-3.5 text-sm outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all resize-y" placeholder="Racconta cosa hai provato, cosa non era chiaro, eventuali bug o cosa ti servirebbe per usarla davvero."></textarea>
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
+                            <p class="text-xs text-slate-500 leading-relaxed max-w-xl">Il feedback viene salvato nella lista beta interna. Non inserire dati economici reali o informazioni riservate.</p>
+                            <button id="feedback-submit" type="submit" class="inline-flex items-center justify-center gap-3 bg-slate-900 text-white text-sm font-black uppercase tracking-widest px-7 py-4 rounded-xl hover:bg-indigo-600 transition-all shadow-lg active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed">
+                                Invia feedback
+                            </button>
+                        </div>
+
+                        <div id="feedback-form-status" class="hidden" role="status" aria-live="polite"></div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-950 py-16 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+        <div class="max-w-5xl mx-auto px-6 relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
+            <span class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">ARCH TIME PRO &copy; 2026</span>
+            <div class="flex gap-8 text-xs font-bold text-slate-400 uppercase tracking-widest">
+                <a href="index.html" class="hover:text-indigo-400 transition-colors">Home</a>
+                <a href="guida.html" class="hover:text-indigo-400 transition-colors">Guida</a>
+                <a href="sicurezza.html" class="hover:text-indigo-400 transition-colors">Sicurezza</a>
+                <a href="privacy.html" class="hover:text-indigo-400 transition-colors">Privacy</a>
+                <a href="termini.html" class="hover:text-indigo-400 transition-colors">Termini</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/00-runtime-config.js?v=phase3-feedback-2026-05-02"></script>
+    <script src="assets/js/08-public-feedback.js?v=phase3-feedback-2026-05-02"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
