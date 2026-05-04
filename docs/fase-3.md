@@ -59,6 +59,7 @@ Stato: beta su dominio definitivo attiva.
 - Aggiunto redirect esplicito al dominio definitivo nella registrazione Supabase Auth e messaggio post-signup con conferma email.
 - Risolto blocco Brevo `525 5.7.1 Unauthorized IP address` disattivando/autorizzando il blocco IP e verificato invio email Auth.
 - Forzato redirect conferma registrazione e reset password verso `https://www.archtimepro.it/app.html`.
+- Riposizionata la landing page attorno al payoff "margini chiari, zero gestionale da imparare", valorizzando semplicità, privacy finanziaria, collaboratori gratuiti, report PDF e aderenza a studi tecnici/piccole imprese.
 
 ## Sicurezza dati economici
 
