@@ -702,6 +702,22 @@
             showProjectDetail(projectId);
             await appAlert("Fatto", "Spesa aggiornata correttamente.", "success");
         }
+
+        function openAnalyticsDetail() {
+            document.getElementById('modal-analytics-detail')?.classList.remove('force-hide');
+            renderStrategicCharts();
+            lucide.createIcons();
+        }
+
+        function closeAnalyticsDetail() {
+            document.getElementById('modal-analytics-detail')?.classList.add('force-hide');
+            ['marginTrend', 'risk', 'tasks'].forEach(chartKey => {
+                if (charts[chartKey]) {
+                    charts[chartKey].destroy();
+                    charts[chartKey] = null;
+                }
+            });
+        }
         
         function renderStrategicCharts() {
             if(!document.body.classList.contains('is-admin')) return;
@@ -876,12 +892,21 @@
             });
 
             const trendDelta = marginTrend.length > 1 ? marginTrend[marginTrend.length - 1].margin - marginTrend[marginTrend.length - 2].margin : 0;
-            const trendLabel = document.getElementById('analytics-trend-label');
-            if (trendLabel) {
-                trendLabel.innerText = trendDelta < 0 ? `- ${formatMoney(Math.abs(trendDelta), 0)} ultima settimana` : `+ ${formatMoney(trendDelta, 0)} ultima settimana`;
-                trendLabel.className = trendDelta < 0
-                    ? 'text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-lg border bg-red-50 text-red-700 border-red-200'
-                    : 'text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-lg border bg-emerald-50 text-emerald-700 border-emerald-200';
+            const trendText = trendDelta < 0 ? `- ${formatMoney(Math.abs(trendDelta), 0)} ultima settimana` : `+ ${formatMoney(trendDelta, 0)} ultima settimana`;
+            const trendClass = trendDelta < 0
+                ? 'text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-lg border bg-red-50 text-red-700 border-red-200'
+                : 'text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-lg border bg-emerald-50 text-emerald-700 border-emerald-200';
+            ['analytics-trend-label', 'analytics-modal-trend-label'].forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.innerText = trendText;
+                el.className = trendClass;
+            });
+
+            const analyticsModal = document.getElementById('modal-analytics-detail');
+            if (!analyticsModal || analyticsModal.classList.contains('force-hide')) {
+                lucide.createIcons();
+                return;
             }
             
             if(charts.marginTrend) charts.marginTrend.destroy();

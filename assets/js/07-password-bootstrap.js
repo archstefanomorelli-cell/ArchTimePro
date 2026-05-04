@@ -59,6 +59,8 @@
             bindClick('btn-open-edit-task-builder', () => openTaskBuilder('edit'));
             bindClick('btn-save-project-edit', saveModalProjectEdit);
             bindClick('btn-close-report', closeReportModal);
+            bindClick('btn-open-analytics-detail', openAnalyticsDetail);
+            bindClick('btn-close-analytics-detail', closeAnalyticsDetail);
             bindClick('btn-close-team-report', closeTeamReportModal);
             bindClick('btn-generate-team-report', generateTeamPDFReport);
             bindClick('btn-close-forgot-password', closeForgotPassword);
