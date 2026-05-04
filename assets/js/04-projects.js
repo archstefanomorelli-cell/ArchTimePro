@@ -557,29 +557,18 @@
             </div>`;
         }
 
-        function renderTaskStats(taskStats, budget) {
-            const sortedTaskNames = Object.keys(taskStats).sort((a, b) => taskStats[b].h - taskStats[a].h);
-            const rows = sortedTaskNames.map(taskName => {
-                const stat = taskStats[taskName];
-                const percent = budget > 0 ? Math.min((stat.c / budget) * 100, 100).toFixed(1) : 0;
-                const isZero = stat.h === 0;
-                return `
-                            <div>
-                                <div class="flex justify-between items-end mb-1.5">
-                                    <span class="font-bold ${isZero ? 'text-slate-400' : 'text-slate-700'} text-xs">${escapeHtml(taskName)}</span>
-                                    <span class="text-[10px] font-mono font-bold text-slate-500">${formatMoney(stat.c, 0)} (${formatTime(stat.h)})</span>
-                                </div>
-                                <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                                    <div class="${isZero ? 'bg-slate-200' : 'bg-primary-500'} h-full" style="width: ${percent}%"></div>
-                                </div>
-                            </div>`;
-            }).join('');
-
+        function compactTaskCostBarHtml(stat, budget, isZero) {
+            const percent = budget > 0 ? Math.min((stat.c / budget) * 100, 100).toFixed(1) : 0;
             return `
-                    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-                        <h3 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200 pb-2 mb-4 flex items-center gap-1.5"><i data-lucide="layers" class="w-3.5 h-3.5"></i> Per attività (ore)</h3>
-                        <div class="space-y-4">${rows}</div>
-                    </div>`;
+                <div class="min-w-[120px]">
+                    <div class="flex justify-between items-center gap-2 mb-1">
+                        <span class="text-[10px] font-mono font-black text-slate-600">${formatMoney(stat.c, 0)}</span>
+                        <span class="text-[9px] font-bold text-slate-400">${formatTime(stat.h)}</span>
+                    </div>
+                    <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                        <div class="${isZero ? 'bg-slate-200' : 'bg-primary-500'} h-full" style="width: ${percent}%"></div>
+                    </div>
+                </div>`;
         }
 
         function taskStatusButtonHtml(projectId, taskName, value, label, activeValue) {
@@ -589,29 +578,33 @@
                 : (value === 'doing' ? 'bg-primary-600 text-white border-primary-600' : 'bg-slate-200 text-slate-700 border-slate-200');
             const idleClass = 'bg-white text-slate-500 border-slate-200 hover:border-primary-200 hover:text-primary-600';
 
-            return `<button data-ui-action="set-task-status" data-project-id="${escapeAttr(projectId)}" data-task="${escapeAttr(taskName)}" data-status="${value}" class="px-2.5 py-1.5 rounded-lg border text-[10px] font-black uppercase tracking-wider transition-all ${isActive ? activeClass : idleClass}">${label}</button>`;
+            return `<button data-ui-action="set-task-status" data-project-id="${escapeAttr(projectId)}" data-task="${escapeAttr(taskName)}" data-status="${value}" class="px-2 py-1 rounded-md border text-[9px] font-black uppercase tracking-wider transition-all whitespace-nowrap ${isActive ? activeClass : idleClass}">${label}</button>`;
         }
 
         function renderProjectRhythmPanel(data) {
             const rhythm = getProjectRhythmSummary(data.project);
             if (!rhythm) return '';
 
-            const tasks = data.project.tasks || [];
+            const tasks = (data.project.tasks || []).slice().sort((a, b) => {
+                const aStat = data.taskStats[a] || { c: 0 };
+                const bStat = data.taskStats[b] || { c: 0 };
+                return bStat.c - aStat.c;
+            });
             const rows = tasks.map(taskName => {
                 const stat = data.taskStats[taskName] || { h: 0, c: 0 };
                 const status = rhythm.statuses[taskName] || 'todo';
+                const isZero = Number(stat.h || 0) === 0 && Number(stat.c || 0) === 0;
                 return `
-                    <div class="bg-white border border-slate-200 rounded-xl p-3 shadow-sm">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                            <div class="min-w-0">
-                                <p class="text-xs font-black text-slate-800 truncate">${escapeHtml(taskName)}</p>
-                                <p class="text-[10px] font-bold text-slate-400 mt-1">${formatTime(stat.h)} · ${formatMoney(stat.c, 0)}</p>
-                            </div>
-                            <div class="flex flex-wrap gap-1.5">
-                                ${taskStatusButtonHtml(data.project.id, taskName, 'todo', 'Da fare', status)}
-                                ${taskStatusButtonHtml(data.project.id, taskName, 'doing', 'In corso', status)}
-                                ${taskStatusButtonHtml(data.project.id, taskName, 'done', 'Completata', status)}
-                            </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_160px_230px] gap-3 lg:gap-4 items-center bg-white border border-slate-200 rounded-xl p-3 shadow-sm">
+                        <div class="min-w-0">
+                            <p class="text-xs font-black ${isZero ? 'text-slate-400' : 'text-slate-800'} truncate">${escapeHtml(taskName)}</p>
+                            <p class="text-[9px] font-bold text-slate-400 mt-0.5 uppercase tracking-wider">Assorbimento attività</p>
+                        </div>
+                        ${compactTaskCostBarHtml(stat, data.project.budget, isZero)}
+                        <div class="flex flex-wrap lg:justify-end gap-1.5">
+                            ${taskStatusButtonHtml(data.project.id, taskName, 'todo', 'Da fare', status)}
+                            ${taskStatusButtonHtml(data.project.id, taskName, 'doing', 'In corso', status)}
+                            ${taskStatusButtonHtml(data.project.id, taskName, 'done', 'Completata', status)}
                         </div>
                     </div>`;
             }).join('');
@@ -638,6 +631,10 @@
                     <div class="relative w-full bg-slate-100 h-3 rounded-full mb-5">
                         <div class="${rhythm.barClass} h-full rounded-full" style="width: ${Math.min(rhythm.costPercent, 100)}%"></div>
                         <span class="absolute top-1/2 -translate-y-1/2 w-1.5 h-5 rounded-full ${rhythm.markerClass} shadow-sm" style="left: calc(${Math.min(rhythm.operationalPercent, 100)}% - 3px)"></span>
+                    </div>
+                    <div class="flex justify-between items-center mb-2">
+                        <p class="text-[10px] font-black uppercase tracking-wider text-slate-400">Attività</p>
+                        <p class="text-[10px] font-bold text-slate-400 hidden lg:block">Costo / ore / stato</p>
                     </div>
                     <div class="space-y-2">${rows}</div>
                     <p class="text-[10px] text-slate-400 font-medium mt-4 leading-relaxed">Indicatore sperimentale: confronta i costi già consumati con lo stato dichiarato delle attività. Serve come allarme operativo, non come percentuale contabile del progetto.</p>
@@ -704,7 +701,6 @@
             ${renderProjectRhythmPanel(data)}
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 pb-8 lg:pb-0">
                 <div class="space-y-8">
-                    ${renderTaskStats(data.taskStats, data.project.budget)}
                     ${renderTeamStats(data.teamStats)}
                 </div>
                 ${renderExpensesPanel(data.projectExpenses, projectId)}

@@ -62,6 +62,8 @@ Stato: beta su dominio definitivo attiva.
 - Riposizionata la landing page attorno al payoff "margini chiari, zero gestionale da imparare", valorizzando semplicità, privacy finanziaria, collaboratori gratuiti, report PDF e aderenza a studi tecnici/piccole imprese.
 - Avviato indicatore sperimentale "Ritmo progetto": confronto tra costi consumati e stato delle attività, con barra compatta in dashboard e aggiornamento stati nel dettaglio progetto.
 - Aggiunto script SQL `docs/sql/phase-3-project-rhythm.sql` per salvare `task_statuses` sui progetti e aggiornare la RPC `get_projects_for_app`.
+- Inserito "Ritmo progetto" anche nel racconto pubblico della landing come feature distintiva rispetto al semplice timesheet.
+- Compattato il dettaglio progetto unendo stati attività e assorbimento economico in una tabella unica, rimuovendo la duplicazione con la vecchia sezione "Per attività".
 
 ## Sicurezza dati economici
 
