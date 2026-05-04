@@ -839,12 +839,12 @@
             const insights = document.getElementById('analytics-insights');
             if (insights) {
                 insights.innerHTML = insightItems.map(item => `
-                    <div class="border rounded-2xl p-4 ${toneClasses[item.tone]}">
-                        <div class="flex items-center justify-between gap-3 mb-3">
+                    <div class="border rounded-xl p-3 ${toneClasses[item.tone]}">
+                        <div class="flex items-center justify-between gap-3 mb-2">
                             <span class="text-[10px] font-black uppercase tracking-wider">${escapeHtml(item.label)}</span>
                             <i data-lucide="${item.icon}" class="w-4 h-4"></i>
                         </div>
-                        <p class="text-lg font-black truncate tracking-tight">${escapeHtml(item.value)}</p>
+                        <p class="text-base font-black truncate tracking-tight">${escapeHtml(item.value)}</p>
                         <p class="text-[10px] font-bold uppercase tracking-wider opacity-75 mt-1">${escapeHtml(item.text)}</p>
                     </div>
                 `).join('');
