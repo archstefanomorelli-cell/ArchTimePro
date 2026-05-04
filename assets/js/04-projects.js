@@ -892,7 +892,9 @@
             });
 
             const trendDelta = marginTrend.length > 1 ? marginTrend[marginTrend.length - 1].margin - marginTrend[marginTrend.length - 2].margin : 0;
-            const trendText = trendDelta < 0 ? `- ${formatMoney(Math.abs(trendDelta), 0)} ultima settimana` : `+ ${formatMoney(trendDelta, 0)} ultima settimana`;
+            const trendText = Math.abs(trendDelta) < 0.01
+                ? 'Margine invariato'
+                : (trendDelta < 0 ? `- ${formatMoney(Math.abs(trendDelta), 0)} margine` : `+ ${formatMoney(trendDelta, 0)} margine`);
             const trendClass = trendDelta < 0
                 ? 'text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-lg border bg-red-50 text-red-700 border-red-200'
                 : 'text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-lg border bg-emerald-50 text-emerald-700 border-emerald-200';
