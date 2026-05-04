@@ -706,15 +706,22 @@
         function renderStrategicCharts() {
             if(!document.body.classList.contains('is-admin')) return;
             const activeProjects = projects.filter(p => !p.is_archived);
-            let totalBudget = 0, totalSpent = 0, projectSpend = {}; let totalTaskHours = 0;
+            let totalBudget = 0, totalSpent = 0, projectSpend = {};
+            const activeProjectIds = new Set(activeProjects.map(project => project.id));
+            const projectRows = activeProjects.map(project => {
+                const hoursCost = entries.filter(entry => entry.project_id === project.id).reduce((sum, entry) => sum + Number(entry.rate || 0), 0);
+                const expenseCost = expenses.filter(expense => expense.project_id === project.id).reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
+                const spent = hoursCost + expenseCost;
+                const budget = Number(project.budget || 0);
+                const margin = budget - spent;
+                const percent = budget > 0 ? (spent / budget) * 100 : (spent > 0 ? 100 : 0);
+                return { project, budget, spent, margin, percent };
+            });
             
-            activeProjects.forEach(p => { 
-                totalBudget += (p.budget || 0); 
-                const costHrs = entries.filter(e => e.project_id === p.id).reduce((s, e) => s + Number(e.rate || 0), 0); 
-                const costExp = expenses.filter(ex => ex.project_id === p.id).reduce((s, ex) => s + Number(ex.amount || 0), 0); 
-                const pSpent = costHrs + costExp; 
-                totalSpent += pSpent; 
-                projectSpend[p.name] = pSpent; 
+            projectRows.forEach(row => { 
+                totalBudget += row.budget; 
+                totalSpent += row.spent; 
+                projectSpend[row.project.name] = row.spent; 
             });
             
             const archivedBudget = projects.filter(p => p.is_archived).reduce((s,p) => s + p.budget, 0); 
@@ -774,54 +781,214 @@
                 cornerRadius: 10,
                 displayColors: false
             };
+
+            const gridColor = '#f1f5f9';
+            const tickFont = { size: 10, weight: 'bold' };
+            const activeEntries = entries.filter(entry => activeProjectIds.has(entry.project_id));
+            const activeExpenses = expenses.filter(expense => activeProjectIds.has(expense.project_id));
+            const overBudgetProjects = projectRows.filter(row => row.margin < 0);
+            const warningProjects = projectRows.filter(row => row.margin >= 0 && row.percent > 75);
+            const sortedRiskRows = [...projectRows].sort((a, b) => b.percent - a.percent).slice(0, 6);
+
+            const taskStats = {}; 
+            let totalTaskHours = 0;
+            activeEntries.forEach(entry => { 
+                const hrs = Number(entry.duration || 0); 
+                const taskName = entry.task || 'Altro';
+                if (!taskStats[taskName]) taskStats[taskName] = { hours: 0, cost: 0 };
+                taskStats[taskName].hours += hrs;
+                taskStats[taskName].cost += Number(entry.rate || 0);
+                totalTaskHours += hrs; 
+            });
+            const topTasks = Object.entries(taskStats).sort((a,b) => b[1].hours - a[1].hours).slice(0, 6);
+
+            const topTask = topTasks[0];
+            const worstProject = sortedRiskRows[0];
+            const insightItems = [
+                {
+                    icon: overBudgetProjects.length > 0 ? 'octagon-alert' : 'check-circle-2',
+                    label: 'Fuori budget',
+                    value: `${overBudgetProjects.length}`,
+                    text: overBudgetProjects.length > 0 ? 'Progetti con margine negativo' : 'Nessun progetto oltre budget',
+                    tone: overBudgetProjects.length > 0 ? 'red' : 'emerald'
+                },
+                {
+                    icon: warningProjects.length > 0 ? 'circle-alert' : 'shield-check',
+                    label: 'Da monitorare',
+                    value: `${warningProjects.length}`,
+                    text: 'Oltre il 75% del budget',
+                    tone: warningProjects.length > 0 ? 'amber' : 'slate'
+                },
+                {
+                    icon: 'timer',
+                    label: 'Assorbimento',
+                    value: topTask ? topTask[0] : '-',
+                    text: topTask ? `${formatTime(topTask[1].hours)} registrate` : 'Nessuna ora sui lavori attivi',
+                    tone: 'primary'
+                }
+            ];
+
+            const toneClasses = {
+                red: 'bg-red-50 border-red-200 text-red-700',
+                amber: 'bg-amber-50 border-amber-200 text-amber-700',
+                emerald: 'bg-emerald-50 border-emerald-200 text-emerald-700',
+                primary: 'bg-primary-50 border-primary-200 text-primary-700',
+                slate: 'bg-slate-50 border-slate-200 text-slate-600'
+            };
+
+            const insights = document.getElementById('analytics-insights');
+            if (insights) {
+                insights.innerHTML = insightItems.map(item => `
+                    <div class="border rounded-2xl p-4 ${toneClasses[item.tone]}">
+                        <div class="flex items-center justify-between gap-3 mb-3">
+                            <span class="text-[10px] font-black uppercase tracking-wider">${escapeHtml(item.label)}</span>
+                            <i data-lucide="${item.icon}" class="w-4 h-4"></i>
+                        </div>
+                        <p class="text-lg font-black truncate tracking-tight">${escapeHtml(item.value)}</p>
+                        <p class="text-[10px] font-bold uppercase tracking-wider opacity-75 mt-1">${escapeHtml(item.text)}</p>
+                    </div>
+                `).join('');
+            }
+
+            const weekStarts = [];
+            const start = new Date();
+            start.setHours(0, 0, 0, 0);
+            start.setDate(start.getDate() - 7 * 7);
+            for (let i = 0; i < 8; i++) {
+                const week = new Date(start);
+                week.setDate(start.getDate() + i * 7);
+                weekStarts.push(week);
+            }
+
+            const marginTrend = weekStarts.map((weekStart, index) => {
+                const nextWeek = new Date(weekStart);
+                nextWeek.setDate(weekStart.getDate() + 7);
+                const cumulativeEntryCost = activeEntries
+                    .filter(entry => new Date(entry.created_at) < nextWeek)
+                    .reduce((sum, entry) => sum + Number(entry.rate || 0), 0);
+                const cumulativeExpenseCost = activeExpenses
+                    .filter(expense => new Date(expense.created_at) < nextWeek)
+                    .reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
+                return {
+                    label: index === weekStarts.length - 1 ? 'Ora' : weekStart.toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit' }),
+                    margin: totalBudget - cumulativeEntryCost - cumulativeExpenseCost
+                };
+            });
+
+            const trendDelta = marginTrend.length > 1 ? marginTrend[marginTrend.length - 1].margin - marginTrend[marginTrend.length - 2].margin : 0;
+            const trendLabel = document.getElementById('analytics-trend-label');
+            if (trendLabel) {
+                trendLabel.innerText = trendDelta < 0 ? `- ${formatMoney(Math.abs(trendDelta), 0)} ultima settimana` : `+ ${formatMoney(trendDelta, 0)} ultima settimana`;
+                trendLabel.className = trendDelta < 0
+                    ? 'text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-lg border bg-red-50 text-red-700 border-red-200'
+                    : 'text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-lg border bg-emerald-50 text-emerald-700 border-emerald-200';
+            }
             
-            if(charts.global) charts.global.destroy();
-            charts.global = new Chart(document.getElementById('chart-global'), { 
-                type: 'bar', 
+            if(charts.marginTrend) charts.marginTrend.destroy();
+            charts.marginTrend = new Chart(document.getElementById('chart-margin-trend'), { 
+                type: 'line', 
                 data: { 
-                    labels: ['Portafoglio attivo'], 
-                    datasets: [ 
-                        { label: 'Costi ore e spese', data: [totalSpent], backgroundColor: theme.chartMainColor, borderRadius: 8, barThickness: 38 }, 
-                        { label: 'Budget', data: [totalBudget], backgroundColor: '#e2e8f0', hoverBackgroundColor: '#cbd5e1', borderRadius: 8, barThickness: 38 } 
-                    ]
+                    labels: marginTrend.map(item => item.label), 
+                    datasets: [{
+                        label: 'Margine residuo',
+                        data: marginTrend.map(item => item.margin),
+                        borderColor: theme.chartMainColor,
+                        backgroundColor: `${theme.chartMainColor}18`,
+                        fill: true,
+                        tension: 0.35,
+                        borderWidth: 3,
+                        pointRadius: 3,
+                        pointHoverRadius: 5,
+                        pointBackgroundColor: '#ffffff',
+                        pointBorderColor: theme.chartMainColor,
+                        pointBorderWidth: 2
+                    }]
                 }, 
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        x: { grid: { display: false }, ticks: { font: { size: 10, weight: 'bold' } } },
-                        y: { grid: { color: '#f1f5f9' }, ticks: { callback: value => formatMoney(value, 0), font: { size: 10 } } }
+                        x: { grid: { display: false }, ticks: { font: tickFont } },
+                        y: { grid: { color: gridColor }, ticks: { callback: value => formatMoney(value, 0), font: { size: 10 } } }
                     },
                     plugins: {
-                        legend: { position: 'bottom', labels: { usePointStyle: true, pointStyle: 'circle', boxWidth: 8, font: { size: 10, weight: 'bold' } } },
+                        legend: { display: false },
                         tooltip: chartTooltip
                     }
                 } 
             });
-            
-            const taskStats = {}; 
-            entries.filter(e => activeProjects.find(p => p.id === e.project_id)).forEach(e => { 
-                const hrs = Number(e.duration); 
-                taskStats[e.task||'Altro'] = (taskStats[e.task||'Altro']||0) + hrs; 
-                totalTaskHours += hrs; 
+
+            if(charts.risk) charts.risk.destroy();
+            charts.risk = new Chart(document.getElementById('chart-risk'), { 
+                type: 'bar', 
+                data: { 
+                    labels: sortedRiskRows.map(row => row.project.name), 
+                    datasets: [{
+                        label: 'Budget consumato',
+                        data: sortedRiskRows.map(row => Math.min(row.percent, 130)),
+                        backgroundColor: sortedRiskRows.map(row => row.margin < 0 ? '#ef4444' : (row.percent > 75 ? '#f59e0b' : theme.chartMainColor)),
+                        borderRadius: 8,
+                        barThickness: 18
+                    }]
+                }, 
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { min: 0, max: 130, grid: { color: gridColor }, ticks: { callback: value => `${value}%`, font: { size: 10 } } },
+                        y: { grid: { display: false }, ticks: { font: tickFont } }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            ...chartTooltip,
+                            callbacks: {
+                                label: context => {
+                                    const row = sortedRiskRows[context.dataIndex];
+                                    return `${Math.round(row.percent)}% consumato - margine ${formatMoney(row.margin, 0)}`;
+                                }
+                            }
+                        }
+                    }
+                } 
             });
-            
-            const topTasks = Object.entries(taskStats).sort((a,b) => b[1] - a[1]).slice(0, 5);
-            const taskLabelsWithPerc = topTasks.map(t => `${t[0]} - ${totalTaskHours > 0 ? Math.round((t[1] / totalTaskHours) * 100) : 0}%`);
-            
+
             if(charts.tasks) charts.tasks.destroy();
             charts.tasks = new Chart(document.getElementById('chart-tasks-dist'), { 
-                type: 'doughnut', 
+                type: 'bar', 
                 data: { 
-                    labels: taskLabelsWithPerc, 
-                    datasets: [{ data: topTasks.map(t=>t[1]), backgroundColor: theme.chartPalette, borderWidth: 3, borderColor: '#ffffff', hoverOffset: 4 }]
+                    labels: topTasks.map(task => task[0]), 
+                    datasets: [{
+                        label: 'Ore registrate',
+                        data: topTasks.map(task => task[1].hours),
+                        backgroundColor: topTasks.map((task, index) => theme.chartPalette[index % theme.chartPalette.length]),
+                        borderRadius: 8,
+                        barThickness: 18
+                    }]
                 }, 
                 options: { 
-                    responsive: true, maintainAspectRatio: false, cutout: '75%', 
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { grid: { color: gridColor }, ticks: { callback: value => `${value}h`, font: { size: 10 } } },
+                        y: { grid: { display: false }, ticks: { font: tickFont } }
+                    },
                     plugins: {
-                        legend: { position: 'right', labels: { usePointStyle: true, pointStyle: 'circle', boxWidth: 8, font: { size: 10, weight: 'bold' } } },
-                        tooltip: chartTooltip
+                        legend: { display: false },
+                        tooltip: {
+                            ...chartTooltip,
+                            callbacks: {
+                                label: context => {
+                                    const task = topTasks[context.dataIndex];
+                                    const percent = totalTaskHours > 0 ? Math.round((task[1].hours / totalTaskHours) * 100) : 0;
+                                    return `${formatTime(task[1].hours)} - ${percent}% del tempo attivo`;
+                                }
+                            }
+                        }
                     } 
                 } 
             });
+            lucide.createIcons();
         }
