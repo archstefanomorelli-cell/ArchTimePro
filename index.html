@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="it">
 <head>
     <meta charset="UTF-8">
@@ -29,7 +29,7 @@
                 <nav class="hidden md:flex gap-8">
                     <a href="#perche" class="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors">Perché</a>
                     <a href="guida.html" class="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors">Metodo</a>
-                    <a href="#prezzi" class="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors">Prezzi</a>
+                    <a href="#prezzi" class="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors">Beta</a>
                 </nav>
                 <div class="flex items-center gap-4">
                     <a href="app.html" class="text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors">Accedi</a>
@@ -224,11 +224,11 @@
     <section id="prezzi" class="py-32 bg-slate-50 border-t border-slate-200">
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-20">
-                <h2 class="text-[11px] font-black text-indigo-600 uppercase tracking-[0.2em] mb-4">Piani Trasparenti</h2>
-                <h3 class="text-4xl font-black text-slate-900 tracking-tight">Controllo semplice, costo prevedibile.</h3>
-                <p class="text-slate-500 mt-4 font-medium">Paghi solo la licenza della tua organizzazione. Tutti i collaboratori sono gratuiti.</p>
+                <h2 class="text-[11px] font-black text-indigo-600 uppercase tracking-[0.2em] mb-4">Beta su invito</h2>
+                <h3 class="text-4xl font-black text-slate-900 tracking-tight">Prova Arch Time Pro gratis durante la beta.</h3>
+                <p class="text-slate-500 mt-4 font-medium max-w-2xl mx-auto">In questa fase stiamo raccogliendo feedback da studi tecnici e piccole imprese selezionate. I piani commerciali saranno definiti dopo la beta.</p>
             </div>
-            <div id="pricing-grid" class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto"></div>
+            <div id="pricing-grid" class="max-w-4xl mx-auto"></div>
         </div>
     </section>
 
@@ -272,21 +272,21 @@
 
                 <details class="bg-slate-50 border border-slate-200 rounded-2xl group cursor-pointer overflow-hidden transition-all shadow-sm">
                     <summary class="p-6 font-bold text-slate-900 flex justify-between items-center select-none group-open:bg-white transition-colors">
-                        I miei collaboratori o operai devono pagare per entrare?
+                        I miei collaboratori o operai devono pagare durante la beta?
                         <i data-lucide="chevron-down" class="text-slate-400 group-open:rotate-180 transition-transform"></i>
                     </summary>
                     <div class="px-6 pb-6 pt-4 text-sm text-slate-600 leading-relaxed border-t border-slate-100 bg-white">
-                        No. Arch Time Pro adotta un modello di pricing basato sull'organizzazione. Paghi una sola licenza manager e puoi invitare collaboratori o dipendenti staff senza costi aggiuntivi.
+                        No. Durante la beta l'accesso è gratuito per gli studi invitati. Anche i collaboratori possono entrare senza costi, così il team può testare il flusso reale di lavoro.
                     </div>
                 </details>
 
                 <details class="bg-slate-50 border border-slate-200 rounded-2xl group cursor-pointer overflow-hidden transition-all shadow-sm">
                     <summary class="p-6 font-bold text-slate-900 flex justify-between items-center select-none group-open:bg-white transition-colors">
-                        Cosa succede se supero i 5 progetti nel piano Starter?
+                        Quanto costerà dopo la beta?
                         <i data-lucide="chevron-down" class="text-slate-400 group-open:rotate-180 transition-transform"></i>
                     </summary>
                     <div class="px-6 pb-6 pt-4 text-sm text-slate-600 leading-relaxed border-t border-slate-100 bg-white">
-                        Il sistema ti chiederà di archiviare uno dei lavori attivi prima di poterne creare uno nuovo. In alternativa, potrai passare al piano Premium in qualsiasi momento per sbloccare progetti e cantieri illimitati.
+                        Il prezzo non è ancora definitivo. La beta serve anche a capire quale formula sia più corretta per studi tecnici e piccole imprese, senza complicare l'accesso ai collaboratori.
                     </div>
                 </details>
 
@@ -328,91 +328,35 @@
     <script>
         lucide.createIcons();
 
-        let activePlan = 'premium'; 
-
         function renderPricing() {
             const grid = document.getElementById('pricing-grid');
-            const isStarter = activePlan === 'starter';
-            const isPremium = activePlan === 'premium';
-
-            const starterHTML = `
-                <div data-plan="starter" class="pricing-card ${isStarter ? 'bg-slate-950 border-4 border-indigo-600 shadow-2xl shadow-indigo-500/20 transform md:-translate-y-4' : 'bg-white border border-slate-200 shadow-sm transform md:translate-y-0'} rounded-[2.5rem] p-10 flex flex-col relative cursor-pointer">
-                    ${isStarter ? `
+            grid.innerHTML = `
+                <div class="bg-slate-950 border-4 border-indigo-600 shadow-2xl shadow-indigo-500/20 rounded-[2.5rem] p-8 lg:p-10 relative overflow-hidden">
                     <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-indigo-600 text-white text-[11px] font-black uppercase tracking-[0.2em] px-6 py-2 rounded-full shadow-lg whitespace-nowrap">
-                        Piano Selezionato
+                        Accesso gratuito
                     </div>
-                    ` : ''}
-                    
-                    <div class="mb-8 ${isStarter ? 'pt-2' : ''}">
-                        <span class="text-[10px] font-black ${isStarter ? 'text-indigo-400' : 'text-slate-400'} uppercase tracking-widest block mb-2 text-center">Per piccoli team e ditte individuali</span>
-                        <h4 class="text-2xl font-black ${isStarter ? 'text-white' : 'text-slate-900'} text-center mb-6">Piano Starter</h4>
-                        <div class="flex items-baseline justify-center gap-1">
-                            <span class="text-5xl font-black ${isStarter ? 'text-white' : 'text-slate-900'} tracking-tight">€29,99</span>
-                            <span class="${isStarter ? 'text-slate-400' : 'text-slate-500'} font-bold">/mese</span>
+                    <div class="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-8 lg:gap-12 items-center pt-4">
+                        <div>
+                            <span class="text-[10px] font-black text-indigo-400 uppercase tracking-widest block mb-3">Per i primi studi tester</span>
+                            <h4 class="text-3xl lg:text-4xl font-black text-white tracking-tight mb-4">Beta gratuita su invito</h4>
+                            <p class="text-slate-300 text-sm lg:text-base leading-relaxed font-medium">Durante questa fase puoi usare Arch Time Pro senza costi, creare progetti reali, invitare collaboratori e inviarci feedback sull'esperienza.</p>
+                        </div>
+                        <div class="bg-white/5 border border-white/10 rounded-2xl p-5 lg:p-6">
+                            <ul class="space-y-4 mb-6">
+                                <li class="flex items-center gap-3 text-indigo-100 text-sm font-bold"><i data-lucide="check" class="text-indigo-400 w-5 h-5 shrink-0"></i> Accesso completo durante la beta</li>
+                                <li class="flex items-center gap-3 text-indigo-100 text-sm font-bold"><i data-lucide="check" class="text-indigo-400 w-5 h-5 shrink-0"></i> Collaboratori invitabili senza costi</li>
+                                <li class="flex items-center gap-3 text-indigo-100 text-sm font-bold"><i data-lucide="check" class="text-indigo-400 w-5 h-5 shrink-0"></i> Test su progetti, ore, costi, report e ritmo progetto</li>
+                                <li class="flex items-center gap-3 text-slate-300 text-sm font-medium"><i data-lucide="message-square" class="text-indigo-400 w-5 h-5 shrink-0"></i> I piani commerciali saranno definiti dopo i feedback</li>
+                            </ul>
+                            <a href="app.html" class="block w-full text-center bg-indigo-600 text-white hover:bg-indigo-500 shadow-xl shadow-indigo-600/30 text-sm font-bold py-4 rounded-xl transition-all active:scale-[0.98]">Entra nella beta</a>
                         </div>
                     </div>
-                    
-                    <ul class="space-y-4 mb-10 flex-grow ${isStarter ? 'text-white' : ''}">
-                        <li class="flex items-center gap-3 ${isStarter ? 'text-indigo-100' : 'text-slate-700'} text-sm font-bold"><i data-lucide="check" class="${isStarter ? 'text-indigo-400' : 'text-indigo-500'} w-5 h-5 shrink-0"></i> Fino a 5 lavori attivi</li>
-                        <li class="flex items-center gap-3 ${isStarter ? 'text-indigo-100' : 'text-slate-700'} text-sm font-bold"><i data-lucide="check" class="${isStarter ? 'text-indigo-400' : 'text-indigo-500'} w-5 h-5 shrink-0"></i> Collaboratori illimitati</li>
-                        <li class="flex items-center gap-3 ${isStarter ? 'text-indigo-200' : 'text-slate-600'} text-sm font-medium"><i data-lucide="check" class="${isStarter ? 'text-indigo-400' : 'text-indigo-500'} w-5 h-5 shrink-0"></i> Tracking ore e spese extra</li>
-                        <li class="flex items-center gap-3 ${isStarter ? 'text-indigo-200' : 'text-slate-600'} text-sm font-medium"><i data-lucide="check" class="${isStarter ? 'text-indigo-400' : 'text-indigo-500'} w-5 h-5 shrink-0"></i> Dashboard Margini</li>
-                        <li class="flex items-center gap-3 ${isStarter ? 'text-slate-500' : 'text-slate-400'} text-sm opacity-50"><i data-lucide="lock" class="w-4 h-4 shrink-0"></i> No creazione Template</li>
-                        <li class="flex items-center gap-3 ${isStarter ? 'text-slate-500' : 'text-slate-400'} text-sm opacity-50"><i data-lucide="lock" class="w-4 h-4 shrink-0"></i> No report in PDF</li>
-                    </ul>
-
-                    <a href="app.html" class="block w-full text-center ${isStarter ? 'bg-indigo-600 text-white hover:bg-indigo-500 shadow-xl shadow-indigo-600/30' : 'bg-slate-50 border border-slate-200 text-slate-900 hover:bg-slate-100 shadow-sm'} text-sm font-bold py-4 rounded-xl transition-all active:scale-[0.98]">Prova lo Starter</a>
-                </div>
-            `;
-
-            const premiumHTML = `
-                <div data-plan="premium" class="pricing-card ${isPremium ? 'bg-slate-950 border-4 border-indigo-600 shadow-2xl shadow-indigo-500/20 transform md:-translate-y-4' : 'bg-white border border-slate-200 shadow-sm transform md:translate-y-0'} rounded-[2.5rem] p-10 flex flex-col relative cursor-pointer">
-                    ${isPremium ? `
-                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-indigo-600 text-white text-[11px] font-black uppercase tracking-[0.2em] px-6 py-2 rounded-full shadow-lg whitespace-nowrap">
-                        Consigliato
-                    </div>
-                    ` : ''}
-                    
-                    <div class="mb-8 ${isPremium ? 'pt-2' : ''}">
-                        <span class="text-[10px] font-black ${isPremium ? 'text-indigo-400' : 'text-slate-400'} uppercase tracking-widest block mb-2 text-center">Per realtà strutturate</span>
-                        <h4 class="text-2xl font-black ${isPremium ? 'text-white' : 'text-slate-900'} text-center mb-6">Piano Premium</h4>
-                        <div class="flex items-baseline justify-center gap-1">
-                            <span class="text-5xl font-black ${isPremium ? 'text-white' : 'text-slate-900'} tracking-tight">€59,99</span>
-                            <span class="${isPremium ? 'text-slate-400' : 'text-slate-500'} font-bold">/mese</span>
-                        </div>
-                    </div>
-                    
-                    <ul class="space-y-4 mb-10 flex-grow ${isPremium ? 'text-white' : ''}">
-                        <li class="${isPremium ? 'text-indigo-200 border-slate-800' : 'text-slate-600 border-slate-100'} text-sm font-medium pb-4 border-b">
-                            Tutto quello che è compreso nello Starter e:
-                        </li>
-                        <li class="flex items-center gap-3 ${isPremium ? 'text-white' : 'text-slate-900'} text-sm font-bold pt-2"><i data-lucide="zap" class="${isPremium ? 'text-indigo-400' : 'text-amber-500'} w-5 h-5 shrink-0"></i> Progetti e Cantieri illimitati</li>
-                        <li class="flex items-center gap-3 ${isPremium ? 'text-white' : 'text-slate-900'} text-sm font-bold"><i data-lucide="zap" class="${isPremium ? 'text-indigo-400' : 'text-amber-500'} w-5 h-5 shrink-0"></i> Creazione Template Lavoro</li>
-                        <li class="flex items-center gap-3 ${isPremium ? 'text-white' : 'text-slate-900'} text-sm font-bold"><i data-lucide="zap" class="${isPremium ? 'text-indigo-400' : 'text-amber-500'} w-5 h-5 shrink-0"></i> Esportazione Report e SAL in PDF</li>
-                    </ul>
-
-                    <a href="app.html" class="block w-full text-center ${isPremium ? 'bg-indigo-600 text-white hover:bg-indigo-500 shadow-xl shadow-indigo-600/30' : 'bg-slate-50 border border-slate-200 text-slate-900 hover:bg-slate-100 shadow-sm'} text-sm font-bold py-4 rounded-xl transition-all active:scale-[0.98]">Inizia il Premium</a>
-                </div>
-            `;
-
-            grid.innerHTML = starterHTML + premiumHTML;
+                </div>`;
             lucide.createIcons();
         }
-
-        function selectPlan(plan) {
-            if (activePlan !== plan) {
-                activePlan = plan;
-                renderPricing();
-            }
-        }
-
-        document.addEventListener('click', (event) => {
-            const planCard = event.target.closest('[data-plan]');
-            if (!planCard) return;
-            selectPlan(planCard.dataset.plan);
-        });
 
         document.addEventListener('DOMContentLoaded', renderPricing);
     </script>
 </body>
 </html>
+

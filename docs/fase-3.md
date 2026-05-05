@@ -65,6 +65,7 @@ Stato: beta su dominio definitivo attiva.
 - Inserito "Ritmo progetto" anche nel racconto pubblico della landing come feature distintiva rispetto al semplice timesheet.
 - Compattato il dettaglio progetto unendo stati attività e assorbimento economico in una tabella unica, rimuovendo la duplicazione con la vecchia sezione "Per attività".
 - La tabella compatta delle attività nel dettaglio progetto rispetta l'ordine impostato nel progetto, così resta coerente con il flusso operativo.
+- Rimossa dalla landing l'indicazione degli importi futuri, sostituendo la sezione prezzi con "Beta gratuita su invito" per la prima fase di test con studi selezionati.
 
 ## Sicurezza dati economici
 
