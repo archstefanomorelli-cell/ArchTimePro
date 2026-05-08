@@ -81,6 +81,12 @@
             document.getElementById('edit-entry-hours')?.addEventListener('input', updateEditCost);
             document.getElementById('edit-entry-hours')?.addEventListener('blur', () => normalizeDurationField('edit-entry-hours'));
             document.getElementById('edit-entry-project')?.addEventListener('change', updateEditTaskDropdown);
+            document.addEventListener('blur', event => {
+                if (event.target?.classList?.contains('task-estimate-input')) {
+                    const hours = parseDurationInput(event.target.value);
+                    if (!isNaN(hours) && hours > 0) event.target.value = formatTime(hours);
+                }
+            }, true);
 
             document.querySelectorAll('[data-action="logout"]').forEach(button => {
                 button.addEventListener('click', handleLogout);

@@ -228,6 +228,7 @@ const ARCH_TIME_CONFIG = window.ARCH_TIME_CONFIG || {};
         }
 
         let activityCatalog = [], projectTemplates = [], newProjectTasks = [], editProjectTasks = [], newTemplateTasks = [];
+        let newProjectEstimates = {}, editProjectEstimates = {};
         let editingTemplateIndex = null, editingCatalogTask = null, taskBuilderMode = 'new', tempBuilderTasks = [];
 
         function showCustomDialog(options) {
