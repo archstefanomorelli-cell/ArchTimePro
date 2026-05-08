@@ -37,13 +37,35 @@
 
                 return inDate;
             }).sort((a, b) => {
-                const dateDiff = new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-                if (dateDiff !== 0) return dateDiff;
+                const aSort = getEntrySortData(a);
+                const bSort = getEntrySortData(b);
 
-                const aNotes = parseEntryNotes(a.notes);
-                const bNotes = parseEntryNotes(b.notes);
-                return String(bNotes.startTime || '').localeCompare(String(aNotes.startTime || ''));
+                if (aSort.day !== bSort.day) return bSort.day - aSort.day;
+                if (aSort.time !== bSort.time) return aSort.time - bSort.time;
+                return bSort.createdAt - aSort.createdAt;
             });
+        }
+
+        function getEntrySortData(entry) {
+            const createdAt = new Date(entry.created_at);
+            const activityDay = new Date(createdAt);
+            activityDay.setHours(0, 0, 0, 0);
+
+            const parsedNotes = parseEntryNotes(entry.notes);
+            const time = parsedNotes.startTime
+                ? timeStringToMinutes(parsedNotes.startTime)
+                : (createdAt.getHours() * 60 + createdAt.getMinutes());
+
+            return {
+                day: activityDay.getTime(),
+                time,
+                createdAt: createdAt.getTime()
+            };
+        }
+
+        function timeStringToMinutes(value) {
+            const [hours, minutes] = String(value || '00:00').split(':').map(Number);
+            return ((hours || 0) * 60) + (minutes || 0);
         }
 
         function parseEntryNotes(notes) {
