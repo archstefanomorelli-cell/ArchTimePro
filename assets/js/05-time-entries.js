@@ -119,12 +119,20 @@
         function renderEntryDateGroupRow(item) {
             return `
 <tr class="bg-slate-100/80 border-y border-slate-200">
-    <td colspan="7" class="px-5 py-2 text-left">
+    <td colspan="6" class="px-5 py-2 text-left">
         <div class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-wider text-slate-500">
             <span class="w-1.5 h-1.5 rounded-full bg-primary-500"></span>
             ${item.dateGroupLabel}
         </div>
     </td>
+</tr>
+<tr class="bg-slate-50 text-slate-500 uppercase text-[10px] font-bold tracking-wider border-b border-slate-200">
+    <th class="px-5 py-3 text-center font-bold whitespace-nowrap">Team</th>
+    <th class="px-5 py-3 text-center font-bold w-full">Progetto</th>
+    <th class="px-5 py-3 text-center font-bold min-w-[150px]">Attività / Note</th>
+    <th class="px-5 py-3 text-center font-bold whitespace-nowrap">Tempo</th>
+    <th class="px-5 py-3 admin-only text-center font-bold whitespace-nowrap">Costo</th>
+    <th class="px-5 py-3 admin-only text-center font-bold whitespace-nowrap"></th>
 </tr>`;
         }
 
@@ -151,7 +159,6 @@
 
             return `
 <tr class="${item.bgClass} hover:bg-slate-100 border-b border-slate-100 transition-colors">
-    <td class="px-5 py-4 text-center font-bold text-slate-500 text-xs whitespace-nowrap">${item.dateLabel}</td>
     <td class="px-5 py-4 text-center whitespace-nowrap"><span class="bg-white border border-slate-200 text-slate-600 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm">${item.userName}</span></td>
     <td class="px-5 py-4 text-center font-black text-slate-900 tracking-tight w-full">${item.projectName}</td>
     <td class="px-5 py-4 min-w-[170px] text-center"><div class="inline-flex text-[11px] font-black text-primary-700 bg-primary-50 border border-primary-100 rounded-full px-2.5 py-1">${item.taskName}</div><div class="text-[11px] text-slate-400 mt-1.5 break-words">${item.notes}</div></td>

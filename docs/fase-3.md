@@ -70,6 +70,7 @@ Stato: beta su dominio definitivo attiva.
 - Centrata la tabella desktop del registro attività e ordinato il registro settimanale per data effettiva di svolgimento, con fallback sull'orario di inizio quando presente.
 - Corretto ordinamento registro: prima giorno attività, poi orario di inizio dichiarato, poi data tecnica di inserimento.
 - Aggiunte intestazioni di giornata nel registro desktop per rendere chiaro il raggruppamento delle attività dello stesso giorno.
+- Spostata l'intestazione colonne del registro sotto ogni giornata e rimossa la colonna data dalle singole righe desktop.
 
 ## Sicurezza dati economici
 
