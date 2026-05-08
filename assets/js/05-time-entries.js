@@ -36,6 +36,13 @@
                 }
 
                 return inDate;
+            }).sort((a, b) => {
+                const dateDiff = new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+                if (dateDiff !== 0) return dateDiff;
+
+                const aNotes = parseEntryNotes(a.notes);
+                const bNotes = parseEntryNotes(b.notes);
+                return String(bNotes.startTime || '').localeCompare(String(aNotes.startTime || ''));
             });
         }
 
@@ -52,6 +59,18 @@
                 startTime: timeMatch[1],
                 endTime: timeMatch[2]
             };
+        }
+
+        function entryDateToIso(dateValue) {
+            return dateValue ? new Date(`${dateValue}T12:00:00Z`).toISOString() : null;
+        }
+
+        function normalizeDurationField(inputId) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+
+            const hours = parseDurationInput(input.value);
+            if (!isNaN(hours) && hours > 0) input.value = formatTime(hours);
         }
 
         function getEntryDisplayData(entry, index) {
@@ -95,19 +114,19 @@
 
             return `
 <tr class="${item.bgClass} hover:bg-slate-100 border-b border-slate-100 transition-colors">
-    <td class="px-5 py-4 font-bold text-slate-500 text-xs whitespace-nowrap">${item.dateLabel}</td>
+    <td class="px-5 py-4 text-center font-bold text-slate-500 text-xs whitespace-nowrap">${item.dateLabel}</td>
     <td class="px-5 py-4 text-center whitespace-nowrap"><span class="bg-white border border-slate-200 text-slate-600 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm">${item.userName}</span></td>
     <td class="px-5 py-4 text-center font-black text-slate-900 tracking-tight w-full">${item.projectName}</td>
-    <td class="px-5 py-4 min-w-[170px]"><div class="inline-flex text-[11px] font-black text-primary-700 bg-primary-50 border border-primary-100 rounded-full px-2.5 py-1">${item.taskName}</div><div class="text-[11px] text-slate-400 mt-1.5 break-words">${item.notes}</div></td>
-    <td class="px-5 py-4 whitespace-nowrap">
+    <td class="px-5 py-4 min-w-[170px] text-center"><div class="inline-flex text-[11px] font-black text-primary-700 bg-primary-50 border border-primary-100 rounded-full px-2.5 py-1">${item.taskName}</div><div class="text-[11px] text-slate-400 mt-1.5 break-words">${item.notes}</div></td>
+    <td class="px-5 py-4 text-center whitespace-nowrap">
         <div class="inline-flex items-center justify-center font-mono font-black text-primary-700 bg-primary-50 border border-primary-100 px-2.5 py-1 rounded-lg">${item.duration}</div>
         ${renderEntryTimeRange(item)}
     </td>
     <td class="px-5 py-4 text-center admin-only whitespace-nowrap">
         <span class="font-mono text-slate-400 text-sm font-bold">${item.rate}</span>
     </td>
-    <td class="px-5 py-4 text-right admin-only whitespace-nowrap">
-        <div class="flex justify-end gap-2 items-center">
+    <td class="px-5 py-4 text-center admin-only whitespace-nowrap">
+        <div class="flex justify-center gap-2 items-center">
             ${renderEntryActions(item.id, 'w-4 h-4', 'text-slate-300 hover:text-primary-600 p-1.5 hover:bg-white rounded-lg transition-colors')}
         </div>
     </td>
@@ -283,7 +302,7 @@
                 entry_task: task,
                 entry_duration: hours,
                 entry_notes: notes,
-                entry_created_at: customDate ? new Date(customDate).toISOString() : null
+                entry_created_at: entryDateToIso(customDate)
             };
             const { error } = await supabaseClient.rpc('create_entry_for_app', payload);
             if (error) {
@@ -302,7 +321,7 @@
 
             const { data: prof } = await supabaseClient.from('profiles').select('*').eq('id', userProfile.id).single();
             const payload = { project_id: proj.id, project_name: proj.name, task, duration: hours, user_email: userProfile.email, user_name: prof.full_name, rate: (prof ? prof.hourly_cost : 0) * hours, studio_id: userProfile.studio_id, notes: notes };
-            if(customDate) payload.created_at = new Date(customDate).toISOString();
+            if(customDate) payload.created_at = entryDateToIso(customDate);
             await supabaseClient.from('entries').insert([payload]); 
             fetchEntries();
         }
@@ -332,14 +351,14 @@
                 const [eH, eM] = end.split(':').map(Number);
                 let diffMins = (eH * 60 + eM) - (sH * 60 + sM);
                 if(diffMins > 0) {
-                    document.getElementById('manual-hours').value = (diffMins / 60).toFixed(2);
+                    document.getElementById('manual-hours').value = formatTime(diffMins / 60);
                 }
             }
         }
         
         async function saveManualEntry() { 
             const pIdx = document.getElementById('manual-project').value; 
-            const h = parseFloat(document.getElementById('manual-hours').value); 
+            const h = parseDurationInput(document.getElementById('manual-hours').value); 
             const d = document.getElementById('manual-date').value; 
             const t = document.getElementById('manual-task').value; 
             let n = document.getElementById('manual-notes').value.trim(); 
@@ -376,7 +395,7 @@
 
         function updateEditCost() { 
             const userVal = document.getElementById('edit-entry-user').value; 
-            const hoursVal = parseFloat(document.getElementById('edit-entry-hours').value) || 0; 
+            const hoursVal = parseDurationInput(document.getElementById('edit-entry-hours').value) || 0; 
             const selectedProfile = profiles.find(pr => pr.full_name === userVal); 
             document.getElementById('edit-entry-cost').value = ((selectedProfile ? (selectedProfile.hourly_cost || 0) : 0) * hoursVal).toFixed(2); 
         }
@@ -397,7 +416,7 @@
             updateEditTaskDropdown(e.task);
             
             document.getElementById('edit-entry-notes').value = e.notes || ''; 
-            document.getElementById('edit-entry-hours').value = Number(e.duration).toFixed(2);
+            document.getElementById('edit-entry-hours').value = formatTime(Number(e.duration));
             updateEditCost(); 
             
             document.getElementById('modal-edit-entry').classList.remove('force-hide'); 
@@ -413,7 +432,7 @@
             const projId = document.getElementById('edit-entry-project').value; 
             const taskVal = document.getElementById('edit-entry-task').value; 
             const notesVal = document.getElementById('edit-entry-notes').value.trim(); 
-            const hoursVal = parseFloat(document.getElementById('edit-entry-hours').value); 
+            const hoursVal = parseDurationInput(document.getElementById('edit-entry-hours').value); 
             const costVal = parseFloat(document.getElementById('edit-entry-cost').value);
             
             if (!dateVal || isNaN(hoursVal) || isNaN(costVal) || !projId) return await appAlert("Attenzione", "Compila tutti i campi!", "danger");

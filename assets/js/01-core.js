@@ -114,11 +114,22 @@ const ARCH_TIME_CONFIG = window.ARCH_TIME_CONFIG || {};
         };
 
         function formatTime(decimalHours) {
-            const h = Math.floor(decimalHours);
-            const m = Math.round((decimalHours - h) * 60);
-            if (h === 0) return `${m}m`;
-            if (m === 0) return `${h}h`;
-            return `${h}h ${m.toString().padStart(2, '0')}m`;
+            const totalMinutes = Math.max(0, Math.round(Number(decimalHours || 0) * 60));
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+        }
+
+        function parseDurationInput(value) {
+            const rawValue = String(value || '').trim();
+            if (!rawValue) return NaN;
+
+            const timeMatch = rawValue.match(/^(\d{1,3}):([0-5]\d)$/);
+            if (timeMatch) {
+                return Number(timeMatch[1]) + (Number(timeMatch[2]) / 60);
+            }
+
+            return parseFloat(rawValue.replace(',', '.'));
         }
 
         function escapeHtml(value) {

@@ -76,8 +76,10 @@
             document.getElementById('manual-project')?.addEventListener('change', updateManualTaskDropdown);
             document.getElementById('manual-start')?.addEventListener('change', calculateManualHours);
             document.getElementById('manual-end')?.addEventListener('change', calculateManualHours);
+            document.getElementById('manual-hours')?.addEventListener('blur', () => normalizeDurationField('manual-hours'));
             document.getElementById('edit-entry-user')?.addEventListener('change', updateEditCost);
             document.getElementById('edit-entry-hours')?.addEventListener('input', updateEditCost);
+            document.getElementById('edit-entry-hours')?.addEventListener('blur', () => normalizeDurationField('edit-entry-hours'));
             document.getElementById('edit-entry-project')?.addEventListener('change', updateEditTaskDropdown);
 
             document.querySelectorAll('[data-action="logout"]').forEach(button => {

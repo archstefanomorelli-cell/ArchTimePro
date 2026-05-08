@@ -384,16 +384,16 @@
                         </div>
                     </div>
                     <div class="overflow-x-auto">
-                        <table class="w-full text-sm text-left hidden lg:table">
+                        <table class="w-full text-sm text-center hidden lg:table">
                             <thead class="bg-slate-50 text-slate-500 uppercase text-[10px] font-bold tracking-wider border-b border-slate-200">
     <tr>
-        <th class="px-5 py-4 font-bold whitespace-nowrap">Data</th>
+        <th class="px-5 py-4 text-center font-bold whitespace-nowrap">Data</th>
         <th class="px-5 py-4 text-center font-bold whitespace-nowrap">Team</th>
         <th class="px-5 py-4 text-center font-bold w-full">Progetto</th>
-        <th class="px-5 py-4 font-bold min-w-[150px]">Attività / Note</th>
-        <th class="px-5 py-4 font-bold whitespace-nowrap">Tempo</th>
+        <th class="px-5 py-4 text-center font-bold min-w-[150px]">Attività / Note</th>
+        <th class="px-5 py-4 text-center font-bold whitespace-nowrap">Tempo</th>
         <th class="px-5 py-4 admin-only text-center font-bold whitespace-nowrap">Costo</th>
-        <th class="px-5 py-4 admin-only font-bold whitespace-nowrap"></th>
+        <th class="px-5 py-4 admin-only text-center font-bold whitespace-nowrap"></th>
     </tr>
 </thead>
                             <tbody id="entries-table-desktop" class="divide-y divide-slate-100"></tbody>
@@ -639,7 +639,7 @@
 
                 <div class="grid grid-cols-2 gap-4">
                     <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Data</label><input type="date" id="manual-date" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all"></div>
-                    <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Ore totali</label><input type="number" step="0.1" id="manual-hours" placeholder="0.0" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all font-bold"></div>
+                    <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Ore totali</label><input type="text" id="manual-hours" placeholder="00:00" inputmode="decimal" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all font-bold font-mono"></div>
                 </div>
 
                 <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Note (opzionali)</label><input type="text" id="manual-notes" placeholder="Aggiungi una nota" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all"></div>
@@ -662,7 +662,7 @@
                 <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Attività</label><select id="edit-entry-task" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all appearance-none"></select></div>
                 <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Note</label><input type="text" id="edit-entry-notes" placeholder="Note" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all"></div>
                 <div class="grid grid-cols-2 gap-4">
-                    <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Ore</label><input type="number" step="0.1" id="edit-entry-hours" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all"></div>
+                    <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Ore</label><input type="text" id="edit-entry-hours" placeholder="00:00" inputmode="decimal" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all font-mono"></div>
                     <div class="admin-only"><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Costo (€)</label><input type="number" step="0.01" id="edit-entry-cost" readonly class="w-full border border-slate-200 bg-slate-50 text-slate-500 font-bold rounded-xl p-3 text-sm outline-none"></div>
                 </div>
                 <button id="btn-save-entry-edit" class="w-full bg-slate-900 text-white py-3.5 mt-4 rounded-xl font-bold shadow-sm hover:bg-slate-800 transition-all active:scale-[0.98]">Salva modifiche</button>
@@ -817,13 +817,13 @@
         </div>
     </div>
     <script src="assets/js/00-runtime-config.js?v=phase3-2026-05-01"></script>
-    <script src="assets/js/01-core.js?v=phase3-polish-2026-05-02"></script>
+    <script src="assets/js/01-core.js?v=phase3-time-format-2026-05-08"></script>
     <script src="assets/js/02-auth-account.js?v=phase3-auth-app-redirect-2026-05-03"></script>
     <script src="assets/js/03-team.js?v=phase3-polish-2026-05-02"></script>
     <script src="assets/js/04-projects.js?v=phase3-project-rhythm-order-2026-05-04"></script>
-    <script src="assets/js/05-time-entries.js?v=phase3-polish-2026-05-02"></script>
+    <script src="assets/js/05-time-entries.js?v=phase3-time-format-2026-05-08"></script>
     <script src="assets/js/06-reports.js?v=phase3-final-ui-2026-05-02"></script>
-    <script src="assets/js/07-password-bootstrap.js?v=phase3-project-rhythm-2026-05-04"></script>
+    <script src="assets/js/07-password-bootstrap.js?v=phase3-time-format-2026-05-08"></script>
 </body>
 </html>
 

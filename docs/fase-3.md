@@ -66,6 +66,8 @@ Stato: beta su dominio definitivo attiva.
 - Compattato il dettaglio progetto unendo stati attività e assorbimento economico in una tabella unica, rimuovendo la duplicazione con la vecchia sezione "Per attività".
 - La tabella compatta delle attività nel dettaglio progetto rispetta l'ordine impostato nel progetto, così resta coerente con il flusso operativo.
 - Rimossa dalla landing l'indicazione degli importi futuri, sostituendo la sezione prezzi con "Beta gratuita su invito" per la prima fase di test con studi selezionati.
+- Uniformata la visualizzazione delle durate in formato `HH:MM` in app e report, inclusi inserimento manuale e modifica attività.
+- Centrata la tabella desktop del registro attività e ordinato il registro settimanale per data effettiva di svolgimento, con fallback sull'orario di inizio quando presente.
 
 ## Sicurezza dati economici
 
