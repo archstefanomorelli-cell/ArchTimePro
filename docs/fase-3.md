@@ -69,6 +69,7 @@ Stato: beta su dominio definitivo attiva.
 - Uniformata la visualizzazione delle durate in formato `HH:MM` in app e report, inclusi inserimento manuale e modifica attività.
 - Centrata la tabella desktop del registro attività e ordinato il registro settimanale per data effettiva di svolgimento, con fallback sull'orario di inizio quando presente.
 - Corretto ordinamento registro: prima giorno attività, poi orario di inizio dichiarato, poi data tecnica di inserimento.
+- Aggiunte intestazioni di giornata nel registro desktop per rendere chiaro il raggruppamento delle attività dello stesso giorno.
 
 ## Sicurezza dati economici
 

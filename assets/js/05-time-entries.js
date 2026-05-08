@@ -97,11 +97,14 @@
 
         function getEntryDisplayData(entry, index) {
             const parsedNotes = parseEntryNotes(entry.notes);
+            const entryDate = new Date(entry.created_at);
 
             return {
                 id: escapeAttr(entry.id),
                 bgClass: index % 2 === 0 ? 'bg-white' : 'bg-slate-50/60',
-                dateLabel: new Date(entry.created_at).toLocaleDateString('it-IT', {weekday:'short', day:'2-digit'}),
+                dateKey: formatDateInputValue(entryDate),
+                dateLabel: entryDate.toLocaleDateString('it-IT', {weekday:'short', day:'2-digit'}),
+                dateGroupLabel: entryDate.toLocaleDateString('it-IT', {weekday:'long', day:'2-digit', month:'long'}),
                 userName: escapeHtml(entry.user_name),
                 projectName: escapeHtml(entry.project_name),
                 taskName: escapeHtml(entry.task),
@@ -111,6 +114,18 @@
                 duration: formatTime(Number(entry.duration)),
                 rate: formatMoney(Number(entry.rate))
             };
+        }
+
+        function renderEntryDateGroupRow(item) {
+            return `
+<tr class="bg-slate-100/80 border-y border-slate-200">
+    <td colspan="7" class="px-5 py-2 text-left">
+        <div class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-wider text-slate-500">
+            <span class="w-1.5 h-1.5 rounded-full bg-primary-500"></span>
+            ${item.dateGroupLabel}
+        </div>
+    </td>
+</tr>`;
         }
 
         function renderEntryActions(entryId, iconSize, buttonClass, dangerButtonClass = '') {
@@ -155,6 +170,16 @@
 </tr>`;
         }
 
+        function renderEntryDesktopRows(entriesList) {
+            let lastDateKey = '';
+            return entriesList.map((entry, index) => {
+                const item = getEntryDisplayData(entry, index);
+                const groupRow = item.dateKey !== lastDateKey ? renderEntryDateGroupRow(item) : '';
+                lastDateKey = item.dateKey;
+                return groupRow + renderEntryDesktopRow(entry, index);
+            }).join('');
+        }
+
         function renderEntryMobileCard(entry, index) {
             const item = getEntryDisplayData(entry, index);
 
@@ -197,7 +222,7 @@
             emptyState.classList.toggle('force-hide', weekly.length > 0);
             table.classList.toggle('force-hide', weekly.length === 0);
 
-            table.innerHTML = weekly.map(renderEntryDesktopRow).join('');
+            table.innerHTML = renderEntryDesktopRows(weekly);
             mobile.innerHTML = weekly.map(renderEntryMobileCard).join('');
             const emptyManualButton = document.getElementById('btn-empty-manual-entry');
             if (emptyManualButton) emptyManualButton.onclick = openManualEntry;
