@@ -82,6 +82,7 @@ Stato: beta su dominio definitivo attiva.
 - Aggiunta modalità budget progetto esclusiva: budget libero oppure somma attività. Le attività senza importo sono marcate "Fuori piano" e non pesano sul ritmo, pur restando nei costi reali.
 - Allineato il bottone "Crea nuovo" progetti allo stile nero del timer mantenendo dimensione compatta come "Archivio".
 - Rinominata la modalità budget "Manuale" in "Libero" e nascosti i campi costo attività quando il budget non è calcolato dalla somma attività.
+- Reso il bottone "Crea nuovo" dimensionalmente identico ai bottoni compatti tramite classe dedicata e aggiornato il testo della modalità budget libero.
 
 ## Sicurezza dati economici
 

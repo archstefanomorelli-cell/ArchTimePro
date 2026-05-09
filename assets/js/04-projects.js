@@ -477,7 +477,7 @@
             }
             if (note) note.textContent = isAuto
                 ? 'Budget calcolato dalla somma delle attività con importo. Le voci fuori piano non pesano sul ritmo.'
-                : 'Budget libero: i costi attività servono solo come pesi del ritmo progetto.';
+                : 'Budget libero: il ritmo considera le attività con lo stesso peso. Per pesi economici usa Somma attività.';
         }
 
         function setProjectBudgetMode(mode) {
