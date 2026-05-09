@@ -16,8 +16,8 @@
             bindClick('btn-open-manual-entry', openManualEntry);
             bindClick('btn-toggle-timer', toggleTimer);
             bindClick('btn-manage-templates', openTemplatesModal);
-            bindClick('btn-open-new-task-builder', () => openTaskBuilder('new'));
-            bindClick('btn-create-project', createNewProject);
+            bindClick('btn-open-project-modal', openCreateProjectModal);
+            bindClick('btn-open-new-task-builder', openProjectTaskBuilder);
             bindClick('btn-open-team-report', openTeamReportModal);
             bindClick('btn-generate-invite', generateInviteLink);
             bindClick('btn-close-team-invite', closeTeamInviteModal);
@@ -56,7 +56,6 @@
             bindClick('btn-close-edit-expense', closeEditExpenseModal);
             bindClick('btn-save-expense-edit', saveExpenseEdit);
             bindClick('btn-close-edit-project', closeEditProjectModal);
-            bindClick('btn-open-edit-task-builder', () => openTaskBuilder('edit'));
             bindClick('btn-save-project-edit', saveModalProjectEdit);
             bindClick('btn-close-report', closeReportModal);
             bindClick('btn-open-analytics-detail', openAnalyticsDetail);

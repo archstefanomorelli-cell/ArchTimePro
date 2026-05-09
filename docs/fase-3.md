@@ -73,6 +73,8 @@ Stato: beta su dominio definitivo attiva.
 - Spostata l'intestazione colonne del registro sotto ogni giornata e rimossa la colonna data dalle singole righe desktop.
 - Convertito il piano attività da ore previste a "Piano costi": il valore economico previsto per attività diventa il peso operativo del Ritmo progetto.
 - Aggiunto script SQL `docs/sql/phase-3-cost-plan.sql` per salvare `task_budgets` e aggiornare `get_projects_for_app` senza esporre budget attività allo staff.
+- Reso scrollabile il popup di modifica progetto dopo l'aggiunta dei campi Piano costi.
+- Spostata la creazione progetto dalla barra laterale alla tab Progetti con bottone "Crea nuovo"; lo stesso modale ora gestisce creazione e modifica con anagrafica a sinistra e template/attività a destra.
 
 ## Sicurezza dati economici
 

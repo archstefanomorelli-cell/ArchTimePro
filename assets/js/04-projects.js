@@ -501,28 +501,88 @@
         
         async function removeTemplate(index) { if(await appConfirm("Elimina Template", "Sei sicuro di voler eliminare questo template? L'operazione non può essere annullata.", "danger")) { if(editingTemplateIndex === index) cancelEditTemplate(); projectTemplates.splice(index, 1); renderCatalogAndTemplatesUI(); await syncCatalogAndTemplatesToDB(); } }
 
+        function isProjectModalCreateMode() {
+            return !document.getElementById('edit-modal-proj-id')?.value;
+        }
+
+        function setProjectModalMode(mode) {
+            const isCreate = mode === 'create';
+            const title = document.getElementById('project-modal-title');
+            const desc = document.getElementById('project-modal-desc');
+            const saveButton = document.getElementById('btn-save-project-edit');
+            if (title) {
+                const icon = document.createElement('i');
+                icon.setAttribute('data-lucide', isCreate ? 'folder-plus' : 'edit-3');
+                icon.className = 'text-primary-500 w-5 h-5';
+                title.replaceChildren(icon, document.createTextNode(isCreate ? ' Nuovo progetto' : ' Modifica progetto'));
+            }
+            if (desc) desc.textContent = isCreate ? 'Imposta anagrafica, budget e flusso di lavoro in un unico passaggio.' : 'Aggiorna anagrafica, budget e attività incluse.';
+            if (saveButton) saveButton.textContent = isCreate ? 'Crea progetto' : 'Salva modifiche';
+        }
+
+        function openCreateProjectModal() {
+            if (activePlan === 'starter') {
+                const activeCount = projects.filter(p => p.is_archived !== true).length;
+                if (activeCount >= 5) return openUpgradeModal('Lavori Illimitati');
+            }
+            document.getElementById('edit-modal-proj-id').value = '';
+            document.getElementById('edit-modal-name').value = '';
+            document.getElementById('edit-modal-client').value = '';
+            document.getElementById('edit-modal-budget').value = '';
+            newProjectTasks = [];
+            newProjectTaskBudgets = {};
+            setProjectModalMode('create');
+            renderNewProjectUI();
+            document.getElementById('modal-edit-project').classList.remove('force-hide');
+            lucide.createIcons();
+        }
+
+        function openProjectTaskBuilder() {
+            openTaskBuilder(isProjectModalCreateMode() ? 'new' : 'edit');
+        }
+
+        function renderProjectModalTasks() {
+            const selectedContainer = document.getElementById('edit-proj-selected-tasks');
+            if (!selectedContainer) return;
+            const isCreate = isProjectModalCreateMode();
+            const tasks = isCreate ? newProjectTasks : editProjectTasks;
+            const budgets = isCreate ? newProjectTaskBudgets : editProjectTaskBudgets;
+            const prefix = isCreate ? 'new' : 'edit';
+            if (tasks.length === 0) selectedContainer.innerHTML = emptyStateHtml('Nessuna attività configurata.');
+            else selectedContainer.innerHTML = tasks.map((task, idx) => taskTagHtml(task, idx, 'rounded-md')).join('') + taskBudgetRowsHtml(tasks, budgets, prefix);
+        }
+
         function renderNewProjectUI() {
             const selectTpl = document.getElementById('new-proj-template');
             if (selectTpl) {
                 if(activePlan === 'starter') { selectTpl.innerHTML = optionHtml('', 'I Template sono nel piano PREMIUM', true, true); selectTpl.disabled = true; selectTpl.classList.add('locked-feature'); } 
                 else { selectTpl.innerHTML = optionHtml('', '-- Scegli da un Template --', true, true) + projectTemplates.map((t, i) => optionHtml(i, t.name)).join(''); selectTpl.disabled = false; selectTpl.classList.remove('locked-feature'); }
             }
-            const selectedContainer = document.getElementById('new-proj-selected-tasks');
-            if (selectedContainer) {
-                if (newProjectTasks.length === 0) selectedContainer.innerHTML = emptyStateHtml('Nessuna attività configurata.');
-                else selectedContainer.innerHTML = newProjectTasks.map((task, idx) => taskTagHtml(task, idx)).join('') + taskBudgetRowsHtml(newProjectTasks, newProjectTaskBudgets, 'new');
-            }
+            renderProjectModalTasks();
             lucide.createIcons();
         }
 
-        function applyTemplateToNewProject() { if(activePlan==='starter') return; const val = document.getElementById('new-proj-template').value; if(val !== "") newProjectTasks = [...projectTemplates[val].tasks]; else newProjectTasks = []; newProjectTaskBudgets = {}; renderNewProjectUI(); }
+        function applyTemplateToNewProject() {
+            if(activePlan==='starter') return;
+            const val = document.getElementById('new-proj-template').value;
+            const templateTasks = val !== "" ? [...projectTemplates[val].tasks] : [];
+            if (isProjectModalCreateMode()) {
+                newProjectTasks = templateTasks;
+                newProjectTaskBudgets = {};
+            } else {
+                editProjectTasks = templateTasks;
+                editProjectTaskBudgets = {};
+            }
+            renderProjectModalTasks();
+            lucide.createIcons();
+        }
 
         async function createNewProject() {
             if (activePlan === 'starter') {
                 const activeCount = projects.filter(p => p.is_archived !== true).length;
                 if (activeCount >= 5) return openUpgradeModal('Lavori Illimitati');
             }
-            const name = document.getElementById('new-proj-name').value.trim(); const client = document.getElementById('new-proj-client').value.trim(); const budget = parseFloat(document.getElementById('new-proj-budget').value) || 0;
+            const name = document.getElementById('edit-modal-name').value.trim(); const client = document.getElementById('edit-modal-client').value.trim(); const budget = parseFloat(document.getElementById('edit-modal-budget').value) || 0;
             if(!name) return await appAlert("Attenzione", "Inserisci il nome del lavoro", "danger"); 
             if(newProjectTasks.length === 0) return await appAlert("Attenzione", "Configura almeno un'attività", "danger");
             newProjectTaskBudgets = collectVisibleTaskBudgets('new');
@@ -532,15 +592,16 @@
             const { error } = await supabaseClient.from('projects').insert([payload]);
             if (error) return await appAlert("Configurazione richiesta", "Per salvare il Piano costi va prima aggiunta la colonna task_budgets in Supabase. Puoi lasciare vuoti i campi Piano costi oppure eseguire lo script SQL dedicato.", "danger");
             
-            document.getElementById('new-proj-name').value = ""; 
-            document.getElementById('new-proj-client').value = ""; 
-            document.getElementById('new-proj-budget').value = ""; 
+            document.getElementById('edit-modal-name').value = ""; 
+            document.getElementById('edit-modal-client').value = ""; 
+            document.getElementById('edit-modal-budget').value = ""; 
             document.getElementById('new-proj-template').value = ""; 
             newProjectTasks = [];
             newProjectTaskBudgets = {};
             
             renderNewProjectUI(); 
             fetchProjects(); 
+            closeEditProjectModal();
             await appAlert("Fatto", "Lavoro Creato!", "success"); 
             switchAppTab('operate');
         }
@@ -845,12 +906,16 @@
 
         function openEditProjectModal(id) {
             const p = projects.find(x => x.id === id); if(!p) return;
+            setProjectModalMode('edit');
             document.getElementById('edit-modal-proj-id').value = id; 
             document.getElementById('edit-modal-name').value = p.name; 
             document.getElementById('edit-modal-client').value = p.client || ''; 
             document.getElementById('edit-modal-budget').value = p.budget;
+            const templateSelect = document.getElementById('new-proj-template');
+            if (templateSelect) templateSelect.value = '';
             editProjectTasks = p.tasks && p.tasks.length > 0 ? [...p.tasks] : [];
             editProjectTaskBudgets = getProjectTaskBudgets(p);
+            renderNewProjectUI();
             renderEditProjectTasks();
             document.getElementById('modal-detail').classList.add('force-hide'); 
             document.getElementById('modal-edit-project').classList.remove('force-hide'); 
@@ -858,9 +923,7 @@
         }
 
         function renderEditProjectTasks() {
-            const selectedContainer = document.getElementById('edit-proj-selected-tasks');
-            if (editProjectTasks.length === 0) selectedContainer.innerHTML = emptyStateHtml('Nessuna attività configurata.');
-            else selectedContainer.innerHTML = editProjectTasks.map((task, idx) => taskTagHtml(task, idx, 'rounded-md')).join('') + taskBudgetRowsHtml(editProjectTasks, editProjectTaskBudgets, 'edit');
+            renderProjectModalTasks();
             lucide.createIcons();
         }
 
@@ -868,6 +931,7 @@
         
         async function saveModalProjectEdit() {
             const id = document.getElementById('edit-modal-proj-id').value; 
+            if (!id) return createNewProject();
             const name = document.getElementById('edit-modal-name').value.trim(); 
             const client = document.getElementById('edit-modal-client').value.trim(); 
             const budget = parseFloat(document.getElementById('edit-modal-budget').value) || 0;
