@@ -105,50 +105,65 @@ const clips = [
     },
     {
         file: '02-nuovo-progetto.webm',
-        scene: 'project-modal',
+        scene: 'dashboard',
         steps: [
-            ['Compila nome progetto, cliente e budget nello stesso modale.', async page => {
-                await moveCursor(page, '#edit-modal-name');
-                await guidedClick(page, '#edit-modal-client');
+            ['Dalla dashboard apri il modale per creare un nuovo progetto.', async page => {
+                await guidedClick(page, '#btn-open-project-modal');
             }],
-            ['Scegli un template per partire da una lista attivita gia pronta.', async page => moveCursor(page, '#new-proj-template')],
+            ['Scrivi nome progetto, cliente e budget iniziale.', async page => {
+                await guidedFill(page, '#edit-modal-name', 'Ristrutturazione Bianchi');
+                await guidedFill(page, '#edit-modal-client', 'Famiglia Bianchi');
+                await guidedFill(page, '#edit-modal-budget', '15000');
+            }],
+            ['Scegli un template per partire da una lista attivita gia pronta.', async page => guidedSelect(page, '#new-proj-template', '0')],
             ['Le attivita restano modificabili e ordinabili prima di salvare.', async page => moveCursor(page, '#edit-proj-selected-tasks')]
         ]
     },
     {
         file: '03-budget-libero-somma-attivita.webm',
-        scene: 'project-modal',
+        scene: 'dashboard',
         steps: [
+            ['Apri un nuovo progetto dalla dashboard.', async page => {
+                await guidedClick(page, '#btn-open-project-modal');
+                await guidedFill(page, '#edit-modal-name', 'Casa sul parco');
+                await guidedFill(page, '#edit-modal-client', 'Cliente demo');
+                await guidedSelect(page, '#new-proj-template', '0');
+            }],
             ['Budget libero: inserisci una cifra unica di progetto.', async page => {
                 await guidedClick(page, '#budget-mode-manual');
-                await moveCursor(page, '#edit-modal-budget');
+                await guidedFill(page, '#edit-modal-budget', '12000');
             }],
             ['In questa modalita non compili i costi delle singole attivita.', async page => moveCursor(page, '#edit-proj-selected-tasks')],
             ['Somma attivita: ogni voce puo avere un importo e il totale si aggiorna da solo.', async page => {
                 await guidedClick(page, '#budget-mode-auto');
                 await page.waitForTimeout(350);
-                await moveCursor(page, '#edit-proj-selected-tasks');
+                await guidedFill(page, 'input.task-budget-input[data-task="Progetto definitivo"]', '4000');
+                await guidedFill(page, 'input.task-budget-input[data-task="Direzione lavori"]', '8000');
             }],
             ['Le attivita senza importo restano fuori piano e non pesano sul ritmo progetto.', async page => moveCursor(page, '#project-budget-mode-note')]
         ]
     },
     {
         file: '04-ore-manuali.webm',
-        scene: 'manual-entry',
+        scene: 'dashboard',
         steps: [
-            ['Apri l\'inserimento manuale quando vuoi registrare ore gia svolte.', async page => moveCursor(page, '#modal-manual')],
+            ['Dalla dashboard apri l\'inserimento manuale delle ore.', async page => guidedClick(page, '#btn-open-manual-entry')],
+            ['Scegli progetto e attivita da registrare.', async page => {
+                await guidedSelect(page, '#manual-project', '0');
+                await guidedSelect(page, '#manual-task', 'Progetto definitivo');
+            }],
             ['Inserisci ora di inizio e ora di fine: la durata viene calcolata in ore:minuti.', async page => {
-                await moveCursor(page, '#manual-start');
-                await guidedClick(page, '#manual-end');
+                await guidedFill(page, '#manual-start', '09:00');
+                await guidedFill(page, '#manual-end', '11:30');
             }],
             ['Salva: il tempo finisce nel registro e nei margini del progetto.', async page => moveCursor(page, '#btn-save-manual-entry')]
         ]
     },
     {
         file: '05-dettaglio-progetto.webm',
-        scene: 'project-detail',
+        scene: 'dashboard',
         steps: [
-            ['Apri un progetto per leggere budget, costi, margine e ritmo.', async page => moveCursor(page, '#modal-detail')],
+            ['Dalla dashboard apri un progetto per leggere budget, costi, margine e ritmo.', async page => guidedClick(page, '[data-ui-action="show-project-detail"][data-project-id="demo-villa"]')],
             ['Scorri: trovi attivita, ore, costi e spese dello stesso progetto.', async page => {
                 await page.locator('#modal-detail > div').first().evaluate(el => { el.scrollTop = 360; });
                 await moveCursor(page, '#modal-detail');
@@ -157,9 +172,10 @@ const clips = [
     },
     {
         file: '06-team-costi.webm',
-        scene: 'team',
+        scene: 'dashboard',
         steps: [
-            ['Apri un collaboratore e imposta il suo costo orario interno.', async page => moveCursor(page, '#edit-team-cost')],
+            ['Scorri fino al team e apri un collaboratore.', async page => guidedClick(page, '[data-ui-action="edit-team-member"][data-profile-id="demo-laura"]')],
+            ['Scrivi il costo orario interno del collaboratore.', async page => guidedFill(page, '#edit-team-cost', '42')],
             ['Da quel momento le sue ore entrano nel margine reale dei progetti.', async page => moveCursor(page, '#btn-save-team-edit')],
             ['Invita nuovi collaboratori con codice o email, senza creare account a mano.', async page => {
                 await page.keyboard.press('Escape');
@@ -169,9 +185,9 @@ const clips = [
     },
     {
         file: '07-analisi.webm',
-        scene: 'analytics',
+        scene: 'dashboard',
         steps: [
-            ['Apri il dettaglio solo quando vuoi approfondire i numeri.', async page => moveCursor(page, '#modal-analytics-detail')],
+            ['Dalla dashboard apri il dettaglio analisi solo quando vuoi approfondire i numeri.', async page => guidedClick(page, '#btn-open-analytics-detail')],
             ['Scorri per vedere quali lavori e attivita assorbono piu risorse.', async page => {
                 await page.locator('#modal-analytics-detail > div').first().evaluate(el => { el.scrollTop = 420; });
                 await moveCursor(page, '#modal-analytics-detail');
@@ -272,6 +288,8 @@ async function setCaption(page, text) {
 async function elementCenter(page, selector) {
     const locator = page.locator(selector).first();
     await locator.waitFor({ state: 'visible', timeout: 10000 });
+    await locator.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(250);
     const box = await locator.boundingBox();
     if (!box) throw new Error(`Cannot find visible box for ${selector}`);
     return { x: box.x + box.width / 2, y: box.y + Math.min(box.height / 2, 90) };
@@ -305,6 +323,20 @@ async function guidedClick(page, selector, afterClick) {
     if (afterClick) await afterClick();
     else await page.locator(selector).first().click({ force: true });
     await page.waitForTimeout(650);
+}
+
+async function guidedFill(page, selector, value) {
+    await moveCursor(page, selector);
+    await pulseAt(page, selector);
+    const locator = page.locator(selector).first();
+    await locator.click({ force: true });
+    await page.keyboard.press('Control+A');
+    await page.keyboard.type(String(value), { delay: 55 });
+    await locator.evaluate(element => {
+        element.dispatchEvent(new Event('input', { bubbles: true }));
+        element.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    await page.waitForTimeout(500);
 }
 
 async function guidedSelect(page, selector, value) {
