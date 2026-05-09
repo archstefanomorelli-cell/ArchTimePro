@@ -79,8 +79,9 @@ Stato: beta su dominio definitivo attiva.
 - Uniformato il modale template alla stessa logica: attività ordinabili con trascinamento, aggiunta dal catalogo, creazione attività al volo e z-index superiore al modale progetto.
 - Spostata la gestione dello studio dal popup account alla colonna sinistra: identità studio tra Timer e Team, caricamento logo senza anteprima e anteprima compatta del catalogo attività.
 - Migliorato onboarding primo accesso con costo orario del titolare, bottone "Crea nuovo" più evidente e riga analisi compatta per fuori budget, monitoraggio e assorbimento.
-- Aggiunta modalità budget progetto esclusiva: budget manuale oppure somma attività. Le attività senza importo sono marcate "Fuori piano" e non pesano sul ritmo, pur restando nei costi reali.
+- Aggiunta modalità budget progetto esclusiva: budget libero oppure somma attività. Le attività senza importo sono marcate "Fuori piano" e non pesano sul ritmo, pur restando nei costi reali.
 - Allineato il bottone "Crea nuovo" progetti allo stile nero del timer mantenendo dimensione compatta come "Archivio".
+- Rinominata la modalità budget "Manuale" in "Libero" e nascosti i campi costo attività quando il budget non è calcolato dalla somma attività.
 
 ## Sicurezza dati economici
 

@@ -484,6 +484,7 @@
             projectBudgetMode = mode === 'auto' ? 'auto' : 'manual';
             if (projectBudgetMode === 'auto') fillProjectBudgetFromTaskBudgets(false);
             refreshProjectBudgetModeUI();
+            renderProjectModalTasks();
         }
 
         function syncProjectBudgetFromTaskBudgetsIfNeeded() {
@@ -495,17 +496,19 @@
 
         function inlineProjectTaskHtml(task, index, budgets, mode) {
             const budgetValue = Number(budgets?.[task] || 0);
+            const isAutoBudget = projectBudgetMode === 'auto';
             return `
-                <div draggable="true" data-ui-action="project-task-drag" data-task-index="${index}" class="project-task-row grid grid-cols-[auto_minmax(0,1fr)_104px_auto] gap-2 items-center bg-white border border-slate-200 rounded-xl px-2.5 py-2 shadow-sm cursor-grab active:cursor-grabbing touch-none">
+                <div draggable="true" data-ui-action="project-task-drag" data-task-index="${index}" class="project-task-row grid ${isAutoBudget ? 'grid-cols-[auto_minmax(0,1fr)_104px_auto]' : 'grid-cols-[auto_minmax(0,1fr)_auto]'} gap-2 items-center bg-white border border-slate-200 rounded-xl px-2.5 py-2 shadow-sm cursor-grab active:cursor-grabbing touch-none">
                     <span class="text-slate-300"><i data-lucide="grip-vertical" class="w-4 h-4"></i></span>
                     <div class="min-w-0">
                         <span class="block text-[11px] font-bold text-slate-700 truncate"><span class="text-primary-600 font-black">${index + 1}.</span> ${escapeHtml(task)}</span>
-                        <span class="block text-[8px] font-black uppercase tracking-wider ${budgetValue > 0 ? 'text-primary-500' : 'text-slate-400'}">${budgetValue > 0 ? 'Pesa sul ritmo' : 'Fuori piano'}</span>
+                        ${isAutoBudget ? `<span class="block text-[8px] font-black uppercase tracking-wider ${budgetValue > 0 ? 'text-primary-500' : 'text-slate-400'}">${budgetValue > 0 ? 'Pesa sul ritmo' : 'Fuori piano'}</span>` : ''}
                     </div>
+                    ${isAutoBudget ? `
                     <div class="flex items-center gap-1 border border-slate-200 rounded-lg px-2 py-1.5 bg-slate-50 focus-within:bg-white focus-within:border-primary-400 focus-within:ring-2 focus-within:ring-primary-500/10" title="${budgetValue > 0 ? 'Importo usato come peso nel ritmo progetto' : 'Lascia vuoto se questa attività non deve pesare sul ritmo'}">
                         <span class="text-[10px] font-black text-slate-400">€</span>
                         <input type="text" data-budget-mode="${mode}" data-task="${escapeAttr(task)}" value="${escapeAttr(getTaskBudgetInputValue(budgets, task))}" placeholder="Fuori piano" inputmode="decimal" class="task-budget-input w-full bg-transparent outline-none text-[11px] font-mono font-bold text-slate-700 placeholder:text-[8px] placeholder:font-sans placeholder:uppercase placeholder:tracking-wider">
-                    </div>
+                    </div>` : ''}
                     <button type="button" data-ui-action="remove-inline-project-task" data-task-index="${index}" class="p-1.5 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
                 </div>`;
         }
