@@ -273,6 +273,7 @@ function switchAuthTab(mode) {
             document.getElementById('onboarding-project-name').value = '';
             document.getElementById('onboarding-project-client').value = '';
             document.getElementById('onboarding-project-budget').value = '';
+            document.getElementById('onboarding-hourly-cost').value = userProfile?.hourly_cost || '';
             modal.classList.remove('force-hide');
             lucide.createIcons();
         }
@@ -299,7 +300,18 @@ function switchAuthTab(mode) {
             await appAlert("Fatto", "Identità salvata.", "success");
         }
 
-        function prepareFirstProjectFromOnboarding() {
+        async function saveOnboardingHourlyCost() {
+            const costInput = document.getElementById('onboarding-hourly-cost');
+            const cost = parseFloat(costInput?.value);
+            if (isNaN(cost) || cost < 0) return;
+            await supabaseClient.from('profiles').update({ hourly_cost: cost }).eq('id', userProfile.id);
+            if (userProfile) userProfile.hourly_cost = cost;
+            const profile = profiles.find(item => item.id === userProfile.id);
+            if (profile) profile.hourly_cost = cost;
+        }
+
+        async function prepareFirstProjectFromOnboarding() {
+            await saveOnboardingHourlyCost();
             const name = document.getElementById('onboarding-project-name').value.trim();
             const client = document.getElementById('onboarding-project-client').value.trim();
             const budget = document.getElementById('onboarding-project-budget').value;

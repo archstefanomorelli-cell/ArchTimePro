@@ -345,11 +345,10 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-                        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                            <div id="analytics-insights" class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 flex-1"></div>
-                            <div class="flex lg:flex-col items-center lg:items-end justify-between gap-3 border-t lg:border-t-0 lg:border-l border-slate-100 pt-3 lg:pt-0 lg:pl-4">
-                                <span id="analytics-trend-label" class="text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-lg border bg-slate-50 text-slate-500 border-slate-200">Trend</span>
+                    <div class="bg-white border border-slate-200 rounded-2xl px-3.5 py-3 shadow-sm">
+                        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+                            <div id="analytics-insights" class="grid grid-cols-1 sm:grid-cols-3 gap-2 flex-1"></div>
+                            <div class="flex items-center justify-end border-t lg:border-t-0 lg:border-l border-slate-100 pt-3 lg:pt-0 lg:pl-3">
                                 <button id="btn-open-analytics-detail" class="secondary-action compact"><i data-lucide="bar-chart-3" class="w-3.5 h-3.5"></i> Dettaglio</button>
                             </div>
                         </div>
@@ -360,7 +359,7 @@
                     <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4 pl-1">
                         <h2 id="lbl-active-projects" class="text-lg lg:text-xl font-black text-slate-800 tracking-tight">Progetti attivi</h2>
                         <div class="flex items-center gap-2">
-                            <button id="btn-open-project-modal" class="secondary-action compact"><i data-lucide="plus" class="w-3.5 h-3.5"></i> Crea nuovo</button>
+                            <button id="btn-open-project-modal" class="bg-primary-600 text-white px-3.5 py-2 rounded-xl text-xs font-black shadow-sm hover:bg-primary-700 transition-all active:scale-[0.98] flex items-center gap-1.5 uppercase tracking-wider"><i data-lucide="plus" class="w-3.5 h-3.5"></i> Crea nuovo</button>
                             <button id="toggle-archived-btn" class="secondary-action compact">Archivio</button>
                         </div>
                     </div>
@@ -493,7 +492,7 @@
             <div class="mb-6">
                 <div class="w-12 h-12 bg-primary-50 text-primary-600 rounded-2xl flex items-center justify-center mb-4 border border-primary-100"><i data-lucide="sparkles" class="w-6 h-6"></i></div>
                 <h2 class="text-2xl font-black text-slate-900 tracking-tight">Configura il tuo spazio</h2>
-                <p class="text-sm text-slate-500 leading-relaxed mt-2">Due passaggi veloci per partire con dati ordinati e un primo lavoro pronto da salvare.</p>
+                <p class="text-sm text-slate-500 leading-relaxed mt-2">Tre passaggi veloci per partire con dati ordinati, costi corretti e un primo lavoro pronto da salvare.</p>
             </div>
 
             <div class="space-y-5">
@@ -515,6 +514,15 @@
                 <div class="bg-white border border-slate-200 rounded-2xl p-4">
                     <div class="flex items-center gap-2 mb-3">
                         <span class="w-6 h-6 rounded-lg bg-slate-900 text-white text-[11px] font-black flex items-center justify-center">2</span>
+                        <h3 class="text-sm font-black text-slate-800 tracking-tight">Costo orario</h3>
+                    </div>
+                    <input type="number" step="0.01" id="onboarding-hourly-cost" placeholder="Costo orario interno (€)" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all font-bold">
+                    <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-2 leading-relaxed">Lo puoi modificare quando vuoi dalla tab Team, anche per ogni collaboratore.</p>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-2xl p-4">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="w-6 h-6 rounded-lg bg-slate-900 text-white text-[11px] font-black flex items-center justify-center">3</span>
                         <h3 class="text-sm font-black text-slate-800 tracking-tight">Primo lavoro</h3>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -832,9 +840,9 @@
     </div>
     <script src="assets/js/00-runtime-config.js?v=phase3-2026-05-01"></script>
     <script src="assets/js/01-core.js?v=phase3-studio-panel-2026-05-09"></script>
-    <script src="assets/js/02-auth-account.js?v=phase3-studio-panel-2026-05-09"></script>
+    <script src="assets/js/02-auth-account.js?v=phase3-onboarding-analytics-2026-05-09"></script>
     <script src="assets/js/03-team.js?v=phase3-polish-2026-05-02"></script>
-    <script src="assets/js/04-projects.js?v=phase3-studio-panel-2026-05-09"></script>
+    <script src="assets/js/04-projects.js?v=phase3-onboarding-analytics-2026-05-09"></script>
     <script src="assets/js/05-time-entries.js?v=phase3-entry-group-headers-2026-05-08"></script>
     <script src="assets/js/06-reports.js?v=phase3-final-ui-2026-05-02"></script>
     <script src="assets/js/07-password-bootstrap.js?v=phase3-studio-panel-2026-05-09"></script>

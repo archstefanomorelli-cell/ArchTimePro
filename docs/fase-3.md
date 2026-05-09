@@ -78,6 +78,7 @@ Stato: beta su dominio definitivo attiva.
 - Portato il costruttore attività direttamente dentro il modale progetto: attività trascinabili, aggiunta dal catalogo inline e comando "Somma attività" per compilare il budget totale dal piano costi.
 - Uniformato il modale template alla stessa logica: attività ordinabili con trascinamento, aggiunta dal catalogo, creazione attività al volo e z-index superiore al modale progetto.
 - Spostata la gestione dello studio dal popup account alla colonna sinistra: identità studio tra Timer e Team, caricamento logo senza anteprima e anteprima compatta del catalogo attività.
+- Migliorato onboarding primo accesso con costo orario del titolare, bottone "Crea nuovo" più evidente e riga analisi compatta per fuori budget, monitoraggio e assorbimento.
 
 ## Sicurezza dati economici
 
