@@ -374,6 +374,15 @@
             return `<button data-ui-action="toggle-template-task" data-task="${escapeAttr(task)}" class="px-3 py-1.5 rounded-lg border text-xs font-bold transition-all shadow-sm tag-enter ${isSelected ? 'bg-primary-50 border-primary-200 text-primary-700' : 'bg-white border-slate-200 text-slate-600 hover:border-primary-300 hover:text-primary-600'}">${escapeHtml(task)}</button>`;
         }
 
+        function inlineTemplateTaskHtml(task, index) {
+            return `
+                <div draggable="true" data-ui-action="template-task-drag" data-task-index="${index}" class="template-task-row grid grid-cols-[auto_minmax(0,1fr)_auto] gap-2 items-center bg-white border border-slate-200 rounded-xl px-2.5 py-2 shadow-sm cursor-grab active:cursor-grabbing touch-none">
+                    <span class="text-slate-300"><i data-lucide="grip-vertical" class="w-4 h-4"></i></span>
+                    <span class="min-w-0 text-[11px] font-bold text-slate-700 truncate"><span class="text-primary-600 font-black">${index + 1}.</span> ${escapeHtml(task)}</span>
+                    <button type="button" data-ui-action="remove-inline-template-task" data-task-index="${index}" class="p-1.5 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
+                </div>`;
+        }
+
         function templateTaskPillHtml(task) {
             return `<span class="text-[10px] bg-slate-50 text-slate-500 font-bold px-2 py-0.5 rounded-md border border-slate-200 uppercase tracking-wider">${escapeHtml(task)}</span>`;
         }
@@ -464,6 +473,16 @@
             select.disabled = availableTasks.length === 0;
         }
 
+        function renderInlineTemplatePicker() {
+            const select = document.getElementById('new-template-task-select');
+            if (!select) return;
+            const availableTasks = activityCatalog.filter(task => !newTemplateTasks.includes(task));
+            select.innerHTML = availableTasks.length
+                ? optionHtml('', 'Aggiungi attività dal catalogo', true, true) + availableTasks.map(task => optionHtml(task, task)).join('')
+                : optionHtml('', 'Tutte le attività sono già incluse', true, true);
+            select.disabled = availableTasks.length === 0;
+        }
+
         function templateManageItemHtml(template, index) {
             return `
                 <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex justify-between items-start group tag-enter">
@@ -489,7 +508,15 @@
             if(btnAddCat) btnAddCat.innerText = isEditCat ? "Aggiorna" : "Aggiungi"; 
             if(btnCancelCat) isEditCat ? btnCancelCat.classList.remove('hidden') : btnCancelCat.classList.add('hidden');
 
-            document.getElementById('new-template-catalog-tasks').innerHTML = activityCatalog.map(newTemplateCatalogTaskHtml).join('');
+            const legacyTemplateCatalog = document.getElementById('new-template-catalog-tasks');
+            if (legacyTemplateCatalog) legacyTemplateCatalog.innerHTML = activityCatalog.map(newTemplateCatalogTaskHtml).join('');
+            const selectedTemplateTasks = document.getElementById('new-template-selected-tasks');
+            if (selectedTemplateTasks) {
+                selectedTemplateTasks.innerHTML = newTemplateTasks.length === 0
+                    ? '<div class="text-[11px] font-bold text-center text-slate-400 uppercase tracking-wider py-4 bg-white border border-dashed border-slate-200 rounded-xl">Nessuna attività selezionata.</div>'
+                    : newTemplateTasks.map(inlineTemplateTaskHtml).join('');
+            }
+            renderInlineTemplatePicker();
             document.getElementById('templates-manage-list').innerHTML = projectTemplates.map(templateManageItemHtml).join('');
             
             const isEditTpl = editingTemplateIndex !== null;
@@ -538,6 +565,41 @@
         }
 
         function toggleTaskInNewTemplate(task) { if(newTemplateTasks.includes(task)) newTemplateTasks = newTemplateTasks.filter(t => t !== task); else newTemplateTasks.push(task); renderCatalogAndTemplatesUI(); }
+        function addInlineTemplateTask() {
+            const select = document.getElementById('new-template-task-select');
+            const task = select?.value;
+            if (!task) return;
+            if (!newTemplateTasks.includes(task)) newTemplateTasks.push(task);
+            renderCatalogAndTemplatesUI();
+        }
+
+        async function createInlineTemplateTask() {
+            const input = document.getElementById('new-template-inline-task');
+            const val = input?.value.trim();
+            if (!val) return;
+            if (!activityCatalog.includes(val)) {
+                activityCatalog.push(val);
+                await syncCatalogAndTemplatesToDB();
+            }
+            if (!newTemplateTasks.includes(val)) newTemplateTasks.push(val);
+            input.value = '';
+            renderCatalogAndTemplatesUI();
+        }
+
+        function removeInlineTemplateTask(index) {
+            newTemplateTasks = newTemplateTasks.filter((_, idx) => idx !== index);
+            renderCatalogAndTemplatesUI();
+        }
+
+        function reorderInlineTemplateTasks(fromIndex, toIndex) {
+            if (fromIndex === toIndex || fromIndex < 0 || toIndex < 0 || fromIndex >= newTemplateTasks.length || toIndex >= newTemplateTasks.length) return;
+            const tasks = [...newTemplateTasks];
+            const [movedTask] = tasks.splice(fromIndex, 1);
+            tasks.splice(toIndex, 0, movedTask);
+            newTemplateTasks = tasks;
+            renderCatalogAndTemplatesUI();
+        }
+
         function editTemplate(index) { editingTemplateIndex = index; document.getElementById('new-template-name').value = projectTemplates[index].name; newTemplateTasks = [...projectTemplates[index].tasks]; renderCatalogAndTemplatesUI(); }
         function cancelEditTemplate() { editingTemplateIndex = null; document.getElementById('new-template-name').value = ''; newTemplateTasks = []; renderCatalogAndTemplatesUI(); }
 
@@ -628,6 +690,22 @@
             if (!task) return;
             const tasks = getCurrentProjectModalTasks();
             if (!tasks.includes(task)) setCurrentProjectModalTasks([...tasks, task]);
+            renderProjectModalTasks();
+            lucide.createIcons();
+        }
+
+        async function createInlineProjectTask() {
+            const input = document.getElementById('project-inline-new-task');
+            const val = input?.value.trim();
+            if (!val) return;
+            if (!activityCatalog.includes(val)) {
+                activityCatalog.push(val);
+                await syncCatalogAndTemplatesToDB();
+            }
+            const tasks = getCurrentProjectModalTasks();
+            if (!tasks.includes(val)) setCurrentProjectModalTasks([...tasks, val]);
+            input.value = '';
+            renderCatalogAndTemplatesUI();
             renderProjectModalTasks();
             lucide.createIcons();
         }

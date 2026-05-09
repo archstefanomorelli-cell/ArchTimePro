@@ -76,6 +76,7 @@ Stato: beta su dominio definitivo attiva.
 - Reso scrollabile il popup di modifica progetto dopo l'aggiunta dei campi Piano costi.
 - Spostata la creazione progetto dalla barra laterale alla tab Progetti con bottone "Crea nuovo"; lo stesso modale ora gestisce creazione e modifica con anagrafica a sinistra e template/attività a destra.
 - Portato il costruttore attività direttamente dentro il modale progetto: attività trascinabili, aggiunta dal catalogo inline e comando "Somma attività" per compilare il budget totale dal piano costi.
+- Uniformato il modale template alla stessa logica: attività ordinabili con trascinamento, aggiunta dal catalogo, creazione attività al volo e z-index superiore al modale progetto.
 
 ## Sicurezza dati economici
 

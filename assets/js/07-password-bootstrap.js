@@ -128,8 +128,16 @@
                         return fillProjectBudgetFromTaskBudgets();
                     case 'add-inline-project-task':
                         return addInlineProjectTask();
+                    case 'create-inline-project-task':
+                        return createInlineProjectTask();
                     case 'remove-inline-project-task':
                         return removeInlineProjectTask(taskIndex);
+                    case 'add-inline-template-task':
+                        return addInlineTemplateTask();
+                    case 'create-inline-template-task':
+                        return createInlineTemplateTask();
+                    case 'remove-inline-template-task':
+                        return removeInlineTemplateTask(taskIndex);
                     case 'move-builder-task':
                         return moveTaskBuilder(taskIndex, Number(trigger.dataset.direction));
                     case 'remove-builder-task':
@@ -173,73 +181,87 @@
                 }
             });
 
-            let draggedProjectTaskIndex = null;
+            const getDraggableTaskRow = target => target?.closest?.('[data-ui-action="project-task-drag"], [data-ui-action="template-task-drag"]');
+            const getTaskDragType = row => row?.dataset.uiAction === 'template-task-drag' ? 'template' : 'project';
+            const reorderDraggedTask = (type, fromIndex, toIndex) => {
+                if (type === 'template') return reorderInlineTemplateTasks(fromIndex, toIndex);
+                return reorderInlineProjectTasks(fromIndex, toIndex);
+            };
+
+            let draggedTaskIndex = null;
+            let draggedTaskType = null;
             document.addEventListener('dragstart', event => {
-                const row = event.target.closest('[data-ui-action="project-task-drag"]');
+                const row = getDraggableTaskRow(event.target);
                 if (!row) return;
-                if (typeof clearProjectTaskPress === 'function') clearProjectTaskPress();
-                draggedProjectTaskIndex = Number(row.dataset.taskIndex);
+                if (typeof clearTaskPress === 'function') clearTaskPress();
+                draggedTaskIndex = Number(row.dataset.taskIndex);
+                draggedTaskType = getTaskDragType(row);
                 row.classList.add('opacity-50');
                 event.dataTransfer.effectAllowed = 'move';
-                event.dataTransfer.setData('text/plain', String(draggedProjectTaskIndex));
+                event.dataTransfer.setData('text/plain', String(draggedTaskIndex));
             });
 
             document.addEventListener('dragover', event => {
-                const row = event.target.closest('[data-ui-action="project-task-drag"]');
-                if (!row || draggedProjectTaskIndex === null) return;
+                const row = getDraggableTaskRow(event.target);
+                if (!row || draggedTaskIndex === null || getTaskDragType(row) !== draggedTaskType) return;
                 event.preventDefault();
                 event.dataTransfer.dropEffect = 'move';
             });
 
             document.addEventListener('drop', event => {
-                const row = event.target.closest('[data-ui-action="project-task-drag"]');
-                if (!row || draggedProjectTaskIndex === null) return;
+                const row = getDraggableTaskRow(event.target);
+                if (!row || draggedTaskIndex === null || getTaskDragType(row) !== draggedTaskType) return;
                 event.preventDefault();
-                reorderInlineProjectTasks(draggedProjectTaskIndex, Number(row.dataset.taskIndex));
-                draggedProjectTaskIndex = null;
+                reorderDraggedTask(draggedTaskType, draggedTaskIndex, Number(row.dataset.taskIndex));
+                draggedTaskIndex = null;
+                draggedTaskType = null;
             });
 
             document.addEventListener('dragend', () => {
-                document.querySelectorAll('.project-task-row.opacity-50').forEach(row => row.classList.remove('opacity-50'));
-                draggedProjectTaskIndex = null;
+                document.querySelectorAll('.project-task-row.opacity-50, .template-task-row.opacity-50').forEach(row => row.classList.remove('opacity-50'));
+                draggedTaskIndex = null;
+                draggedTaskType = null;
             });
 
-            let pressedProjectTaskIndex = null;
-            let pressedProjectTaskRow = null;
-            let projectTaskPressTimer = null;
-            let projectTaskPressActive = false;
-            const clearProjectTaskPress = () => {
-                if (projectTaskPressTimer) clearTimeout(projectTaskPressTimer);
-                projectTaskPressTimer = null;
-                projectTaskPressActive = false;
-                pressedProjectTaskIndex = null;
-                if (pressedProjectTaskRow) pressedProjectTaskRow.classList.remove('ring-2', 'ring-primary-300', 'scale-[0.99]');
-                pressedProjectTaskRow = null;
+            let pressedTaskIndex = null;
+            let pressedTaskType = null;
+            let pressedTaskRow = null;
+            let taskPressTimer = null;
+            let taskPressActive = false;
+            const clearTaskPress = () => {
+                if (taskPressTimer) clearTimeout(taskPressTimer);
+                taskPressTimer = null;
+                taskPressActive = false;
+                pressedTaskIndex = null;
+                pressedTaskType = null;
+                if (pressedTaskRow) pressedTaskRow.classList.remove('ring-2', 'ring-primary-300', 'scale-[0.99]');
+                pressedTaskRow = null;
             };
 
             document.addEventListener('pointerdown', event => {
-                const row = event.target.closest('[data-ui-action="project-task-drag"]');
+                const row = getDraggableTaskRow(event.target);
                 if (!row || event.target.closest('input, button, select, textarea')) return;
-                pressedProjectTaskIndex = Number(row.dataset.taskIndex);
-                pressedProjectTaskRow = row;
-                projectTaskPressTimer = setTimeout(() => {
-                    projectTaskPressActive = true;
-                    pressedProjectTaskRow?.classList.add('ring-2', 'ring-primary-300', 'scale-[0.99]');
+                pressedTaskIndex = Number(row.dataset.taskIndex);
+                pressedTaskType = getTaskDragType(row);
+                pressedTaskRow = row;
+                taskPressTimer = setTimeout(() => {
+                    taskPressActive = true;
+                    pressedTaskRow?.classList.add('ring-2', 'ring-primary-300', 'scale-[0.99]');
                 }, 180);
             });
 
             document.addEventListener('pointermove', event => {
-                if (projectTaskPressActive) event.preventDefault();
+                if (taskPressActive) event.preventDefault();
             }, { passive: false });
 
             document.addEventListener('pointerup', event => {
-                if (!projectTaskPressActive || pressedProjectTaskIndex === null) return clearProjectTaskPress();
-                const targetRow = document.elementFromPoint(event.clientX, event.clientY)?.closest('[data-ui-action="project-task-drag"]');
-                if (targetRow) reorderInlineProjectTasks(pressedProjectTaskIndex, Number(targetRow.dataset.taskIndex));
-                clearProjectTaskPress();
+                if (!taskPressActive || pressedTaskIndex === null) return clearTaskPress();
+                const targetRow = getDraggableTaskRow(document.elementFromPoint(event.clientX, event.clientY));
+                if (targetRow && getTaskDragType(targetRow) === pressedTaskType) reorderDraggedTask(pressedTaskType, pressedTaskIndex, Number(targetRow.dataset.taskIndex));
+                clearTaskPress();
             });
 
-            document.addEventListener('pointercancel', clearProjectTaskPress);
+            document.addEventListener('pointercancel', clearTaskPress);
 
             document.querySelectorAll('input[name="main-role"]').forEach(input => {
                 input.addEventListener('change', toggleSignupOptions);
@@ -252,6 +274,20 @@
                         handleAuthAction();
                     }
                 });
+            });
+
+            document.getElementById('project-inline-new-task')?.addEventListener('keydown', event => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    createInlineProjectTask();
+                }
+            });
+
+            document.getElementById('new-template-inline-task')?.addEventListener('keydown', event => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    createInlineTemplateTask();
+                }
             });
         }
 
