@@ -84,6 +84,7 @@ Stato: beta su dominio definitivo attiva.
 - Rinominata la modalità budget "Manuale" in "Libero" e nascosti i campi costo attività quando il budget non è calcolato dalla somma attività.
 - Reso il bottone "Crea nuovo" dimensionalmente identico ai bottoni compatti tramite classe dedicata e aggiornato il testo della modalità budget libero.
 - Uniformato definitivamente "Crea nuovo" a "Archivio" usando la stessa classe compatta, senza icona, con variante scura.
+- Aggiornata label del bottone progetti in "+ Aggiungi nuovo" mantenendo stile compatto scuro.
 
 ## Sicurezza dati economici
 
