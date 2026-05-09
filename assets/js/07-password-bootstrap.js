@@ -31,6 +31,7 @@
             bindClick('btn-save-team-edit', saveTeamMemberEdit);
             bindClick('btn-close-account', closeAccountModal);
             bindClick('btn-save-studio-name', saveStudioName);
+            bindClick('btn-upload-studio-logo', () => document.getElementById('account-logo-input')?.click());
             bindClick('btn-skip-onboarding', () => closeOwnerOnboarding(true));
             bindClick('btn-save-onboarding-identity', saveOnboardingIdentity);
             bindClick('btn-prepare-first-project', prepareFirstProjectFromOnboarding);

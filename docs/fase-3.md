@@ -77,6 +77,7 @@ Stato: beta su dominio definitivo attiva.
 - Spostata la creazione progetto dalla barra laterale alla tab Progetti con bottone "Crea nuovo"; lo stesso modale ora gestisce creazione e modifica con anagrafica a sinistra e template/attività a destra.
 - Portato il costruttore attività direttamente dentro il modale progetto: attività trascinabili, aggiunta dal catalogo inline e comando "Somma attività" per compilare il budget totale dal piano costi.
 - Uniformato il modale template alla stessa logica: attività ordinabili con trascinamento, aggiunta dal catalogo, creazione attività al volo e z-index superiore al modale progetto.
+- Spostata la gestione dello studio dal popup account alla colonna sinistra: identità studio tra Timer e Team, caricamento logo senza anteprima e anteprima compatta del catalogo attività.
 
 ## Sicurezza dati economici
 

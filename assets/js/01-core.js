@@ -214,7 +214,7 @@ const ARCH_TIME_CONFIG = window.ARCH_TIME_CONFIG || {};
                 'header-title': theme.appNameHtmlHeader,
                 'lbl-new-project': `<i data-lucide="folder-plus" class="text-primary-500 w-5 h-5"></i> ${theme.newProjectTitle}`,
                 'lbl-active-projects': theme.activeProjectsTitle,
-                'lbl-identity-title': `<i data-lucide="image" class="w-3.5 h-3.5"></i> ${theme.identityTitle}`,
+                'lbl-identity-title': `<i data-lucide="building-2" class="text-primary-500 w-5 h-5"></i> ${theme.identityTitle}`,
                 'lbl-catalog-title': theme.catalogTitle,
                 'lbl-catalog-desc': theme.catalogDesc,
                 'modal-catalog-title': `<i data-lucide="book-open" class="text-primary-500 w-5 h-5"></i> ${theme.catalogTitle}`,

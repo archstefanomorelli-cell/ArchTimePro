@@ -223,6 +223,8 @@ function switchAuthTab(mode) {
             if(!name) return; 
             await supabaseClient.from('studios').update({ name }).eq('id', userProfile.studio_id); 
             if(studioData) studioData.name = name; 
+            const headerStudioName = document.getElementById('header-studio-name');
+            if (headerStudioName) headerStudioName.innerText = name || 'Spazio di lavoro';
             await appAlert("Fatto", "Nome aggiornato!", "success"); 
         }
 
@@ -236,10 +238,14 @@ function switchAuthTab(mode) {
             const { data: { publicUrl } } = supabaseClient.storage.from('studio-logos').getPublicUrl(filePath); 
             await supabaseClient.from('studios').update({ logo_url: publicUrl }).eq('id', userProfile.studio_id); 
             if(studioData) studioData.logo_url = publicUrl; 
-            document.getElementById('account-logo-preview').src = publicUrl; 
-            document.getElementById('account-logo-preview').classList.remove('force-hide'); 
+            const accountLogoPreview = document.getElementById('account-logo-preview');
+            if (accountLogoPreview) {
+                accountLogoPreview.src = publicUrl; 
+                accountLogoPreview.classList.remove('force-hide'); 
+            }
             document.getElementById('header-logo').src = publicUrl; 
             document.getElementById('header-logo').classList.remove('force-hide'); 
+            await appAlert("Fatto", "Logo caricato!", "success");
         }
 
         function ownerOnboardingKey() {
@@ -299,14 +305,15 @@ function switchAuthTab(mode) {
             const budget = document.getElementById('onboarding-project-budget').value;
             const defaults = THEMES[currentBusinessType].defaultCatalog.slice(0, 3);
 
-            document.getElementById('new-proj-name').value = name || THEMES[currentBusinessType].demoProject;
-            document.getElementById('new-proj-client').value = client || THEMES[currentBusinessType].demoClient;
-            document.getElementById('new-proj-budget').value = budget || '';
+            openCreateProjectModal();
+            document.getElementById('edit-modal-name').value = name || THEMES[currentBusinessType].demoProject;
+            document.getElementById('edit-modal-client').value = client || THEMES[currentBusinessType].demoClient;
+            document.getElementById('edit-modal-budget').value = budget || '';
             newProjectTasks = defaults.length > 0 ? defaults : ['Generico'];
             renderNewProjectUI();
-            switchAppTab('manage');
+            switchAppTab('operate');
             closeOwnerOnboarding(true);
-            document.getElementById('new-proj-name')?.focus();
+            document.getElementById('edit-modal-name')?.focus();
         }
 
         async function checkUser() {
@@ -371,8 +378,11 @@ function switchAuthTab(mode) {
                         if(studioData) {
                             document.getElementById('account-studio-name').value = studioData.name || '';
                             if(studioData.logo_url) { 
-                                document.getElementById('account-logo-preview').src = studioData.logo_url; 
-                                document.getElementById('account-logo-preview').classList.remove('force-hide'); 
+                                const accountLogoPreview = document.getElementById('account-logo-preview');
+                                if (accountLogoPreview) {
+                                    accountLogoPreview.src = studioData.logo_url; 
+                                    accountLogoPreview.classList.remove('force-hide'); 
+                                }
                                 document.getElementById('header-logo').src = studioData.logo_url; 
                                 document.getElementById('header-logo').classList.remove('force-hide'); 
                             }

@@ -369,6 +369,10 @@
                 </div>`;
         }
 
+        function catalogPreviewItemHtml(task) {
+            return `<span class="text-[10px] bg-slate-50 text-slate-500 font-bold px-2 py-0.5 rounded-md border border-slate-200 uppercase tracking-wider">${escapeHtml(task)}</span>`;
+        }
+
         function newTemplateCatalogTaskHtml(task) {
             const isSelected = newTemplateTasks.includes(task); 
             return `<button data-ui-action="toggle-template-task" data-task="${escapeAttr(task)}" class="px-3 py-1.5 rounded-lg border text-xs font-bold transition-all shadow-sm tag-enter ${isSelected ? 'bg-primary-50 border-primary-200 text-primary-700' : 'bg-white border-slate-200 text-slate-600 hover:border-primary-300 hover:text-primary-600'}">${escapeHtml(task)}</button>`;
@@ -510,6 +514,13 @@
 
             const legacyTemplateCatalog = document.getElementById('new-template-catalog-tasks');
             if (legacyTemplateCatalog) legacyTemplateCatalog.innerHTML = activityCatalog.map(newTemplateCatalogTaskHtml).join('');
+            const catalogPreview = document.getElementById('studio-catalog-preview');
+            if (catalogPreview) {
+                const previewTasks = activityCatalog.slice(0, 8);
+                catalogPreview.innerHTML = previewTasks.length
+                    ? previewTasks.map(catalogPreviewItemHtml).join('') + (activityCatalog.length > previewTasks.length ? `<span class="text-[10px] bg-white text-slate-400 font-bold px-2 py-0.5 rounded-md border border-slate-200">+${activityCatalog.length - previewTasks.length}</span>` : '')
+                    : '<span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Nessuna attività nel catalogo.</span>';
+            }
             const selectedTemplateTasks = document.getElementById('new-template-selected-tasks');
             if (selectedTemplateTasks) {
                 selectedTemplateTasks.innerHTML = newTemplateTasks.length === 0
