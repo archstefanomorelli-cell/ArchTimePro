@@ -454,14 +454,57 @@
             return collectVisibleTaskBudgets(currentProjectBudgetMode());
         }
 
+        function getTaskBudgetsTotal(tasks = getCurrentProjectModalTasks(), budgets = collectCurrentProjectTaskBudgets()) {
+            return tasks.reduce((sum, task) => sum + Number(budgets[task] || 0), 0);
+        }
+
+        function refreshProjectBudgetModeUI() {
+            const isAuto = projectBudgetMode === 'auto';
+            const manualButton = document.getElementById('budget-mode-manual');
+            const autoButton = document.getElementById('budget-mode-auto');
+            const budgetInput = document.getElementById('edit-modal-budget');
+            const note = document.getElementById('project-budget-mode-note');
+
+            if (manualButton) manualButton.className = isAuto
+                ? 'px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-wider transition-all text-slate-400 hover:text-slate-600'
+                : 'px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-wider transition-all bg-slate-900 text-white shadow-sm';
+            if (autoButton) autoButton.className = isAuto
+                ? 'px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-wider transition-all bg-primary-600 text-white shadow-sm'
+                : 'px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-wider transition-all text-slate-400 hover:text-primary-600';
+            if (budgetInput) {
+                budgetInput.readOnly = isAuto;
+                budgetInput.classList.toggle('text-slate-500', isAuto);
+            }
+            if (note) note.textContent = isAuto
+                ? 'Budget calcolato dalla somma delle attività con importo. Le voci fuori piano non pesano sul ritmo.'
+                : 'Budget libero: i costi attività servono solo come pesi del ritmo progetto.';
+        }
+
+        function setProjectBudgetMode(mode) {
+            projectBudgetMode = mode === 'auto' ? 'auto' : 'manual';
+            if (projectBudgetMode === 'auto') fillProjectBudgetFromTaskBudgets(false);
+            refreshProjectBudgetModeUI();
+        }
+
+        function syncProjectBudgetFromTaskBudgetsIfNeeded() {
+            if (projectBudgetMode !== 'auto') return;
+            const total = getTaskBudgetsTotal();
+            const budgetInput = document.getElementById('edit-modal-budget');
+            if (budgetInput) budgetInput.value = total > 0 ? total.toFixed(2) : '';
+        }
+
         function inlineProjectTaskHtml(task, index, budgets, mode) {
+            const budgetValue = Number(budgets?.[task] || 0);
             return `
                 <div draggable="true" data-ui-action="project-task-drag" data-task-index="${index}" class="project-task-row grid grid-cols-[auto_minmax(0,1fr)_104px_auto] gap-2 items-center bg-white border border-slate-200 rounded-xl px-2.5 py-2 shadow-sm cursor-grab active:cursor-grabbing touch-none">
                     <span class="text-slate-300"><i data-lucide="grip-vertical" class="w-4 h-4"></i></span>
-                    <span class="min-w-0 text-[11px] font-bold text-slate-700 truncate"><span class="text-primary-600 font-black">${index + 1}.</span> ${escapeHtml(task)}</span>
-                    <div class="flex items-center gap-1 border border-slate-200 rounded-lg px-2 py-1.5 bg-slate-50 focus-within:bg-white focus-within:border-primary-400 focus-within:ring-2 focus-within:ring-primary-500/10">
+                    <div class="min-w-0">
+                        <span class="block text-[11px] font-bold text-slate-700 truncate"><span class="text-primary-600 font-black">${index + 1}.</span> ${escapeHtml(task)}</span>
+                        <span class="block text-[8px] font-black uppercase tracking-wider ${budgetValue > 0 ? 'text-primary-500' : 'text-slate-400'}">${budgetValue > 0 ? 'Pesa sul ritmo' : 'Fuori piano'}</span>
+                    </div>
+                    <div class="flex items-center gap-1 border border-slate-200 rounded-lg px-2 py-1.5 bg-slate-50 focus-within:bg-white focus-within:border-primary-400 focus-within:ring-2 focus-within:ring-primary-500/10" title="${budgetValue > 0 ? 'Importo usato come peso nel ritmo progetto' : 'Lascia vuoto se questa attività non deve pesare sul ritmo'}">
                         <span class="text-[10px] font-black text-slate-400">€</span>
-                        <input type="text" data-budget-mode="${mode}" data-task="${escapeAttr(task)}" value="${escapeAttr(getTaskBudgetInputValue(budgets, task))}" placeholder="0" inputmode="decimal" class="task-budget-input w-full bg-transparent outline-none text-[11px] font-mono font-bold text-slate-700">
+                        <input type="text" data-budget-mode="${mode}" data-task="${escapeAttr(task)}" value="${escapeAttr(getTaskBudgetInputValue(budgets, task))}" placeholder="Fuori piano" inputmode="decimal" class="task-budget-input w-full bg-transparent outline-none text-[11px] font-mono font-bold text-slate-700 placeholder:text-[8px] placeholder:font-sans placeholder:uppercase placeholder:tracking-wider">
                     </div>
                     <button type="button" data-ui-action="remove-inline-project-task" data-task-index="${index}" class="p-1.5 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
                 </div>`;
@@ -653,6 +696,7 @@
             document.getElementById('edit-modal-budget').value = '';
             newProjectTasks = [];
             newProjectTaskBudgets = {};
+            setProjectBudgetMode('manual');
             setProjectModalMode('create');
             renderNewProjectUI();
             document.getElementById('modal-edit-project').classList.remove('force-hide');
@@ -668,6 +712,7 @@
             if (tasks.length === 0) selectedContainer.innerHTML = '<div class="text-[11px] font-bold text-center text-slate-400 uppercase tracking-wider py-4">Nessuna attività configurata.</div>';
             else selectedContainer.innerHTML = tasks.map((task, idx) => inlineProjectTaskHtml(task, idx, budgets, mode)).join('');
             renderInlineTaskPicker(tasks);
+            syncProjectBudgetFromTaskBudgetsIfNeeded();
         }
 
         function renderNewProjectUI() {
@@ -746,12 +791,13 @@
             lucide.createIcons();
         }
 
-        function fillProjectBudgetFromTaskBudgets() {
+        function fillProjectBudgetFromTaskBudgets(switchMode = true) {
             const budgets = collectCurrentProjectTaskBudgets();
             setCurrentProjectModalBudgets(budgets);
-            const total = getCurrentProjectModalTasks().reduce((sum, task) => sum + Number(budgets[task] || 0), 0);
+            const total = getTaskBudgetsTotal(getCurrentProjectModalTasks(), budgets);
             const budgetInput = document.getElementById('edit-modal-budget');
             if (budgetInput) budgetInput.value = total > 0 ? total.toFixed(2) : '';
+            if (switchMode) setProjectBudgetMode('auto');
         }
 
         async function createNewProject() {
@@ -759,6 +805,7 @@
                 const activeCount = projects.filter(p => p.is_archived !== true).length;
                 if (activeCount >= 5) return openUpgradeModal('Lavori Illimitati');
             }
+            if (projectBudgetMode === 'auto') fillProjectBudgetFromTaskBudgets(false);
             const name = document.getElementById('edit-modal-name').value.trim(); const client = document.getElementById('edit-modal-client').value.trim(); const budget = parseFloat(document.getElementById('edit-modal-budget').value) || 0;
             if(!name) return await appAlert("Attenzione", "Inserisci il nome del lavoro", "danger"); 
             if(newProjectTasks.length === 0) return await appAlert("Attenzione", "Configura almeno un'attività", "danger");
@@ -775,6 +822,7 @@
             document.getElementById('new-proj-template').value = ""; 
             newProjectTasks = [];
             newProjectTaskBudgets = {};
+            setProjectBudgetMode('manual');
             
             renderNewProjectUI(); 
             fetchProjects(); 
@@ -1092,6 +1140,8 @@
             if (templateSelect) templateSelect.value = '';
             editProjectTasks = p.tasks && p.tasks.length > 0 ? [...p.tasks] : [];
             editProjectTaskBudgets = getProjectTaskBudgets(p);
+            const taskBudgetTotal = getTaskBudgetsTotal(editProjectTasks, editProjectTaskBudgets);
+            setProjectBudgetMode(taskBudgetTotal > 0 && Math.abs(taskBudgetTotal - Number(p.budget || 0)) < 0.01 ? 'auto' : 'manual');
             renderNewProjectUI();
             renderEditProjectTasks();
             document.getElementById('modal-detail').classList.add('force-hide'); 
@@ -1109,6 +1159,7 @@
         async function saveModalProjectEdit() {
             const id = document.getElementById('edit-modal-proj-id').value; 
             if (!id) return createNewProject();
+            if (projectBudgetMode === 'auto') fillProjectBudgetFromTaskBudgets(false);
             const name = document.getElementById('edit-modal-name').value.trim(); 
             const client = document.getElementById('edit-modal-client').value.trim(); 
             const budget = parseFloat(document.getElementById('edit-modal-budget').value) || 0;

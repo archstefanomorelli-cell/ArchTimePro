@@ -84,8 +84,14 @@
                 if (event.target?.classList?.contains('task-budget-input')) {
                     const amount = parseMoneyInput(event.target.value);
                     if (!isNaN(amount) && amount > 0) event.target.value = amount.toFixed(amount % 1 === 0 ? 0 : 2).replace('.', ',');
+                    syncProjectBudgetFromTaskBudgetsIfNeeded();
                 }
             }, true);
+            document.addEventListener('input', event => {
+                if (event.target?.classList?.contains('task-budget-input')) {
+                    syncProjectBudgetFromTaskBudgetsIfNeeded();
+                }
+            });
 
             document.querySelectorAll('[data-action="logout"]').forEach(button => {
                 button.addEventListener('click', handleLogout);
@@ -127,6 +133,8 @@
                         return deleteProject(projectId);
                     case 'sum-project-task-budgets':
                         return fillProjectBudgetFromTaskBudgets();
+                    case 'set-project-budget-mode':
+                        return setProjectBudgetMode(trigger.dataset.budgetMode);
                     case 'add-inline-project-task':
                         return addInlineProjectTask();
                     case 'create-inline-project-task':
