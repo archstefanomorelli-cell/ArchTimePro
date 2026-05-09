@@ -39,9 +39,13 @@ jobs:
           set -euo pipefail
           rm -rf dist
           mkdir -p dist/assets
-          cp index.html app.html guida.html privacy.html termini.html feedback.html sicurezza.html robots.txt .nojekyll CNAME dist/
+          cp index.html app.html guida.html tutorial.html privacy.html termini.html feedback.html sicurezza.html robots.txt .nojekyll CNAME dist/
           cp assets/app.css dist/assets/app.css
           cp -R assets/js dist/assets/js
+          cp -R tutorial dist/tutorial
+          mkdir -p dist/docs/video-guide
+          cp -R docs/video-guide/frames-real dist/docs/video-guide/frames-real
+          cp -R docs/video-guide/videos-real dist/docs/video-guide/videos-real
           cp -f mockup.png dist/ 2>/dev/null || true
           rm -f dist/assets/js/00-runtime-config.js
           cat > dist/assets/js/00-runtime-config.js <<EOF
