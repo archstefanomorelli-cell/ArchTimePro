@@ -114,21 +114,21 @@
             return statuses;
         }
 
-        function getProjectTaskEstimates(project) {
-            const rawEstimates = project.task_estimates && typeof project.task_estimates === 'object' ? project.task_estimates : {};
-            const estimates = {};
+        function getProjectTaskBudgets(project) {
+            const rawBudgets = project.task_budgets && typeof project.task_budgets === 'object' ? project.task_budgets : {};
+            const budgets = {};
             (project.tasks || []).forEach(task => {
-                const estimate = Number(rawEstimates[task] || 0);
-                if (estimate > 0) estimates[task] = estimate;
+                const budgetValue = Number(rawBudgets[task] || 0);
+                if (budgetValue > 0) budgets[task] = budgetValue;
             });
-            return estimates;
+            return budgets;
         }
 
-        function hasUsableTaskEstimates(project) {
+        function hasUsableTaskBudgets(project) {
             const tasks = project.tasks || [];
-            const estimates = getProjectTaskEstimates(project);
-            const estimatedTotal = tasks.reduce((sum, task) => sum + Number(estimates[task] || 0), 0);
-            return estimatedTotal > 0;
+            const budgets = getProjectTaskBudgets(project);
+            const budgetValuedTotal = tasks.reduce((sum, task) => sum + Number(budgets[task] || 0), 0);
+            return budgetValuedTotal > 0;
         }
 
         function getProjectRhythmSummary(project, costSummary = getProjectCostSummary(project)) {
@@ -136,15 +136,15 @@
             if (!isAdminUser() || tasks.length === 0 || costSummary.budget <= 0) return null;
 
             const statuses = getProjectTaskStatuses(project);
-            const estimates = getProjectTaskEstimates(project);
-            const usesEstimates = hasUsableTaskEstimates(project);
+            const budgets = getProjectTaskBudgets(project);
+            const usesTaskBudgets = hasUsableTaskBudgets(project);
             const weights = { todo: 0, doing: 0.5, done: 1 };
-            const estimatedTotal = tasks.reduce((sum, task) => sum + (usesEstimates ? Number(estimates[task] || 0) : 1), 0);
+            const budgetValuedTotal = tasks.reduce((sum, task) => sum + (usesTaskBudgets ? Number(budgets[task] || 0) : 1), 0);
             const completedWeight = tasks.reduce((sum, task) => {
-                const taskWeight = usesEstimates ? Number(estimates[task] || 0) : 1;
+                const taskWeight = usesTaskBudgets ? Number(budgets[task] || 0) : 1;
                 return sum + (taskWeight * (weights[statuses[task]] || 0));
             }, 0);
-            const operationalPercent = estimatedTotal > 0 ? completedWeight / estimatedTotal * 100 : 0;
+            const operationalPercent = budgetValuedTotal > 0 ? completedWeight / budgetValuedTotal * 100 : 0;
             const costPercent = costSummary.percent;
             const gap = costPercent - operationalPercent;
             const isOverBudget = costPercent > 100;
@@ -153,9 +153,9 @@
 
             return {
                 statuses,
-                estimates,
-                usesEstimates,
-                estimatedTotal,
+                budgets,
+                usesTaskBudgets,
+                budgetValuedTotal,
                 costPercent,
                 operationalPercent,
                 gap,
@@ -163,8 +163,8 @@
                 description: isOverBudget
                     ? 'I costi hanno superato il budget disponibile.'
                     : (isOffPace
-                        ? `I costi stanno correndo più dell’avanzamento ${usesEstimates ? 'del piano ore' : 'attività'}.`
-                        : (isWarning ? `I costi sono leggermente avanti rispetto ${usesEstimates ? 'al piano ore' : 'alle attività'}.` : `Costi e ${usesEstimates ? 'piano ore' : 'attività'} risultano coerenti.`)),
+                        ? `I costi stanno correndo più dell’avanzamento ${usesTaskBudgets ? 'del piano costi' : 'attività'}.`
+                        : (isWarning ? `I costi sono leggermente avanti rispetto ${usesTaskBudgets ? 'al piano costi' : 'alle attività'}.` : `Costi e ${usesTaskBudgets ? 'piano costi' : 'attività'} risultano coerenti.`)),
                 barClass: isOverBudget || isOffPace ? 'bg-red-500' : (isWarning ? 'bg-amber-400' : 'bg-emerald-500'),
                 markerClass: isOverBudget || isOffPace ? 'bg-red-700' : (isWarning ? 'bg-amber-700' : 'bg-emerald-700'),
                 statusClass: isOverBudget || isOffPace ? 'bg-red-50 text-red-700 border-red-200' : (isWarning ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200')
@@ -226,7 +226,7 @@
                         </div>
                         <div class="flex justify-between text-[9px] font-bold text-slate-400 mt-1.5">
                             <span>Costi ${Math.round(rhythm.costPercent)}%</span>
-                            <span>${rhythm.usesEstimates ? 'Piano ore' : 'Attività'} ${Math.round(rhythm.operationalPercent)}%</span>
+                            <span>${rhythm.usesTaskBudgets ? 'Piano costi' : 'Attività'} ${Math.round(rhythm.operationalPercent)}%</span>
                         </div>
                     </div>` : ''}
                 </div>`;
@@ -318,14 +318,14 @@
         
         function confirmTaskBuilder() { 
             if(taskBuilderMode === 'new') { 
-                newProjectEstimates = collectVisibleTaskEstimates('new');
+                newProjectTaskBudgets = collectVisibleTaskBudgets('new');
                 newProjectTasks = [...tempBuilderTasks]; 
-                newProjectEstimates = Object.fromEntries(Object.entries(newProjectEstimates).filter(([task]) => newProjectTasks.includes(task)));
+                newProjectTaskBudgets = Object.fromEntries(Object.entries(newProjectTaskBudgets).filter(([task]) => newProjectTasks.includes(task)));
                 renderNewProjectUI(); 
             } else { 
-                editProjectEstimates = collectVisibleTaskEstimates('edit');
+                editProjectTaskBudgets = collectVisibleTaskBudgets('edit');
                 editProjectTasks = [...tempBuilderTasks]; 
-                editProjectEstimates = Object.fromEntries(Object.entries(editProjectEstimates).filter(([task]) => editProjectTasks.includes(task)));
+                editProjectTaskBudgets = Object.fromEntries(Object.entries(editProjectTaskBudgets).filter(([task]) => editProjectTasks.includes(task)));
                 renderEditProjectTasks(); 
             } 
             closeTaskBuilder(); 
@@ -378,35 +378,38 @@
             return `<span class="text-[10px] bg-slate-50 text-slate-500 font-bold px-2 py-0.5 rounded-md border border-slate-200 uppercase tracking-wider">${escapeHtml(task)}</span>`;
         }
 
-        function getEstimateInputValue(estimates, task) {
-            const value = Number(estimates?.[task] || 0);
-            return value > 0 ? formatTime(value) : '';
+        function getTaskBudgetInputValue(budgets, task) {
+            const value = Number(budgets?.[task] || 0);
+            return value > 0 ? String(value).replace('.', ',') : '';
         }
 
-        function collectVisibleTaskEstimates(mode) {
-            const selector = mode === 'edit' ? '[data-estimate-mode="edit"]' : '[data-estimate-mode="new"]';
-            const estimates = {};
+        function collectVisibleTaskBudgets(mode) {
+            const selector = mode === 'edit' ? '[data-budget-mode="edit"]' : '[data-budget-mode="new"]';
+            const budgets = {};
             document.querySelectorAll(selector).forEach(input => {
-                const hours = parseDurationInput(input.value);
-                if (!isNaN(hours) && hours > 0) estimates[input.dataset.task] = hours;
+                const amount = parseMoneyInput(input.value);
+                if (!isNaN(amount) && amount > 0) budgets[input.dataset.task] = amount;
             });
-            return estimates;
+            return budgets;
         }
 
-        function taskEstimateRowsHtml(tasks, estimates, mode) {
+        function taskBudgetRowsHtml(tasks, budgets, mode) {
             if (!tasks || tasks.length === 0) return '';
 
             return `
                 <div class="mt-3 pt-3 border-t border-slate-100 space-y-2">
                     <div class="flex items-center justify-between gap-3">
-                        <span class="text-[10px] font-black uppercase tracking-wider text-slate-500">Piano ore</span>
+                        <span class="text-[10px] font-black uppercase tracking-wider text-slate-500">Piano costi</span>
                         <span class="text-[9px] font-bold text-slate-400">Opzionale</span>
                     </div>
                     <div class="space-y-1.5">
                         ${tasks.map((task, index) => `
-                            <div class="grid grid-cols-[minmax(0,1fr)_88px] gap-2 items-center">
+                            <div class="grid grid-cols-[minmax(0,1fr)_110px] gap-2 items-center">
                                 <span class="text-[10px] font-bold text-slate-500 truncate"><span class="text-primary-600 font-black">${index + 1}.</span> ${escapeHtml(task)}</span>
-                                <input type="text" data-estimate-mode="${mode}" data-task="${escapeAttr(task)}" value="${escapeAttr(getEstimateInputValue(estimates, task))}" placeholder="00:00" inputmode="decimal" class="task-estimate-input w-full border border-slate-200 rounded-lg px-2 py-1.5 text-[11px] font-mono font-bold text-slate-700 bg-white outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-500/10">
+                                <div class="flex items-center gap-1 border border-slate-200 rounded-lg px-2 py-1.5 bg-white focus-within:border-primary-400 focus-within:ring-2 focus-within:ring-primary-500/10">
+                                    <span class="text-[10px] font-black text-slate-400">€</span>
+                                    <input type="text" data-budget-mode="${mode}" data-task="${escapeAttr(task)}" value="${escapeAttr(getTaskBudgetInputValue(budgets, task))}" placeholder="0" inputmode="decimal" class="task-budget-input w-full bg-transparent outline-none text-[11px] font-mono font-bold text-slate-700">
+                                </div>
                             </div>`).join('')}
                     </div>
                 </div>`;
@@ -463,8 +466,8 @@
                     if (idx !== -1) activityCatalog[idx] = val;
                     projectTemplates.forEach(tpl => { const tIdx = tpl.tasks.indexOf(editingCatalogTask); if(tIdx !== -1) tpl.tasks[tIdx] = val; });
                     let ntIdx = newTemplateTasks.indexOf(editingCatalogTask); if(ntIdx !== -1) newTemplateTasks[ntIdx] = val;
-                    let npIdx = newProjectTasks.indexOf(editingCatalogTask); if(npIdx !== -1) { newProjectTasks[npIdx] = val; if (newProjectEstimates[editingCatalogTask]) { newProjectEstimates[val] = newProjectEstimates[editingCatalogTask]; delete newProjectEstimates[editingCatalogTask]; } }
-                    let epIdx = editProjectTasks.indexOf(editingCatalogTask); if(epIdx !== -1) { editProjectTasks[epIdx] = val; if (editProjectEstimates[editingCatalogTask]) { editProjectEstimates[val] = editProjectEstimates[editingCatalogTask]; delete editProjectEstimates[editingCatalogTask]; } }
+                    let npIdx = newProjectTasks.indexOf(editingCatalogTask); if(npIdx !== -1) { newProjectTasks[npIdx] = val; if (newProjectTaskBudgets[editingCatalogTask]) { newProjectTaskBudgets[val] = newProjectTaskBudgets[editingCatalogTask]; delete newProjectTaskBudgets[editingCatalogTask]; } }
+                    let epIdx = editProjectTasks.indexOf(editingCatalogTask); if(epIdx !== -1) { editProjectTasks[epIdx] = val; if (editProjectTaskBudgets[editingCatalogTask]) { editProjectTaskBudgets[val] = editProjectTaskBudgets[editingCatalogTask]; delete editProjectTaskBudgets[editingCatalogTask]; } }
                     let tbIdx = tempBuilderTasks.indexOf(editingCatalogTask); if(tbIdx !== -1) tempBuilderTasks[tbIdx] = val;
                     editingCatalogTask = null; document.getElementById('new-catalog-item').value = ''; renderCatalogAndTemplatesUI();
                     if(!document.getElementById('modal-task-builder').classList.contains('force-hide')) renderTaskBuilder();
@@ -480,7 +483,7 @@
         async function removeActivityFromCatalog(task) { 
             if(await appConfirm("Elimina Voce", `Sei sicuro di voler eliminare "${task}" dal catalogo?\n(Verrà rimossa automaticamente anche dai Template che la utilizzano).`, "danger")) {
                 if (editingCatalogTask === task) cancelCatalogEdit();
-                activityCatalog = activityCatalog.filter(t => t !== task); newTemplateTasks = newTemplateTasks.filter(t => t !== task); newProjectTasks = newProjectTasks.filter(t => t !== task); editProjectTasks = editProjectTasks.filter(t => t !== task); tempBuilderTasks = tempBuilderTasks.filter(t => t !== task); delete newProjectEstimates[task]; delete editProjectEstimates[task]; projectTemplates.forEach(tpl => { tpl.tasks = tpl.tasks.filter(t => t !== task); });
+                activityCatalog = activityCatalog.filter(t => t !== task); newTemplateTasks = newTemplateTasks.filter(t => t !== task); newProjectTasks = newProjectTasks.filter(t => t !== task); editProjectTasks = editProjectTasks.filter(t => t !== task); tempBuilderTasks = tempBuilderTasks.filter(t => t !== task); delete newProjectTaskBudgets[task]; delete editProjectTaskBudgets[task]; projectTemplates.forEach(tpl => { tpl.tasks = tpl.tasks.filter(t => t !== task); });
                 renderCatalogAndTemplatesUI(); if(!document.getElementById('modal-task-builder').classList.contains('force-hide')) renderTaskBuilder(); await syncCatalogAndTemplatesToDB(); 
             }
         }
@@ -507,12 +510,12 @@
             const selectedContainer = document.getElementById('new-proj-selected-tasks');
             if (selectedContainer) {
                 if (newProjectTasks.length === 0) selectedContainer.innerHTML = emptyStateHtml('Nessuna attività configurata.');
-                else selectedContainer.innerHTML = newProjectTasks.map((task, idx) => taskTagHtml(task, idx)).join('') + taskEstimateRowsHtml(newProjectTasks, newProjectEstimates, 'new');
+                else selectedContainer.innerHTML = newProjectTasks.map((task, idx) => taskTagHtml(task, idx)).join('') + taskBudgetRowsHtml(newProjectTasks, newProjectTaskBudgets, 'new');
             }
             lucide.createIcons();
         }
 
-        function applyTemplateToNewProject() { if(activePlan==='starter') return; const val = document.getElementById('new-proj-template').value; if(val !== "") newProjectTasks = [...projectTemplates[val].tasks]; else newProjectTasks = []; newProjectEstimates = {}; renderNewProjectUI(); }
+        function applyTemplateToNewProject() { if(activePlan==='starter') return; const val = document.getElementById('new-proj-template').value; if(val !== "") newProjectTasks = [...projectTemplates[val].tasks]; else newProjectTasks = []; newProjectTaskBudgets = {}; renderNewProjectUI(); }
 
         async function createNewProject() {
             if (activePlan === 'starter') {
@@ -522,19 +525,19 @@
             const name = document.getElementById('new-proj-name').value.trim(); const client = document.getElementById('new-proj-client').value.trim(); const budget = parseFloat(document.getElementById('new-proj-budget').value) || 0;
             if(!name) return await appAlert("Attenzione", "Inserisci il nome del lavoro", "danger"); 
             if(newProjectTasks.length === 0) return await appAlert("Attenzione", "Configura almeno un'attività", "danger");
-            newProjectEstimates = collectVisibleTaskEstimates('new');
+            newProjectTaskBudgets = collectVisibleTaskBudgets('new');
             
             const payload = { name: name, client: client, budget: budget, tasks: [...newProjectTasks], studio_id: userProfile.studio_id };
-            if (Object.keys(newProjectEstimates).length > 0) payload.task_estimates = newProjectEstimates;
+            if (Object.keys(newProjectTaskBudgets).length > 0) payload.task_budgets = newProjectTaskBudgets;
             const { error } = await supabaseClient.from('projects').insert([payload]);
-            if (error) return await appAlert("Configurazione richiesta", "Per salvare il Piano ore va prima aggiunta la colonna task_estimates in Supabase. Puoi lasciare vuoti i campi Piano ore oppure eseguire lo script SQL dedicato.", "danger");
+            if (error) return await appAlert("Configurazione richiesta", "Per salvare il Piano costi va prima aggiunta la colonna task_budgets in Supabase. Puoi lasciare vuoti i campi Piano costi oppure eseguire lo script SQL dedicato.", "danger");
             
             document.getElementById('new-proj-name').value = ""; 
             document.getElementById('new-proj-client').value = ""; 
             document.getElementById('new-proj-budget').value = ""; 
             document.getElementById('new-proj-template').value = ""; 
             newProjectTasks = [];
-            newProjectEstimates = {};
+            newProjectTaskBudgets = {};
             
             renderNewProjectUI(); 
             fetchProjects(); 
@@ -641,17 +644,17 @@
                 </div>`;
         }
 
-        function compactTaskPlanHtml(stat, estimateHours) {
-            if (!estimateHours || estimateHours <= 0) {
-                return `<span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Eff. ${formatTime(stat.h)}</span>`;
+        function compactTaskBudgetHtml(stat, taskBudget) {
+            if (!taskBudget || taskBudget <= 0) {
+                return `<span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Eff. ${formatMoney(stat.c, 0)} · ${formatTime(stat.h)}</span>`;
             }
 
-            const delta = Number(stat.h || 0) - Number(estimateHours || 0);
+            const delta = Number(stat.c || 0) - Number(taskBudget || 0);
             const deltaClass = delta > 0.01 ? 'text-red-600' : (delta < -0.01 ? 'text-emerald-600' : 'text-slate-400');
-            const deltaLabel = Math.abs(delta) < 0.01 ? 'in linea' : `${delta > 0 ? '+' : '-'}${formatTime(Math.abs(delta))}`;
+            const deltaLabel = Math.abs(delta) < 0.01 ? 'in linea' : `${delta > 0 ? '+' : '-'}${formatMoney(Math.abs(delta), 0)}`;
 
             return `
-                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Prev. ${formatTime(estimateHours)} · Eff. ${formatTime(stat.h)}</span>
+                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Prev. ${formatMoney(taskBudget, 0)} · Eff. ${formatMoney(stat.c, 0)}</span>
                 <span class="text-[9px] font-black ${deltaClass} mt-0.5">${deltaLabel}</span>`;
         }
 
@@ -673,13 +676,13 @@
             const rows = tasks.map(taskName => {
                 const stat = data.taskStats[taskName] || { h: 0, c: 0 };
                 const status = rhythm.statuses[taskName] || 'todo';
-                const estimateHours = Number(rhythm.estimates[taskName] || 0);
+                const taskBudget = Number(rhythm.budgets[taskName] || 0);
                 const isZero = Number(stat.h || 0) === 0 && Number(stat.c || 0) === 0;
                 return `
                     <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_160px_230px] gap-3 lg:gap-4 items-center bg-white border border-slate-200 rounded-xl p-3 shadow-sm">
                         <div class="min-w-0">
                             <p class="text-xs font-black ${isZero ? 'text-slate-400' : 'text-slate-800'} truncate">${escapeHtml(taskName)}</p>
-                            <div class="flex flex-col mt-0.5">${compactTaskPlanHtml(stat, estimateHours)}</div>
+                            <div class="flex flex-col mt-0.5">${compactTaskBudgetHtml(stat, taskBudget)}</div>
                         </div>
                         ${compactTaskCostBarHtml(stat, data.project.budget, isZero)}
                         <div class="flex flex-wrap lg:justify-end gap-1.5">
@@ -705,7 +708,7 @@
                             <p class="text-lg font-black text-slate-800 mt-1">${Math.round(rhythm.costPercent)}%</p>
                         </div>
                         <div class="bg-slate-50 border border-slate-200 rounded-xl p-3">
-                            <p class="text-[9px] font-black uppercase tracking-wider text-slate-400">${rhythm.usesEstimates ? 'Piano ore avanzato' : 'Attività avanzate'}</p>
+                            <p class="text-[9px] font-black uppercase tracking-wider text-slate-400">${rhythm.usesTaskBudgets ? 'Piano costi avanzato' : 'Attività avanzate'}</p>
                             <p class="text-lg font-black text-slate-800 mt-1">${Math.round(rhythm.operationalPercent)}%</p>
                         </div>
                     </div>
@@ -718,7 +721,7 @@
                         <p class="text-[10px] font-bold text-slate-400 hidden lg:block">Costo / ore / stato</p>
                     </div>
                     <div class="space-y-2">${rows}</div>
-                    <p class="text-[10px] text-slate-400 font-medium mt-4 leading-relaxed">Indicatore sperimentale: confronta i costi già consumati con ${rhythm.usesEstimates ? 'il piano ore e lo stato delle attività' : 'lo stato dichiarato delle attività'}. Serve come allarme operativo, non come percentuale contabile del progetto.</p>
+                    <p class="text-[10px] text-slate-400 font-medium mt-4 leading-relaxed">Indicatore sperimentale: confronta i costi già consumati con ${rhythm.usesTaskBudgets ? 'il piano costi e lo stato delle attività' : 'lo stato dichiarato delle attività'}. Serve come allarme operativo, non come percentuale contabile del progetto.</p>
                 </div>`;
         }
 
@@ -847,7 +850,7 @@
             document.getElementById('edit-modal-client').value = p.client || ''; 
             document.getElementById('edit-modal-budget').value = p.budget;
             editProjectTasks = p.tasks && p.tasks.length > 0 ? [...p.tasks] : [];
-            editProjectEstimates = getProjectTaskEstimates(p);
+            editProjectTaskBudgets = getProjectTaskBudgets(p);
             renderEditProjectTasks();
             document.getElementById('modal-detail').classList.add('force-hide'); 
             document.getElementById('modal-edit-project').classList.remove('force-hide'); 
@@ -857,7 +860,7 @@
         function renderEditProjectTasks() {
             const selectedContainer = document.getElementById('edit-proj-selected-tasks');
             if (editProjectTasks.length === 0) selectedContainer.innerHTML = emptyStateHtml('Nessuna attività configurata.');
-            else selectedContainer.innerHTML = editProjectTasks.map((task, idx) => taskTagHtml(task, idx, 'rounded-md')).join('') + taskEstimateRowsHtml(editProjectTasks, editProjectEstimates, 'edit');
+            else selectedContainer.innerHTML = editProjectTasks.map((task, idx) => taskTagHtml(task, idx, 'rounded-md')).join('') + taskBudgetRowsHtml(editProjectTasks, editProjectTaskBudgets, 'edit');
             lucide.createIcons();
         }
 
@@ -870,13 +873,13 @@
             const budget = parseFloat(document.getElementById('edit-modal-budget').value) || 0;
             if(!name) return await appAlert("Attenzione", "Inserisci il nome", "danger"); 
             if(editProjectTasks.length === 0) return await appAlert("Attenzione", "Configura almeno un'attività", "danger");
-            editProjectEstimates = collectVisibleTaskEstimates('edit');
+            editProjectTaskBudgets = collectVisibleTaskBudgets('edit');
             const originalProject = projects.find(project => project.id === id);
-            const hadEstimates = originalProject && Object.keys(getProjectTaskEstimates(originalProject)).length > 0;
+            const hadTaskBudgets = originalProject && Object.keys(getProjectTaskBudgets(originalProject)).length > 0;
             const updatePayload = { name, client, budget, tasks: editProjectTasks };
-            if (hadEstimates || Object.keys(editProjectEstimates).length > 0) updatePayload.task_estimates = editProjectEstimates;
+            if (hadTaskBudgets || Object.keys(editProjectTaskBudgets).length > 0) updatePayload.task_budgets = editProjectTaskBudgets;
             const { error } = await supabaseClient.from('projects').update(updatePayload).eq('id', id); 
-            if (error) return await appAlert("Configurazione richiesta", "Per salvare il Piano ore va prima aggiunta la colonna task_estimates in Supabase. Puoi eseguire lo script SQL dedicato e riprovare.", "danger");
+            if (error) return await appAlert("Configurazione richiesta", "Per salvare il Piano costi va prima aggiunta la colonna task_budgets in Supabase. Puoi eseguire lo script SQL dedicato e riprovare.", "danger");
             await supabaseClient.from('entries').update({ project_name: name }).eq('project_id', id);
             await fetchProjects(); await fetchEntries();
             closeEditProjectModal(); showProjectDetail(id); 
@@ -1249,3 +1252,4 @@
             });
             lucide.createIcons();
         }
+

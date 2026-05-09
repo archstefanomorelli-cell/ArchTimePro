@@ -71,8 +71,8 @@ Stato: beta su dominio definitivo attiva.
 - Corretto ordinamento registro: prima giorno attività, poi orario di inizio dichiarato, poi data tecnica di inserimento.
 - Aggiunte intestazioni di giornata nel registro desktop per rendere chiaro il raggruppamento delle attività dello stesso giorno.
 - Spostata l'intestazione colonne del registro sotto ogni giornata e rimossa la colonna data dalle singole righe desktop.
-- Aggiunto "Piano ore" opzionale per attività: le ore previste diventano il peso operativo del Ritmo progetto, senza aggiungere un nuovo blocco al popup.
-- Aggiunto script SQL `docs/sql/phase-3-hour-plan.sql` per salvare `task_estimates` e aggiornare `get_projects_for_app`.
+- Convertito il piano attività da ore previste a "Piano costi": il valore economico previsto per attività diventa il peso operativo del Ritmo progetto.
+- Aggiunto script SQL `docs/sql/phase-3-cost-plan.sql` per salvare `task_budgets` e aggiornare `get_projects_for_app` senza esporre budget attività allo staff.
 
 ## Sicurezza dati economici
 

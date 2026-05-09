@@ -132,6 +132,16 @@ const ARCH_TIME_CONFIG = window.ARCH_TIME_CONFIG || {};
             return parseFloat(rawValue.replace(',', '.'));
         }
 
+        function parseMoneyInput(value) {
+            const rawValue = String(value || '')
+                .replace(/\s/g, '')
+                .replace(/[€]/g, '')
+                .replace(/\./g, '')
+                .replace(',', '.');
+
+            return parseFloat(rawValue);
+        }
+
         function escapeHtml(value) {
             return String(value ?? '')
                 .replace(/&/g, '&amp;')
@@ -228,7 +238,7 @@ const ARCH_TIME_CONFIG = window.ARCH_TIME_CONFIG || {};
         }
 
         let activityCatalog = [], projectTemplates = [], newProjectTasks = [], editProjectTasks = [], newTemplateTasks = [];
-        let newProjectEstimates = {}, editProjectEstimates = {};
+        let newProjectTaskBudgets = {}, editProjectTaskBudgets = {};
         let editingTemplateIndex = null, editingCatalogTask = null, taskBuilderMode = 'new', tempBuilderTasks = [];
 
         function showCustomDialog(options) {

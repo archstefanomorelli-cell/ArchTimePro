@@ -1,11 +1,14 @@
--- Phase 3 - Optional hour plan per project task
+-- Phase 3 - Optional cost plan per project task
 -- Run in Supabase SQL Editor after a backup.
 
 alter table public.projects
-add column if not exists task_estimates jsonb not null default '{}'::jsonb;
+add column if not exists task_budgets jsonb not null default '{}'::jsonb;
 
--- Recreate get_projects_for_app so the frontend receives task_estimates.
--- Staff still receives NULL budget; estimates are operational planning data.
+alter table public.projects
+add column if not exists task_statuses jsonb not null default '{}'::jsonb;
+
+-- Recreate get_projects_for_app so the frontend receives task_budgets.
+-- Staff receives an empty object because task budgets are economic data.
 drop function if exists public.get_projects_for_app();
 
 create or replace function public.get_projects_for_app()
@@ -17,7 +20,7 @@ returns table (
   budget numeric,
   tasks jsonb,
   task_statuses jsonb,
-  task_estimates jsonb,
+  task_budgets jsonb,
   is_archived boolean
 )
 language plpgsql
@@ -42,7 +45,7 @@ begin
     case when is_admin() then p.budget::numeric else null::numeric end as budget,
     to_jsonb(p.tasks) as tasks,
     coalesce(p.task_statuses, '{}'::jsonb) as task_statuses,
-    coalesce(p.task_estimates, '{}'::jsonb) as task_estimates,
+    case when is_admin() then coalesce(p.task_budgets, '{}'::jsonb) else '{}'::jsonb end as task_budgets,
     p.is_archived
   from public.projects p
   where p.studio_id = caller_studio
