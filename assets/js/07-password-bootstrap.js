@@ -17,7 +17,6 @@
             bindClick('btn-toggle-timer', toggleTimer);
             bindClick('btn-manage-templates', openTemplatesModal);
             bindClick('btn-open-project-modal', openCreateProjectModal);
-            bindClick('btn-open-new-task-builder', openProjectTaskBuilder);
             bindClick('btn-open-team-report', openTeamReportModal);
             bindClick('btn-generate-invite', generateInviteLink);
             bindClick('btn-close-team-invite', closeTeamInviteModal);
@@ -125,6 +124,12 @@
                         return toggleArchive(projectId, trigger.dataset.archived === 'true');
                     case 'delete-project':
                         return deleteProject(projectId);
+                    case 'sum-project-task-budgets':
+                        return fillProjectBudgetFromTaskBudgets();
+                    case 'add-inline-project-task':
+                        return addInlineProjectTask();
+                    case 'remove-inline-project-task':
+                        return removeInlineProjectTask(taskIndex);
                     case 'move-builder-task':
                         return moveTaskBuilder(taskIndex, Number(trigger.dataset.direction));
                     case 'remove-builder-task':
@@ -167,6 +172,74 @@
                         return;
                 }
             });
+
+            let draggedProjectTaskIndex = null;
+            document.addEventListener('dragstart', event => {
+                const row = event.target.closest('[data-ui-action="project-task-drag"]');
+                if (!row) return;
+                if (typeof clearProjectTaskPress === 'function') clearProjectTaskPress();
+                draggedProjectTaskIndex = Number(row.dataset.taskIndex);
+                row.classList.add('opacity-50');
+                event.dataTransfer.effectAllowed = 'move';
+                event.dataTransfer.setData('text/plain', String(draggedProjectTaskIndex));
+            });
+
+            document.addEventListener('dragover', event => {
+                const row = event.target.closest('[data-ui-action="project-task-drag"]');
+                if (!row || draggedProjectTaskIndex === null) return;
+                event.preventDefault();
+                event.dataTransfer.dropEffect = 'move';
+            });
+
+            document.addEventListener('drop', event => {
+                const row = event.target.closest('[data-ui-action="project-task-drag"]');
+                if (!row || draggedProjectTaskIndex === null) return;
+                event.preventDefault();
+                reorderInlineProjectTasks(draggedProjectTaskIndex, Number(row.dataset.taskIndex));
+                draggedProjectTaskIndex = null;
+            });
+
+            document.addEventListener('dragend', () => {
+                document.querySelectorAll('.project-task-row.opacity-50').forEach(row => row.classList.remove('opacity-50'));
+                draggedProjectTaskIndex = null;
+            });
+
+            let pressedProjectTaskIndex = null;
+            let pressedProjectTaskRow = null;
+            let projectTaskPressTimer = null;
+            let projectTaskPressActive = false;
+            const clearProjectTaskPress = () => {
+                if (projectTaskPressTimer) clearTimeout(projectTaskPressTimer);
+                projectTaskPressTimer = null;
+                projectTaskPressActive = false;
+                pressedProjectTaskIndex = null;
+                if (pressedProjectTaskRow) pressedProjectTaskRow.classList.remove('ring-2', 'ring-primary-300', 'scale-[0.99]');
+                pressedProjectTaskRow = null;
+            };
+
+            document.addEventListener('pointerdown', event => {
+                const row = event.target.closest('[data-ui-action="project-task-drag"]');
+                if (!row || event.target.closest('input, button, select, textarea')) return;
+                pressedProjectTaskIndex = Number(row.dataset.taskIndex);
+                pressedProjectTaskRow = row;
+                projectTaskPressTimer = setTimeout(() => {
+                    projectTaskPressActive = true;
+                    pressedProjectTaskRow?.classList.add('ring-2', 'ring-primary-300', 'scale-[0.99]');
+                }, 180);
+            });
+
+            document.addEventListener('pointermove', event => {
+                if (projectTaskPressActive) event.preventDefault();
+            }, { passive: false });
+
+            document.addEventListener('pointerup', event => {
+                if (!projectTaskPressActive || pressedProjectTaskIndex === null) return clearProjectTaskPress();
+                const targetRow = document.elementFromPoint(event.clientX, event.clientY)?.closest('[data-ui-action="project-task-drag"]');
+                if (targetRow) reorderInlineProjectTasks(pressedProjectTaskIndex, Number(targetRow.dataset.taskIndex));
+                clearProjectTaskPress();
+            });
+
+            document.addEventListener('pointercancel', clearProjectTaskPress);
 
             document.querySelectorAll('input[name="main-role"]').forEach(input => {
                 input.addEventListener('change', toggleSignupOptions);

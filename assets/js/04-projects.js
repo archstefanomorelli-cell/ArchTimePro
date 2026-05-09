@@ -415,6 +415,55 @@
                 </div>`;
         }
 
+        function getCurrentProjectModalTasks() {
+            return isProjectModalCreateMode() ? newProjectTasks : editProjectTasks;
+        }
+
+        function getCurrentProjectModalBudgets() {
+            return isProjectModalCreateMode() ? newProjectTaskBudgets : editProjectTaskBudgets;
+        }
+
+        function setCurrentProjectModalTasks(tasks) {
+            if (isProjectModalCreateMode()) newProjectTasks = tasks;
+            else editProjectTasks = tasks;
+        }
+
+        function setCurrentProjectModalBudgets(budgets) {
+            if (isProjectModalCreateMode()) newProjectTaskBudgets = budgets;
+            else editProjectTaskBudgets = budgets;
+        }
+
+        function currentProjectBudgetMode() {
+            return isProjectModalCreateMode() ? 'new' : 'edit';
+        }
+
+        function collectCurrentProjectTaskBudgets() {
+            return collectVisibleTaskBudgets(currentProjectBudgetMode());
+        }
+
+        function inlineProjectTaskHtml(task, index, budgets, mode) {
+            return `
+                <div draggable="true" data-ui-action="project-task-drag" data-task-index="${index}" class="project-task-row grid grid-cols-[auto_minmax(0,1fr)_104px_auto] gap-2 items-center bg-white border border-slate-200 rounded-xl px-2.5 py-2 shadow-sm cursor-grab active:cursor-grabbing touch-none">
+                    <span class="text-slate-300"><i data-lucide="grip-vertical" class="w-4 h-4"></i></span>
+                    <span class="min-w-0 text-[11px] font-bold text-slate-700 truncate"><span class="text-primary-600 font-black">${index + 1}.</span> ${escapeHtml(task)}</span>
+                    <div class="flex items-center gap-1 border border-slate-200 rounded-lg px-2 py-1.5 bg-slate-50 focus-within:bg-white focus-within:border-primary-400 focus-within:ring-2 focus-within:ring-primary-500/10">
+                        <span class="text-[10px] font-black text-slate-400">€</span>
+                        <input type="text" data-budget-mode="${mode}" data-task="${escapeAttr(task)}" value="${escapeAttr(getTaskBudgetInputValue(budgets, task))}" placeholder="0" inputmode="decimal" class="task-budget-input w-full bg-transparent outline-none text-[11px] font-mono font-bold text-slate-700">
+                    </div>
+                    <button type="button" data-ui-action="remove-inline-project-task" data-task-index="${index}" class="p-1.5 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
+                </div>`;
+        }
+
+        function renderInlineTaskPicker(tasks) {
+            const select = document.getElementById('project-inline-task-select');
+            if (!select) return;
+            const availableTasks = activityCatalog.filter(task => !tasks.includes(task));
+            select.innerHTML = availableTasks.length
+                ? optionHtml('', 'Aggiungi attività dal catalogo', true, true) + availableTasks.map(task => optionHtml(task, task)).join('')
+                : optionHtml('', 'Tutte le attività sono già incluse', true, true);
+            select.disabled = availableTasks.length === 0;
+        }
+
         function templateManageItemHtml(template, index) {
             return `
                 <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex justify-between items-start group tag-enter">
@@ -537,19 +586,15 @@
             lucide.createIcons();
         }
 
-        function openProjectTaskBuilder() {
-            openTaskBuilder(isProjectModalCreateMode() ? 'new' : 'edit');
-        }
-
         function renderProjectModalTasks() {
             const selectedContainer = document.getElementById('edit-proj-selected-tasks');
             if (!selectedContainer) return;
-            const isCreate = isProjectModalCreateMode();
-            const tasks = isCreate ? newProjectTasks : editProjectTasks;
-            const budgets = isCreate ? newProjectTaskBudgets : editProjectTaskBudgets;
-            const prefix = isCreate ? 'new' : 'edit';
-            if (tasks.length === 0) selectedContainer.innerHTML = emptyStateHtml('Nessuna attività configurata.');
-            else selectedContainer.innerHTML = tasks.map((task, idx) => taskTagHtml(task, idx, 'rounded-md')).join('') + taskBudgetRowsHtml(tasks, budgets, prefix);
+            const tasks = getCurrentProjectModalTasks();
+            const budgets = getCurrentProjectModalBudgets();
+            const mode = currentProjectBudgetMode();
+            if (tasks.length === 0) selectedContainer.innerHTML = '<div class="text-[11px] font-bold text-center text-slate-400 uppercase tracking-wider py-4">Nessuna attività configurata.</div>';
+            else selectedContainer.innerHTML = tasks.map((task, idx) => inlineProjectTaskHtml(task, idx, budgets, mode)).join('');
+            renderInlineTaskPicker(tasks);
         }
 
         function renderNewProjectUI() {
@@ -575,6 +620,49 @@
             }
             renderProjectModalTasks();
             lucide.createIcons();
+        }
+
+        function addInlineProjectTask() {
+            const select = document.getElementById('project-inline-task-select');
+            const task = select?.value;
+            if (!task) return;
+            const tasks = getCurrentProjectModalTasks();
+            if (!tasks.includes(task)) setCurrentProjectModalTasks([...tasks, task]);
+            renderProjectModalTasks();
+            lucide.createIcons();
+        }
+
+        function removeInlineProjectTask(index) {
+            const tasks = getCurrentProjectModalTasks();
+            const budgets = collectCurrentProjectTaskBudgets();
+            const removedTask = tasks[index];
+            const nextTasks = tasks.filter((_, idx) => idx !== index);
+            delete budgets[removedTask];
+            setCurrentProjectModalTasks(nextTasks);
+            setCurrentProjectModalBudgets(budgets);
+            renderProjectModalTasks();
+            lucide.createIcons();
+        }
+
+        function reorderInlineProjectTasks(fromIndex, toIndex) {
+            if (fromIndex === toIndex || fromIndex < 0 || toIndex < 0) return;
+            const tasks = [...getCurrentProjectModalTasks()];
+            if (fromIndex >= tasks.length || toIndex >= tasks.length) return;
+            const budgets = collectCurrentProjectTaskBudgets();
+            const [movedTask] = tasks.splice(fromIndex, 1);
+            tasks.splice(toIndex, 0, movedTask);
+            setCurrentProjectModalTasks(tasks);
+            setCurrentProjectModalBudgets(budgets);
+            renderProjectModalTasks();
+            lucide.createIcons();
+        }
+
+        function fillProjectBudgetFromTaskBudgets() {
+            const budgets = collectCurrentProjectTaskBudgets();
+            setCurrentProjectModalBudgets(budgets);
+            const total = getCurrentProjectModalTasks().reduce((sum, task) => sum + Number(budgets[task] || 0), 0);
+            const budgetInput = document.getElementById('edit-modal-budget');
+            if (budgetInput) budgetInput.value = total > 0 ? total.toFixed(2) : '';
         }
 
         async function createNewProject() {
