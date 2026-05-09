@@ -207,28 +207,20 @@
                             <p class="text-xs font-black ${summary.marginClass} mt-0.5">${formatMoney(summary.margin, 0)}</p>
                         </div>
                     </div>
-                    <div class="flex justify-between text-[10px] uppercase font-bold tracking-wider text-slate-500 mb-2">
-                        <span>Avanzamento costi</span>
-                        <span>${Math.round(summary.percent)}%</span>
-                    </div>
-                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-                        <div class="${summary.barClass} h-full transition-all duration-1000 rounded-full" style="width: ${Math.min(summary.percent, 100)}%"></div>
-                    </div>
-                    ${rhythm ? `
-                    <div class="mt-4 pt-4 border-t border-slate-100">
+                    <div class="pt-2 border-t border-slate-100">
                         <div class="flex justify-between items-center gap-2 text-[10px] uppercase font-bold tracking-wider text-slate-500 mb-2">
-                            <span>Ritmo progetto</span>
-                            <span class="normal-case tracking-normal font-black ${rhythm.gap > 25 || rhythm.costPercent > 100 ? 'text-red-600' : (rhythm.gap > 10 ? 'text-amber-600' : 'text-emerald-600')}">${rhythm.label}</span>
+                            <span>Avanzamento</span>
+                            ${rhythm ? `<span class="normal-case tracking-normal font-black ${rhythm.gap > 25 || rhythm.costPercent > 100 ? 'text-red-600' : (rhythm.gap > 10 ? 'text-amber-600' : 'text-emerald-600')}">${rhythm.label}</span>` : `<span>${Math.round(summary.percent)}%</span>`}
                         </div>
-                        <div class="relative w-full bg-slate-100 h-2.5 rounded-full">
-                            <div class="${rhythm.barClass} h-full transition-all duration-1000 rounded-full" style="width: ${Math.min(rhythm.costPercent, 100)}%"></div>
-                            <span class="absolute top-1/2 -translate-y-1/2 w-1 h-4 rounded-full ${rhythm.markerClass} shadow-sm" style="left: calc(${Math.min(rhythm.operationalPercent, 100)}% - 2px)"></span>
+                        <div class="relative w-full bg-slate-100 h-2.5 rounded-full overflow-visible">
+                            <div class="${rhythm ? rhythm.barClass : summary.barClass} h-full transition-all duration-1000 rounded-full" style="width: ${Math.min(rhythm ? rhythm.costPercent : summary.percent, 100)}%"></div>
+                            ${rhythm ? `<span class="absolute top-1/2 -translate-y-1/2 w-1 h-4 rounded-full ${rhythm.markerClass} shadow-sm" style="left: calc(${Math.min(rhythm.operationalPercent, 100)}% - 2px)"></span>` : ''}
                         </div>
-                        <div class="flex justify-between text-[9px] font-bold text-slate-400 mt-1.5">
-                            <span>Costi ${Math.round(rhythm.costPercent)}%</span>
-                            <span>${rhythm.usesTaskBudgets ? 'Piano costi' : 'Attività'} ${Math.round(rhythm.operationalPercent)}%</span>
+                        <div class="flex justify-between text-[10px] lg:text-[11px] font-black text-slate-500 mt-2">
+                            <span>Costi ${Math.round(rhythm ? rhythm.costPercent : summary.percent)}%</span>
+                            ${rhythm ? `<span>${rhythm.usesTaskBudgets ? 'Piano costi' : 'Attività'} ${Math.round(rhythm.operationalPercent)}%</span>` : `<span>Budget ${Math.round(summary.percent)}%</span>`}
                         </div>
-                    </div>` : ''}
+                    </div>
                 </div>`;
         }
 

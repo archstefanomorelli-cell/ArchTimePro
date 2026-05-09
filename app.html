@@ -7,6 +7,14 @@
     <meta name="theme-color" content="#f8fafc">
     <meta name="robots" content="noindex, nofollow">
     <title>Arch Time Pro - Studio & Impresa Management</title>
+    <script>
+        if (new URLSearchParams(window.location.search).get('videoDemo') === '1') {
+            document.documentElement.classList.add('video-demo-boot');
+        }
+    </script>
+    <style>
+        html.video-demo-boot body { visibility: hidden; }
+    </style>
     
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -850,6 +858,7 @@
     <script src="assets/js/05-time-entries.js?v=phase3-entry-group-headers-2026-05-08"></script>
     <script src="assets/js/06-reports.js?v=phase3-final-ui-2026-05-02"></script>
     <script src="assets/js/07-password-bootstrap.js?v=phase3-budget-libero-2026-05-09"></script>
+    <script src="assets/js/09-video-demo.js?v=video-demo-real-ui-2026-05-09"></script>
 </body>
 </html>
 
