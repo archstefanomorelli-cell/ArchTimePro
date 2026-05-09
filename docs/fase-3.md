@@ -83,6 +83,7 @@ Stato: beta su dominio definitivo attiva.
 - Allineato il bottone "Crea nuovo" progetti allo stile nero del timer mantenendo dimensione compatta come "Archivio".
 - Rinominata la modalità budget "Manuale" in "Libero" e nascosti i campi costo attività quando il budget non è calcolato dalla somma attività.
 - Reso il bottone "Crea nuovo" dimensionalmente identico ai bottoni compatti tramite classe dedicata e aggiornato il testo della modalità budget libero.
+- Uniformato definitivamente "Crea nuovo" a "Archivio" usando la stessa classe compatta, senza icona, con variante scura.
 
 ## Sicurezza dati economici
 

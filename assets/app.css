@@ -38,6 +38,8 @@
         .secondary-action { display: inline-flex; align-items: center; justify-content: center; gap: 0.375rem; background: #fff; color: #475569; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 0.5rem 0.75rem; font-size: 0.625rem; line-height: 1; font-weight: 800; letter-spacing: 0.04em; transition: all 0.16s ease; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04); }
         .secondary-action:hover { color: rgb(var(--color-primary-600)); border-color: rgb(var(--color-primary-200)); background: rgb(var(--color-primary-50)); }
         .secondary-action.compact { padding: 0.375rem 0.625rem; border-radius: 0.625rem; }
+        .secondary-action.dark { background: #0f172a; color: #fff; border-color: #0f172a; }
+        .secondary-action.dark:hover { background: #1e293b; color: #fff; border-color: #1e293b; }
         .secondary-action.icon-only { width: 2.75rem; padding-left: 0; padding-right: 0; }
         .primary-action-compact { display: inline-flex; align-items: center; justify-content: center; gap: 0.375rem; background: #0f172a; color: #fff; border: 1px solid #0f172a; border-radius: 0.625rem; padding: 0.375rem 0.625rem; font-size: 0.625rem; line-height: 1; font-weight: 800; letter-spacing: 0.04em; transition: all 0.16s ease; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04); }
         .primary-action-compact:hover { background: #1e293b; border-color: #1e293b; }
