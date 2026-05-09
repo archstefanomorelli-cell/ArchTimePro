@@ -56,6 +56,87 @@ Impostare `SMTP_PASS` dal terminale o dal dashboard Supabase senza salvarla nel 
 
 La password SMTP non deve mai essere inserita in `app.html`, nei file `assets/js` o nei GitHub Secrets del sito statico.
 
+## Notifica nuova registrazione studio/impresa
+
+Funzione:
+
+```text
+notify-new-studio
+```
+
+La funzione riceve il payload del Database Webhook Supabase quando viene creato un record nella tabella `studios` e invia una notifica interna a `info@archtimepro.it`.
+
+La notifica contiene solo dati minimi:
+
+- nome studio/impresa;
+- tipologia;
+- id studio;
+- data registrazione.
+
+Non vengono inviati dati economici, progetti, attività o informazioni riservate.
+
+## Secrets richiesti per notifica nuova registrazione
+
+La funzione `notify-new-studio` puo usare lo stesso SMTP gia configurato per le email transazionali.
+
+Con Brevo:
+
+```text
+SMTP_HOST=smtp-relay.brevo.com
+SMTP_PORT=587
+SMTP_USER=LOGIN_SMTP_BREVO
+SMTP_PASS=SMTP_KEY_BREVO
+SMTP_FROM_EMAIL=info@archtimepro.it
+SMTP_FROM_NAME=Arch Time Pro
+NEW_STUDIO_NOTIFICATION_EMAIL=info@archtimepro.it
+NEW_STUDIO_WEBHOOK_SECRET=UNA_PASSWORD_LUNGA_A_TUA_SCELTA
+```
+
+`NEW_STUDIO_WEBHOOK_SECRET` serve a proteggere la funzione: lo stesso valore va inserito negli header del webhook Supabase.
+
+## Deploy notifica nuova registrazione
+
+Con Supabase CLI:
+
+```text
+supabase functions deploy notify-new-studio
+```
+
+Poi impostare i secrets:
+
+```text
+supabase secrets set SMTP_HOST=smtp-relay.brevo.com SMTP_PORT=587 SMTP_USER=LOGIN_SMTP_BREVO SMTP_FROM_EMAIL=info@archtimepro.it SMTP_FROM_NAME="Arch Time Pro" NEW_STUDIO_NOTIFICATION_EMAIL=info@archtimepro.it NEW_STUDIO_WEBHOOK_SECRET=UNA_PASSWORD_LUNGA_A_TUA_SCELTA
+```
+
+Impostare `SMTP_PASS` senza salvarla nel repository.
+
+## Database Webhook per nuova registrazione
+
+Nel dashboard Supabase:
+
+```text
+Database > Webhooks > Create a new hook
+```
+
+Impostazioni consigliate:
+
+```text
+Name: notify-new-studio
+Table: public.studios
+Events: Insert
+Type: Supabase Edge Function
+Edge Function: notify-new-studio
+Method: POST
+```
+
+Header da aggiungere:
+
+```text
+x-archtime-webhook-secret: lo stesso valore di NEW_STUDIO_WEBHOOK_SECRET
+```
+
+Salvare il webhook e testare creando un nuovo studio/impresa da Arch Time Pro.
+
 ## Email Supabase Auth
 
 Le email Auth di Supabase, cioe conferma registrazione e reset password, usano invece Brevo come SMTP transazionale.
