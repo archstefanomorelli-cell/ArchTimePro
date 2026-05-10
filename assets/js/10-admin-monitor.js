@@ -287,11 +287,6 @@
         const password = byId('admin-password').value;
         const submitButton = byId('admin-login-submit');
 
-        if (!isAllowedEmail(email)) {
-            setLoginStatus('Questa email non è autorizzata per il monitor beta.', 'error');
-            return;
-        }
-
         if (submitButton) submitButton.disabled = true;
         setLoginStatus('Accesso in corso...', 'neutral');
 
