@@ -125,7 +125,11 @@
                                 ${businessTypeLabel(studio.business_type)}
                             </span>
                         </div>
-                        <p class="text-xs font-bold text-slate-400">ID: ${escapeHtml(studio.studio_id)}</p>
+                        <div class="space-y-1">
+                            <p class="text-sm font-black text-slate-700">${escapeHtml(studio.owner_name || 'Owner non indicato')}</p>
+                            <p class="text-xs font-bold text-indigo-600">${escapeHtml(studio.owner_email || 'Email owner non disponibile')}</p>
+                            <p class="text-xs font-bold text-slate-400">ID: ${escapeHtml(studio.studio_id)}</p>
+                        </div>
                     </div>
                     <div class="flex flex-col sm:flex-row gap-2">
                         ${statusSelectHtml(studio)}
@@ -174,6 +178,8 @@
         const filtered = studios.filter((studio) => {
             const haystack = [
                 studio.studio_name,
+                studio.owner_name,
+                studio.owner_email,
                 studio.business_type,
                 STATUS_LABELS[studio.beta_status],
                 studio.internal_notes

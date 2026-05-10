@@ -4,6 +4,8 @@ create or replace function public.get_platform_beta_monitor()
 returns table (
   studio_id uuid,
   studio_name text,
+  owner_email text,
+  owner_name text,
   business_type text,
   created_at timestamptz,
   members_count bigint,
@@ -29,6 +31,8 @@ begin
   select
     s.id as studio_id,
     s.name::text as studio_name,
+    owner_profile.email::text as owner_email,
+    owner_profile.full_name::text as owner_name,
     coalesce(s.business_type, 'studio')::text as business_type,
     nullif(to_jsonb(s) ->> 'created_at', '')::timestamptz as created_at,
     coalesce(member_stats.members_count, 0)::bigint as members_count,
@@ -44,6 +48,16 @@ begin
     coalesce(notes.beta_status, 'new')::text as beta_status,
     notes.internal_notes::text as internal_notes
   from public.studios s
+  left join lateral (
+    select
+      p.email,
+      p.full_name
+    from public.profiles p
+    where p.studio_id = s.id
+      and (p.is_owner = true or p.role = 'admin')
+    order by p.is_owner desc, nullif(to_jsonb(p) ->> 'created_at', '')::timestamptz asc nulls last, p.full_name asc
+    limit 1
+  ) owner_profile on true
   left join lateral (
     select
       count(*)::bigint as members_count,
