@@ -1,6 +1,6 @@
 // Arch Time Pro - internal beta monitor
 (function () {
-    const PLATFORM_ADMIN_EMAILS = ['info@archtimepro.it', 'moroz81@hotmail.it'];
+    const PLATFORM_ADMIN_EMAILS = ['info@archtimepro.it', 'arch.morelli@estplatform.com'];
     const STATUS_LABELS = {
         new: 'Nuovo',
         active: 'Attivo',
