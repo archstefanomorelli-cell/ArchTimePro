@@ -1379,13 +1379,13 @@
             const insights = document.getElementById('analytics-insights');
             if (insights) {
                 insights.innerHTML = insightItems.map(item => `
-                    <div class="analytics-insight-item border rounded-xl px-3 py-2 ${toneClasses[item.tone]}" data-insight-tone="${escapeAttr(item.tone)}">
-                        <div class="flex items-center gap-2 min-w-0">
-                            <span class="analytics-insight-dot"></span>
+                    <div class="border rounded-xl px-3 py-2 ${toneClasses[item.tone]}">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="${item.icon}" class="w-3.5 h-3.5 shrink-0"></i>
                             <span class="text-[9px] font-black uppercase tracking-wider whitespace-nowrap">${escapeHtml(item.label)}</span>
-                            <span class="analytics-insight-value text-sm font-black tracking-tight ml-auto truncate">${escapeHtml(item.value)}</span>
+                            <span class="text-sm font-black tracking-tight ml-auto truncate">${escapeHtml(item.value)}</span>
                         </div>
-                        <p class="analytics-insight-text text-[9px] font-bold uppercase tracking-wider opacity-75 mt-1 truncate">${escapeHtml(item.text)}</p>
+                        <p class="text-[9px] font-bold uppercase tracking-wider opacity-75 mt-1 truncate">${escapeHtml(item.text)}</p>
                     </div>
                 `).join('');
             }
