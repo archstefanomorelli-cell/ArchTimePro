@@ -180,11 +180,11 @@
             return `
                 <div data-ui-action="show-project-detail" data-project-id="${projectId}" data-project-tone="${summary.statusTone}" class="bg-white border border-slate-200 p-5 lg:p-6 shadow-sm hover:shadow-md hover:border-primary-200 rounded-2xl cursor-pointer relative group transition-all ${project.is_archived ? 'is-archived' : ''}">
                     <div class="absolute top-0 left-0 right-0 h-1 ${summary.barClass} rounded-t-2xl"></div>
+                    <span class="project-life-dot" aria-hidden="true" title="${escapeAttr(summary.statusLabel)}"></span>
                     <div class="flex justify-between items-start gap-3 mb-5">
                         <div class="min-w-0">
                             <div class="flex items-center gap-2 mb-1.5">
                                 <h3 class="font-black text-slate-900 text-base lg:text-lg tracking-tight truncate">${escapeHtml(project.name)}</h3>
-                                <span class="project-life-dot shrink-0" aria-hidden="true" title="${escapeAttr(summary.statusLabel)}"></span>
                             </div>
                             <div class="flex flex-wrap items-center gap-2">
                                 ${project.is_archived ? '<span class="text-[9px] font-black uppercase tracking-wider border px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border-slate-200">Archiviato</span>' : ''}
