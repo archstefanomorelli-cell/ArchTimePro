@@ -95,11 +95,12 @@
                 budget,
                 percent,
                 margin,
-                barClass: isOverBudget || isCritical ? 'bg-red-500' : (isWarning ? 'bg-amber-400' : 'bg-primary-500'),
+                barClass: isOverBudget || isCritical ? 'bg-red-500' : (isWarning ? 'bg-amber-400' : 'bg-emerald-500'),
                 statusLabel: isOverBudget ? 'Fuori budget' : (isCritical ? 'Critico' : (isWarning ? 'Da monitorare' : 'In controllo')),
                 statusIcon: isOverBudget ? 'octagon-alert' : (isCritical ? 'alert-triangle' : (isWarning ? 'circle-alert' : 'check-circle-2')),
                 statusClass: isOverBudget || isCritical ? 'bg-red-50 text-red-700 border-red-200' : (isWarning ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200'),
-                marginClass: margin < 0 ? 'text-red-600' : 'text-emerald-600'
+                marginClass: margin < 0 ? 'text-red-600' : 'text-emerald-600',
+                statusTone: isOverBudget || isCritical ? 'danger' : (isWarning ? 'warning' : 'healthy')
             };
         }
 
@@ -177,11 +178,12 @@
             const projectId = escapeAttr(project.id);
 
             return `
-                <div data-ui-action="show-project-detail" data-project-id="${projectId}" class="bg-white border border-slate-200 p-5 lg:p-6 shadow-sm hover:shadow-md hover:border-primary-200 rounded-2xl cursor-pointer relative group transition-all ${project.is_archived ? 'is-archived' : ''}">
+                <div data-ui-action="show-project-detail" data-project-id="${projectId}" data-project-tone="${summary.statusTone}" class="bg-white border border-slate-200 p-5 lg:p-6 shadow-sm hover:shadow-md hover:border-primary-200 rounded-2xl cursor-pointer relative group transition-all ${project.is_archived ? 'is-archived' : ''}">
                     <div class="absolute top-0 left-0 right-0 h-1 ${summary.barClass} rounded-t-2xl"></div>
                     <div class="flex justify-between items-start gap-3 mb-5">
                         <div class="min-w-0">
                             <div class="flex flex-wrap items-center gap-2 mb-1.5">
+                                <span class="project-life-dot" aria-hidden="true"></span>
                                 <span class="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-wider border px-2 py-0.5 rounded-full ${summary.statusClass}"><i data-lucide="${summary.statusIcon}" class="w-3 h-3"></i>${summary.statusLabel}</span>
                                 ${project.is_archived ? '<span class="text-[9px] font-black uppercase tracking-wider border px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border-slate-200">Archiviato</span>' : ''}
                             </div>

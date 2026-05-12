@@ -392,6 +392,46 @@ html.theme-pro #projects-list span.inline-flex {
     letter-spacing: 0.08em;
 }
 
+html.theme-pro #projects-list .project-life-dot {
+    position: relative;
+    display: inline-flex;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: #0f766e;
+    box-shadow: 0 0 0 0 rgba(15, 118, 110, 0.28);
+    animation: projectBreath 2.8s ease-in-out infinite;
+    margin-right: 0.125rem;
+    margin-left: 0.125rem;
+}
+
+html.theme-pro #projects-list [data-project-tone="danger"] .project-life-dot {
+    background: #b91c1c;
+    box-shadow: 0 0 0 0 rgba(185, 28, 28, 0.28);
+    animation-name: projectBreathDanger;
+}
+
+html.theme-pro #projects-list [data-project-tone="warning"] .project-life-dot {
+    background: #b45309;
+    box-shadow: 0 0 0 0 rgba(180, 83, 9, 0.24);
+    animation-name: projectBreathWarning;
+}
+
+@keyframes projectBreath {
+    0%, 100% { transform: scale(0.92); box-shadow: 0 0 0 0 rgba(15, 118, 110, 0.2); }
+    50% { transform: scale(1.12); box-shadow: 0 0 0 7px rgba(15, 118, 110, 0); }
+}
+
+@keyframes projectBreathDanger {
+    0%, 100% { transform: scale(0.92); box-shadow: 0 0 0 0 rgba(185, 28, 28, 0.2); }
+    50% { transform: scale(1.12); box-shadow: 0 0 0 7px rgba(185, 28, 28, 0); }
+}
+
+@keyframes projectBreathWarning {
+    0%, 100% { transform: scale(0.92); box-shadow: 0 0 0 0 rgba(180, 83, 9, 0.18); }
+    50% { transform: scale(1.12); box-shadow: 0 0 0 7px rgba(180, 83, 9, 0); }
+}
+
 html.theme-pro #projects-list .admin-only button {
     color: #64748b;
     background: #ffffff;
