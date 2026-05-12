@@ -832,6 +832,193 @@ html.theme-pro #btn-close-analytics-detail:hover {
     color: #111827;
 }
 
+/* Modal refinement pass */
+html.theme-pro .modal {
+    background: rgba(15, 23, 42, 0.56);
+}
+
+html.theme-pro .modal:not(.force-hide) > div,
+html.theme-pro #custom-dialog-card,
+html.theme-pro #paywall-container > div,
+html.theme-pro #update-password-container > div.relative {
+    border-color: #d8dee6 !important;
+    border-radius: 10px !important;
+    box-shadow: 0 22px 70px rgba(15, 23, 42, 0.2) !important;
+}
+
+html.theme-pro .modal > div {
+    color: #172033;
+}
+
+html.theme-pro .modal h2,
+html.theme-pro #custom-dialog-title,
+html.theme-pro #update-password-container h2 {
+    color: #101827 !important;
+    font-size: 1.05rem !important;
+    line-height: 1.15;
+    letter-spacing: 0;
+}
+
+html.theme-pro .modal h2 i,
+html.theme-pro #update-password-container h2 i {
+    color: #475569 !important;
+}
+
+html.theme-pro .modal h2 + p {
+    margin-bottom: 1rem !important;
+    color: #64748b !important;
+    line-height: 1.35;
+}
+
+html.theme-pro .modal label {
+    color: #64748b !important;
+    font-size: 0.62rem !important;
+    letter-spacing: 0.09em;
+}
+
+html.theme-pro .modal input,
+html.theme-pro .modal select,
+html.theme-pro .modal textarea,
+html.theme-pro #custom-dialog-input,
+html.theme-pro #new-password {
+    border-color: #d8dee6 !important;
+    border-radius: 8px !important;
+    min-height: 2.45rem;
+    padding-top: 0.62rem !important;
+    padding-bottom: 0.62rem !important;
+    box-shadow: none !important;
+}
+
+html.theme-pro .modal input:focus,
+html.theme-pro .modal select:focus,
+html.theme-pro .modal textarea:focus,
+html.theme-pro #custom-dialog-input:focus,
+html.theme-pro #new-password:focus {
+    border-color: #64748b !important;
+    box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.12) !important;
+}
+
+html.theme-pro .modal button,
+html.theme-pro #custom-dialog button,
+html.theme-pro #update-password-container button {
+    border-radius: 8px !important;
+}
+
+html.theme-pro .modal [id^="btn-close"],
+html.theme-pro #btn-skip-onboarding {
+    width: 1.9rem;
+    height: 1.9rem;
+    padding: 0.4rem !important;
+    top: 0.9rem !important;
+    right: 0.9rem !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #64748b !important;
+    box-shadow: none !important;
+}
+
+html.theme-pro .modal [id^="btn-close"]:hover,
+html.theme-pro #btn-skip-onboarding:hover {
+    color: #111827 !important;
+    background: #f8fafc !important;
+}
+
+html.theme-pro #modal-edit-team > div,
+html.theme-pro #modal-team-invite > div,
+html.theme-pro #modal-task-builder > div,
+html.theme-pro #modal-catalog > div,
+html.theme-pro #modal-templates > div,
+html.theme-pro #modal-manual > div,
+html.theme-pro #modal-edit-entry > div,
+html.theme-pro #modal-edit-expense > div,
+html.theme-pro #modal-report > div,
+html.theme-pro #modal-team-report > div,
+html.theme-pro #modal-forgot-password > div {
+    padding: 1.35rem !important;
+}
+
+html.theme-pro #modal-edit-project > div,
+html.theme-pro #modal-analytics-detail > div {
+    padding: 1.35rem !important;
+}
+
+html.theme-pro #modal-edit-project .bg-slate-50,
+html.theme-pro #modal-edit-project .bg-white,
+html.theme-pro #modal-owner-onboarding .bg-slate-50,
+html.theme-pro #modal-owner-onboarding .bg-white,
+html.theme-pro #modal-task-builder .bg-slate-50,
+html.theme-pro #modal-task-builder .bg-white,
+html.theme-pro #modal-account .bg-slate-50,
+html.theme-pro #modal-account .bg-white {
+    border-radius: 9px !important;
+    box-shadow: none !important;
+}
+
+html.theme-pro #modal-edit-project .bg-slate-50,
+html.theme-pro #modal-owner-onboarding .bg-slate-50,
+html.theme-pro #modal-task-builder .bg-slate-50 {
+    background: #f8fafc !important;
+}
+
+html.theme-pro #modal-account > div {
+    max-width: 24rem;
+}
+
+html.theme-pro #modal-account .text-center {
+    text-align: left;
+    padding: 0.9rem !important;
+}
+
+html.theme-pro #account-role {
+    border-radius: 999px !important;
+}
+
+html.theme-pro #modal-owner-onboarding > div {
+    padding: 1.25rem !important;
+}
+
+html.theme-pro #modal-owner-onboarding .w-12.h-12,
+html.theme-pro #update-password-container .w-16.h-16,
+html.theme-pro #custom-dialog-icon {
+    width: 2.4rem !important;
+    height: 2.4rem !important;
+    border-radius: 8px !important;
+    margin-bottom: 0.9rem !important;
+}
+
+html.theme-pro #modal-owner-onboarding .space-y-5 {
+    gap: 0.8rem;
+}
+
+html.theme-pro #modal-edit-project #btn-save-project-edit {
+    position: sticky;
+    bottom: -0.25rem;
+    z-index: 5;
+    margin-top: 1rem !important;
+    border: 1px solid #111827;
+}
+
+html.theme-pro #modal-edit-project [class*="space-y-4"] {
+    gap: 0.75rem;
+}
+
+html.theme-pro #modal-edit-project .grid.grid-cols-1.lg\:grid-cols-\[0\.9fr_1\.1fr\] {
+    gap: 0.9rem !important;
+}
+
+html.theme-pro #modal-team-invite #team-invite-code-preview {
+    color: #172033;
+}
+
+html.theme-pro #custom-dialog-card {
+    padding: 1.35rem !important;
+}
+
+html.theme-pro #custom-dialog-msg {
+    color: #64748b !important;
+    line-height: 1.45;
+}
+
 @media (max-width: 767px) {
     html.theme-pro .app-panel,
     html.theme-pro section.bg-white.border {
