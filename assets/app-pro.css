@@ -404,6 +404,7 @@ html.theme-pro #projects-list h3 + p {
 
 html.theme-pro #projects-list h3 {
     min-width: 0;
+    padding-right: 0;
 }
 
 html.theme-pro #projects-list .grid.grid-cols-3 {
@@ -451,9 +452,7 @@ html.theme-pro #projects-list span.inline-flex {
 }
 
 html.theme-pro #projects-list .project-life-dot {
-    position: absolute;
-    right: 1rem;
-    top: 1rem;
+    position: relative;
     display: inline-flex;
     width: 0.55rem;
     height: 0.55rem;
@@ -463,7 +462,7 @@ html.theme-pro #projects-list .project-life-dot {
     animation: projectBreath 2.8s ease-in-out infinite;
     margin: 0;
     transform-origin: center;
-    z-index: 2;
+    z-index: 1;
 }
 
 html.theme-pro #projects-list [data-project-tone="danger"] .project-life-dot {
@@ -664,7 +663,7 @@ html.theme-pro #btn-close-analytics-detail:hover {
 
     html.theme-pro #projects-list h3 {
         font-size: 0.95rem;
-        padding-right: 1.25rem;
+        padding-right: 0;
     }
 
     html.theme-pro #projects-list .grid.grid-cols-3 > div {
