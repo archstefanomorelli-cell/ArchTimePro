@@ -23,6 +23,13 @@
             return '<span class="bg-slate-100 text-slate-500 border border-slate-200 text-[9px] px-2 py-0.5 rounded-md uppercase font-bold tracking-wider">Staff</span>';
         }
 
+        function teamRoleLabel(profile) {
+            if (profile.is_owner) return 'Owner';
+            if (profile.role === 'admin') return 'Admin';
+            if (profile.role === 'inactive') return 'Inattivo';
+            return 'Staff';
+        }
+
         function teamMemberCardHtml(profile) {
             const profileId = escapeAttr(profile.id);
             const fullName = escapeHtml(profile.full_name);
@@ -81,6 +88,8 @@
             document.getElementById('edit-team-id').value = pr.id;
             document.getElementById('edit-team-name').value = pr.full_name || '';
             document.getElementById('edit-team-cost').value = pr.hourly_cost || 0;
+            document.getElementById('edit-team-summary-name').innerText = pr.full_name || 'Collaboratore';
+            document.getElementById('edit-team-summary-meta').innerText = `${pr.email || 'Email non disponibile'} · ${teamRoleLabel(pr)}`;
             
             const roleSelect = document.getElementById('edit-team-role');
             roleSelect.innerHTML = teamRoleOptionsHtml(pr);

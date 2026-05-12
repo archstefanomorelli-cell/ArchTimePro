@@ -1010,6 +1010,124 @@ html.theme-pro #modal-team-invite #team-invite-code-preview {
     color: #172033;
 }
 
+html.theme-pro .team-modal-summary {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border: 1px solid #dfe5ed;
+    border-radius: 9px;
+    background: #f8fafc;
+}
+
+html.theme-pro .team-modal-avatar {
+    width: 2.15rem;
+    height: 2.15rem;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #172033;
+    color: #ffffff;
+    flex: 0 0 auto;
+}
+
+html.theme-pro .team-modal-summary-name {
+    font-size: 0.9rem;
+    line-height: 1.15;
+    font-weight: 850;
+    color: #101827;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+html.theme-pro .team-modal-summary-meta {
+    margin-top: 0.18rem;
+    font-size: 0.66rem;
+    line-height: 1.2;
+    font-weight: 800;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+html.theme-pro .team-modal-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.55rem;
+    padding: 0.7rem 0.75rem;
+    border: 1px solid #dfe5ed;
+    border-radius: 9px;
+    background: #ffffff;
+    color: #64748b;
+    font-size: 0.68rem;
+    line-height: 1.35;
+    font-weight: 700;
+}
+
+html.theme-pro .team-modal-note i {
+    color: #475569;
+    margin-top: 0.05rem;
+    flex: 0 0 auto;
+}
+
+html.theme-pro .team-invite-path {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.35rem;
+    margin-bottom: 1rem;
+}
+
+html.theme-pro .team-invite-path div {
+    min-width: 0;
+    padding: 0.55rem 0.45rem;
+    border: 1px solid #dfe5ed;
+    border-radius: 8px;
+    background: #f8fafc;
+    color: #475569;
+    font-size: 0.58rem;
+    line-height: 1.1;
+    font-weight: 850;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-align: center;
+}
+
+html.theme-pro .team-invite-path span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.25rem;
+    border-radius: 999px;
+    background: #172033;
+    color: #ffffff;
+    font-size: 0.56rem;
+}
+
+html.theme-pro #modal-edit-team #btn-delete-team {
+    width: 2.55rem;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    border-color: #fecaca !important;
+    background: #fff7f7 !important;
+}
+
+html.theme-pro #modal-edit-team #btn-save-team-edit,
+html.theme-pro #modal-team-invite #btn-send-team-invite {
+    background: #172033 !important;
+}
+
+html.theme-pro #modal-team-invite #btn-copy-team-invite {
+    background: #ffffff !important;
+    color: #334155 !important;
+}
+
 html.theme-pro #custom-dialog-card {
     padding: 1.35rem !important;
 }
