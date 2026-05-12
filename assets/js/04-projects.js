@@ -969,7 +969,7 @@
                             <div class="flex flex-col mt-0.5">${compactTaskBudgetHtml(stat, taskBudget)}</div>
                         </div>
                         ${compactTaskCostBarHtml(stat, data.project.budget, isZero)}
-                        <div class="project-task-status-grid grid grid-cols-3 gap-1.5">
+                        <div class="project-task-status-grid grid grid-cols-3 gap-1.5 lg:justify-self-end w-full lg:max-w-[282px]">
                             ${taskStatusButtonHtml(data.project.id, taskName, 'todo', 'Da fare', status)}
                             ${taskStatusButtonHtml(data.project.id, taskName, 'doing', 'In corso', status)}
                             ${taskStatusButtonHtml(data.project.id, taskName, 'done', 'Completata', status)}

@@ -694,6 +694,10 @@ html.theme-pro .project-task-status-grid button {
     text-overflow: clip;
 }
 
+html.theme-pro .project-task-status-grid {
+    justify-self: end;
+}
+
 html.theme-pro .project-side-panel {
     min-height: 0;
 }
