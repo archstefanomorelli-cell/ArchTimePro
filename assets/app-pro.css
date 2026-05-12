@@ -306,3 +306,171 @@ html.theme-pro #trial-info-container {
         padding: 1.25rem;
     }
 }
+
+/* Pro Studio refinement pass */
+html.theme-pro #btn-open-project-modal,
+html.theme-pro #btn-open-project-modal *,
+html.theme-pro button#btn-open-project-modal.secondary-action.dark,
+html.theme-pro button#btn-open-project-modal.secondary-action.dark * {
+    color: #ffffff !important;
+    opacity: 1 !important;
+}
+
+html.theme-pro #projects-list {
+    gap: 0.875rem;
+}
+
+html.theme-pro #projects-list [data-ui-action="show-project-detail"] {
+    padding: 1rem 1.125rem;
+    background: #ffffff;
+    border-color: #d7dde6;
+    transition: border-color 0.16s ease, background-color 0.16s ease, transform 0.16s ease;
+}
+
+html.theme-pro #projects-list [data-ui-action="show-project-detail"]:hover {
+    border-color: #aeb8c7;
+    background: #fcfcfd;
+    transform: translateY(-1px);
+}
+
+html.theme-pro #projects-list [data-ui-action="show-project-detail"] > .absolute:first-child {
+    height: 3px;
+    border-radius: 10px 10px 0 0;
+}
+
+html.theme-pro #projects-list h3 {
+    font-size: 1rem;
+    font-weight: 850;
+    color: #101827;
+}
+
+html.theme-pro #projects-list h3 + p {
+    color: #64748b;
+    letter-spacing: 0.11em;
+}
+
+html.theme-pro #projects-list .grid.grid-cols-3 {
+    gap: 0;
+    border: 1px solid #e6eaf0;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fbfcfd;
+}
+
+html.theme-pro #projects-list .grid.grid-cols-3 > div {
+    padding: 0.625rem 0.75rem;
+    border-right: 1px solid #e6eaf0;
+}
+
+html.theme-pro #projects-list .grid.grid-cols-3 > div:last-child {
+    border-right: 0;
+}
+
+html.theme-pro #projects-list .grid.grid-cols-3 p:first-child {
+    font-size: 0.625rem;
+    color: #6b7280;
+}
+
+html.theme-pro #projects-list .grid.grid-cols-3 p:last-child {
+    font-size: 0.875rem;
+    font-variant-numeric: tabular-nums;
+    color: #111827;
+}
+
+html.theme-pro #projects-list .pt-2.border-t {
+    padding-top: 0.875rem;
+    border-color: #e8ecf2;
+}
+
+html.theme-pro #projects-list .h-2\.5 {
+    height: 0.5rem;
+    background: #e8edf3;
+}
+
+html.theme-pro #projects-list span.inline-flex {
+    font-size: 0.625rem;
+    letter-spacing: 0.08em;
+}
+
+html.theme-pro #projects-list .admin-only button {
+    color: #64748b;
+    background: #ffffff;
+    border: 1px solid #e6eaf0;
+}
+
+html.theme-pro #projects-list .admin-only button:hover {
+    color: #172033;
+    background: #f8fafc;
+}
+
+html.theme-pro #card-margin,
+html.theme-pro #card-profit,
+html.theme-pro #card-burn,
+html.theme-pro [id^="card-"] {
+    min-height: auto;
+}
+
+html.theme-pro [data-tab="analyze"] .grid > div,
+html.theme-pro [data-tab="analyze"] .bg-gradient-to-br {
+    padding: 1rem;
+}
+
+html.theme-pro [data-tab="analyze"] h3 {
+    color: #475569 !important;
+    font-size: 0.6875rem;
+}
+
+html.theme-pro [data-tab="analyze"] .text-2xl,
+html.theme-pro [data-tab="analyze"] .text-3xl {
+    font-size: 1.375rem;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+}
+
+html.theme-pro #entries-list tr,
+html.theme-pro tbody tr {
+    border-color: #eef1f5;
+}
+
+html.theme-pro #entries-list td,
+html.theme-pro tbody td {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+}
+
+html.theme-pro thead th {
+    border-bottom: 1px solid #dbe2ea;
+}
+
+html.theme-pro #modal-edit-project > div,
+html.theme-pro #modal-detail > div,
+html.theme-pro #report-modal > div,
+html.theme-pro #modal-analytics-detail > div {
+    border: 1px solid #d8dee6;
+    background: #ffffff;
+}
+
+html.theme-pro #modal-edit-project h2,
+html.theme-pro #modal-detail h2,
+html.theme-pro #report-modal h2,
+html.theme-pro #modal-analytics-detail h2 {
+    color: #111827;
+    font-size: 1.25rem;
+}
+
+html.theme-pro #btn-close-detail,
+html.theme-pro #btn-close-edit-project,
+html.theme-pro #btn-close-report,
+html.theme-pro #btn-close-analytics-detail {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+}
+
+html.theme-pro #btn-close-detail:hover,
+html.theme-pro #btn-close-edit-project:hover,
+html.theme-pro #btn-close-report:hover,
+html.theme-pro #btn-close-analytics-detail:hover {
+    background: #f8fafc;
+    color: #111827;
+}
