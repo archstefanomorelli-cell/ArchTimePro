@@ -615,7 +615,7 @@ html.theme-pro #modal-edit-project .grid {
 }
 
 html.theme-pro #modal-detail > div {
-    padding: 1.25rem 1.5rem 1.5rem;
+    padding: 1rem 1.25rem 1.25rem;
 }
 
 html.theme-pro #detail-content {
@@ -630,48 +630,63 @@ html.theme-pro #btn-close-detail {
 }
 
 html.theme-pro .project-detail-header {
-    margin-bottom: 1rem;
-    padding-top: 0.875rem;
-    padding-bottom: 0.875rem;
+    margin-bottom: 0.75rem;
+    padding-top: 0.65rem;
+    padding-bottom: 0.65rem;
 }
 
 html.theme-pro .project-detail-header h2 {
-    font-size: clamp(1.2rem, 2vw, 1.55rem);
+    font-size: clamp(1.05rem, 1.8vw, 1.35rem);
 }
 
 html.theme-pro .project-detail-header .admin-only button {
-    padding: 0.55rem 0.75rem;
+    padding: 0.45rem 0.65rem;
     border-radius: 8px;
 }
 
 html.theme-pro .project-detail-metrics {
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
 }
 
 html.theme-pro .project-metric-card {
-    min-height: 4.25rem;
-    padding: 0.7rem 0.75rem;
+    min-height: 3.25rem;
+    padding: 0.5rem 0.625rem;
 }
 
 html.theme-pro .project-metric-card p:first-child {
-    font-size: 0.58rem;
+    font-size: 0.54rem;
+    line-height: 1;
 }
 
 html.theme-pro .project-metric-card p:last-child {
-    font-size: 1rem;
+    font-size: 0.9rem;
+    line-height: 1.1;
     font-variant-numeric: tabular-nums;
 }
 
 html.theme-pro .project-rhythm-panel {
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
 }
 
 html.theme-pro .project-rhythm-row {
     min-height: 0;
 }
 
+html.theme-pro .project-rhythm-row p {
+    line-height: 1.15;
+}
+
+html.theme-pro .project-rhythm-row button {
+    padding-top: 0.18rem;
+    padding-bottom: 0.18rem;
+}
+
 html.theme-pro .project-side-panel {
     min-height: 0;
+}
+
+html.theme-pro .project-side-panel p {
+    line-height: 1.15;
 }
 
 html.theme-pro #modal-detail .bg-slate-50,
@@ -755,24 +770,24 @@ html.theme-pro #btn-close-analytics-detail:hover {
     }
 
     html.theme-pro #modal-detail > div {
-        padding: 1rem;
+        padding: 0.85rem;
     }
 
     html.theme-pro .project-detail-header {
-        padding: 0.875rem;
+        padding: 0.75rem;
         padding-right: 2.75rem;
     }
 
     html.theme-pro .project-detail-header h2 {
-        font-size: 1.15rem;
+        font-size: 1.05rem;
     }
 
     html.theme-pro .project-metric-card {
-        min-height: 3.9rem;
-        padding: 0.625rem;
+        min-height: 3.2rem;
+        padding: 0.55rem;
     }
 
     html.theme-pro .project-metric-card p:last-child {
-        font-size: 0.92rem;
+        font-size: 0.84rem;
     }
 }
