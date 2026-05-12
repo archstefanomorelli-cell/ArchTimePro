@@ -601,6 +601,87 @@ html.theme-pro #entries-list-mobile > div {
     box-shadow: none;
 }
 
+html.theme-pro .timesheet-day-row {
+    background: #eef2f6 !important;
+}
+
+html.theme-pro .timesheet-day-row td {
+    padding-top: 0.45rem !important;
+    padding-bottom: 0.45rem !important;
+}
+
+html.theme-pro .timesheet-day-dot {
+    background: #172033 !important;
+}
+
+html.theme-pro .timesheet-head-row th {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+}
+
+html.theme-pro .timesheet-entry-row td {
+    padding-top: 0.52rem !important;
+    padding-bottom: 0.52rem !important;
+}
+
+html.theme-pro .timesheet-user,
+html.theme-pro .timesheet-task,
+html.theme-pro .timesheet-duration {
+    border-radius: 6px !important;
+    box-shadow: none !important;
+}
+
+html.theme-pro .timesheet-user {
+    background: #f8fafc;
+    color: #475569;
+    font-size: 0.58rem;
+    padding: 0.18rem 0.45rem;
+}
+
+html.theme-pro .timesheet-project {
+    font-size: 0.82rem;
+    font-weight: 850;
+}
+
+html.theme-pro .timesheet-task {
+    background: #f8fafc;
+    border-color: #dfe5ed;
+    color: #334155 !important;
+    font-size: 0.68rem;
+    padding: 0.2rem 0.5rem;
+}
+
+html.theme-pro .timesheet-notes {
+    margin-top: 0.25rem;
+    font-size: 0.65rem;
+    line-height: 1.2;
+}
+
+html.theme-pro .timesheet-duration {
+    background: #f8fafc;
+    border-color: #dfe5ed;
+    color: #111827 !important;
+    min-width: 3.2rem;
+    padding: 0.2rem 0.5rem;
+}
+
+html.theme-pro .timesheet-time-cell .text-\[10px\] {
+    margin-top: 0.2rem;
+    font-style: italic;
+}
+
+html.theme-pro .timesheet-cost span {
+    color: #64748b;
+    font-size: 0.78rem;
+}
+
+html.theme-pro .timesheet-mobile-card {
+    margin: 0.5rem 0.75rem;
+    padding: 0.8rem;
+}
+
 html.theme-pro #modal-edit-project > div,
 html.theme-pro #modal-detail > div,
 html.theme-pro #report-modal > div,
