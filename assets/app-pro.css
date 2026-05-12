@@ -307,6 +307,59 @@ html.theme-pro #trial-info-container {
     }
 }
 
+/* Pro is now the default app skin; classic remains available with ?theme=classic. */
+html.theme-pro #auth-container .bg-slate-900 {
+    background: linear-gradient(180deg, #111827 0%, #172033 100%);
+}
+
+html.theme-pro #auth-container .opacity-10 {
+    opacity: 0 !important;
+}
+
+html.theme-pro #landing-title {
+    font-size: clamp(2.6rem, 4vw, 4.6rem);
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+}
+
+html.theme-pro #landing-title + p {
+    max-width: 30rem;
+    color: #cbd5e1;
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
+html.theme-pro #auth-container .space-y-6 > .flex {
+    gap: 0.875rem;
+    color: #d1d5db;
+}
+
+html.theme-pro #auth-container .space-y-6 > .flex > div:first-child {
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+html.theme-pro .auth-panel {
+    background: #f8fafc;
+}
+
+html.theme-pro .auth-card {
+    border: 1px solid #d8dee6 !important;
+    box-shadow: 0 20px 60px rgba(15, 23, 42, 0.08) !important;
+}
+
+html.theme-pro #tab-login,
+html.theme-pro #tab-signup {
+    border-radius: 7px;
+}
+
 /* Pro Studio refinement pass */
 html.theme-pro #btn-open-project-modal,
 html.theme-pro #btn-open-project-modal *,
@@ -373,6 +426,7 @@ html.theme-pro #projects-list .grid.grid-cols-3 > div:last-child {
 html.theme-pro #projects-list .grid.grid-cols-3 p:first-child {
     font-size: 0.625rem;
     color: #6b7280;
+    white-space: nowrap;
 }
 
 html.theme-pro #projects-list .grid.grid-cols-3 p:last-child {
@@ -512,12 +566,40 @@ html.theme-pro tbody tr {
 
 html.theme-pro #entries-list td,
 html.theme-pro tbody td {
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
+    padding-top: 0.625rem;
+    padding-bottom: 0.625rem;
 }
 
 html.theme-pro thead th {
     border-bottom: 1px solid #dbe2ea;
+}
+
+html.theme-pro #entries-table-desktop tr.bg-slate-100\/80 {
+    background: #eef2f6;
+}
+
+html.theme-pro #entries-table-desktop tr.bg-slate-50 {
+    background: #f8fafc;
+}
+
+html.theme-pro #entries-table-desktop th {
+    padding-top: 0.625rem;
+    padding-bottom: 0.625rem;
+}
+
+html.theme-pro #entries-table-desktop td span.rounded-full,
+html.theme-pro #entries-table-desktop td div.rounded-full,
+html.theme-pro #entries-table-desktop td div.rounded-lg {
+    border-radius: 7px;
+}
+
+html.theme-pro #entries-table-desktop td:nth-child(2) {
+    font-weight: 800;
+}
+
+html.theme-pro #entries-list-mobile > div {
+    border-radius: 10px;
+    box-shadow: none;
 }
 
 html.theme-pro #modal-edit-project > div,
@@ -526,6 +608,18 @@ html.theme-pro #report-modal > div,
 html.theme-pro #modal-analytics-detail > div {
     border: 1px solid #d8dee6;
     background: #ffffff;
+}
+
+html.theme-pro #modal-detail .grid,
+html.theme-pro #modal-edit-project .grid {
+    gap: 0.875rem;
+}
+
+html.theme-pro #modal-detail .bg-slate-50,
+html.theme-pro #modal-detail .bg-white,
+html.theme-pro #modal-edit-project .bg-slate-50,
+html.theme-pro #modal-edit-project .bg-white {
+    border-color: #dfe5ed;
 }
 
 html.theme-pro #modal-edit-project h2,
@@ -551,4 +645,53 @@ html.theme-pro #btn-close-report:hover,
 html.theme-pro #btn-close-analytics-detail:hover {
     background: #f8fafc;
     color: #111827;
+}
+
+@media (max-width: 767px) {
+    html.theme-pro .app-panel,
+    html.theme-pro section.bg-white.border {
+        padding: 1rem;
+        border-radius: 10px;
+    }
+
+    html.theme-pro #projects-list {
+        gap: 0.75rem;
+    }
+
+    html.theme-pro #projects-list [data-ui-action="show-project-detail"] {
+        padding: 0.95rem;
+    }
+
+    html.theme-pro #projects-list h3 {
+        font-size: 0.95rem;
+        padding-right: 1.25rem;
+    }
+
+    html.theme-pro #projects-list .grid.grid-cols-3 > div {
+        padding: 0.55rem 0.5rem;
+    }
+
+    html.theme-pro #projects-list .grid.grid-cols-3 p:first-child {
+        font-size: 0.55rem;
+        letter-spacing: 0.04em;
+    }
+
+    html.theme-pro #projects-list .grid.grid-cols-3 p:last-child {
+        font-size: 0.75rem;
+    }
+
+    html.theme-pro #timer-display {
+        font-size: 3rem;
+    }
+
+    html.theme-pro .modal {
+        align-items: flex-start;
+        padding: 0.75rem;
+        overflow-y: auto;
+    }
+
+    html.theme-pro .modal:not(.force-hide) > div {
+        max-height: calc(100vh - 1.5rem);
+        overflow-y: auto;
+    }
 }

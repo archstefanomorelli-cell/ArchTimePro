@@ -11,7 +11,8 @@
         if (new URLSearchParams(window.location.search).get('videoDemo') === '1') {
             document.documentElement.classList.add('video-demo-boot');
         }
-        if (new URLSearchParams(window.location.search).get('theme') === 'pro') {
+        const requestedTheme = new URLSearchParams(window.location.search).get('theme');
+        if (requestedTheme !== 'classic') {
             document.documentElement.classList.add('theme-pro');
         }
     </script>
@@ -48,7 +49,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="assets/app.css?v=phase3-budget-libero-2026-05-09">
-    <link rel="stylesheet" href="assets/app-pro.css?v=pro-studio-2026-05-12-6">
+    <link rel="stylesheet" href="assets/app-pro.css?v=pro-studio-2026-05-12-7">
 </head>
 <body class="text-slate-800 pb-20 lg:pb-0">
 
@@ -371,7 +372,7 @@
                     <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4 pl-1">
                         <h2 id="lbl-active-projects" class="text-lg lg:text-xl font-black text-slate-800 tracking-tight">Progetti attivi</h2>
                         <div class="flex items-center gap-2">
-                            <button id="btn-open-project-modal" class="secondary-action compact dark !text-white" style="color:#fff !important;">+ Aggiungi nuovo</button>
+                            <button id="btn-open-project-modal" class="secondary-action compact dark !text-white" style="color:#fff !important;">Nuovo progetto</button>
                             <button id="toggle-archived-btn" class="secondary-action compact">Archivio</button>
                         </div>
                     </div>
@@ -858,7 +859,7 @@
     <script src="assets/js/01-core.js?v=phase3-budget-libero-2026-05-09"></script>
     <script src="assets/js/02-auth-account.js?v=phase3-onboarding-analytics-2026-05-09"></script>
     <script src="assets/js/03-team.js?v=phase3-polish-2026-05-02"></script>
-    <script src="assets/js/04-projects.js?v=phase3-pro-studio-2026-05-12-3"></script>
+    <script src="assets/js/04-projects.js?v=phase3-pro-studio-2026-05-12-4"></script>
     <script src="assets/js/05-time-entries.js?v=phase3-entry-group-headers-2026-05-08"></script>
     <script src="assets/js/06-reports.js?v=phase3-final-ui-2026-05-02"></script>
     <script src="assets/js/07-password-bootstrap.js?v=phase3-budget-libero-2026-05-09"></script>

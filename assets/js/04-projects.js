@@ -198,7 +198,7 @@
                     </div>
                     <div class="grid grid-cols-3 gap-2 mb-4">
                         <div>
-                            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Speso</p>
+                            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Costi rilevati</p>
                             <p class="text-xs font-black text-slate-800 mt-0.5">${formatMoney(summary.totalCost, 0)}</p>
                         </div>
                         <div>
@@ -221,7 +221,7 @@
                         </div>
                         <div class="flex justify-between text-[10px] lg:text-[11px] font-black text-slate-500 mt-2">
                             <span>Costi ${Math.round(rhythm ? rhythm.costPercent : summary.percent)}%</span>
-                            ${rhythm ? `<span>${rhythm.usesTaskBudgets ? 'Piano costi' : 'Attività'} ${Math.round(rhythm.operationalPercent)}%</span>` : `<span>Budget ${Math.round(summary.percent)}%</span>`}
+                            ${rhythm ? `<span>${rhythm.usesTaskBudgets ? 'Piano costi' : 'Avanz. attività'} ${Math.round(rhythm.operationalPercent)}%</span>` : `<span>Budget ${Math.round(summary.percent)}%</span>`}
                         </div>
                     </div>
                 </div>`;
