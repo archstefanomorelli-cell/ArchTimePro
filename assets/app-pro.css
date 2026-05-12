@@ -415,6 +415,37 @@ html.theme-pro [data-tab="analyze"] .bg-gradient-to-br {
     padding: 1rem;
 }
 
+html.theme-pro [data-tab="analyze"] .bg-gradient-to-br {
+    overflow: hidden;
+}
+
+html.theme-pro [data-tab="analyze"] .bg-gradient-to-br > .absolute.inset-0 {
+    display: none;
+}
+
+html.theme-pro [data-tab="analyze"] .bg-gradient-to-br::after {
+    content: "";
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: #94a3b8;
+}
+
+html.theme-pro [data-tab="analyze"] .bg-gradient-to-br.from-primary-50::after {
+    background: #172033;
+}
+
+html.theme-pro [data-tab="analyze"] .bg-gradient-to-br.from-emerald-50::after {
+    background: var(--pro-accent);
+}
+
+html.theme-pro [data-tab="analyze"] .bg-gradient-to-br.from-amber-50::after {
+    background: var(--pro-warn);
+}
+
 html.theme-pro [data-tab="analyze"] h3 {
     color: #475569 !important;
     font-size: 0.6875rem;
