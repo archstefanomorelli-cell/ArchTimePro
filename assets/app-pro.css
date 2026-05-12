@@ -676,6 +676,10 @@ html.theme-pro .project-rhythm-row p {
     line-height: 1.15;
 }
 
+html.theme-pro .project-task-progress {
+    justify-self: start;
+}
+
 html.theme-pro .project-rhythm-row button {
     padding-top: 0.18rem;
     padding-bottom: 0.18rem;
