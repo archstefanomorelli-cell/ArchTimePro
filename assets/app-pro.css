@@ -558,6 +558,133 @@ html.theme-pro [data-tab="analyze"] .text-3xl {
     font-variant-numeric: tabular-nums;
 }
 
+html.theme-pro .analytics-kpi-grid {
+    gap: 0.75rem !important;
+}
+
+html.theme-pro .analytics-kpi-card {
+    min-height: 6.1rem;
+    padding: 1rem 1rem 0.9rem !important;
+    background: #ffffff !important;
+    border-color: #d8dee6 !important;
+    border-radius: 10px !important;
+    box-shadow: none !important;
+}
+
+html.theme-pro .analytics-kpi-card:hover {
+    border-color: #b8c2d0 !important;
+}
+
+html.theme-pro .analytics-kpi-accent {
+    top: 0.75rem !important;
+    left: auto !important;
+    right: 0.9rem !important;
+    width: 0.55rem;
+    height: 0.55rem !important;
+    border-radius: 999px;
+}
+
+html.theme-pro .analytics-kpi-icon {
+    display: none !important;
+}
+
+html.theme-pro .analytics-kpi-label {
+    color: #475569 !important;
+    font-size: 0.62rem !important;
+    letter-spacing: 0.11em;
+    padding-right: 1rem;
+}
+
+html.theme-pro .analytics-kpi-caption {
+    color: #64748b !important;
+    font-size: 0.58rem !important;
+    letter-spacing: 0.09em;
+}
+
+html.theme-pro #kpi-margin,
+html.theme-pro #kpi-profit {
+    margin-top: 0.45rem;
+    color: #111827 !important;
+    font-size: 1.45rem !important;
+}
+
+html.theme-pro #kpi-margin.text-red-500,
+html.theme-pro #kpi-profit.text-red-600 {
+    color: #b91c1c !important;
+}
+
+html.theme-pro #kpi-profit.text-emerald-700 {
+    color: #0f766e !important;
+}
+
+html.theme-pro #kpi-burner {
+    margin-top: 0.55rem !important;
+    color: #111827 !important;
+    font-size: 0.98rem !important;
+    font-weight: 850;
+}
+
+html.theme-pro .analytics-summary-strip {
+    border-radius: 10px !important;
+    padding: 0.75rem !important;
+    box-shadow: none !important;
+}
+
+html.theme-pro #analytics-insights {
+    gap: 0.45rem !important;
+}
+
+html.theme-pro .analytics-insight-item {
+    min-height: 3.1rem;
+    padding: 0.65rem 0.75rem !important;
+    background: #f8fafc !important;
+    border-color: #dfe5ed !important;
+    color: #475569 !important;
+    border-radius: 8px !important;
+}
+
+html.theme-pro .analytics-insight-dot {
+    width: 0.42rem;
+    height: 0.42rem;
+    border-radius: 999px;
+    background: #64748b;
+    flex: 0 0 auto;
+}
+
+html.theme-pro .analytics-insight-item[data-insight-tone="red"] .analytics-insight-dot {
+    background: #b91c1c;
+}
+
+html.theme-pro .analytics-insight-item[data-insight-tone="amber"] .analytics-insight-dot {
+    background: #b45309;
+}
+
+html.theme-pro .analytics-insight-item[data-insight-tone="emerald"] .analytics-insight-dot {
+    background: #0f766e;
+}
+
+html.theme-pro .analytics-insight-item[data-insight-tone="primary"] .analytics-insight-dot {
+    background: #172033;
+}
+
+html.theme-pro .analytics-insight-value {
+    color: #111827 !important;
+}
+
+html.theme-pro .analytics-insight-text {
+    color: #64748b !important;
+    opacity: 1 !important;
+}
+
+html.theme-pro #modal-analytics-detail .grid > .bg-white {
+    border-radius: 10px !important;
+    box-shadow: none !important;
+}
+
+html.theme-pro #modal-analytics-detail canvas {
+    filter: saturate(0.8);
+}
+
 html.theme-pro #entries-list tr,
 html.theme-pro tbody tr {
     border-color: #eef1f5;
