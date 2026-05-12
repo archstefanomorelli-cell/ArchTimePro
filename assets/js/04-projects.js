@@ -1139,7 +1139,8 @@
             editProjectTasks = p.tasks && p.tasks.length > 0 ? [...p.tasks] : [];
             editProjectTaskBudgets = getProjectTaskBudgets(p);
             const taskBudgetTotal = getTaskBudgetsTotal(editProjectTasks, editProjectTaskBudgets);
-            setProjectBudgetMode(taskBudgetTotal > 0 ? 'auto' : 'manual');
+            projectBudgetMode = taskBudgetTotal > 0 ? 'auto' : 'manual';
+            refreshProjectBudgetModeUI();
             renderNewProjectUI();
             renderEditProjectTasks();
             document.getElementById('modal-detail').classList.add('force-hide'); 
