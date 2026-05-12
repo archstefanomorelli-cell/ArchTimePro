@@ -614,6 +614,66 @@ html.theme-pro #modal-edit-project .grid {
     gap: 0.875rem;
 }
 
+html.theme-pro #modal-detail > div {
+    padding: 1.25rem 1.5rem 1.5rem;
+}
+
+html.theme-pro #detail-content {
+    margin-top: 0;
+}
+
+html.theme-pro #btn-close-detail {
+    top: 0;
+    width: 2rem;
+    height: 2rem;
+    padding: 0.375rem;
+}
+
+html.theme-pro .project-detail-header {
+    margin-bottom: 1rem;
+    padding-top: 0.875rem;
+    padding-bottom: 0.875rem;
+}
+
+html.theme-pro .project-detail-header h2 {
+    font-size: clamp(1.2rem, 2vw, 1.55rem);
+}
+
+html.theme-pro .project-detail-header .admin-only button {
+    padding: 0.55rem 0.75rem;
+    border-radius: 8px;
+}
+
+html.theme-pro .project-detail-metrics {
+    margin-bottom: 1rem;
+}
+
+html.theme-pro .project-metric-card {
+    min-height: 4.25rem;
+    padding: 0.7rem 0.75rem;
+}
+
+html.theme-pro .project-metric-card p:first-child {
+    font-size: 0.58rem;
+}
+
+html.theme-pro .project-metric-card p:last-child {
+    font-size: 1rem;
+    font-variant-numeric: tabular-nums;
+}
+
+html.theme-pro .project-rhythm-panel {
+    margin-bottom: 1rem;
+}
+
+html.theme-pro .project-rhythm-row {
+    min-height: 0;
+}
+
+html.theme-pro .project-side-panel {
+    min-height: 0;
+}
+
 html.theme-pro #modal-detail .bg-slate-50,
 html.theme-pro #modal-detail .bg-white,
 html.theme-pro #modal-edit-project .bg-slate-50,
@@ -692,5 +752,27 @@ html.theme-pro #btn-close-analytics-detail:hover {
     html.theme-pro .modal:not(.force-hide) > div {
         max-height: calc(100vh - 1.5rem);
         overflow-y: auto;
+    }
+
+    html.theme-pro #modal-detail > div {
+        padding: 1rem;
+    }
+
+    html.theme-pro .project-detail-header {
+        padding: 0.875rem;
+        padding-right: 2.75rem;
+    }
+
+    html.theme-pro .project-detail-header h2 {
+        font-size: 1.15rem;
+    }
+
+    html.theme-pro .project-metric-card {
+        min-height: 3.9rem;
+        padding: 0.625rem;
+    }
+
+    html.theme-pro .project-metric-card p:last-child {
+        font-size: 0.92rem;
     }
 }

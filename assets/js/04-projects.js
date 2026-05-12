@@ -880,11 +880,11 @@
         function renderProjectDetailHeader(project) {
             const summary = getProjectCostSummary(project);
             return `
-            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 lg:p-6 mb-6 lg:mb-8 pr-14">
-            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-4">
+            <div class="project-detail-header bg-slate-50 border border-slate-200 rounded-2xl p-4 lg:p-5 mb-5 pr-14">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3">
                 <div class="min-w-0">
-                    <span class="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-wider border px-2 py-0.5 rounded-full mb-3 ${summary.statusClass}"><i data-lucide="${summary.statusIcon}" class="w-3 h-3"></i>${summary.statusLabel}</span>
-                    <h2 class="text-2xl lg:text-3xl font-black text-slate-800 mb-1 leading-tight pr-8 tracking-tight">${escapeHtml(project.name)}</h2>
+                    <span class="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-wider border px-2 py-0.5 rounded-full mb-2 ${summary.statusClass}"><i data-lucide="${summary.statusIcon}" class="w-3 h-3"></i>${summary.statusLabel}</span>
+                    <h2 class="text-xl lg:text-2xl font-black text-slate-800 mb-1 leading-tight pr-8 tracking-tight">${escapeHtml(project.name)}</h2>
                     <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">${escapeHtml(project.client || 'Interno')}</p>
                 </div>
                 ${renderProjectDetailActions(project)}
@@ -894,9 +894,9 @@
 
         function metricCardHtml(label, valueHtml, colorClass = 'text-slate-800') {
             return `
-                <div class="bg-white p-4 rounded-xl border border-slate-200 flex flex-col justify-center shadow-sm min-h-[92px]">
+                <div class="project-metric-card bg-white p-3 rounded-xl border border-slate-200 flex flex-col justify-center shadow-sm min-h-[76px]">
                     <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">${escapeHtml(label)}</p>
-                    <p class="text-lg lg:text-xl font-black ${colorClass} mt-1 tracking-tight">${valueHtml}</p>
+                    <p class="text-base lg:text-lg font-black ${colorClass} mt-1 tracking-tight">${valueHtml}</p>
                 </div>`;
         }
 
@@ -906,7 +906,7 @@
             const rateClass = data.effectiveRate > 0 ? 'text-emerald-500' : 'text-red-500';
 
             return `
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 lg:gap-4 mb-8 bg-slate-50 border border-slate-200 rounded-2xl p-3">
+            <div class="project-detail-metrics grid grid-cols-2 md:grid-cols-4 gap-2 lg:gap-3 mb-5 bg-slate-50 border border-slate-200 rounded-2xl p-2.5">
                 ${metricCardHtml('Spesa totale', `${formatMoney(data.totalSpent, 0)} ${budgetHint}`, 'text-primary-600')}
                 ${metricCardHtml('Costo team', `${formatMoney(data.totalHoursCost, 0)} ${hoursHint}`)}
                 ${metricCardHtml('Spese extra', formatMoney(data.totalExpenses, 0), 'text-amber-600')}
@@ -963,7 +963,7 @@
                 const taskBudget = Number(rhythm.budgets[taskName] || 0);
                 const isZero = Number(stat.h || 0) === 0 && Number(stat.c || 0) === 0;
                 return `
-                    <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_160px_230px] gap-3 lg:gap-4 items-center bg-white border border-slate-200 rounded-xl p-3 shadow-sm">
+                    <div class="project-rhythm-row grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_150px_220px] gap-2 lg:gap-3 items-center bg-white border border-slate-200 rounded-xl p-2.5 shadow-sm">
                         <div class="min-w-0">
                             <p class="text-xs font-black ${isZero ? 'text-slate-400' : 'text-slate-800'} truncate">${escapeHtml(taskName)}</p>
                             <div class="flex flex-col mt-0.5">${compactTaskBudgetHtml(stat, taskBudget)}</div>
@@ -978,25 +978,25 @@
             }).join('');
 
             return `
-                <div class="admin-only bg-white border border-slate-200 rounded-2xl p-5 shadow-sm mb-8">
-                    <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-4 border-b border-slate-100 pb-4 mb-4">
+                <div class="project-rhythm-panel admin-only bg-white border border-slate-200 rounded-2xl p-4 shadow-sm mb-5">
+                    <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-3 border-b border-slate-100 pb-3 mb-3">
                         <div>
                             <h3 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="activity" class="w-3.5 h-3.5"></i> Ritmo progetto</h3>
                             <p class="text-xs text-slate-500 font-medium mt-1">${rhythm.description}</p>
                         </div>
                         <span class="inline-flex items-center justify-center text-[10px] font-black uppercase tracking-wider border px-3 py-1 rounded-full ${rhythm.statusClass}">${rhythm.label}</span>
                     </div>
-                    <div class="grid grid-cols-2 gap-3 mb-4">
-                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3">
+                    <div class="grid grid-cols-2 gap-2 mb-3">
+                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5">
                             <p class="text-[9px] font-black uppercase tracking-wider text-slate-400">Costi consumati</p>
                             <p class="text-lg font-black text-slate-800 mt-1">${Math.round(rhythm.costPercent)}%</p>
                         </div>
-                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3">
+                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5">
                             <p class="text-[9px] font-black uppercase tracking-wider text-slate-400">${rhythm.usesTaskBudgets ? 'Piano costi avanzato' : 'Attività avanzate'}</p>
                             <p class="text-lg font-black text-slate-800 mt-1">${Math.round(rhythm.operationalPercent)}%</p>
                         </div>
                     </div>
-                    <div class="relative w-full bg-slate-100 h-3 rounded-full mb-5">
+                    <div class="relative w-full bg-slate-100 h-2.5 rounded-full mb-4">
                         <div class="${rhythm.barClass} h-full rounded-full" style="width: ${Math.min(rhythm.costPercent, 100)}%"></div>
                         <span class="absolute top-1/2 -translate-y-1/2 w-1.5 h-5 rounded-full ${rhythm.markerClass} shadow-sm" style="left: calc(${Math.min(rhythm.operationalPercent, 100)}% - 3px)"></span>
                     </div>
@@ -1011,7 +1011,7 @@
 
         function renderTeamStats(teamStats) {
             const rows = Object.keys(teamStats).map(member => `
-                            <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
+                            <div class="flex justify-between items-center bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm">
                                 <span class="font-bold text-slate-700 text-xs uppercase tracking-wide">${escapeHtml(member)}</span>
                                 <div class="text-right">
                                     <p class="text-[11px] font-mono font-bold text-primary-600">${formatTime(teamStats[member].h)}</p>
@@ -1020,9 +1020,9 @@
                             </div>`).join('');
 
             return `
-                    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-                        <h3 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200 pb-2 mb-4 flex items-center gap-1.5"><i data-lucide="users" class="w-3.5 h-3.5"></i> Per membro team</h3>
-                        <div class="space-y-3">${rows}</div>
+                    <div class="project-side-panel bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+                        <h3 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200 pb-2 mb-3 flex items-center gap-1.5"><i data-lucide="users" class="w-3.5 h-3.5"></i> Per membro team</h3>
+                        <div class="space-y-2">${rows}</div>
                     </div>`;
         }
 
@@ -1032,7 +1032,7 @@
             }
 
             return expensesList.map(expense => `
-                        <div class="bg-white p-3 rounded-xl border border-slate-200 flex justify-between items-center shadow-sm group">
+                        <div class="bg-white p-2.5 rounded-xl border border-slate-200 flex justify-between items-center shadow-sm group">
                             <div class="min-w-0 pr-3">
                                 <p class="text-xs font-bold text-slate-700">${escapeHtml(expense.description)}</p>
                                 <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-1">${new Date(expense.created_at).toLocaleDateString()} • ${escapeHtml(expense.user_name)}</p>
@@ -1047,9 +1047,9 @@
 
         function renderExpensesPanel(expensesList, projectId) {
             return `
-                <div class="admin-only bg-slate-50 rounded-2xl p-5 border border-slate-200 shadow-sm">
-                    <h3 class="text-[11px] font-bold text-slate-600 uppercase tracking-wider border-b border-slate-200 pb-3 mb-4 flex items-center gap-2"><i data-lucide="receipt" class="w-4 h-4 text-amber-500"></i> Spese vive</h3>
-                    <div class="flex gap-2 mb-6">
+                <div class="project-side-panel admin-only bg-slate-50 rounded-2xl p-4 border border-slate-200 shadow-sm">
+                    <h3 class="text-[11px] font-bold text-slate-600 uppercase tracking-wider border-b border-slate-200 pb-2 mb-3 flex items-center gap-2"><i data-lucide="receipt" class="w-4 h-4 text-amber-500"></i> Spese vive</h3>
+                    <div class="flex gap-2 mb-4">
                         <input type="text" id="exp-desc" placeholder="Es. Oneri o Materiali" class="flex-1 border border-slate-200 rounded-xl p-3 text-xs outline-none focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 transition-all bg-white">
                         <div class="w-24 relative flex items-center">
                             <span class="absolute left-3 text-slate-400 font-bold text-xs">€</span>
@@ -1067,8 +1067,8 @@
             ${renderProjectDetailHeader(data.project)}
             ${renderProjectMetrics(data)}
             ${renderProjectRhythmPanel(data)}
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 pb-8 lg:pb-0">
-                <div class="space-y-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 lg:gap-6 pb-6 lg:pb-0">
+                <div class="space-y-5">
                     ${renderTeamStats(data.teamStats)}
                 </div>
                 ${renderExpensesPanel(data.projectExpenses, projectId)}
