@@ -963,13 +963,13 @@
                 const taskBudget = Number(rhythm.budgets[taskName] || 0);
                 const isZero = Number(stat.h || 0) === 0 && Number(stat.c || 0) === 0;
                 return `
-                    <div class="project-rhythm-row grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_140px_210px] gap-2 items-center bg-white border border-slate-200 rounded-xl px-2.5 py-2 shadow-sm">
+                    <div class="project-rhythm-row grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_140px_250px] gap-2 items-center bg-white border border-slate-200 rounded-xl px-2.5 py-2 shadow-sm">
                         <div class="min-w-0">
                             <p class="text-xs font-black ${isZero ? 'text-slate-400' : 'text-slate-800'} truncate">${escapeHtml(taskName)}</p>
                             <div class="flex flex-col mt-0.5">${compactTaskBudgetHtml(stat, taskBudget)}</div>
                         </div>
                         ${compactTaskCostBarHtml(stat, data.project.budget, isZero)}
-                        <div class="flex flex-wrap lg:justify-end gap-1.5">
+                        <div class="project-task-status-grid grid grid-cols-3 gap-1.5">
                             ${taskStatusButtonHtml(data.project.id, taskName, 'todo', 'Da fare', status)}
                             ${taskStatusButtonHtml(data.project.id, taskName, 'doing', 'In corso', status)}
                             ${taskStatusButtonHtml(data.project.id, taskName, 'done', 'Completata', status)}

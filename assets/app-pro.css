@@ -681,6 +681,13 @@ html.theme-pro .project-rhythm-row button {
     padding-bottom: 0.18rem;
 }
 
+html.theme-pro .project-task-status-grid button {
+    min-width: 0;
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
+    text-align: center;
+}
+
 html.theme-pro .project-side-panel {
     min-height: 0;
 }
