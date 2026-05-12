@@ -349,6 +349,10 @@ html.theme-pro #projects-list h3 + p {
     letter-spacing: 0.11em;
 }
 
+html.theme-pro #projects-list h3 {
+    min-width: 0;
+}
+
 html.theme-pro #projects-list .grid.grid-cols-3 {
     gap: 0;
     border: 1px solid #e6eaf0;
@@ -395,14 +399,15 @@ html.theme-pro #projects-list span.inline-flex {
 html.theme-pro #projects-list .project-life-dot {
     position: relative;
     display: inline-flex;
-    width: 0.5rem;
-    height: 0.5rem;
+    width: 0.55rem;
+    height: 0.55rem;
     border-radius: 999px;
     background: #0f766e;
     box-shadow: 0 0 0 0 rgba(15, 118, 110, 0.28);
     animation: projectBreath 2.8s ease-in-out infinite;
     margin-right: 0.125rem;
     margin-left: 0.125rem;
+    transform-origin: center;
 }
 
 html.theme-pro #projects-list [data-project-tone="danger"] .project-life-dot {

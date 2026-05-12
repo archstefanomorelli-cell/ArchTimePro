@@ -182,13 +182,14 @@
                     <div class="absolute top-0 left-0 right-0 h-1 ${summary.barClass} rounded-t-2xl"></div>
                     <div class="flex justify-between items-start gap-3 mb-5">
                         <div class="min-w-0">
-                            <div class="flex flex-wrap items-center gap-2 mb-1.5">
-                                <span class="project-life-dot" aria-hidden="true"></span>
-                                <span class="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-wider border px-2 py-0.5 rounded-full ${summary.statusClass}"><i data-lucide="${summary.statusIcon}" class="w-3 h-3"></i>${summary.statusLabel}</span>
-                                ${project.is_archived ? '<span class="text-[9px] font-black uppercase tracking-wider border px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border-slate-200">Archiviato</span>' : ''}
+                            <div class="flex items-center gap-2 mb-1.5">
+                                <h3 class="font-black text-slate-900 text-base lg:text-lg tracking-tight truncate">${escapeHtml(project.name)}</h3>
+                                <span class="project-life-dot shrink-0" aria-hidden="true" title="${escapeAttr(summary.statusLabel)}"></span>
                             </div>
-                            <h3 class="font-black text-slate-900 text-base lg:text-lg tracking-tight truncate">${escapeHtml(project.name)}</h3>
-                            <p class="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">${escapeHtml(project.client || 'Interno')}</p>
+                            <div class="flex flex-wrap items-center gap-2">
+                                ${project.is_archived ? '<span class="text-[9px] font-black uppercase tracking-wider border px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border-slate-200">Archiviato</span>' : ''}
+                                <p class="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-widest">${escapeHtml(project.client || 'Interno')}</p>
+                            </div>
                         </div>
                         <div class="admin-only opacity-100 lg:opacity-0 group-hover:opacity-100 flex gap-1 bg-white lg:bg-transparent rounded-lg shadow-sm lg:shadow-none p-1 lg:p-0">
                             <button data-ui-action="toggle-project-archive" data-project-id="${projectId}" data-archived="${project.is_archived ? 'true' : 'false'}" class="p-1.5 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors"><i data-lucide="archive" class="w-4 h-4"></i></button>
