@@ -1075,41 +1075,6 @@ html.theme-pro .team-modal-note i {
     flex: 0 0 auto;
 }
 
-html.theme-pro .team-invite-path {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.35rem;
-    margin-bottom: 1rem;
-}
-
-html.theme-pro .team-invite-path div {
-    min-width: 0;
-    padding: 0.55rem 0.45rem;
-    border: 1px solid #dfe5ed;
-    border-radius: 8px;
-    background: #f8fafc;
-    color: #475569;
-    font-size: 0.58rem;
-    line-height: 1.1;
-    font-weight: 850;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    text-align: center;
-}
-
-html.theme-pro .team-invite-path span {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 1rem;
-    height: 1rem;
-    margin-right: 0.25rem;
-    border-radius: 999px;
-    background: #172033;
-    color: #ffffff;
-    font-size: 0.56rem;
-}
-
 html.theme-pro #modal-edit-team #btn-delete-team {
     width: 2.55rem;
     padding-left: 0 !important;
@@ -1126,6 +1091,18 @@ html.theme-pro #modal-team-invite #btn-send-team-invite {
 html.theme-pro #modal-team-invite #btn-copy-team-invite {
     background: #ffffff !important;
     color: #334155 !important;
+}
+
+html.theme-pro #modal-edit-team #edit-team-role {
+    padding-right: 2.1rem !important;
+    background-image:
+        linear-gradient(45deg, transparent 50%, #64748b 50%),
+        linear-gradient(135deg, #64748b 50%, transparent 50%);
+    background-position:
+        calc(100% - 1.05rem) 50%,
+        calc(100% - 0.78rem) 50%;
+    background-size: 0.28rem 0.28rem, 0.28rem 0.28rem;
+    background-repeat: no-repeat;
 }
 
 html.theme-pro #custom-dialog-card {
