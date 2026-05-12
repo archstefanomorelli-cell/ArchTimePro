@@ -41,6 +41,7 @@ jobs:
           mkdir -p dist/assets
           cp index.html app.html admin.html guida.html tutorial.html privacy.html termini.html feedback.html sicurezza.html robots.txt .nojekyll CNAME dist/
           cp assets/app.css dist/assets/app.css
+          cp assets/app-pro.css dist/assets/app-pro.css
           cp -R assets/js dist/assets/js
           cp -R tutorial dist/tutorial
           mkdir -p dist/docs/video-guide

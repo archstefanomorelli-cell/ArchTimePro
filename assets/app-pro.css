@@ -1,0 +1,307 @@
+/* Arch Time Pro - experimental Pro Studio theme.
+   Active only with app.html?theme=pro. */
+
+html.theme-pro {
+    --color-primary-50: 241 245 249;
+    --color-primary-100: 226 232 240;
+    --color-primary-200: 203 213 225;
+    --color-primary-300: 148 163 184;
+    --color-primary-400: 100 116 139;
+    --color-primary-500: 51 65 85;
+    --color-primary-600: 30 41 59;
+    --color-primary-700: 15 23 42;
+    --pro-bg: #f3f5f7;
+    --pro-panel: #ffffff;
+    --pro-border: #d8dee6;
+    --pro-border-soft: #e5e9ef;
+    --pro-ink: #111827;
+    --pro-muted: #64748b;
+    --pro-accent: #0f766e;
+    --pro-accent-soft: #e6f3f1;
+    --pro-warn: #b45309;
+    --pro-warn-soft: #fff7ed;
+    --pro-danger: #b91c1c;
+    --pro-danger-soft: #fef2f2;
+}
+
+html.theme-pro body {
+    background: var(--pro-bg);
+    color: var(--pro-ink);
+}
+
+html.theme-pro .bg-white\/90,
+html.theme-pro header.bg-white\/90 {
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(14px);
+}
+
+html.theme-pro .app-panel,
+html.theme-pro section.bg-white.border,
+html.theme-pro .bg-white.border.border-slate-200,
+html.theme-pro .bg-slate-50.border.border-slate-200,
+html.theme-pro .bg-gradient-to-br {
+    border-color: var(--pro-border);
+    border-radius: 10px;
+    box-shadow: none;
+}
+
+html.theme-pro .app-panel,
+html.theme-pro section.bg-white.border,
+html.theme-pro .bg-white.border.border-slate-200 {
+    background: var(--pro-panel);
+}
+
+html.theme-pro .bg-slate-50,
+html.theme-pro .bg-slate-100 {
+    background-color: #f7f8fa;
+}
+
+html.theme-pro .rounded-3xl,
+html.theme-pro .rounded-2xl,
+html.theme-pro .rounded-xl {
+    border-radius: 10px;
+}
+
+html.theme-pro .rounded-lg,
+html.theme-pro .rounded-md {
+    border-radius: 7px;
+}
+
+html.theme-pro .shadow-sm,
+html.theme-pro .shadow,
+html.theme-pro .shadow-lg,
+html.theme-pro .shadow-xl,
+html.theme-pro .shadow-2xl {
+    box-shadow: none !important;
+}
+
+html.theme-pro .secondary-action,
+html.theme-pro .primary-action-compact,
+html.theme-pro #btn-toggle-timer,
+html.theme-pro #btn-auth,
+html.theme-pro #btn-limbo-create,
+html.theme-pro #btn-limbo-join,
+html.theme-pro [data-plan-checkout] {
+    border-radius: 8px;
+    letter-spacing: 0.02em;
+}
+
+html.theme-pro #btn-toggle-timer,
+html.theme-pro #btn-auth,
+html.theme-pro .secondary-action.dark,
+html.theme-pro .primary-action-compact,
+html.theme-pro #btn-open-project-modal {
+    background: #172033;
+    border-color: #172033;
+}
+
+html.theme-pro #btn-toggle-timer:hover,
+html.theme-pro #btn-auth:hover,
+html.theme-pro .secondary-action.dark:hover,
+html.theme-pro .primary-action-compact:hover,
+html.theme-pro #btn-open-project-modal:hover {
+    background: #0f172a;
+    border-color: #0f172a;
+}
+
+html.theme-pro .secondary-action {
+    background: #fff;
+    border-color: var(--pro-border);
+    color: #334155;
+}
+
+html.theme-pro .secondary-action:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #0f172a;
+}
+
+html.theme-pro .nav-btn {
+    border-radius: 8px;
+    color: #64748b;
+}
+
+html.theme-pro .nav-btn.text-primary-600,
+html.theme-pro .nav-btn:hover {
+    background: #eef2f6;
+    border-color: #d6dde7;
+    color: #0f172a;
+}
+
+html.theme-pro #timer-display {
+    color: #101827;
+    font-weight: 900;
+    letter-spacing: 0;
+}
+
+html.theme-pro label,
+html.theme-pro .text-\[11px\].font-bold,
+html.theme-pro .text-\[10px\].font-bold,
+html.theme-pro .uppercase.tracking-wider {
+    letter-spacing: 0.08em;
+}
+
+html.theme-pro input,
+html.theme-pro select,
+html.theme-pro textarea {
+    border-color: var(--pro-border);
+    border-radius: 8px !important;
+    box-shadow: none !important;
+}
+
+html.theme-pro input:focus,
+html.theme-pro select:focus,
+html.theme-pro textarea:focus {
+    border-color: #64748b !important;
+    box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.12) !important;
+}
+
+html.theme-pro #projects-list > article,
+html.theme-pro [data-project-id],
+html.theme-pro [data-ui-action="show-project-detail"] {
+    border-color: var(--pro-border);
+    border-radius: 10px;
+    box-shadow: none;
+}
+
+html.theme-pro #projects-list h3,
+html.theme-pro #projects-list .font-black,
+html.theme-pro h2,
+html.theme-pro h3 {
+    letter-spacing: 0;
+}
+
+html.theme-pro .bg-gradient-to-br.from-primary-50,
+html.theme-pro .from-primary-50,
+html.theme-pro .to-primary-100 {
+    background: #ffffff !important;
+}
+
+html.theme-pro .from-emerald-50,
+html.theme-pro .to-emerald-100 {
+    background: linear-gradient(180deg, #ffffff 0%, #f6fbf9 100%) !important;
+}
+
+html.theme-pro .from-amber-50,
+html.theme-pro .to-orange-100 {
+    background: linear-gradient(180deg, #ffffff 0%, #fffaf3 100%) !important;
+}
+
+html.theme-pro .bg-primary-50,
+html.theme-pro .bg-indigo-50,
+html.theme-pro .bg-emerald-50,
+html.theme-pro .bg-amber-50,
+html.theme-pro .bg-red-50 {
+    background-color: #f7f8fa;
+}
+
+html.theme-pro .text-primary-600,
+html.theme-pro .text-primary-700,
+html.theme-pro .text-indigo-600 {
+    color: #172033 !important;
+}
+
+html.theme-pro .text-emerald-600,
+html.theme-pro .text-emerald-700 {
+    color: var(--pro-accent) !important;
+}
+
+html.theme-pro .text-amber-600,
+html.theme-pro .text-orange-600 {
+    color: var(--pro-warn) !important;
+}
+
+html.theme-pro .text-red-600,
+html.theme-pro .text-red-700 {
+    color: var(--pro-danger) !important;
+}
+
+html.theme-pro .bg-primary-500,
+html.theme-pro .bg-primary-600,
+html.theme-pro .bg-indigo-600 {
+    background-color: #172033 !important;
+}
+
+html.theme-pro .bg-emerald-500,
+html.theme-pro .bg-emerald-600 {
+    background-color: var(--pro-accent) !important;
+}
+
+html.theme-pro .bg-amber-500,
+html.theme-pro .bg-orange-500 {
+    background-color: var(--pro-warn) !important;
+}
+
+html.theme-pro .border-primary-100,
+html.theme-pro .border-primary-200,
+html.theme-pro .border-indigo-100,
+html.theme-pro .border-indigo-200,
+html.theme-pro .border-emerald-100,
+html.theme-pro .border-emerald-200,
+html.theme-pro .border-amber-100,
+html.theme-pro .border-amber-200 {
+    border-color: var(--pro-border) !important;
+}
+
+html.theme-pro table,
+html.theme-pro .overflow-x-auto table {
+    font-size: 0.8125rem;
+}
+
+html.theme-pro th {
+    background: #f8fafc;
+    color: #475569;
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+}
+
+html.theme-pro td {
+    color: #1f2937;
+}
+
+html.theme-pro .modal {
+    background: rgba(15, 23, 42, 0.5);
+    backdrop-filter: blur(2px);
+}
+
+html.theme-pro .modal:not(.force-hide) > div {
+    border-radius: 12px;
+    box-shadow: 0 24px 80px rgba(15, 23, 42, 0.18) !important;
+}
+
+html.theme-pro #trial-badge,
+html.theme-pro #plan-badge,
+html.theme-pro span[class*="rounded-full"],
+html.theme-pro span[class*="rounded-md"] {
+    border-radius: 999px;
+}
+
+html.theme-pro canvas {
+    filter: saturate(0.85);
+}
+
+html.theme-pro .auth-card {
+    border-radius: 12px;
+}
+
+html.theme-pro #auth-container .bg-slate-900,
+html.theme-pro #limbo-container {
+    background: #111827;
+}
+
+html.theme-pro #auth-context-copy,
+html.theme-pro #trial-info-container {
+    background: #f8fafc;
+    border-color: var(--pro-border);
+    color: #334155;
+}
+
+@media (min-width: 1024px) {
+    html.theme-pro #main-app > main {
+        background: var(--pro-bg);
+    }
+
+    html.theme-pro .app-panel {
+        padding: 1.25rem;
+    }
+}

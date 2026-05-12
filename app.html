@@ -11,6 +11,9 @@
         if (new URLSearchParams(window.location.search).get('videoDemo') === '1') {
             document.documentElement.classList.add('video-demo-boot');
         }
+        if (new URLSearchParams(window.location.search).get('theme') === 'pro') {
+            document.documentElement.classList.add('theme-pro');
+        }
     </script>
     <style>
         html.video-demo-boot body { visibility: hidden; }
@@ -45,6 +48,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="assets/app.css?v=phase3-budget-libero-2026-05-09">
+    <link rel="stylesheet" href="assets/app-pro.css?v=pro-studio-2026-05-12">
 </head>
 <body class="text-slate-800 pb-20 lg:pb-0">
 
