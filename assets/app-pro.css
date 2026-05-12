@@ -93,6 +93,7 @@ html.theme-pro .primary-action-compact,
 html.theme-pro #btn-open-project-modal {
     background: #172033;
     border-color: #172033;
+    color: #ffffff !important;
 }
 
 html.theme-pro #btn-toggle-timer:hover,
