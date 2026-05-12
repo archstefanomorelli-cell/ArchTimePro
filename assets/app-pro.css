@@ -672,6 +672,19 @@ html.theme-pro .project-rhythm-row {
     min-height: 0;
 }
 
+@media (min-width: 1024px) {
+    html.theme-pro .project-rhythm-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 130px 300px !important;
+        column-gap: 1.75rem !important;
+    }
+
+    html.theme-pro .project-task-status-grid {
+        width: 300px;
+        justify-self: end !important;
+    }
+}
+
 html.theme-pro .project-rhythm-row p {
     line-height: 1.15;
 }
@@ -695,7 +708,7 @@ html.theme-pro .project-task-status-grid button {
 }
 
 html.theme-pro .project-task-status-grid {
-    justify-self: end;
+    justify-self: end !important;
 }
 
 html.theme-pro .project-side-panel {
