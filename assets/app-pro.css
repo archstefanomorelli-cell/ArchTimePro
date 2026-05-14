@@ -201,6 +201,23 @@ html.theme-pro .to-orange-100 {
     background: linear-gradient(180deg, #ffffff 0%, #fffaf3 100%) !important;
 }
 
+html.theme-pro #card-burn {
+    background: linear-gradient(180deg, #ffffff 0%, #f8f5f0 100%) !important;
+}
+
+html.theme-pro #card-burn .bg-amber-500 {
+    background-color: #8a5a2b !important;
+}
+
+html.theme-pro #card-burn .text-amber-700 {
+    color: #73512c !important;
+}
+
+html.theme-pro #card-burn .text-amber-300 {
+    color: #c5a17a !important;
+    opacity: 0.42 !important;
+}
+
 html.theme-pro .bg-primary-50,
 html.theme-pro .bg-indigo-50,
 html.theme-pro .bg-emerald-50,
