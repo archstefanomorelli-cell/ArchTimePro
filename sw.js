@@ -29,3 +29,9 @@ self.addEventListener('fetch', event => {
     fetch(event.request).catch(() => caches.match(ARCH_TIME_OFFLINE_URL))
   );
 });
+
+self.addEventListener('message', event => {
+  if (event.data?.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});

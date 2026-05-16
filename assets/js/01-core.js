@@ -246,9 +246,13 @@ const ARCH_TIME_CONFIG = window.ARCH_TIME_CONFIG || {};
             if (!('serviceWorker' in navigator) || location.protocol !== 'https:') return;
 
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js').catch(error => {
-                    console.warn('Arch Time Pro service worker registration failed', error);
-                });
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        registration.update();
+                    })
+                    .catch(error => {
+                        console.warn('Arch Time Pro service worker registration failed', error);
+                    });
             });
         }
 
