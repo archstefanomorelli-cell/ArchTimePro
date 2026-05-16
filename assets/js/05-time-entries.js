@@ -279,6 +279,17 @@
             taskSel.innerHTML = taskOptionsHtml(p.tasks || []); 
         }
 
+        function setTimerButtonRunning(isRunning) {
+            const button = document.getElementById('btn-toggle-timer');
+            if (!button) return;
+
+            button.classList.toggle('is-running', isRunning);
+            button.classList.toggle('bg-red-500', isRunning);
+            button.classList.toggle('hover:bg-red-600', isRunning);
+            button.classList.toggle('bg-slate-900', !isRunning);
+            button.classList.toggle('hover:bg-slate-800', !isRunning);
+        }
+
         async function restoreCloudTimer() {
             const { data: prof } = await supabaseClient.from('profiles').select('*').eq('id', userProfile.id).single();
             if (prof && prof.active_timer_start) {
@@ -294,8 +305,7 @@
                 
                 document.getElementById('btn-text').innerText = "FERMA E SALVA"; 
                 document.getElementById('btn-icon').setAttribute("data-lucide", "square"); 
-                document.getElementById('btn-toggle-timer').classList.replace('bg-slate-900', 'bg-red-500'); 
-                document.getElementById('btn-toggle-timer').classList.replace('hover:bg-slate-800', 'hover:bg-red-600');
+                setTimerButtonRunning(true);
                 
                 timerInterval = setInterval(() => { 
                     const d = new Date(Date.now() - startTime); 
@@ -317,8 +327,7 @@
                 await supabaseClient.from('profiles').update({ active_timer_start: startTime.toString(), active_timer_project: pIdx, active_timer_task: tVal, active_timer_notes: notes }).eq('id', userProfile.id);
                 document.getElementById('btn-text').innerText = "FERMA E SALVA"; 
                 document.getElementById('btn-icon').setAttribute("data-lucide", "square"); 
-                document.getElementById('btn-toggle-timer').classList.replace('bg-slate-900', 'bg-red-500'); 
-                document.getElementById('btn-toggle-timer').classList.replace('hover:bg-slate-800', 'hover:bg-red-600');
+                setTimerButtonRunning(true);
                 
                 timerInterval = setInterval(() => { 
                     const d = new Date(Date.now() - startTime); 
@@ -344,8 +353,7 @@
                 document.getElementById('timer-notes').value = ""; 
                 document.getElementById('btn-text').innerText = "Avvia ora"; 
                 document.getElementById('btn-icon').setAttribute("data-lucide", "play-circle"); 
-                document.getElementById('btn-toggle-timer').classList.replace('bg-red-500', 'bg-slate-900'); 
-                document.getElementById('btn-toggle-timer').classList.replace('hover:bg-red-600', 'hover:bg-slate-800');
+                setTimerButtonRunning(false);
             }
             lucide.createIcons();
         }

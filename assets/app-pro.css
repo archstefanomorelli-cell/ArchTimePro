@@ -131,6 +131,17 @@ html.theme-pro #btn-open-project-modal:hover {
     border-color: #0f172a;
 }
 
+html.theme-pro #btn-toggle-timer.is-running {
+    background: #b91c1c !important;
+    border-color: #b91c1c !important;
+    color: #ffffff !important;
+}
+
+html.theme-pro #btn-toggle-timer.is-running:hover {
+    background: #991b1b !important;
+    border-color: #991b1b !important;
+}
+
 html.theme-pro .secondary-action {
     background: #fff;
     border-color: var(--pro-border);
