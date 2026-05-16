@@ -1,6 +1,23 @@
-const ARCH_TIME_SW_VERSION = '2026-05-16-02';
+const ARCH_TIME_SW_VERSION = '2026-05-16-03';
 const ARCH_TIME_OFFLINE_CACHE = `archtime-offline-${ARCH_TIME_SW_VERSION}`;
 const ARCH_TIME_OFFLINE_URL = '/offline.html';
+
+function shouldFetchFresh(request) {
+  if (request.method !== 'GET') return false;
+
+  const url = new URL(request.url);
+  if (url.origin !== self.location.origin) return false;
+
+  return (
+    request.mode === 'navigate' ||
+    ['document', 'script', 'style', 'manifest'].includes(request.destination) ||
+    /\.(?:html|js|css|webmanifest)$/i.test(url.pathname)
+  );
+}
+
+function freshRequest(request) {
+  return new Request(request, { cache: 'reload' });
+}
 
 self.addEventListener('install', event => {
   event.waitUntil(
@@ -23,10 +40,13 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-  if (event.request.mode !== 'navigate') return;
+  if (!shouldFetchFresh(event.request)) return;
 
   event.respondWith(
-    fetch(event.request).catch(() => caches.match(ARCH_TIME_OFFLINE_URL))
+    fetch(freshRequest(event.request)).catch(() => {
+      if (event.request.mode === 'navigate') return caches.match(ARCH_TIME_OFFLINE_URL);
+      return Response.error();
+    })
   );
 });
 

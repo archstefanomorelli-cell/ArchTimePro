@@ -245,6 +245,13 @@ const ARCH_TIME_CONFIG = window.ARCH_TIME_CONFIG || {};
         function registerPwaServiceWorker() {
             if (!('serviceWorker' in navigator) || location.protocol !== 'https:') return;
 
+            let refreshingForServiceWorker = false;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (refreshingForServiceWorker) return;
+                refreshingForServiceWorker = true;
+                window.location.reload();
+            });
+
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/sw.js')
                     .then(registration => {
