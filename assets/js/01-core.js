@@ -249,6 +249,18 @@ const ARCH_TIME_CONFIG = window.ARCH_TIME_CONFIG || {};
                 navigator.serviceWorker.register('/sw.js')
                     .then(registration => {
                         registration.update();
+                        if (registration.waiting) {
+                            registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                        }
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            if (!newWorker) return;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    newWorker.postMessage({ type: 'SKIP_WAITING' });
+                                }
+                            });
+                        });
                     })
                     .catch(error => {
                         console.warn('Arch Time Pro service worker registration failed', error);
