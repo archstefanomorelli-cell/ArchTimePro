@@ -168,22 +168,24 @@
                         : (isWarning ? `I costi sono leggermente avanti rispetto ${usesTaskBudgets ? 'al piano costi' : 'alle attività'}.` : `Costi e ${usesTaskBudgets ? 'piano costi' : 'attività'} risultano coerenti.`)),
                 barClass: isOverBudget || isOffPace ? 'bg-red-500' : (isWarning ? 'bg-amber-400' : 'bg-emerald-500'),
                 markerClass: isOverBudget || isOffPace ? 'bg-red-700' : (isWarning ? 'bg-amber-700' : 'bg-emerald-700'),
-                statusClass: isOverBudget || isOffPace ? 'bg-red-50 text-red-700 border-red-200' : (isWarning ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200')
+                statusClass: isOverBudget || isOffPace ? 'bg-red-50 text-red-700 border-red-200' : (isWarning ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200'),
+                statusTone: isOverBudget || isOffPace ? 'danger' : (isWarning ? 'warning' : 'healthy')
             };
         }
 
         function projectCardHtml(project) {
             const summary = getProjectCostSummary(project);
             const rhythm = getProjectRhythmSummary(project, summary);
+            const cardStatus = rhythm || summary;
             const projectId = escapeAttr(project.id);
 
             return `
-                <div data-ui-action="show-project-detail" data-project-id="${projectId}" data-project-tone="${summary.statusTone}" class="bg-white border border-slate-200 p-5 lg:p-6 shadow-sm hover:shadow-md hover:border-primary-200 rounded-2xl cursor-pointer relative group transition-all ${project.is_archived ? 'is-archived' : ''}">
-                    <div class="absolute top-0 left-0 right-0 h-1 ${summary.barClass} rounded-t-2xl"></div>
+                <div data-ui-action="show-project-detail" data-project-id="${projectId}" data-project-tone="${cardStatus.statusTone}" class="bg-white border border-slate-200 p-5 lg:p-6 shadow-sm hover:shadow-md hover:border-primary-200 rounded-2xl cursor-pointer relative group transition-all ${project.is_archived ? 'is-archived' : ''}">
+                    <div class="absolute top-0 left-0 right-0 h-1 ${cardStatus.barClass} rounded-t-2xl"></div>
                     <div class="flex justify-between items-start gap-3 mb-5">
                         <div class="min-w-0">
                             <div class="flex items-center gap-2 mb-1.5">
-                                <span class="project-life-dot shrink-0" aria-hidden="true" title="${escapeAttr(summary.statusLabel)}"></span>
+                                <span class="project-life-dot shrink-0" aria-hidden="true" title="${escapeAttr(rhythm ? rhythm.label : summary.statusLabel)}"></span>
                                 <h3 class="font-black text-slate-900 text-base lg:text-lg tracking-tight truncate">${escapeHtml(project.name)}</h3>
                             </div>
                             <div class="flex flex-wrap items-center gap-2">
