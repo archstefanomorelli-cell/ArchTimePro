@@ -370,6 +370,63 @@ html.theme-pro #trial-info-container {
     color: #334155;
 }
 
+html.theme-pro .pwa-install-hint {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.8rem;
+    border: 1px solid #d8dee6;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #172033;
+}
+
+html.theme-pro .pwa-install-icon {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #172033;
+    color: #ffffff;
+    flex: 0 0 auto;
+}
+
+html.theme-pro .pwa-install-title {
+    font-size: 0.75rem;
+    line-height: 1.15;
+    font-weight: 900;
+    color: #111827;
+}
+
+html.theme-pro .pwa-install-copy {
+    margin-top: 0.18rem;
+    font-size: 0.68rem;
+    line-height: 1.35;
+    font-weight: 700;
+    color: #64748b;
+}
+
+html.theme-pro .pwa-install-close {
+    margin-left: auto;
+    width: 1.65rem;
+    height: 1.65rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    background: #f8fafc;
+    flex: 0 0 auto;
+}
+
+html.theme-pro .pwa-install-close:hover {
+    color: #111827;
+    background: #eef2f6;
+}
+
 @media (min-width: 1024px) {
     html.theme-pro #main-app > main {
         background: var(--pro-bg);

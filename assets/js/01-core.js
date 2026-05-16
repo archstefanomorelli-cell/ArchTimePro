@@ -180,6 +180,31 @@ const ARCH_TIME_CONFIG = window.ARCH_TIME_CONFIG || {};
             return `<option value="${escapeAttr(value)}"${selected ? ' selected' : ''}${disabled ? ' disabled' : ''}>${escapeHtml(label)}</option>`;
         }
 
+        function isStandaloneDisplayMode() {
+            return window.matchMedia?.('(display-mode: standalone)')?.matches || window.navigator.standalone === true;
+        }
+
+        function isMobileViewport() {
+            return window.matchMedia?.('(max-width: 767px)')?.matches || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+        }
+
+        function setupPwaInstallHint() {
+            const hint = document.getElementById('pwa-install-hint');
+            const dismiss = document.getElementById('btn-dismiss-pwa-hint');
+            if (!hint || !dismiss) return;
+
+            const dismissed = localStorage.getItem('archtime_pwa_hint_dismissed') === '1';
+            const shouldShow = isMobileViewport() && !isStandaloneDisplayMode() && !dismissed;
+            hint.classList.toggle('force-hide', !shouldShow);
+
+            dismiss.addEventListener('click', () => {
+                localStorage.setItem('archtime_pwa_hint_dismissed', '1');
+                hint.classList.add('force-hide');
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', setupPwaInstallHint);
+
         function emptyStateHtml(message) {
             return `<span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider py-1 block">${escapeHtml(message)}</span>`;
         }
