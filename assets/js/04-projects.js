@@ -173,19 +173,46 @@
             };
         }
 
+        function getProjectVisualStatus(project, costSummary = getProjectCostSummary(project)) {
+            const rhythm = getProjectRhythmSummary(project, costSummary);
+            if (!rhythm) {
+                return {
+                    label: costSummary.statusLabel,
+                    icon: costSummary.statusIcon,
+                    className: costSummary.statusClass,
+                    tone: costSummary.statusTone,
+                    barClass: costSummary.barClass,
+                    title: costSummary.statusLabel,
+                    rhythm: null
+                };
+            }
+
+            const isDanger = rhythm.statusTone === 'danger';
+            const isWarning = rhythm.statusTone === 'warning';
+            return {
+                label: rhythm.label,
+                icon: isDanger ? 'activity' : (isWarning ? 'circle-alert' : 'check-circle-2'),
+                className: rhythm.statusClass,
+                tone: rhythm.statusTone,
+                barClass: rhythm.barClass,
+                title: rhythm.label,
+                rhythm
+            };
+        }
+
         function projectCardHtml(project) {
             const summary = getProjectCostSummary(project);
-            const rhythm = getProjectRhythmSummary(project, summary);
-            const cardStatus = rhythm || summary;
+            const cardStatus = getProjectVisualStatus(project, summary);
+            const rhythm = cardStatus.rhythm;
             const projectId = escapeAttr(project.id);
 
             return `
-                <div data-ui-action="show-project-detail" data-project-id="${projectId}" data-project-tone="${cardStatus.statusTone}" class="bg-white border border-slate-200 p-5 lg:p-6 shadow-sm hover:shadow-md hover:border-primary-200 rounded-2xl cursor-pointer relative group transition-all ${project.is_archived ? 'is-archived' : ''}">
+                <div data-ui-action="show-project-detail" data-project-id="${projectId}" data-project-tone="${cardStatus.tone}" class="bg-white border border-slate-200 p-5 lg:p-6 shadow-sm hover:shadow-md hover:border-primary-200 rounded-2xl cursor-pointer relative group transition-all ${project.is_archived ? 'is-archived' : ''}">
                     <div class="absolute top-0 left-0 right-0 h-1 ${cardStatus.barClass} rounded-t-2xl"></div>
                     <div class="flex justify-between items-start gap-3 mb-5">
                         <div class="min-w-0">
                             <div class="flex items-center gap-2 mb-1.5">
-                                <span class="project-life-dot shrink-0" aria-hidden="true" title="${escapeAttr(rhythm ? rhythm.label : summary.statusLabel)}"></span>
+                                <span class="project-life-dot shrink-0" aria-hidden="true" title="${escapeAttr(cardStatus.title)}"></span>
                                 <h3 class="font-black text-slate-900 text-base lg:text-lg tracking-tight truncate">${escapeHtml(project.name)}</h3>
                             </div>
                             <div class="flex flex-wrap items-center gap-2">
@@ -881,11 +908,12 @@
 
         function renderProjectDetailHeader(project) {
             const summary = getProjectCostSummary(project);
+            const visualStatus = getProjectVisualStatus(project, summary);
             return `
             <div class="project-detail-header bg-slate-50 border border-slate-200 rounded-2xl p-3 lg:p-4 mb-4 pr-14">
             <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-2">
                 <div class="min-w-0">
-                    <span class="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-wider border px-2 py-0.5 rounded-full mb-1.5 ${summary.statusClass}"><i data-lucide="${summary.statusIcon}" class="w-3 h-3"></i>${summary.statusLabel}</span>
+                    <span class="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-wider border px-2 py-0.5 rounded-full mb-1.5 ${visualStatus.className}"><i data-lucide="${visualStatus.icon}" class="w-3 h-3"></i>${visualStatus.label}</span>
                     <h2 class="text-lg lg:text-xl font-black text-slate-800 mb-0.5 leading-tight pr-8 tracking-tight">${escapeHtml(project.name)}</h2>
                     <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">${escapeHtml(project.client || 'Interno')}</p>
                 </div>
