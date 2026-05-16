@@ -123,10 +123,18 @@ html.theme-pro .nav-btn {
 }
 
 html.theme-pro .nav-btn.text-primary-600,
-html.theme-pro .nav-btn:hover {
+html.theme-pro .nav-btn.is-active {
     background: #eef2f6;
     border-color: #d6dde7;
     color: #0f172a;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    html.theme-pro .nav-btn:hover {
+        background: #eef2f6;
+        border-color: #d6dde7;
+        color: #0f172a;
+    }
 }
 
 html.theme-pro #timer-display {

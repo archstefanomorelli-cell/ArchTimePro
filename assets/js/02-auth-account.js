@@ -421,12 +421,27 @@ function switchAuthTab(mode) {
         }
 
         function switchAppTab(tabName) { 
-            document.querySelectorAll('.mobile-tab').forEach(el => el.classList.toggle('active', el.dataset.tab === tabName)); 
-            document.querySelectorAll('.nav-btn').forEach(btn => { 
-                btn.classList.toggle('text-primary-600', btn.dataset.tab === tabName); 
-                btn.classList.toggle('text-slate-400', btn.dataset.tab !== tabName); 
+            const requestedTab = ['operate', 'analyze', 'manage'].includes(tabName) ? tabName : 'operate';
+            const isAdmin = document.body.classList.contains('is-admin');
+            const nextTab = !isAdmin && requestedTab !== 'operate' ? 'operate' : requestedTab;
+
+            document.querySelectorAll('.mobile-tab').forEach(el => {
+                el.classList.toggle('active', el.dataset.tab === nextTab);
             }); 
-            if(tabName === 'analyze' && document.body.classList.contains('is-admin')) {
+
+            document.querySelectorAll('.nav-btn[data-tab]').forEach(btn => { 
+                const isActive = btn.dataset.tab === nextTab;
+                btn.classList.toggle('is-active', isActive);
+                btn.classList.toggle('text-primary-600', isActive); 
+                btn.classList.toggle('text-slate-400', !isActive);
+                btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+            }); 
+
+            if (document.activeElement?.classList?.contains('nav-btn')) {
+                document.activeElement.blur();
+            }
+
+            if(nextTab === 'analyze' && isAdmin) {
                 setTimeout(renderStrategicCharts, 50); 
             }
             window.scrollTo(0, 0); 
