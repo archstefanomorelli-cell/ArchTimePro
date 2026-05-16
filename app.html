@@ -59,7 +59,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="assets/app.css?v=phase3-budget-libero-2026-05-09">
-    <link rel="stylesheet" href="assets/app-pro.css?v=pro-studio-2026-05-16-04">
+    <link rel="stylesheet" href="assets/app-pro.css?v=pro-studio-2026-05-16-06">
 </head>
 <body class="text-slate-800 pb-20 lg:pb-0">
 
@@ -93,8 +93,9 @@
                     <div class="pwa-install-icon"><i data-lucide="smartphone" class="w-4 h-4"></i></div>
                     <div class="min-w-0">
                         <p class="pwa-install-title">Usala come app</p>
-                        <p class="pwa-install-copy">Da Safari: Condividi e poi Aggiungi alla schermata Home.</p>
+                        <p class="pwa-install-copy" data-pwa-install-copy>Da Safari: Condividi e poi Aggiungi alla schermata Home.</p>
                     </div>
+                    <button type="button" class="force-hide pwa-install-action" data-pwa-install-action>Installa</button>
                     <button id="btn-dismiss-pwa-hint" type="button" class="pwa-install-close" data-pwa-dismiss aria-label="Nascondi suggerimento"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
                 </div>
                 <div class="space-y-4">
@@ -270,8 +271,9 @@
                 <div class="pwa-install-icon"><i data-lucide="smartphone" class="w-4 h-4"></i></div>
                 <div class="min-w-0">
                     <p class="pwa-install-title">Installa Arch Time</p>
-                    <p class="pwa-install-copy">Da Safari: Condividi e poi Aggiungi alla schermata Home.</p>
+                    <p class="pwa-install-copy" data-pwa-install-copy>Da Safari: Condividi e poi Aggiungi alla schermata Home.</p>
                 </div>
+                <button type="button" class="force-hide pwa-install-action" data-pwa-install-action>Installa</button>
                 <button type="button" class="pwa-install-close" data-pwa-dismiss aria-label="Nascondi suggerimento"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
             </div>
             
@@ -896,7 +898,7 @@
         </div>
     </div>
     <script src="assets/js/00-runtime-config.js?v=phase3-2026-05-01"></script>
-    <script src="assets/js/01-core.js?v=phase3-pwa-hint-app-2026-05-16"></script>
+    <script src="assets/js/01-core.js?v=phase3-pwa-native-install-2026-05-16"></script>
     <script src="assets/js/02-auth-account.js?v=phase3-tab-state-2026-05-16"></script>
     <script src="assets/js/03-team.js?v=phase3-team-modals-2026-05-12"></script>
     <script src="assets/js/04-projects.js?v=phase3-analytics-rollback-2026-05-12"></script>

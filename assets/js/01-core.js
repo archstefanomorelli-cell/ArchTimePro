@@ -191,16 +191,55 @@ const ARCH_TIME_CONFIG = window.ARCH_TIME_CONFIG || {};
         function setupPwaInstallHint() {
             const hints = Array.from(document.querySelectorAll('.pwa-install-hint'));
             const dismissButtons = Array.from(document.querySelectorAll('[data-pwa-dismiss]'));
+            const installButtons = Array.from(document.querySelectorAll('[data-pwa-install-action]'));
+            const copyNodes = Array.from(document.querySelectorAll('[data-pwa-install-copy]'));
             if (!hints.length) return;
 
+            let deferredInstallPrompt = null;
             const dismissed = localStorage.getItem('archtime_pwa_hint_dismissed') === '1';
             const shouldShow = isMobileViewport() && !isStandaloneDisplayMode() && !dismissed;
             hints.forEach(hint => hint.classList.toggle('force-hide', !shouldShow));
+
+            const setNativeInstallAvailable = isAvailable => {
+                installButtons.forEach(button => button.classList.toggle('force-hide', !isAvailable));
+                copyNodes.forEach(node => {
+                    node.textContent = isAvailable
+                        ? 'Installa Arch Time Pro sul dispositivo.'
+                        : 'Da Safari: Condividi e poi Aggiungi alla schermata Home.';
+                });
+                if (isAvailable) lucide?.createIcons?.();
+            };
 
             dismissButtons.forEach(button => button.addEventListener('click', () => {
                 localStorage.setItem('archtime_pwa_hint_dismissed', '1');
                 hints.forEach(hint => hint.classList.add('force-hide'));
             }));
+
+            window.addEventListener('beforeinstallprompt', event => {
+                event.preventDefault();
+                deferredInstallPrompt = event;
+                if (!localStorage.getItem('archtime_pwa_hint_dismissed') && isMobileViewport() && !isStandaloneDisplayMode()) {
+                    hints.forEach(hint => hint.classList.remove('force-hide'));
+                    setNativeInstallAvailable(true);
+                }
+            });
+
+            installButtons.forEach(button => button.addEventListener('click', async () => {
+                if (!deferredInstallPrompt) return;
+                deferredInstallPrompt.prompt();
+                const result = await deferredInstallPrompt.userChoice;
+                deferredInstallPrompt = null;
+                setNativeInstallAvailable(false);
+                if (result?.outcome === 'accepted') {
+                    localStorage.setItem('archtime_pwa_hint_dismissed', '1');
+                    hints.forEach(hint => hint.classList.add('force-hide'));
+                }
+            }));
+
+            window.addEventListener('appinstalled', () => {
+                localStorage.setItem('archtime_pwa_hint_dismissed', '1');
+                hints.forEach(hint => hint.classList.add('force-hide'));
+            });
         }
 
         document.addEventListener('DOMContentLoaded', setupPwaInstallHint);

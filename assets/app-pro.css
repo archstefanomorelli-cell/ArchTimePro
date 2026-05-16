@@ -39,7 +39,7 @@ html.theme-pro.pwa-standalone body {
     background: #f3f5f7;
 }
 
-html.theme-pro.pwa-standalone #main-app > header {
+html.theme-pro.pwa-standalone #app-container > header {
     padding-top: max(0.75rem, env(safe-area-inset-top));
 }
 
@@ -47,8 +47,12 @@ html.theme-pro.pwa-standalone nav.lg\:hidden {
     padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
 }
 
-html.theme-pro.pwa-standalone #main-app > main {
+html.theme-pro.pwa-standalone #app-container > main {
     padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
+}
+
+html.theme-pro.pwa-standalone .pwa-install-hint {
+    display: none !important;
 }
 
 html.theme-pro .bg-white\/90,
@@ -413,6 +417,22 @@ html.theme-pro .pwa-install-copy {
     color: #64748b;
 }
 
+html.theme-pro .pwa-install-action {
+    align-self: center;
+    padding: 0.48rem 0.7rem;
+    border-radius: 8px;
+    background: #172033;
+    color: #ffffff;
+    font-size: 0.66rem;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    flex: 0 0 auto;
+}
+
+html.theme-pro .pwa-install-action:hover {
+    background: #0f172a;
+}
+
 html.theme-pro .pwa-install-close {
     margin-left: auto;
     width: 1.65rem;
@@ -433,7 +453,7 @@ html.theme-pro .pwa-install-close:hover {
 }
 
 @media (min-width: 1024px) {
-    html.theme-pro #main-app > main {
+    html.theme-pro #app-container > main {
         background: var(--pro-bg);
     }
 
