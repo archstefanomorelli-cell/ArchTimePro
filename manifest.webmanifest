@@ -2,8 +2,8 @@
   "name": "Arch Time Pro",
   "short_name": "Arch Time",
   "description": "Controllo ore, costi e margini per studi tecnici e imprese.",
-  "id": "/app.html",
-  "start_url": "/app.html",
+  "id": "/app.html?app=archtime-pro",
+  "start_url": "/app.html?source=pwa",
   "scope": "/",
   "display": "standalone",
   "background_color": "#f8fafc",
@@ -12,13 +12,13 @@
   "categories": ["business", "productivity", "finance"],
   "icons": [
     {
-      "src": "/assets/icons/icon-192-symbol.png",
+      "src": "/assets/icons/icon-192-archtime-20260516.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/assets/icons/icon-512-symbol.png",
+      "src": "/assets/icons/icon-512-archtime-20260516.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
@@ -31,7 +31,7 @@
       "url": "/app.html",
       "icons": [
         {
-          "src": "/assets/icons/icon-192-symbol.png",
+          "src": "/assets/icons/icon-192-archtime-20260516.png",
           "sizes": "192x192",
           "type": "image/png"
         }
@@ -43,7 +43,7 @@
       "url": "/guida.html",
       "icons": [
         {
-          "src": "/assets/icons/icon-192-symbol.png",
+          "src": "/assets/icons/icon-192-archtime-20260516.png",
           "sizes": "192x192",
           "type": "image/png"
         }
