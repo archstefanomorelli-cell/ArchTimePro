@@ -189,18 +189,18 @@ const ARCH_TIME_CONFIG = window.ARCH_TIME_CONFIG || {};
         }
 
         function setupPwaInstallHint() {
-            const hint = document.getElementById('pwa-install-hint');
-            const dismiss = document.getElementById('btn-dismiss-pwa-hint');
-            if (!hint || !dismiss) return;
+            const hints = Array.from(document.querySelectorAll('.pwa-install-hint'));
+            const dismissButtons = Array.from(document.querySelectorAll('[data-pwa-dismiss]'));
+            if (!hints.length) return;
 
             const dismissed = localStorage.getItem('archtime_pwa_hint_dismissed') === '1';
             const shouldShow = isMobileViewport() && !isStandaloneDisplayMode() && !dismissed;
-            hint.classList.toggle('force-hide', !shouldShow);
+            hints.forEach(hint => hint.classList.toggle('force-hide', !shouldShow));
 
-            dismiss.addEventListener('click', () => {
+            dismissButtons.forEach(button => button.addEventListener('click', () => {
                 localStorage.setItem('archtime_pwa_hint_dismissed', '1');
-                hint.classList.add('force-hide');
-            });
+                hints.forEach(hint => hint.classList.add('force-hide'));
+            }));
         }
 
         document.addEventListener('DOMContentLoaded', setupPwaInstallHint);
