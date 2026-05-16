@@ -29,6 +29,28 @@ html.theme-pro body {
     color: var(--pro-ink);
 }
 
+html.theme-pro.pwa-standalone,
+html.theme-pro.pwa-standalone body {
+    min-height: 100%;
+    overscroll-behavior-y: none;
+}
+
+html.theme-pro.pwa-standalone body {
+    background: #f3f5f7;
+}
+
+html.theme-pro.pwa-standalone #main-app > header {
+    padding-top: max(0.75rem, env(safe-area-inset-top));
+}
+
+html.theme-pro.pwa-standalone nav.lg\:hidden {
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+}
+
+html.theme-pro.pwa-standalone #main-app > main {
+    padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
+}
+
 html.theme-pro .bg-white\/90,
 html.theme-pro header.bg-white\/90 {
     background: rgba(255, 255, 255, 0.94);
