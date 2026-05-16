@@ -242,7 +242,18 @@ const ARCH_TIME_CONFIG = window.ARCH_TIME_CONFIG || {};
             });
         }
 
+        function registerPwaServiceWorker() {
+            if (!('serviceWorker' in navigator) || location.protocol !== 'https:') return;
+
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(error => {
+                    console.warn('Arch Time Pro service worker registration failed', error);
+                });
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', setupPwaInstallHint);
+        registerPwaServiceWorker();
 
         function emptyStateHtml(message) {
             return `<span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider py-1 block">${escapeHtml(message)}</span>`;
