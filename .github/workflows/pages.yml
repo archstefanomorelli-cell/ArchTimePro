@@ -39,7 +39,7 @@ jobs:
           set -euo pipefail
           rm -rf dist
           mkdir -p dist/assets
-          cp index.html app.html admin.html guida.html tutorial.html privacy.html termini.html feedback.html sicurezza.html offline.html manifest.webmanifest sw.js robots.txt .nojekyll CNAME dist/
+          cp index.html app.html timer.html admin.html guida.html tutorial.html privacy.html termini.html feedback.html sicurezza.html offline.html manifest.webmanifest sw.js robots.txt .nojekyll CNAME dist/
           cp apple-touch-icon*.png dist/
           cp assets/app.css dist/assets/app.css
           cp assets/app-pro.css dist/assets/app-pro.css

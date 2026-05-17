@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#172033">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Arch Time Mini Timer</title>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="assets/js/00-runtime-config.js?v=phase3-2026-05-01"></script>
+    <style>
+        * { box-sizing: border-box; }
+        :root {
+            --bg: #101827;
+            --panel: #ffffff;
+            --muted: #64748b;
+            --line: #dbe3ee;
+            --ink: #111827;
+            --primary: #2563eb;
+            --danger: #b91c1c;
+            --soft: #f4f7fb;
+        }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 18px;
+            background: radial-gradient(circle at top left, rgba(37,99,235,.18), transparent 34%), var(--bg);
+            color: var(--ink);
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+        .shell {
+            width: min(420px, 100%);
+            background: var(--panel);
+            border: 1px solid rgba(219, 227, 238, .88);
+            border-radius: 18px;
+            box-shadow: 0 24px 70px rgba(0,0,0,.28);
+            overflow: hidden;
+        }
+        .topbar {
+            padding: 16px 16px 13px;
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            border-bottom: 1px solid var(--line);
+            background: linear-gradient(180deg, #ffffff, #f8fafc);
+        }
+        .mark {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            color: white;
+            background: #172033;
+        }
+        h1 { margin: 0; font-size: 16px; line-height: 1.1; letter-spacing: -.01em; }
+        .caption { margin: 3px 0 0; color: var(--muted); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+        .content { padding: 16px; }
+        .hidden { display: none !important; }
+        label { display: block; margin: 0 0 7px 1px; color: #475569; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; }
+        input, select, textarea {
+            width: 100%;
+            border: 1px solid var(--line);
+            background: #fff;
+            color: var(--ink);
+            border-radius: 12px;
+            padding: 11px 12px;
+            font: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            outline: none;
+        }
+        textarea { min-height: 70px; resize: vertical; line-height: 1.35; }
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(37,99,235,.1);
+        }
+        .field { margin-bottom: 12px; }
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .timer {
+            margin: 14px 0;
+            padding: 18px 14px;
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            background: var(--soft);
+            text-align: center;
+        }
+        .time {
+            font-size: 42px;
+            line-height: 1;
+            font-weight: 950;
+            letter-spacing: -.04em;
+            font-variant-numeric: tabular-nums;
+        }
+        .status {
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+        .actions { display: grid; gap: 10px; }
+        button {
+            border: 0;
+            border-radius: 12px;
+            padding: 12px 14px;
+            font: inherit;
+            font-size: 13px;
+            font-weight: 900;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform .16s ease, background .16s ease;
+        }
+        button:active { transform: scale(.985); }
+        .primary { background: #172033; color: white; }
+        .primary.running { background: var(--danger); }
+        .secondary { background: #eef2f7; color: #334155; }
+        .ghost { background: transparent; color: var(--muted); padding: 8px 0; }
+        .tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            padding: 4px;
+            margin-bottom: 14px;
+            border-radius: 13px;
+            background: #eef2f7;
+        }
+        .tab {
+            background: transparent;
+            color: #64748b;
+            padding: 9px 10px;
+            border-radius: 10px;
+            font-size: 12px;
+        }
+        .tab.active {
+            background: #fff;
+            color: #111827;
+            box-shadow: 0 1px 5px rgba(15,23,42,.08);
+        }
+        .notice {
+            margin-top: 12px;
+            padding: 10px 11px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: #f8fafc;
+            color: #475569;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1.35;
+        }
+        .notice.error { border-color: #fecaca; background: #fef2f2; color: #991b1b; }
+        .notice.success { border-color: #bbf7d0; background: #f0fdf4; color: #166534; }
+        .meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 14px;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 800;
+        }
+    </style>
+</head>
+<body>
+    <main class="shell">
+        <div class="topbar">
+            <div class="mark"><i data-lucide="clock-3" width="19" height="19"></i></div>
+            <div>
+                <h1>Arch Time Mini Timer</h1>
+                <p class="caption">Solo ore, senza dashboard</p>
+            </div>
+        </div>
+
+        <section id="login-view" class="content">
+            <div class="field">
+                <label for="login-email">Email</label>
+                <input id="login-email" type="email" autocomplete="email" placeholder="nome@studio.it">
+            </div>
+            <div class="field">
+                <label for="login-password">Password</label>
+                <input id="login-password" type="password" autocomplete="current-password" placeholder="Password">
+            </div>
+            <div class="actions">
+                <button id="btn-login" class="primary"><i data-lucide="log-in" width="16" height="16"></i> Accedi</button>
+            </div>
+            <div id="login-status" class="notice hidden"></div>
+        </section>
+
+        <section id="timer-view" class="content hidden">
+            <div class="meta">
+                <span id="user-label">Utente</span>
+                <button id="btn-logout" class="ghost">Esci</button>
+            </div>
+
+            <div class="tabs">
+                <button id="tab-timer" class="tab active" type="button">Timer</button>
+                <button id="tab-manual" class="tab" type="button">Manuale</button>
+            </div>
+
+            <div class="field">
+                <label for="project-select">Progetto</label>
+                <select id="project-select"></select>
+            </div>
+            <div class="field">
+                <label for="task-select">Attività</label>
+                <select id="task-select"></select>
+            </div>
+            <div class="field">
+                <label for="notes">Note</label>
+                <textarea id="notes" placeholder="Opzionale"></textarea>
+            </div>
+
+            <div id="timer-panel">
+                <div class="timer">
+                    <div id="timer-display" class="time">00:00:00</div>
+                    <div id="timer-status" class="status">Pronto</div>
+                </div>
+                <div class="actions">
+                    <button id="btn-toggle-timer" class="primary"><i data-lucide="play-circle" width="17" height="17"></i><span>Avvia</span></button>
+                    <button id="btn-refresh" class="secondary"><i data-lucide="refresh-cw" width="16" height="16"></i> Aggiorna progetti</button>
+                </div>
+            </div>
+
+            <div id="manual-panel" class="hidden">
+                <div class="field">
+                    <label for="manual-date">Data</label>
+                    <input id="manual-date" type="date">
+                </div>
+                <div class="row">
+                    <div class="field">
+                        <label for="manual-start">Inizio</label>
+                        <input id="manual-start" type="time">
+                    </div>
+                    <div class="field">
+                        <label for="manual-end">Fine</label>
+                        <input id="manual-end" type="time">
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="manual-hours">Ore</label>
+                    <input id="manual-hours" type="text" placeholder="01:30">
+                </div>
+                <div class="actions">
+                    <button id="btn-save-manual" class="primary"><i data-lucide="save" width="16" height="16"></i> Salva ore</button>
+                </div>
+            </div>
+
+            <div id="app-status" class="notice hidden"></div>
+        </section>
+    </main>
+
+    <script src="assets/js/11-desktop-timer.js?v=desktop-timer-mvp-2026-05-17"></script>
+</body>
+</html>
