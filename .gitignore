@@ -9,6 +9,10 @@ Thumbs.db
 # Local logs
 *.log
 
+# Desktop app build output
+desktop-timer/node_modules/
+desktop-timer/dist/
+
 # Local Supabase secrets
 supabase/.env
 supabase/.env.*
