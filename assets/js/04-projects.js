@@ -900,7 +900,7 @@
                 : `<button data-ui-action="export-project-pdf" data-project-id="${projectId}" class="w-full sm:w-auto text-xs font-bold bg-white text-primary-600 border border-slate-200 px-3.5 py-2.5 rounded-xl hover:border-primary-200 hover:bg-primary-50 flex items-center justify-center gap-2 shadow-sm transition-all"><i data-lucide="file-text" class="w-4 h-4"></i> Esporta in PDF</button>`;
 
             return `
-                <div class="admin-only w-full lg:w-auto flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2">
+                <div class="admin-only w-full max-w-xs mx-auto lg:mx-0 lg:max-w-none lg:w-auto flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2">
                     <button data-ui-action="edit-project" data-project-id="${projectId}" class="w-full sm:w-auto text-xs font-bold bg-white text-slate-600 border border-slate-200 px-3.5 py-2.5 rounded-xl hover:bg-slate-50 flex items-center justify-center gap-2 shadow-sm transition-all"><i data-lucide="edit" class="w-4 h-4"></i> Modifica</button>
                     ${pdfButton}
                 </div>`;
@@ -910,11 +910,11 @@
             const summary = getProjectCostSummary(project);
             const visualStatus = getProjectVisualStatus(project, summary);
             return `
-            <div class="project-detail-header bg-slate-50 border border-slate-200 rounded-2xl p-3 lg:p-4 mb-4 pr-14">
+            <div class="project-detail-header bg-slate-50 border border-slate-200 rounded-2xl p-3 lg:p-4 mb-4">
             <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-2">
                 <div class="min-w-0">
                     <span class="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-wider border px-2 py-0.5 rounded-full mb-1.5 ${visualStatus.className}"><i data-lucide="${visualStatus.icon}" class="w-3 h-3"></i>${visualStatus.label}</span>
-                    <h2 class="text-lg lg:text-xl font-black text-slate-800 mb-0.5 leading-tight pr-8 tracking-tight">${escapeHtml(project.name)}</h2>
+                    <h2 class="text-lg lg:text-xl font-black text-slate-800 mb-0.5 leading-tight tracking-tight">${escapeHtml(project.name)}</h2>
                     <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">${escapeHtml(project.client || 'Interno')}</p>
                 </div>
                 ${renderProjectDetailActions(project)}

@@ -1343,7 +1343,17 @@ html.theme-pro #custom-dialog-msg {
 
     html.theme-pro .project-detail-header {
         padding: 0.75rem;
-        padding-right: 2.75rem;
+        padding-right: 0.75rem;
+    }
+
+    html.theme-pro .project-detail-header > .flex {
+        align-items: center !important;
+        text-align: center;
+    }
+
+    html.theme-pro .project-detail-header .admin-only {
+        margin-left: auto;
+        margin-right: auto;
     }
 
     html.theme-pro .project-detail-header h2 {
