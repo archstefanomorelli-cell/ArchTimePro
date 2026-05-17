@@ -10,7 +10,7 @@
     let projects = [];
     let timerRunning = false;
     let timerStart = null;
-    let timerInterval = null;
+    let timerTickHandle = null;
 
     const $ = id => document.getElementById(id);
 
@@ -47,6 +47,22 @@
         const minutes = Math.floor((totalSeconds % 3600) / 60);
         const seconds = totalSeconds % 60;
         return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    function clearTimerTick() {
+        if (timerTickHandle) {
+            clearTimeout(timerTickHandle);
+            timerTickHandle = null;
+        }
+    }
+
+    function updateTimerDisplay() {
+        if (!timerRunning || !timerStart) return;
+
+        const elapsed = Date.now() - timerStart;
+        $('timer-display').textContent = formatTimer(elapsed);
+        const delayToNextSecond = 1000 - (elapsed % 1000);
+        timerTickHandle = setTimeout(updateTimerDisplay, Math.max(80, delayToNextSecond + 12));
     }
 
     function todayInputValue() {
@@ -178,17 +194,13 @@
         $('btn-toggle-timer').classList.add('running');
         $('btn-toggle-timer').innerHTML = '<i data-lucide="square" width="17" height="17"></i><span>Ferma e salva</span>';
         $('timer-status').textContent = 'Timer attivo';
-        clearInterval(timerInterval);
-        timerInterval = setInterval(() => {
-            $('timer-display').textContent = formatTimer(Date.now() - timerStart);
-        }, 1000);
-        $('timer-display').textContent = formatTimer(Date.now() - timerStart);
+        clearTimerTick();
+        updateTimerDisplay();
         lucide.createIcons();
     }
 
     function stopTimerUi() {
-        clearInterval(timerInterval);
-        timerInterval = null;
+        clearTimerTick();
         $('timer-display').textContent = '00:00:00';
         $('timer-status').textContent = 'Pronto';
         $('btn-toggle-timer').classList.remove('running');
