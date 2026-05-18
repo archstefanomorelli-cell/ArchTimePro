@@ -65,6 +65,16 @@
         timerTickHandle = setTimeout(updateTimerDisplay, Math.max(80, delayToNextSecond + 12));
     }
 
+    function setDesktopCompactMode(isCompact) {
+        document.body.classList.toggle('desktop-compact', Boolean(isCompact));
+        window.archTimeDesktop?.setCompactMode?.(Boolean(isCompact));
+    }
+
+    function updateCompactContext(project = getSelectedProject(), task = $('task-select')?.value || 'Generico') {
+        const projectName = project?.name || 'Progetto';
+        $('compact-context').textContent = `${projectName} · ${task || 'Generico'}`;
+    }
+
     function todayInputValue() {
         const d = new Date();
         return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -191,18 +201,21 @@
     }
 
     function startTimerUi() {
+        setDesktopCompactMode(true);
+        updateCompactContext();
         $('btn-toggle-timer').classList.add('running');
         $('btn-toggle-timer').innerHTML = '<i data-lucide="square" width="17" height="17"></i><span>Ferma e salva</span>';
-        $('timer-status').textContent = 'Timer attivo';
+        if ($('timer-status')) $('timer-status').textContent = 'Timer attivo';
         clearTimerTick();
         updateTimerDisplay();
         lucide.createIcons();
     }
 
     function stopTimerUi() {
+        setDesktopCompactMode(false);
         clearTimerTick();
         $('timer-display').textContent = '00:00:00';
-        $('timer-status').textContent = 'Pronto';
+        if ($('timer-status')) $('timer-status').textContent = 'Pronto';
         $('btn-toggle-timer').classList.remove('running');
         $('btn-toggle-timer').innerHTML = '<i data-lucide="play-circle" width="17" height="17"></i><span>Avvia</span>';
         lucide.createIcons();
@@ -342,6 +355,8 @@
         client = window.supabase.createClient(supabaseUrl, supabaseKey);
         $('btn-login').addEventListener('click', login);
         $('btn-logout').addEventListener('click', logout);
+        $('btn-window-minimize')?.addEventListener('click', () => window.archTimeDesktop?.minimizeWindow?.());
+        $('btn-window-close')?.addEventListener('click', () => window.archTimeDesktop?.closeWindow?.());
         $('btn-toggle-timer').addEventListener('click', () => toggleTimer().catch(error => setStatus('app-status', error.message, 'error')));
         $('btn-save-manual').addEventListener('click', () => saveManual().catch(error => setStatus('app-status', error.message, 'error')));
         $('btn-refresh').addEventListener('click', () => loadProjects().then(() => setStatus('app-status', 'Progetti aggiornati.', 'success')).catch(error => setStatus('app-status', error.message, 'error')));

@@ -1,6 +1,6 @@
 {
   "name": "arch-time-mini-timer",
-  "version": "0.1.0",
+  "version": "0.1.3",
   "description": "Arch Time Pro desktop timer companion for Windows.",
   "main": "main.js",
   "private": true,
@@ -12,11 +12,13 @@
   "build": {
     "appId": "it.archtimepro.timer",
     "productName": "Arch Time Mini Timer",
+    "afterPack": "scripts/apply-win-icon.js",
     "directories": {
       "output": "dist"
     },
     "files": [
       "main.js",
+      "preload.js",
       "assets/**",
       "renderer/**"
     ],
@@ -30,7 +32,7 @@
           ]
         }
       ],
-      "icon": "assets/icon.png"
+      "icon": "assets/icon.ico"
     },
     "nsis": {
       "oneClick": false,

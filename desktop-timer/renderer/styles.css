@@ -16,7 +16,8 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background: var(--bg);
+  overflow: hidden;
+  background: transparent;
   color: var(--ink);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
@@ -29,6 +30,11 @@ button { cursor: pointer; }
   min-height: 100vh;
   margin: 0 auto;
   padding: 16px;
+  overflow: hidden;
+  background: var(--bg);
+  border: 1px solid rgba(217, 225, 234, .92);
+  border-radius: 22px;
+  box-shadow: 0 18px 48px rgba(22, 32, 51, .14);
 }
 
 .view { min-height: calc(100vh - 32px); }
@@ -44,6 +50,11 @@ button { cursor: pointer; }
 }
 
 .brand-row { justify-content: flex-start; padding-top: 12px; }
+
+.brand-row,
+.desktop-header {
+  -webkit-app-region: drag;
+}
 
 .brand-mark {
   width: 48px;
@@ -96,7 +107,7 @@ h1 {
 .user-strip {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 12px;
   padding: 10px 12px;
   margin-bottom: 12px;
@@ -106,7 +117,7 @@ h1 {
 
 .user-strip strong {
   color: var(--ink);
-  max-width: 220px;
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -207,7 +218,8 @@ textarea:focus {
 
 .primary-button,
 .ghost-button,
-.icon-button {
+.icon-button,
+.window-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -216,6 +228,7 @@ textarea:focus {
   border-radius: 11px;
   font-size: 13px;
   font-weight: 900;
+  -webkit-app-region: no-drag;
 }
 
 .primary-button {
@@ -248,6 +261,28 @@ textarea:focus {
   background: #fff;
   color: #344054;
   border: 1px solid var(--line);
+}
+
+.header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  -webkit-app-region: no-drag;
+}
+
+.window-button {
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  color: #667085;
+  border: 1px solid transparent;
+  border-radius: 8px;
+}
+
+.window-button:hover {
+  background: #eef3f8;
+  color: #162033;
+  border-color: var(--line);
 }
 
 .manual-grid {
@@ -283,4 +318,141 @@ textarea:focus {
 .notice.success {
   background: #ecfdf3;
   color: #067647;
+}
+
+body.desktop-compact {
+  background: transparent;
+}
+
+body.desktop-compact .app-shell {
+  width: 100%;
+  min-height: 100vh;
+  padding: 6px;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+body.desktop-compact .view {
+  min-height: calc(100vh - 12px);
+}
+
+body.desktop-compact .desktop-header,
+body.desktop-compact .desktop-header .eyebrow,
+body.desktop-compact .user-strip,
+body.desktop-compact .field-stack,
+body.desktop-compact .mode-tabs,
+body.desktop-compact #manual-panel,
+body.desktop-compact .notes-block,
+body.desktop-compact .footer-actions {
+  display: none !important;
+}
+
+body.desktop-compact .work-panel {
+  position: relative;
+  min-height: calc(100vh - 12px);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0;
+  padding: 8px;
+  border-radius: 12px;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, .22), rgba(255, 255, 255, .05) 32%, rgba(15, 23, 42, .58) 100%),
+    rgba(8, 13, 25, .56);
+  border-color: rgba(255, 255, 255, .24);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .38),
+    inset 0 -1px 0 rgba(255, 255, 255, .08),
+    0 10px 24px rgba(2, 6, 23, .14);
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  -webkit-app-region: drag;
+}
+
+body.desktop-compact .work-panel::before {
+  content: "";
+  position: absolute;
+  inset: 1px 1px auto 1px;
+  height: 48%;
+  border-radius: 11px 11px 18px 18px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .24), rgba(255, 255, 255, 0));
+  pointer-events: none;
+}
+
+.timer-stack {
+  display: contents;
+}
+
+.compact-context {
+  display: none;
+}
+
+body.desktop-compact .timer-stack {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+}
+
+body.desktop-compact .compact-context {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: rgba(255, 255, 255, .74);
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: 0;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, .32);
+}
+
+body.desktop-compact .timer-display {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  text-align: left;
+  font-size: 24px;
+  line-height: 1;
+  color: #fff;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, .38);
+}
+
+body.desktop-compact .timer-button {
+  position: relative;
+  z-index: 1;
+  width: 38px;
+  min-width: 38px;
+  min-height: 38px;
+  height: 38px;
+  padding: 0;
+  border-radius: 12px;
+  background:
+    radial-gradient(circle at 28% 18%, rgba(255, 255, 255, .42), transparent 28%),
+    linear-gradient(145deg, rgba(248, 113, 113, .96), rgba(185, 28, 28, .9));
+  border: 1px solid rgba(255, 255, 255, .3);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .32),
+    0 8px 18px rgba(185, 28, 28, .24);
+  -webkit-app-region: no-drag;
+}
+
+body.desktop-compact .timer-button:hover {
+  background:
+    radial-gradient(circle at 28% 18%, rgba(255, 255, 255, .48), transparent 30%),
+    linear-gradient(145deg, rgba(252, 165, 165, .98), rgba(153, 27, 27, .92));
+}
+
+body.desktop-compact .timer-button span {
+  display: none;
 }

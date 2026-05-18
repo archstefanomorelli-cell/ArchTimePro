@@ -45,13 +45,20 @@
           <p class="eyebrow">Arch Time Pro</p>
           <h1>Registra tempo</h1>
         </div>
-        <button id="btn-logout" class="icon-button" type="button" title="Esci">
-          <i data-lucide="log-out" width="17" height="17"></i>
-        </button>
+        <div class="header-actions">
+          <button id="btn-window-minimize" class="window-button" type="button" title="Riduci">
+            <i data-lucide="minus" width="14" height="14"></i>
+          </button>
+          <button id="btn-window-close" class="window-button" type="button" title="Chiudi">
+            <i data-lucide="x" width="14" height="14"></i>
+          </button>
+          <button id="btn-logout" class="icon-button" type="button" title="Esci">
+            <i data-lucide="log-out" width="17" height="17"></i>
+          </button>
+        </div>
       </header>
 
       <div class="user-strip">
-        <span id="timer-status">Pronto</span>
         <strong id="user-label">-</strong>
       </div>
 
@@ -72,7 +79,10 @@
       </nav>
 
       <section id="timer-panel" class="work-panel">
-        <div id="timer-display" class="timer-display">00:00:00</div>
+        <div class="timer-stack">
+          <div id="compact-context" class="compact-context">-</div>
+          <div id="timer-display" class="timer-display">00:00:00</div>
+        </div>
         <button id="btn-toggle-timer" class="primary-button timer-button" type="button">
           <i data-lucide="play-circle" width="18" height="18"></i>
           <span>Avvia</span>
