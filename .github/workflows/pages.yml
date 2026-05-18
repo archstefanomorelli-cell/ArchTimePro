@@ -45,6 +45,7 @@ jobs:
           cp assets/app-pro.css dist/assets/app-pro.css
           cp -R assets/icons dist/assets/icons
           cp -R assets/js dist/assets/js
+          cp -R downloads dist/downloads
           cp -R tutorial dist/tutorial
           mkdir -p dist/docs/video-guide
           cp -R docs/video-guide/frames-real dist/docs/video-guide/frames-real

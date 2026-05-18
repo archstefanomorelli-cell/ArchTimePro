@@ -75,6 +75,37 @@
         $('compact-context').textContent = `${projectName} · ${task || 'Generico'}`;
     }
 
+    function lastSelectionKey() {
+        return profile?.id ? `archtime-desktop-last-selection:${profile.id}` : '';
+    }
+
+    function rememberLastSelection() {
+        const project = getSelectedProject();
+        const key = lastSelectionKey();
+        if (!project || !key) return;
+        localStorage.setItem(key, JSON.stringify({
+            projectId: project.id,
+            task: $('task-select')?.value || 'Generico'
+        }));
+    }
+
+    function restoreLastSelection() {
+        const key = lastSelectionKey();
+        if (!key) return;
+        try {
+            const saved = JSON.parse(localStorage.getItem(key) || '{}');
+            if (!saved.projectId) return;
+            const projectIndex = projects.findIndex(project => project.id === saved.projectId && project.is_archived !== true);
+            if (projectIndex < 0) return;
+            $('project-select').value = String(projectIndex);
+            renderTasks();
+            const taskOptions = Array.from($('task-select').options).map(option => option.value);
+            if (saved.task && taskOptions.includes(saved.task)) $('task-select').value = saved.task;
+        } catch (error) {
+            console.warn('Impossibile ripristinare ultima selezione', error);
+        }
+    }
+
     function todayInputValue() {
         const d = new Date();
         return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -133,6 +164,7 @@
         if (error) throw error;
         projects = data || [];
         renderProjects();
+        restoreLastSelection();
     }
 
     async function loadProfile() {
@@ -238,6 +270,7 @@
                 active_timer_notes: notes
             }).eq('id', profile.id);
             if (error) throw error;
+            rememberLastSelection();
             startTimerUi();
             setStatus('app-status', 'Timer avviato.', 'success');
             return;
@@ -292,6 +325,7 @@
         $('manual-start').value = '';
         $('manual-end').value = '';
         $('notes').value = '';
+        rememberLastSelection();
         setStatus('app-status', `Ore salvate: ${formatTime(hours)}.`, 'success');
     }
 
@@ -360,7 +394,11 @@
         $('btn-toggle-timer').addEventListener('click', () => toggleTimer().catch(error => setStatus('app-status', error.message, 'error')));
         $('btn-save-manual').addEventListener('click', () => saveManual().catch(error => setStatus('app-status', error.message, 'error')));
         $('btn-refresh').addEventListener('click', () => loadProjects().then(() => setStatus('app-status', 'Progetti aggiornati.', 'success')).catch(error => setStatus('app-status', error.message, 'error')));
-        $('project-select').addEventListener('change', renderTasks);
+        $('project-select').addEventListener('change', () => {
+            renderTasks();
+            rememberLastSelection();
+        });
+        $('task-select').addEventListener('change', rememberLastSelection);
         $('manual-start').addEventListener('change', calculateManualHours);
         $('manual-end').addEventListener('change', calculateManualHours);
         $('tab-timer').addEventListener('click', () => switchPanel('timer'));

@@ -1,6 +1,6 @@
 {
   "name": "arch-time-mini-timer",
-  "version": "0.1.4",
+  "version": "0.1.6",
   "description": "Arch Time Pro desktop timer companion for Windows.",
   "main": "main.js",
   "private": true,
