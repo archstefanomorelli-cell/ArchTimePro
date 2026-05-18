@@ -1,6 +1,23 @@
 // Arch Time Pro - 07-password-bootstrap.js
 // ================= RECUPERO PASSWORD =================
 
+        function isPasswordRecoveryUrl() {
+            const url = new URL(window.location.href);
+            const hashParams = new URLSearchParams(url.hash.replace(/^#/, ''));
+            return url.searchParams.get('type') === 'recovery' || hashParams.get('type') === 'recovery';
+        }
+
+        function showPasswordRecoveryView() {
+            window.archTimePasswordRecoveryActive = true;
+            document.getElementById('auth-container')?.classList.add('force-hide');
+            document.getElementById('limbo-container')?.classList.add('force-hide');
+            document.getElementById('app-container')?.classList.add('force-hide');
+            document.getElementById('paywall-container')?.classList.add('force-hide');
+            document.getElementById('update-password-container')?.classList.remove('force-hide');
+            document.getElementById('new-password')?.focus();
+            lucide.createIcons();
+        }
+
         function bindStaticEvents() {
             const bindClick = (id, handler) => document.getElementById(id)?.addEventListener('click', handler);
 
@@ -319,11 +336,7 @@
 
         supabaseClient.auth.onAuthStateChange(async (event, session) => {
             if (event === 'PASSWORD_RECOVERY') {
-                document.getElementById('auth-container').classList.add('force-hide');
-                document.getElementById('limbo-container').classList.add('force-hide');
-                document.getElementById('app-container').classList.add('force-hide');
-                document.getElementById('update-password-container').classList.remove('force-hide');
-                lucide.createIcons();
+                showPasswordRecoveryView();
             }
         });
 
@@ -335,6 +348,10 @@
             if(error) return await appAlert("Errore", error.message, "danger");
             
             document.getElementById('update-password-container').classList.add('force-hide');
+            window.archTimePasswordRecoveryActive = false;
+            if (window.history.replaceState) {
+                window.history.replaceState({}, document.title, `${window.location.origin}${window.location.pathname}`);
+            }
             await appAlert("Successo!", "La tua password è stata aggiornata. Bentornato a bordo!", "success");
             
             checkUser();
@@ -342,4 +359,5 @@
         
         bindStaticEvents();
         lucide.createIcons();
-        checkUser();
+        if (isPasswordRecoveryUrl()) showPasswordRecoveryView();
+        else checkUser();

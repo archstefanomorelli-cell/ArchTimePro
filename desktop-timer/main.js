@@ -1,14 +1,13 @@
 const { app, BrowserWindow, Menu, shell } = require('electron');
-
-const TIMER_URL = process.env.ARCHTIME_TIMER_URL || 'https://www.archtimepro.it/timer.html';
+const path = require('path');
 
 function createWindow() {
   const win = new BrowserWindow({
-    width: 440,
-    height: 720,
+    width: 430,
+    height: 690,
     minWidth: 390,
-    minHeight: 620,
-    backgroundColor: '#101827',
+    minHeight: 590,
+    backgroundColor: '#f6f8fb',
     title: 'Arch Time Mini Timer',
     icon: `${__dirname}/assets/icon.png`,
     autoHideMenuBar: true,
@@ -19,7 +18,7 @@ function createWindow() {
     }
   });
 
-  win.loadURL(TIMER_URL);
+  win.loadFile(path.join(__dirname, 'renderer', 'index.html'));
 
   win.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url);
@@ -27,8 +26,7 @@ function createWindow() {
   });
 
   win.webContents.on('will-navigate', (event, url) => {
-    const allowedHost = new URL(TIMER_URL).host;
-    if (new URL(url).host !== allowedHost) {
+    if (!url.startsWith('file://')) {
       event.preventDefault();
       shell.openExternal(url);
     }

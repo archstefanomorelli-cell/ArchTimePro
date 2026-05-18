@@ -17,7 +17,8 @@
     },
     "files": [
       "main.js",
-      "assets/**"
+      "assets/**",
+      "renderer/**"
     ],
     "win": {
       "signAndEditExecutable": false,

@@ -329,6 +329,8 @@ function switchAuthTab(mode) {
         }
 
         async function checkUser() {
+            if (window.archTimePasswordRecoveryActive) return;
+
             const { data: { user } } = await supabaseClient.auth.getUser();
             if(user) {
                 const { data: profile, error } = await supabaseClient.from('profiles').select('*').eq('id', user.id).single();
