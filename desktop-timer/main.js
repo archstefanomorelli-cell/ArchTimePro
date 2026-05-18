@@ -62,6 +62,17 @@ function parkWindowInTray(win) {
   win.setPosition(HIDDEN_POSITION.x, HIDDEN_POSITION.y, false);
 }
 
+function bringWindowToFront(win) {
+  if (!win || win.isDestroyed()) return;
+  win.show();
+  win.setAlwaysOnTop(true, 'screen-saver');
+  win.focus();
+  setTimeout(() => {
+    if (win.isDestroyed()) return;
+    win.setAlwaysOnTop(false);
+  }, 180);
+}
+
 function createWindow() {
   const win = new BrowserWindow({
     width: NORMAL_SIZE.width,
@@ -125,8 +136,11 @@ function showMainWindow() {
     isParkedInTray = false;
     mainWindow.setSkipTaskbar(false);
     setCompactMode(mainWindow, false);
+    bringWindowToFront(mainWindow);
     return;
   }
+
+  bringWindowToFront(mainWindow);
 }
 
 function createTray() {
