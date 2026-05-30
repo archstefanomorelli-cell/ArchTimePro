@@ -16,7 +16,7 @@ function switchAuthTab(mode) {
             const contextCopy = document.getElementById('auth-context-copy');
             if (contextCopy) {
                 contextCopy.innerHTML = isSignupMode
-                    ? '<strong class="font-black">Nuovo spazio beta.</strong> Scegli Manager per creare uno studio/impresa, oppure Collaboratore se hai ricevuto un codice invito.'
+                    ? '<strong class="font-black">Nuovo spazio di lavoro.</strong> Scegli Manager per creare uno studio/impresa, oppure Collaboratore se hai ricevuto un codice invito.'
                     : '<strong class="font-black">Bentornato.</strong> Accedi per registrare ore, controllare lavori e consultare i dati del tuo spazio.';
             }
             
@@ -108,7 +108,7 @@ function switchAuthTab(mode) {
             if(!userProfile || !userProfile.studio_id) return; 
             const link = plan === 'starter' ? STRIPE_LINK_STARTER : STRIPE_LINK_PREMIUM;
             if (!isUsableStripeLink(link)) {
-                return appAlert("Beta gratuita", "I pagamenti Stripe non sono ancora attivi. Durante la beta puoi continuare a usare Arch Time Pro senza scegliere un piano.", "info");
+                return appAlert("Accesso gratuito", "I pagamenti Stripe non sono ancora attivi. In fase di lancio puoi continuare a usare Arch Time Pro senza scegliere un piano.", "info");
             }
             window.location.href = `${link}?client_reference_id=${userProfile.studio_id}`; 
         }
@@ -214,7 +214,7 @@ function switchAuthTab(mode) {
                 if(isUsableStripeLink(STRIPE_CUSTOMER_PORTAL)) {
                     window.location.href = STRIPE_CUSTOMER_PORTAL;
                 } else {
-                    await appAlert("Beta gratuita", "Il portale pagamenti non è ancora attivo. Durante la beta la gestione dell'abbonamento resta disabilitata.", "info");
+                    await appAlert("Accesso gratuito", "Il portale pagamenti non è ancora attivo. In fase di lancio la gestione dell'abbonamento resta disabilitata.", "info");
                 }
                 return;
             }

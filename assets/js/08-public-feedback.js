@@ -1,4 +1,4 @@
-// Arch Time Pro - public beta feedback form
+// Arch Time Pro - public launch feedback form
 (function () {
     const FEEDBACK_TABLE = 'beta_feedback';
 
@@ -70,7 +70,7 @@
             if (error) throw error;
 
             form.reset();
-            setStatus('Grazie, feedback salvato. Lo leggeremo nella lista beta.', 'success');
+            setStatus('Grazie, feedback salvato. Lo leggeremo nella lista interna di lancio.', 'success');
         } catch (error) {
             console.error('Feedback submit failed:', error);
             setStatus('Non siamo riusciti a salvare il feedback. Riprova tra poco.', 'error');
@@ -83,7 +83,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        const form = document.getElementById('beta-feedback-form');
+        const form = document.getElementById('launch-feedback-form');
         if (!form) return;
         form.addEventListener('submit', handleFeedbackSubmit);
     });
