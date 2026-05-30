@@ -9,22 +9,19 @@ const ARCH_TIME_CONFIG = window.ARCH_TIME_CONFIG || {};
             return /stripe\.com\/.*\/test_|buy\.stripe\.com\/test_/i.test(String(value || ''));
         }
 
+        function isProductionRuntime(config) {
+            return config.environment === 'production' || /(^|\.)archtimepro\.it$/i.test(window.location.hostname);
+        }
+
+        function isUsableStripeLink(value) {
+            return !isPlaceholderConfigValue(value) && String(value).includes('http') && !(isProductionRuntime(ARCH_TIME_CONFIG) && isStripeTestLink(value));
+        }
+
         function getRuntimeConfigIssues(config) {
             const issues = [];
 
             if (isPlaceholderConfigValue(config.supabaseUrl)) issues.push('Supabase URL mancante o placeholder.');
             if (isPlaceholderConfigValue(config.supabaseKey)) issues.push('Supabase publishable key mancante o placeholder.');
-
-            const stripeLinks = config.stripeLinks || {};
-            if (isPlaceholderConfigValue(stripeLinks.starter)) issues.push('Link Stripe Starter mancante o placeholder.');
-            if (isPlaceholderConfigValue(stripeLinks.premium)) issues.push('Link Stripe Premium mancante o placeholder.');
-            if (isPlaceholderConfigValue(stripeLinks.customerPortal)) issues.push('Link Stripe Customer Portal mancante o placeholder.');
-
-            if (config.environment === 'production') {
-                if (isStripeTestLink(stripeLinks.starter)) issues.push('Link Stripe Starter ancora in modalita test.');
-                if (isStripeTestLink(stripeLinks.premium)) issues.push('Link Stripe Premium ancora in modalita test.');
-                if (isStripeTestLink(stripeLinks.customerPortal)) issues.push('Link Stripe Customer Portal ancora in modalita test.');
-            }
 
             return issues;
         }

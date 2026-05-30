@@ -107,6 +107,9 @@ function switchAuthTab(mode) {
         function redirectToStripe(plan) { 
             if(!userProfile || !userProfile.studio_id) return; 
             const link = plan === 'starter' ? STRIPE_LINK_STARTER : STRIPE_LINK_PREMIUM;
+            if (!isUsableStripeLink(link)) {
+                return appAlert("Beta gratuita", "I pagamenti Stripe non sono ancora attivi. Durante la beta puoi continuare a usare Arch Time Pro senza scegliere un piano.", "info");
+            }
             window.location.href = `${link}?client_reference_id=${userProfile.studio_id}`; 
         }
 
@@ -208,7 +211,11 @@ function switchAuthTab(mode) {
 
         async function handlePlanChange(targetPlan) {
             if (targetPlan === 'portal') {
-                if(STRIPE_CUSTOMER_PORTAL && STRIPE_CUSTOMER_PORTAL.includes('http')) window.location.href = STRIPE_CUSTOMER_PORTAL;
+                if(isUsableStripeLink(STRIPE_CUSTOMER_PORTAL)) {
+                    window.location.href = STRIPE_CUSTOMER_PORTAL;
+                } else {
+                    await appAlert("Beta gratuita", "Il portale pagamenti non è ancora attivo. Durante la beta la gestione dell'abbonamento resta disabilitata.", "info");
+                }
                 return;
             }
             if (targetPlan === 'starter') {
