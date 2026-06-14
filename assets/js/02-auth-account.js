@@ -41,6 +41,20 @@ function switchAuthTab(mode) {
             const trialInfo = document.getElementById('trial-info-container'); 
             if (trialInfo) trialInfo.classList.toggle('force-hide', isStaff); 
         }
+
+        function updateBusinessTypeSelection() {
+            const selected = document.querySelector('input[name="business-type"]:checked')?.value || 'studio';
+            document.querySelectorAll('[data-business-option]').forEach(option => {
+                const isSelected = option.dataset.businessOption === selected;
+                const isImpresa = option.dataset.businessOption === 'impresa';
+                option.classList.toggle('border-slate-200', !isSelected);
+                option.classList.toggle('border-primary-500', isSelected && !isImpresa);
+                option.classList.toggle('ring-primary-500', isSelected && !isImpresa);
+                option.classList.toggle('border-amber-500', isSelected && isImpresa);
+                option.classList.toggle('ring-amber-500', isSelected && isImpresa);
+                option.classList.toggle('ring-1', isSelected);
+            });
+        }
         
         const urlParams = new URLSearchParams(window.location.search);
         if(urlParams.get('invite')) { 
@@ -66,7 +80,9 @@ function switchAuthTab(mode) {
                 const isOwnerChoice = role === 'owner';
                 const finalRole = isOwnerChoice ? 'admin' : role; 
                 const isStaff = finalRole === 'staff';
-                const businessType = isStaff ? 'studio' : document.querySelector('input[name="business-type"]:checked').value;
+                const selectedBusinessType = document.querySelector('input[name="business-type"]:checked');
+                if(!isStaff && !selectedBusinessType) return await appAlert("Attenzione", "Seleziona Studio Tecnico oppure Impresa Edile.", "danger");
+                const businessType = isStaff ? 'studio' : selectedBusinessType.value;
                 const code = document.getElementById('invite-code-input').value.trim();
                 
                 if(isStaff && !code) return await appAlert("Attenzione", "Inserisci il codice invito!", "danger");

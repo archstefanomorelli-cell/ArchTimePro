@@ -118,12 +118,12 @@
                                     <div id="sector-selection" class="force-hide pl-4 border-l-2 border-primary-200 ml-3 mt-3 transition-all duration-300">
                                         <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-2">Seleziona il tuo settore:</label>
                                         <div class="flex gap-2">
-                                            <label class="flex-1 flex items-center justify-center gap-2 p-2.5 bg-white rounded-lg border border-slate-200 cursor-pointer hover:border-primary-300 transition-all shadow-sm relative has-[:checked]:border-primary-500 has-[:checked]:ring-1 has-[:checked]:ring-primary-500">
-                                                <input type="radio" name="business-type" value="studio" checked class="sr-only">
+                                            <label data-business-option="studio" for="business-type-studio" class="flex-1 flex items-center justify-center gap-2 p-2.5 bg-white rounded-lg border border-primary-500 ring-1 ring-primary-500 cursor-pointer hover:border-primary-300 transition-all shadow-sm relative">
+                                                <input id="business-type-studio" type="radio" name="business-type" value="studio" checked class="sr-only">
                                                 <span class="text-xs font-bold text-slate-700">Studio Tecnico</span>
                                             </label>
-                                            <label class="flex-1 flex items-center justify-center gap-2 p-2.5 bg-white rounded-lg border border-slate-200 cursor-pointer hover:border-primary-300 transition-all shadow-sm relative has-[:checked]:border-amber-500 has-[:checked]:ring-1 has-[:checked]:ring-amber-500">
-                                                <input type="radio" name="business-type" value="impresa" class="sr-only">
+                                            <label data-business-option="impresa" for="business-type-impresa" class="flex-1 flex items-center justify-center gap-2 p-2.5 bg-white rounded-lg border border-slate-200 cursor-pointer hover:border-amber-300 transition-all shadow-sm relative">
+                                                <input id="business-type-impresa" type="radio" name="business-type" value="impresa" class="sr-only">
                                                 <span class="text-xs font-bold text-slate-700">Impresa Edile</span>
                                             </label>
                                         </div>
@@ -899,12 +899,12 @@
     </div>
     <script src="assets/js/00-runtime-config.js?v=phase3-2026-05-01"></script>
     <script src="assets/js/01-core.js?v=phase3-pwa-fresh-assets-2026-05-16"></script>
-    <script src="assets/js/02-auth-account.js?v=password-recovery-guard-2026-05-18"></script>
+    <script src="assets/js/02-auth-account.js?v=signup-business-type-2026-06-14"></script>
     <script src="assets/js/03-team.js?v=phase3-team-modals-2026-05-12"></script>
     <script src="assets/js/04-projects.js?v=phase3-project-detail-mobile-actions-2026-05-17"></script>
     <script src="assets/js/05-time-entries.js?v=phase3-timer-running-state-2026-05-16"></script>
     <script src="assets/js/06-reports.js?v=phase3-final-ui-2026-05-02"></script>
-    <script src="assets/js/07-password-bootstrap.js?v=password-recovery-guard-2026-05-18"></script>
+    <script src="assets/js/07-password-bootstrap.js?v=signup-business-type-2026-06-14"></script>
     <script src="assets/js/09-video-demo.js?v=video-demo-real-ui-2026-05-09"></script>
 </body>
 </html>
