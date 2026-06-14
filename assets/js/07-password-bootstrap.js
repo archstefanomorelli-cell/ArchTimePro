@@ -82,8 +82,6 @@
             bindClick('btn-close-forgot-password', closeForgotPassword);
             bindClick('btn-send-reset-link', sendResetLink);
             bindClick('btn-save-new-password', saveNewPassword);
-            bindClick('btn-accept-cookies', acceptCookies);
-
             document.getElementById('project-select')?.addEventListener('change', updateTaskDropdown);
             document.getElementById('new-proj-template')?.addEventListener('change', applyTemplateToNewProject);
             document.getElementById('week-picker')?.addEventListener('change', event => jumpToDate(event.target.value));

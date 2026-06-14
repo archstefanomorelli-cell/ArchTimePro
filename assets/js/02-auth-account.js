@@ -5,6 +5,7 @@ function getAppRedirectUrl() {
 
 function switchAuthTab(mode) { 
             isSignupMode = (mode === 'signup'); 
+            if (isSignupMode) window.archTimeAnalytics?.track('sign_up_start', { method: 'email' });
             document.getElementById('tab-login').className = !isSignupMode ? "flex-1 py-2.5 text-sm font-bold rounded-lg bg-white shadow-sm text-slate-900 transition-all border border-slate-200/50" : "flex-1 py-2.5 text-sm font-bold text-slate-500 hover:text-slate-700 transition-all"; 
             document.getElementById('tab-signup').className = isSignupMode ? "flex-1 py-2.5 text-sm font-bold rounded-lg bg-white shadow-sm text-slate-900 transition-all border border-slate-200/50" : "flex-1 py-2.5 text-sm font-bold text-slate-500 hover:text-slate-700 transition-all"; 
             
@@ -79,20 +80,20 @@ function switchAuthTab(mode) {
                     } 
                 });
                 
-                if(error) await appAlert("Errore", error.message, "danger"); else { await appAlert("Controlla la tua email", "Ti abbiamo inviato un link per confermare la registrazione. Dopo la conferma potrai accedere ad Arch Time Pro.", "success"); switchAuthTab('login'); }
+                if(error) await appAlert("Errore", error.message, "danger"); else {
+                    window.archTimeAnalytics?.track('sign_up', {
+                        method: 'email',
+                        account_type: isStaff ? 'staff' : 'owner',
+                        business_type: businessType
+                    });
+                    await appAlert("Controlla la tua email", "Ti abbiamo inviato un link per confermare la registrazione. Dopo la conferma potrai accedere ad Arch Time Pro.", "success");
+                    switchAuthTab('login');
+                }
             } else { 
                 const { error } = await supabaseClient.auth.signInWithPassword({ email, password }); 
                 if(error) await appAlert("Errore", "Credenziali errate", "danger"); else checkUser(); 
             }
         }
-
-        function checkCookies() {
-            if (!localStorage.getItem('cookie_consent_archtime')) { document.getElementById('cookie-banner').classList.remove('force-hide'); }
-        }
-        function acceptCookies() {
-            localStorage.setItem('cookie_consent_archtime', 'true'); document.getElementById('cookie-banner').classList.add('force-hide');
-        }
-        document.addEventListener('DOMContentLoaded', checkCookies);
 
         async function exportUserData() {
             if(!userProfile) return await appAlert("Errore", "Utente non trovato.", "danger");
@@ -146,6 +147,7 @@ function switchAuthTab(mode) {
             const { data, error } = await supabaseClient.rpc('create_studio_from_limbo', { studio_name: sName, b_type: bType });
             if(error) return await appAlert("Errore", error.message, "danger");
             
+            window.archTimeAnalytics?.track('studio_created', { business_type: bType });
             await appAlert("Congratulazioni", "Il tuo nuovo Spazio di Lavoro è pronto!", "success");
             location.reload();
         }

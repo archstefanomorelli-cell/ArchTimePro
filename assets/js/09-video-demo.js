@@ -93,14 +93,12 @@
         }
 
         function showVideoDemoApp() {
-            localStorage.setItem('cookie_consent_archtime', 'true');
             document.documentElement.classList.remove('video-demo-boot');
             document.body.classList.add('is-admin');
             document.getElementById('auth-container')?.classList.add('force-hide');
             document.getElementById('limbo-container')?.classList.add('force-hide');
             document.getElementById('update-password-container')?.classList.add('force-hide');
             document.getElementById('paywall-container')?.classList.add('force-hide');
-            document.getElementById('cookie-banner')?.classList.add('force-hide');
             document.getElementById('app-container')?.classList.remove('force-hide');
 
             document.getElementById('user-display').innerText = 'Stefano';
