@@ -159,3 +159,94 @@ Se nei log Supabase compare:
 ```
 
 controllare in Brevo la sezione sicurezza/IP autorizzati e disattivare il blocco IP oppure autorizzare l'IP usato da Supabase. Per Supabase e preferibile non dipendere da un singolo IP statico.
+
+## Stripe webhook per Tariffa Fondatori
+
+Funzione:
+
+```text
+stripe-webhook
+```
+
+La funzione riceve gli eventi Stripe, verifica la firma `Stripe-Signature` con `STRIPE_WEBHOOK_SECRET` e aggiorna `public.studios`.
+
+Stati gestiti:
+
+- `checkout.session.completed` -> `subscription_status = active`
+- `customer.subscription.created` -> stato derivato dalla subscription Stripe
+- `customer.subscription.updated` -> stato derivato dalla subscription Stripe
+- `customer.subscription.deleted` -> `subscription_status = canceled`
+- `invoice.payment_succeeded` -> `subscription_status = active`
+- `invoice.payment_failed` -> `subscription_status = past_due`
+
+Mappatura:
+
+- Stripe `active` o `trialing` -> Supabase `active`
+- Stripe `past_due` -> Supabase `past_due`
+- Stripe `unpaid` -> Supabase `unpaid`
+- Stripe `canceled` o `incomplete_expired` -> Supabase `canceled`
+- Stripe `incomplete` -> Supabase `past_due`
+
+Gli account omaggio si gestiscono manualmente con:
+
+```sql
+subscription_status = 'free'
+plan_type = 'founder'
+```
+
+## Setup database Stripe
+
+Prima di collegare Stripe, eseguire in Supabase SQL Editor:
+
+```text
+docs/sql/stripe-founder-billing.sql
+```
+
+## Deploy webhook Stripe
+
+Con Supabase CLI:
+
+```text
+supabase functions deploy stripe-webhook --no-verify-jwt
+```
+
+Impostare i secrets dopo aver creato l'endpoint webhook su Stripe:
+
+```text
+supabase secrets set STRIPE_API_KEY=sk_live_...
+supabase secrets set STRIPE_WEBHOOK_SECRET=whsec_...
+```
+
+Supabase fornisce automaticamente:
+
+```text
+SUPABASE_URL
+SUPABASE_SERVICE_ROLE_KEY
+```
+
+## Endpoint da inserire in Stripe
+
+Usare l'URL pubblico della Edge Function:
+
+```text
+https://PROJECT_REF.supabase.co/functions/v1/stripe-webhook
+```
+
+Eventi Stripe da selezionare:
+
+```text
+checkout.session.completed
+customer.subscription.created
+customer.subscription.updated
+customer.subscription.deleted
+invoice.payment_succeeded
+invoice.payment_failed
+```
+
+Il Payment Link deve ricevere da Arch Time Pro il parametro:
+
+```text
+client_reference_id = studio_id
+```
+
+Il frontend lo aggiunge automaticamente quando manda l'owner su Stripe.
