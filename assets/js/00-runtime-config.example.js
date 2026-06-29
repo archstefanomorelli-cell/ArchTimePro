@@ -5,6 +5,7 @@ window.ARCH_TIME_CONFIG = {
     supabaseUrl: 'https://YOUR_PROJECT_REF.supabase.co',
     supabaseKey: 'YOUR_SUPABASE_PUBLISHABLE_KEY',
     stripeLinks: {
+        founder: 'https://buy.stripe.com/YOUR_FOUNDER_PRICE_LINK',
         starter: 'https://buy.stripe.com/YOUR_STARTER_PRICE_LINK',
         premium: 'https://buy.stripe.com/YOUR_PREMIUM_PRICE_LINK',
         customerPortal: 'https://billing.stripe.com/p/login/YOUR_CUSTOMER_PORTAL_LINK'

@@ -32,6 +32,7 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+          STRIPE_LINK_FOUNDER: ${{ secrets.STRIPE_LINK_FOUNDER }}
           STRIPE_LINK_STARTER: ${{ secrets.STRIPE_LINK_STARTER }}
           STRIPE_LINK_PREMIUM: ${{ secrets.STRIPE_LINK_PREMIUM }}
           STRIPE_CUSTOMER_PORTAL: ${{ secrets.STRIPE_CUSTOMER_PORTAL }}
@@ -65,6 +66,7 @@ jobs:
               supabaseUrl: '${SUPABASE_URL}',
               supabaseKey: '${SUPABASE_PUBLISHABLE_KEY}',
               stripeLinks: {
+                  founder: '${STRIPE_LINK_FOUNDER}',
                   starter: '${STRIPE_LINK_STARTER}',
                   premium: '${STRIPE_LINK_PREMIUM}',
                   customerPortal: '${STRIPE_CUSTOMER_PORTAL}'

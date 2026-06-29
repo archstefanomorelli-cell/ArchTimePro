@@ -94,7 +94,7 @@
                     <button id="tab-signup" class="flex-1 py-2.5 text-sm font-bold text-slate-500 hover:text-slate-700 transition-all">Nuovo utente</button>
                 </div>
                 <div id="auth-context-copy" class="mb-5 bg-primary-50 border border-primary-100 rounded-xl p-3.5 text-xs text-primary-900 leading-relaxed">
-                    <strong class="font-black">Accesso gratuito.</strong> Entra nel tuo spazio di lavoro oppure crea un nuovo account.
+                    <strong class="font-black">Prova gratuita.</strong> Entra nel tuo spazio di lavoro oppure crea un nuovo account.
                 </div>
                 <div id="pwa-install-hint" class="force-hide pwa-install-hint mb-5">
                     <div class="pwa-install-icon"><i data-lucide="smartphone" class="w-4 h-4"></i></div>
@@ -134,7 +134,7 @@
                                     <span class="text-sm font-bold text-slate-700">Collaboratore (unisciti)</span>
                                 </label>
                             </div>
-                            <div id="trial-info-container" class="force-hide mt-4 p-3.5 bg-primary-50 border border-primary-100 rounded-xl flex gap-3 items-start"><i data-lucide="gift" class="w-5 h-5 text-primary-600 shrink-0"></i><p class="text-xs text-primary-900 leading-relaxed"><strong class="font-black">15 giorni di prova gratuita!</strong><br>Nessuna carta richiesta.</p></div>
+                            <div id="trial-info-container" class="force-hide mt-4 p-3.5 bg-primary-50 border border-primary-100 rounded-xl flex gap-3 items-start"><i data-lucide="gift" class="w-5 h-5 text-primary-600 shrink-0"></i><p class="text-xs text-primary-900 leading-relaxed"><strong class="font-black">30 giorni di prova gratuita.</strong><br>Poi Tariffa Fondatori a 19 €/mese per studio.</p></div>
                         </div>
                         <div id="invite-code-container" class="force-hide">
                             <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Codice invito manager</label>
@@ -221,11 +221,8 @@
             <p class="text-slate-500 text-sm mb-8 leading-relaxed">L'abbonamento per questo Spazio di Lavoro è scaduto. Attiva un piano per continuare a lavorare.</p>
             
             <div class="flex flex-col gap-3 mb-6">
-                <button data-plan-checkout="premium" class="w-full bg-primary-600 text-white py-3.5 rounded-xl font-bold hover:bg-primary-700 transition-all shadow-sm active:scale-[0.98] flex justify-center items-center gap-2">
-                    <i data-lucide="zap" class="w-4 h-4"></i> Attiva PREMIUM (59,99€/mese)
-                </button>
-                <button data-plan-checkout="starter" class="w-full bg-white border border-slate-200 text-slate-700 py-3.5 rounded-xl font-bold hover:bg-slate-50 transition-all active:scale-[0.98] flex justify-center items-center gap-2 text-sm shadow-sm">
-                    Attiva STARTER (29,99€/mese)
+                <button data-plan-checkout="founder" class="w-full bg-primary-600 text-white py-3.5 rounded-xl font-bold hover:bg-primary-700 transition-all shadow-sm active:scale-[0.98] flex justify-center items-center gap-2">
+                    <i data-lucide="zap" class="w-4 h-4"></i> Attiva Tariffa Fondatori (19 €/mese)
                 </button>
             </div>
             
@@ -237,9 +234,9 @@
         <div class="bg-white rounded-2xl p-8 max-w-md w-full text-center shadow-xl border border-slate-200 relative">
             <button id="btn-close-upgrade" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
             <div class="w-16 h-16 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-amber-100"><i data-lucide="zap" class="w-8 h-8"></i></div>
-            <h2 class="text-xl font-black text-slate-900 mb-2 tracking-tight">Sblocca il Premium</h2>
-            <p id="upgrade-message" class="text-slate-500 text-sm mb-8 leading-relaxed">Questa funzione è riservata agli abbonamenti Premium.</p>
-            <button data-plan-checkout="premium" class="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold hover:bg-slate-800 transition-all shadow-sm active:scale-[0.98] flex justify-center items-center gap-2">Sblocca PREMIUM a 59,99€</button>
+            <h2 class="text-xl font-black text-slate-900 mb-2 tracking-tight">Attiva Arch Time Pro</h2>
+            <p id="upgrade-message" class="text-slate-500 text-sm mb-8 leading-relaxed">Questa funzione è compresa nella Tariffa Fondatori.</p>
+            <button data-plan-checkout="founder" class="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold hover:bg-slate-800 transition-all shadow-sm active:scale-[0.98] flex justify-center items-center gap-2">Attiva a 19 €/mese</button>
         </div>
     </div>
 
@@ -507,11 +504,11 @@
             <div id="billing-section" class="border-t border-slate-100 pt-4 force-hide">
                 <h3 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2.5 flex items-center gap-1.5"><i data-lucide="credit-card" class="w-3.5 h-3.5"></i> Abbonamento</h3>
                 <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl flex justify-between items-center mb-3">
-                    <div><p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Piano attuale</p><p class="text-base font-black text-slate-900 tracking-tight" id="account-plan-name">PREMIUM</p></div>
+                    <div><p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Piano attuale</p><p class="text-base font-black text-slate-900 tracking-tight" id="account-plan-name">FONDATORI</p></div>
                     <div id="account-plan-status" class="w-2 h-2 bg-emerald-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
                 </div>
-                <div id="account-upgrade-btn-container" class="force-hide"><button data-plan-change="premium" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold hover:bg-slate-800 transition-all shadow-sm text-sm mb-2 flex items-center justify-center gap-2"><i data-lucide="zap" class="w-4 h-4 text-amber-400"></i> Passa a Premium (59,99€)</button></div>
-                <div id="account-downgrade-btn-container" class="force-hide"><button data-plan-change="starter" class="w-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 py-3 rounded-xl font-bold transition-all shadow-sm text-sm mb-2 flex items-center justify-center gap-2">Passa a Starter (29,99€)</button></div>
+                <div id="account-upgrade-btn-container" class="force-hide"><button data-plan-change="founder" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold hover:bg-slate-800 transition-all shadow-sm text-sm mb-2 flex items-center justify-center gap-2"><i data-lucide="zap" class="w-4 h-4 text-amber-400"></i> Attiva Tariffa Fondatori</button></div>
+                <div id="account-downgrade-btn-container" class="force-hide"><button data-plan-change="founder" class="w-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 py-3 rounded-xl font-bold transition-all shadow-sm text-sm mb-2 flex items-center justify-center gap-2">Tariffa Fondatori</button></div>
                 <button data-plan-change="portal" class="w-full bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-800 py-3 rounded-xl font-bold transition-all shadow-sm text-sm mb-2 flex items-center justify-center gap-2"><i data-lucide="external-link" class="w-4 h-4"></i> Gestisci su Stripe</button>
             </div>
 

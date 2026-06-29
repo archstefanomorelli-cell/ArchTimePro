@@ -53,6 +53,7 @@ const ARCH_TIME_CONFIG = window.ARCH_TIME_CONFIG || {};
         const SUPABASE_KEY = ARCH_TIME_CONFIG.supabaseKey;
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         
+        const STRIPE_LINK_FOUNDER = ARCH_TIME_CONFIG.stripeLinks?.founder || ARCH_TIME_CONFIG.stripeLinks?.premium || ARCH_TIME_CONFIG.stripeLinks?.starter || "";
         const STRIPE_LINK_STARTER = ARCH_TIME_CONFIG.stripeLinks?.starter || ""; 
         const STRIPE_LINK_PREMIUM = ARCH_TIME_CONFIG.stripeLinks?.premium || "";
         const STRIPE_CUSTOMER_PORTAL = ARCH_TIME_CONFIG.stripeLinks?.customerPortal || ""; 

@@ -123,7 +123,7 @@ function switchAuthTab(mode) {
 
         function redirectToStripe(plan) { 
             if(!userProfile || !userProfile.studio_id) return; 
-            const link = plan === 'starter' ? STRIPE_LINK_STARTER : STRIPE_LINK_PREMIUM;
+            const link = STRIPE_LINK_FOUNDER || STRIPE_LINK_PREMIUM || STRIPE_LINK_STARTER;
             if (!isUsableStripeLink(link)) {
                 return appAlert("Accesso gratuito", "I pagamenti Stripe non sono ancora attivi. In fase di lancio puoi continuare a usare Arch Time Pro senza scegliere un piano.", "info");
             }
@@ -169,7 +169,7 @@ function switchAuthTab(mode) {
         }
         
         function openUpgradeModal(featureName) { 
-            document.getElementById('upgrade-message').innerText = `La funzione ${featureName} è riservata agli abbonamenti Premium.`; 
+            document.getElementById('upgrade-message').innerText = `La funzione ${featureName} è compresa nella Tariffa Fondatori.`; 
             document.getElementById('modal-upgrade').classList.remove('force-hide'); 
             if (document.getElementById('modal-detail')) document.getElementById('modal-detail').classList.add('force-hide'); 
             if (document.getElementById('modal-report')) document.getElementById('modal-report').classList.add('force-hide'); 
@@ -184,9 +184,9 @@ function switchAuthTab(mode) {
             
             if(userProfile.is_owner) {
                 document.getElementById('billing-section').classList.remove('force-hide');
-                document.getElementById('account-plan-name').innerText = activePlan.toUpperCase();
-                document.getElementById('account-upgrade-btn-container').classList.toggle('force-hide', activePlan !== 'starter');
-                document.getElementById('account-downgrade-btn-container').classList.toggle('force-hide', activePlan !== 'premium');
+                document.getElementById('account-plan-name').innerText = activePlan === 'starter' || activePlan === 'premium' ? 'FONDATORI' : activePlan.toUpperCase();
+                document.getElementById('account-upgrade-btn-container').classList.add('force-hide');
+                document.getElementById('account-downgrade-btn-container').classList.add('force-hide');
             } else {
                 document.getElementById('billing-section').classList.add('force-hide');
             }
@@ -198,8 +198,8 @@ function switchAuthTab(mode) {
 
         async function deleteAccount() {
             if (userProfile.is_owner) {
-                if (activePlan === 'premium' && studioData?.subscription_status === 'active') {
-                    return await appAlert("Abbonamento Attivo", "Prima di poter eliminare definitivamente l'account e distruggere lo Spazio di Lavoro, devi annullare il tuo abbonamento Premium attivo dal portale pagamenti (pulsante Gestione Fatture via Stripe).", "danger");
+                if (studioData?.subscription_status === 'active') {
+                    return await appAlert("Abbonamento attivo", "Prima di poter eliminare definitivamente l'account e distruggere lo Spazio di Lavoro, devi annullare l'abbonamento attivo dal portale pagamenti.", "danger");
                 }
                 const warning = currentBusinessType === 'impresa' ? "Se sei il Titolare, eliminerai anche l'intera Impresa, tutti i cantieri e i dati storici." : "Se sei il Manager, eliminerai anche l'intero Studio, tutti i progetti e i dati storici.";
                 
@@ -235,10 +235,6 @@ function switchAuthTab(mode) {
                     await appAlert("Accesso gratuito", "Il portale pagamenti non è ancora attivo. In fase di lancio la gestione dell'abbonamento resta disabilitata.", "info");
                 }
                 return;
-            }
-            if (targetPlan === 'starter') {
-                const activeCount = projects.filter(p => !p.is_archived).length;
-                if (activeCount > 5) { return await appAlert("Attenzione", `Il piano Starter ha un limite di 5 lavori attivi. Ne hai ${activeCount}.\nArchivia o elimina i lavori in eccesso prima di procedere al downgrade.`, "danger"); }
             }
             redirectToStripe(targetPlan);
         }
@@ -371,7 +367,7 @@ function switchAuthTab(mode) {
                     if(studio) studioData = studio;
 
                     const status = studioData?.subscription_status || 'trialing';
-                    activePlan = studioData?.plan_type || 'premium'; 
+                    activePlan = studioData?.plan_type || 'founder'; 
 
                     let bType = 'studio';
                     if (userProfile.role === 'admin' || userProfile.is_owner) {
@@ -390,13 +386,13 @@ function switchAuthTab(mode) {
                     const trialBadge = document.getElementById('trial-badge');
                     const planBadge = document.getElementById('plan-badge');
 
-                    if (status === 'active') {
+                    if (['active', 'free'].includes(status)) {
                         trialBadge.classList.add('force-hide'); 
-                        planBadge.innerText = activePlan === 'starter' ? 'STARTER' : 'PREMIUM'; 
+                        planBadge.innerText = status === 'free' ? 'FREE' : 'FONDATORI'; 
                         planBadge.classList.remove('force-hide');
                     } else {
                         const createdAt = new Date(studioData?.created_at || new Date()); 
-                        const expireDate = new Date(createdAt.getTime() + 15 * 24 * 60 * 60 * 1000); 
+                        const expireDate = new Date(createdAt.getTime() + 30 * 24 * 60 * 60 * 1000); 
                         const daysLeft = Math.ceil((expireDate.getTime() - Date.now()) / (1000 * 3600 * 24));
                         if (daysLeft > 0) {
                             trialBadge.innerText = `PROVA: ${daysLeft} GG`; 
