@@ -173,6 +173,8 @@ Verificato dopo deploy e test online:
 - `get_entries_for_app()` attiva e usata dal frontend.
 - `get_expenses_for_app()` attiva e usata dal frontend.
 - `create_entry_for_app(...)` attiva e usata dal frontend per timer e inserimento manuale.
+- `update_entry_for_app(...)` consente allo staff di modificare solo le proprie attività senza alterare costi o autore.
+- `delete_entry_for_app(...)` consente allo staff di eliminare solo le proprie attività.
 - Admin verificato: dashboard, margini, dettaglio progetto, spese e PDF funzionanti.
 - Staff verificato: login, progetti, timer, inserimento ore e registro funzionanti senza costi/margini visibili.
 - Select dirette di `projects`, `entries`, `expenses` strette agli admin.

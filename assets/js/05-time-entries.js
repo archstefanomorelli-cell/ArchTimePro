@@ -132,7 +132,7 @@
     <th class="px-5 py-3 text-center font-bold min-w-[150px]">Attività / Note</th>
     <th class="px-5 py-3 text-center font-bold whitespace-nowrap">Tempo</th>
     <th class="px-5 py-3 admin-only text-center font-bold whitespace-nowrap">Costo</th>
-    <th class="px-5 py-3 admin-only text-center font-bold whitespace-nowrap"></th>
+    <th class="px-5 py-3 text-center font-bold whitespace-nowrap"></th>
 </tr>`;
         }
 
@@ -169,7 +169,7 @@
     <td class="timesheet-cost px-5 py-4 text-center admin-only whitespace-nowrap">
         <span class="font-mono text-slate-400 text-sm font-bold">${item.rate}</span>
     </td>
-    <td class="px-5 py-4 text-center admin-only whitespace-nowrap">
+    <td class="px-5 py-4 text-center whitespace-nowrap">
         <div class="flex justify-center gap-2 items-center">
             ${renderEntryActions(item.id, 'w-4 h-4', 'text-slate-300 hover:text-primary-600 p-1.5 hover:bg-white rounded-lg transition-colors')}
         </div>
@@ -207,8 +207,8 @@
                     </div>
                     <div class="flex flex-col gap-3">
                         <div class="max-w-[90%]"><span class="inline-flex text-[11px] text-primary-700 bg-primary-50 border border-primary-100 rounded-full px-2.5 py-1 font-black">${item.taskName}</span><div class="text-[11px] text-slate-400 mt-1.5 break-words">${item.notes}</div></div>
-                        <div class="admin-only flex justify-between border-t border-slate-200 pt-3">
-                            <span class="font-mono text-slate-500 font-bold text-xs whitespace-nowrap">Costo: ${item.rate}</span>
+                        <div class="flex justify-between border-t border-slate-200 pt-3">
+                            <span class="admin-only font-mono text-slate-500 font-bold text-xs whitespace-nowrap">Costo: ${item.rate}</span>
                             <div class="flex gap-2">
                                 ${renderEntryActions(item.id, 'w-3.5 h-3.5', 'text-slate-400 p-1.5 hover:text-primary-600 hover:bg-white rounded-lg transition-colors')}
                             </div>
@@ -462,8 +462,13 @@
             document.getElementById('edit-entry-cost').value = ((selectedProfile ? (selectedProfile.hourly_cost || 0) : 0) * hoursVal).toFixed(2); 
         }
 
+        function canManageEntry(entry) {
+            return document.body.classList.contains('is-admin') || entry.user_email === userProfile.email;
+        }
+
         function openEditEntryModal(id) {
             const e = entries.find(x => x.id === id); if(!e) return;
+            if (!canManageEntry(e)) return appAlert("Permesso negato", "Puoi modificare solo le attività inserite da te.", "danger");
             
             document.getElementById('edit-entry-id').value = id;
             const d = new Date(e.created_at); 
@@ -497,19 +502,41 @@
             const hoursVal = parseDurationInput(document.getElementById('edit-entry-hours').value); 
             const costVal = parseFloat(document.getElementById('edit-entry-cost').value);
             
-            if (!dateVal || isNaN(hoursVal) || isNaN(costVal) || !projId) return await appAlert("Attenzione", "Compila tutti i campi!", "danger");
+            if (!dateVal || isNaN(hoursVal) || !projId) return await appAlert("Attenzione", "Compila tutti i campi!", "danger");
             
             const selectedProj = projects.find(p => p.id === projId); 
             const projName = selectedProj ? selectedProj.name : document.getElementById('edit-entry-project').options[document.getElementById('edit-entry-project').selectedIndex].text;
-            
-            await supabaseClient.from('entries').update({ created_at: new Date(`${dateVal}T12:00:00Z`).toISOString(), user_name: userVal, project_id: projId, project_name: projName, task: taskVal, notes: notesVal, duration: hoursVal, rate: costVal }).eq('id', id); 
+
+            if (!document.body.classList.contains('is-admin')) {
+                const { error } = await supabaseClient.rpc('update_entry_for_app', {
+                    entry_id: id,
+                    entry_project_id: projId,
+                    entry_task: taskVal,
+                    entry_duration: hoursVal,
+                    entry_notes: notesVal,
+                    entry_created_at: entryDateToIso(dateVal)
+                });
+                if (error) return await appAlert("Errore", error.message, "danger");
+            } else {
+                if (isNaN(costVal)) return await appAlert("Attenzione", "Compila tutti i campi!", "danger");
+                await supabaseClient.from('entries').update({ created_at: new Date(`${dateVal}T12:00:00Z`).toISOString(), user_name: userVal, project_id: projId, project_name: projName, task: taskVal, notes: notesVal, duration: hoursVal, rate: costVal }).eq('id', id); 
+            }
             closeEditEntryModal(); 
             fetchEntries();
         }
 
         async function deleteEntry(id) { 
+            const entry = entries.find(x => x.id === id);
+            if (!entry) return;
+            if (!canManageEntry(entry)) return await appAlert("Permesso negato", "Puoi eliminare solo le attività inserite da te.", "danger");
+
             if(await appConfirm("Elimina", "Rimuovere definitivamente questa voce?", "danger")) { 
-                await supabaseClient.from('entries').delete().eq('id', id); 
+                if (!document.body.classList.contains('is-admin')) {
+                    const { error } = await supabaseClient.rpc('delete_entry_for_app', { entry_id: id });
+                    if (error) return await appAlert("Errore", error.message, "danger");
+                } else {
+                    await supabaseClient.from('entries').delete().eq('id', id); 
+                }
                 fetchEntries(); 
             } 
         }
