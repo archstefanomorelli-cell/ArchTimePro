@@ -229,10 +229,14 @@ function switchAuthTab(mode) {
 
         async function handlePlanChange(targetPlan) {
             if (targetPlan === 'portal') {
+                if (studioData?.subscription_status === 'free') {
+                    await appAlert("Account gratuito", "Questo spazio di lavoro ha accesso gratuito interno: non c'è un abbonamento Stripe da gestire.", "info");
+                    return;
+                }
                 if(isUsableStripeLink(STRIPE_CUSTOMER_PORTAL)) {
                     window.location.href = STRIPE_CUSTOMER_PORTAL;
                 } else {
-                    await appAlert("Accesso gratuito", "Il portale pagamenti non è ancora attivo. In fase di lancio la gestione dell'abbonamento resta disabilitata.", "info");
+                    await appAlert("Portale Stripe non configurato", "Il link del portale clienti Stripe non è ancora stato configurato. Aggiungi STRIPE_CUSTOMER_PORTAL nei secret GitHub dopo aver creato il portale in Stripe.", "info");
                 }
                 return;
             }
