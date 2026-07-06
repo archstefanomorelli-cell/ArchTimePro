@@ -160,6 +160,92 @@ Se nei log Supabase compare:
 
 controllare in Brevo la sezione sicurezza/IP autorizzati e disattivare il blocco IP oppure autorizzare l'IP usato da Supabase. Per Supabase e preferibile non dipendere da un singolo IP statico.
 
+## Promemoria timer dopo 8 ore
+
+Funzione:
+
+```text
+timer-reminder
+```
+
+La funzione cerca i profili con un timer attivo da almeno 8 ore e invia una sola
+email al proprietario del timer. Non ferma automaticamente il timer.
+
+Prima del deploy eseguire nel SQL Editor:
+
+```text
+docs/sql/timer-eight-hour-reminder.sql
+```
+
+La funzione riutilizza i secrets SMTP gia configurati:
+
+```text
+SMTP_HOST
+SMTP_PORT
+SMTP_USER
+SMTP_PASS
+SMTP_FROM_EMAIL
+SMTP_FROM_NAME
+```
+
+Aggiungere inoltre:
+
+```text
+APP_URL=https://www.archtimepro.it/app.html
+TIMER_REMINDER_CRON_SECRET=UNA_PASSWORD_LUNGA_E_CASUALE
+```
+
+Deploy:
+
+```text
+supabase functions deploy timer-reminder --no-verify-jwt
+```
+
+Il flag `--no-verify-jwt` e necessario per permettere al Cron di chiamare la
+funzione. La richiesta resta protetta dall'header segreto verificato dalla
+funzione.
+
+Nel Dashboard Supabase aprire:
+
+```text
+Integrations > Cron > Create job
+```
+
+Configurare:
+
+```text
+Name: timer-reminder-every-15-minutes
+Schedule: */15 * * * *
+Type: Supabase Edge Function
+Function: timer-reminder
+Method: POST
+Header: x-timer-reminder-secret
+Header value: lo stesso valore di TIMER_REMINDER_CRON_SECRET
+```
+
+Il job puo anche essere configurato con `pg_cron` e `pg_net`. Conservare sempre
+il segreto in Supabase Vault e non inserirlo direttamente in uno script SQL
+salvato nel repository.
+
+### Verifica
+
+Avviare un timer con un utente di prova, modificare temporaneamente
+`active_timer_start` impostandolo a oltre 8 ore prima e avviare manualmente il
+job Cron. Nei log della Edge Function la risposta deve contenere:
+
+```json
+{
+  "ok": true,
+  "eligible": 1,
+  "sent": 1,
+  "failed": 0
+}
+```
+
+Una seconda esecuzione sullo stesso timer deve restituire `sent: 0`. Quando il
+timer viene fermato o ne viene avviato uno nuovo,
+`active_timer_reminder_sent_at` torna a `NULL`.
+
 ## Stripe webhook per Tariffa Fondatori
 
 Funzione:

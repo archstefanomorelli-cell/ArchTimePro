@@ -222,7 +222,8 @@
                 active_timer_start: String(timerStart),
                 active_timer_project: String(projectIndex),
                 active_timer_task: task,
-                active_timer_notes: notes
+                active_timer_notes: notes,
+                active_timer_reminder_sent_at: null
             }).eq('id', profile.id);
             if (error) throw error;
             startTimerUi();
@@ -242,7 +243,8 @@
             active_timer_start: null,
             active_timer_project: null,
             active_timer_task: null,
-            active_timer_notes: null
+            active_timer_notes: null,
+            active_timer_reminder_sent_at: null
         }).eq('id', profile.id);
         if (error) throw error;
 

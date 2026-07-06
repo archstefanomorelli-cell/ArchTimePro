@@ -324,7 +324,13 @@
             if (!timerRunning) {
                 timerRunning = true; 
                 startTime = Date.now();
-                await supabaseClient.from('profiles').update({ active_timer_start: startTime.toString(), active_timer_project: pIdx, active_timer_task: tVal, active_timer_notes: notes }).eq('id', userProfile.id);
+                await supabaseClient.from('profiles').update({
+                    active_timer_start: startTime.toString(),
+                    active_timer_project: pIdx,
+                    active_timer_task: tVal,
+                    active_timer_notes: notes,
+                    active_timer_reminder_sent_at: null
+                }).eq('id', userProfile.id);
                 document.getElementById('btn-text').innerText = "FERMA E SALVA"; 
                 document.getElementById('btn-icon').setAttribute("data-lucide", "square"); 
                 setTimerButtonRunning(true);
@@ -336,7 +342,13 @@
             } else {
                 timerRunning = false; 
                 clearInterval(timerInterval);
-                await supabaseClient.from('profiles').update({ active_timer_start: null, active_timer_project: null, active_timer_task: null, active_timer_notes: null }).eq('id', userProfile.id);
+                await supabaseClient.from('profiles').update({
+                    active_timer_start: null,
+                    active_timer_project: null,
+                    active_timer_task: null,
+                    active_timer_notes: null,
+                    active_timer_reminder_sent_at: null
+                }).eq('id', userProfile.id);
                 
                 const eDate = new Date();
                 const sDate = new Date(startTime);

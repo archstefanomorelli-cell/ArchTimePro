@@ -19,6 +19,7 @@ Campi usati dall'app:
 - `active_timer_project`
 - `active_timer_task`
 - `active_timer_notes`
+- `active_timer_reminder_sent_at`
 
 Operazioni frontend:
 
