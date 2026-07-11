@@ -6,7 +6,8 @@ const { chromium } = require('playwright');
 
 const root = path.resolve(__dirname, '..', '..');
 const serverScript = path.join(__dirname, 'server.js');
-const outputDir = path.join(__dirname, 'videos-real');
+const tutorialOutputDir = path.join(__dirname, 'videos-real');
+const methodOutputDir = path.join(__dirname, 'videos-method');
 const baseUrl = 'http://127.0.0.1:8765/app.html?videoDemo=1';
 const browserCandidates = [
     'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
@@ -196,6 +197,71 @@ const clips = [
     }
 ];
 
+const methodClips = [
+    {
+        file: '01-nuova-commessa.webm',
+        scene: 'project-modal',
+        steps: [
+            ['1. Nome e cliente della commessa.', async page => {
+                await guidedFill(page, '#edit-modal-name', 'Ristrutturazione Bianchi');
+                await guidedFill(page, '#edit-modal-client', 'Famiglia Bianchi');
+            }],
+            ['2. Inserisci il compenso previsto.', async page => {
+                await guidedClick(page, '#budget-mode-manual');
+                await guidedFill(page, '#edit-modal-budget', '15000');
+            }],
+            ['3. Parti da attività già organizzate.', async page => guidedSelect(page, '#new-proj-template', '0')]
+        ]
+    },
+    {
+        file: '02-team-costi.webm',
+        scene: 'team',
+        steps: [
+            ['1. Assegna il costo orario interno.', async page => guidedFill(page, '#edit-team-cost', '42')],
+            ['2. Il dato resta visibile solo alla direzione.', async page => moveCursor(page, '#edit-team-cost')],
+            ['3. Salva: le sue ore entreranno nei costi reali.', async page => moveCursor(page, '#btn-save-team-edit')]
+        ]
+    },
+    {
+        file: '03-budget-attivita.webm',
+        scene: 'project-modal',
+        steps: [
+            ['1. Usa un budget unico per la commessa.', async page => {
+                await guidedClick(page, '#budget-mode-manual');
+                await guidedFill(page, '#edit-modal-budget', '12000');
+            }],
+            ['2. Oppure assegna un importo alle singole attività.', async page => {
+                await guidedClick(page, '#budget-mode-auto');
+                await guidedFill(page, 'input.task-budget-input[data-task="Progetto definitivo"]', '4000');
+            }],
+            ['3. Il totale si aggiorna automaticamente.', async page => moveCursor(page, '#edit-modal-budget')]
+        ]
+    },
+    {
+        file: '04-timer.webm',
+        scene: 'dashboard',
+        steps: [
+            ['1. Scegli la commessa.', async page => guidedSelect(page, '#project-select', '0')],
+            ['2. Scegli l’attività.', async page => guidedSelect(page, '#task-select', 'Progetto definitivo')],
+            ['3. Avvia il timer con un clic.', async page => guidedClick(page, '#btn-toggle-timer', () => page.evaluate(() => {
+                document.getElementById('timer-display').innerText = '00:18:42';
+                document.getElementById('btn-text').innerText = 'Ferma timer';
+            }))]
+        ]
+    },
+    {
+        file: '05-margine-commessa.webm',
+        scene: 'project-detail',
+        steps: [
+            ['1. Leggi costi, spese e budget nello stesso punto.', async page => moveCursor(page, '.project-detail-metrics')],
+            ['2. Confronta costi consumati e lavoro completato.', async page => {
+                await page.locator('#modal-detail > div').first().evaluate(element => { element.scrollTop = 300; });
+                await moveCursor(page, '.project-rhythm-panel');
+            }]
+        ]
+    }
+];
+
 function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -216,37 +282,38 @@ async function installRoutes(page) {
     });
 }
 
-async function setupGuideOverlay(page) {
-    await page.evaluate(() => {
+async function setupGuideOverlay(page, compact = false) {
+    await page.evaluate(isCompact => {
         const style = document.createElement('style');
         style.textContent = `
+            #analytics-consent-banner { display: none !important; }
             #video-caption-overlay {
                 position: fixed;
-                left: 32px;
-                bottom: 32px;
+                left: ${isCompact ? '16px' : '32px'};
+                bottom: ${isCompact ? '16px' : '32px'};
                 z-index: 99998;
-                max-width: 650px;
+                max-width: ${isCompact ? '360px' : '650px'};
                 background: rgba(15,23,42,.94);
                 color: white;
                 border: 1px solid rgba(255,255,255,.16);
                 box-shadow: 0 24px 60px rgba(15,23,42,.26);
-                border-radius: 18px;
-                padding: 18px 22px;
-                font: 800 24px/1.25 Inter, Arial, sans-serif;
+                border-radius: ${isCompact ? '8px' : '18px'};
+                padding: ${isCompact ? '12px 15px' : '18px 22px'};
+                font: 800 ${isCompact ? '16px' : '24px'}/1.25 Inter, Arial, sans-serif;
             }
             #video-demo-cursor {
                 position: fixed;
                 left: 0;
                 top: 0;
                 z-index: 100000;
-                width: 34px;
-                height: 34px;
+                width: ${isCompact ? '30px' : '34px'};
+                height: ${isCompact ? '30px' : '34px'};
                 pointer-events: none;
                 transform: translate3d(110px, 110px, 0);
                 transition: transform 780ms cubic-bezier(.2,.8,.2,1);
                 filter: drop-shadow(0 10px 12px rgba(15,23,42,.28));
             }
-            #video-demo-cursor svg { width: 34px; height: 34px; display: block; }
+            #video-demo-cursor svg { width: 100%; height: 100%; display: block; }
             .video-demo-pulse {
                 position: fixed;
                 z-index: 99999;
@@ -276,7 +343,7 @@ async function setupGuideOverlay(page) {
             </svg>
         `;
         document.body.appendChild(cursor);
-    });
+    }, compact);
 }
 
 async function setCaption(page, text) {
@@ -346,17 +413,18 @@ async function guidedSelect(page, selector, value) {
     await page.waitForTimeout(450);
 }
 
-async function recordClip(browser, clip) {
+async function recordClip(browser, clip, options) {
+    const { outputDir, width, height, compact } = options;
     const context = await browser.newContext({
-        viewport: { width: 1440, height: 900 },
+        viewport: { width, height },
         deviceScaleFactor: 1,
-        recordVideo: { dir: outputDir, size: { width: 1440, height: 900 } }
+        recordVideo: { dir: outputDir, size: { width, height } }
     });
     const page = await context.newPage();
     await installRoutes(page);
     await page.goto(`${baseUrl}&scene=${encodeURIComponent(clip.scene)}&v=${Date.now()}`, { waitUntil: 'networkidle' });
     await page.waitForFunction(() => window.__ARCHTIME_VIDEO_DEMO_READY__ === true, null, { timeout: 10000 });
-    await setupGuideOverlay(page);
+    await setupGuideOverlay(page, compact);
     await page.waitForTimeout(700);
 
     for (const [caption, action] of clip.steps) {
@@ -375,7 +443,15 @@ async function recordClip(browser, clip) {
 }
 
 async function main() {
-    await fs.mkdir(outputDir, { recursive: true });
+    const methodMode = process.env.ARCHTIME_METHOD_DEMOS === '1';
+    const clipFilter = process.env.ARCHTIME_METHOD_CLIP;
+    const selectedClips = (methodMode ? methodClips : clips)
+        .filter(clip => !clipFilter || clip.file.startsWith(clipFilter));
+    const options = methodMode
+        ? { outputDir: methodOutputDir, width: 560, height: 420, compact: true }
+        : { outputDir: tutorialOutputDir, width: 1440, height: 900, compact: false };
+
+    await fs.mkdir(options.outputDir, { recursive: true });
     const server = spawn(process.execPath, [serverScript], {
         cwd: root,
         stdio: 'ignore',
@@ -390,8 +466,9 @@ async function main() {
     });
 
     try {
-        for (const clip of clips) {
-            await recordClip(browser, clip);
+        for (const clip of selectedClips) {
+            console.log(`Recording ${clip.file}`);
+            await recordClip(browser, clip, options);
         }
     } finally {
         await browser.close();
