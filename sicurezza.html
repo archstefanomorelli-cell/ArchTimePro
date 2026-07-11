@@ -3,146 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" content="#172033">
     <meta name="robots" content="index, follow">
-    <meta name="description" content="Come Arch Time Pro tutela costi, budget e margini riservati dello studio mentre il team registra il proprio lavoro.">
+    <meta name="description" content="Le misure di sicurezza attive oggi in Arch Time Pro: autenticazione, isolamento tra studi, ruoli, funzioni server, pagamenti e limiti dichiarati.">
     <link rel="canonical" href="https://www.archtimepro.it/sicurezza.html">
-    <title>Sicurezza e Privacy Economica | Arch Time Pro</title>
+    <title>Sicurezza dei dati | Arch Time Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #ffffff; color: #0f172a; -webkit-font-smoothing: antialiased; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        body { font-family: 'Inter', sans-serif; color: #0f172a; -webkit-font-smoothing: antialiased; }
         .bg-grid { background-image: radial-gradient(#e2e8f0 1px, transparent 1px); background-size: 30px 30px; }
     </style>
     <script src="assets/js/12-analytics.js?v=2026-06-14" defer></script>
+    <link rel="stylesheet" href="assets/public-site.css?v=2026-07-11">
+    <script src="assets/js/14-public-shell.js?v=2026-07-11" defer></script>
 </head>
-<body class="selection:bg-indigo-100 selection:text-indigo-900">
-    <header class="fixed top-0 w-full bg-white/70 backdrop-blur-xl border-b border-slate-100 z-50 transition-all">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="index.html" class="flex items-center">
-                <span class="text-xl font-black tracking-tighter text-slate-900 uppercase">Arch <span class="text-indigo-600">Time</span> Pro</span>
-            </a>
-            <div class="flex items-center gap-8">
-                <nav class="hidden md:flex gap-8">
-                    <a href="index.html#perche" class="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors">Perché</a>
-                    <a href="guida.html" class="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors">Metodo</a>
-                    <a href="tutorial.html" class="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors">Tutorial</a>
-                    <a href="index.html#prezzi" class="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors">Prezzi</a>
-                </nav>
-                <div class="flex items-center gap-4">
-                    <a href="app.html" class="text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors">Accedi</a>
-                    <a href="app.html" class="bg-slate-900 text-white text-xs font-black uppercase tracking-widest px-6 py-3 rounded-xl hover:bg-indigo-600 transition-all shadow-lg active:scale-95">Prova gratis</a>
-                </div>
-            </div>
-        </div>
-    </header>
-
+<body class="bg-white selection:bg-indigo-100 selection:text-indigo-900">
+    <header><div><a href="index.html">Arch Time Pro</a></div></header>
     <main>
-        <section class="relative pt-36 pb-16 lg:pt-44 lg:pb-20 overflow-hidden bg-grid">
-            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[520px] bg-indigo-50/70 rounded-full blur-[120px] -z-10"></div>
-            <div class="max-w-6xl mx-auto px-6 grid lg:grid-cols-[1.05fr_0.95fr] gap-12 items-center">
-                <div>
-                    <div class="inline-flex items-center px-4 py-2 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-[11px] font-black uppercase tracking-[0.2em] mb-7 shadow-sm">
-                        Sicurezza dati
-                    </div>
-                    <h1 class="text-5xl lg:text-7xl font-black tracking-tighter leading-[0.95] mb-7 text-slate-950">
-                        I tuoi numeri meritano rispetto.
-                    </h1>
-                    <p class="text-lg lg:text-xl text-slate-500 font-medium leading-relaxed max-w-2xl">
-                        Arch Time Pro nasce per gestire dati sensibili: budget, costi, spese e margini. Per questo distinguiamo con chiarezza cosa protegge già la fase di lancio e quale protezione avanzata verrà introdotta prima del lancio commerciale.
-                    </p>
-                </div>
-
-                <div class="bg-white border border-slate-200 rounded-2xl p-6 lg:p-8 shadow-2xl shadow-slate-200/60">
-                    <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center border border-indigo-100 mb-6">
-                        <i data-lucide="shield-check" class="w-6 h-6"></i>
-                    </div>
-                    <h2 class="text-2xl font-black text-slate-900 tracking-tight mb-4">In fase di lancio</h2>
-                    <p class="text-sm text-slate-600 leading-relaxed mb-5">
-                        I dati sono separati tra studi, utenti e ruoli tramite Supabase Row Level Security, RPC dedicate e controlli applicativi.
-                    </p>
-                    <div class="bg-amber-50 border border-amber-100 rounded-xl p-4 text-sm text-amber-900 leading-relaxed">
-                        Nota trasparente: questa protezione non equivale ancora a cifratura end-to-end dei valori economici rispetto al gestore tecnico del database.
-                    </div>
-                </div>
+        <section class="bg-grid border-b border-slate-100 pb-12 pt-28 lg:pb-16 lg:pt-32">
+            <div class="mx-auto max-w-5xl px-5 sm:px-6">
+                <p class="mb-3 text-xs font-extrabold uppercase text-indigo-600">Sicurezza attiva oggi</p>
+                <h1 class="text-4xl font-black text-slate-950 sm:text-5xl lg:text-6xl">Come proteggiamo i dati di Arch Time Pro.</h1>
+                <p class="mt-5 max-w-3xl text-base font-medium leading-relaxed text-slate-600 sm:text-lg">Questa pagina descrive le misure effettivamente utilizzate dal servizio e i relativi limiti, senza presentare funzionalità future come protezioni già disponibili.</p>
+                <p class="mt-5 text-sm font-bold text-slate-500">Ultimo aggiornamento: 11 luglio 2026</p>
             </div>
         </section>
 
-        <section class="py-16 lg:py-24 bg-white">
-            <div class="max-w-6xl mx-auto px-6">
-                <div class="grid lg:grid-cols-3 gap-6">
-                    <article class="bg-slate-50 border border-slate-200 rounded-2xl p-6 shadow-sm">
-                        <i data-lucide="users" class="w-6 h-6 text-indigo-600 mb-5"></i>
-                        <h2 class="text-xl font-black text-slate-900 mb-3">Ruoli separati</h2>
-                        <p class="text-sm text-slate-600 leading-relaxed">Owner e admin vedono la parte economica. I collaboratori registrano ore e attività senza vedere budget, costi orari e margini.</p>
+        <section class="border-b border-slate-100 bg-white py-12 lg:py-16">
+            <div class="mx-auto max-w-6xl px-5 sm:px-6">
+                <div class="grid gap-8 md:grid-cols-3">
+                    <article>
+                        <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600"><i data-lucide="user-check" class="h-5 w-5"></i></div>
+                        <h2 class="text-lg font-black text-slate-900">Utenti autenticati</h2>
+                        <p class="mt-2 text-sm leading-relaxed text-slate-600">Account, sessioni, conferma email e recupero password sono gestiti tramite Supabase Auth.</p>
                     </article>
-                    <article class="bg-slate-50 border border-slate-200 rounded-2xl p-6 shadow-sm">
-                        <i data-lucide="database" class="w-6 h-6 text-emerald-600 mb-5"></i>
-                        <h2 class="text-xl font-black text-slate-900 mb-3">Studi isolati</h2>
-                        <p class="text-sm text-slate-600 leading-relaxed">Le policy database impediscono a uno studio di leggere progetti, ore, spese e profili appartenenti a un altro studio.</p>
+                    <article>
+                        <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600"><i data-lucide="database" class="h-5 w-5"></i></div>
+                        <h2 class="text-lg font-black text-slate-900">Studi separati</h2>
+                        <p class="mt-2 text-sm leading-relaxed text-slate-600">Le policy Row Level Security limitano l’accesso alle righe appartenenti allo studio dell’utente autenticato.</p>
                     </article>
-                    <article class="bg-slate-50 border border-slate-200 rounded-2xl p-6 shadow-sm">
-                        <i data-lucide="key-round" class="w-6 h-6 text-amber-500 mb-5"></i>
-                        <h2 class="text-xl font-black text-slate-900 mb-3">Prossimo livello</h2>
-                        <p class="text-sm text-slate-600 leading-relaxed">La Privacy Economica Avanzata cifrerà i valori sensibili nel browser prima del salvataggio, rendendoli illeggibili nel database.</p>
+                    <article>
+                        <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-amber-50 text-amber-600"><i data-lucide="eye-off" class="h-5 w-5"></i></div>
+                        <h2 class="text-lg font-black text-slate-900">Visibilità per ruolo</h2>
+                        <p class="mt-2 text-sm leading-relaxed text-slate-600">I collaboratori registrano il lavoro senza accedere nell’app a budget, costi orari, spese riservate e margini.</p>
                     </article>
                 </div>
             </div>
         </section>
 
-        <section class="py-16 lg:py-20 bg-slate-50 border-y border-slate-200">
-            <div class="max-w-5xl mx-auto px-6">
-                <div class="text-center mb-12">
-                    <h2 class="text-3xl lg:text-4xl font-black text-slate-900 tracking-tight mb-4">Roadmap privacy economica</h2>
-                    <p class="text-slate-500 font-medium max-w-2xl mx-auto">Il percorso corretto è costruire la fiducia senza promettere oggi quello che sarà attivo domani.</p>
+        <section class="border-b border-slate-200 bg-slate-50 py-12 lg:py-16">
+            <div class="mx-auto max-w-6xl px-5 sm:px-6">
+                <div class="mb-9 max-w-3xl">
+                    <p class="mb-3 text-xs font-extrabold uppercase text-indigo-600">Architettura di protezione</p>
+                    <h2 class="text-3xl font-black text-slate-950 sm:text-4xl">Più livelli, ciascuno con un compito preciso.</h2>
                 </div>
-                <div class="space-y-4">
-                    <div class="bg-white border border-slate-200 rounded-2xl p-6 flex gap-4 shadow-sm">
-                        <span class="text-indigo-600 font-black">1.</span>
-                        <div>
-                            <h3 class="font-black text-slate-900 mb-2">Lancio controllato</h3>
-                            <p class="text-sm text-slate-600 leading-relaxed">RLS, RPC, ruoli e dashboard differenziate proteggono gli utenti tra loro e limitano la visibilità economica ai soli profili autorizzati.</p>
-                        </div>
-                    </div>
-                    <div class="bg-white border border-slate-200 rounded-2xl p-6 flex gap-4 shadow-sm">
-                        <span class="text-indigo-600 font-black">2.</span>
-                        <div>
-                            <h3 class="font-black text-slate-900 mb-2">Progettazione cifratura</h3>
-                            <p class="text-sm text-slate-600 leading-relaxed">Definizione dei campi sensibili, gestione delle chiavi, recupero account, condivisione tra admin e impatto su report e calcoli.</p>
-                        </div>
-                    </div>
-                    <div class="bg-white border border-slate-200 rounded-2xl p-6 flex gap-4 shadow-sm">
-                        <span class="text-indigo-600 font-black">3.</span>
-                        <div>
-                            <h3 class="font-black text-slate-900 mb-2">Lancio commerciale</h3>
-                            <p class="text-sm text-slate-600 leading-relaxed">Attivazione della cifratura lato cliente per budget, costi, spese e margini, con documentazione legale e tecnica aggiornata.</p>
-                        </div>
-                    </div>
+                <div class="overflow-hidden rounded-xl border border-slate-200 bg-white">
+                    <div class="grid gap-3 border-b border-slate-100 p-5 md:grid-cols-[220px_1fr]"><h3 class="font-black text-slate-900">Autorizzazione database</h3><p class="text-sm leading-relaxed text-slate-600">Le tabelle esposte all’app usano policy RLS e controlli legati all’identità autenticata e allo studio di appartenenza.</p></div>
+                    <div class="grid gap-3 border-b border-slate-100 p-5 md:grid-cols-[220px_1fr]"><h3 class="font-black text-slate-900">Operazioni sensibili</h3><p class="text-sm leading-relaxed text-slate-600">Diverse operazioni su commesse, costi e collaboratori passano attraverso funzioni RPC o Edge Functions con verifiche di identità, ruolo e appartenenza allo studio.</p></div>
+                    <div class="grid gap-3 border-b border-slate-100 p-5 md:grid-cols-[220px_1fr]"><h3 class="font-black text-slate-900">Segreti tecnici</h3><p class="text-sm leading-relaxed text-slate-600">Chiavi Stripe, credenziali email e chiavi amministrative sono conservate nei secrets dell’ambiente server e non inserite nei file pubblici del sito.</p></div>
+                    <div class="grid gap-3 border-b border-slate-100 p-5 md:grid-cols-[220px_1fr]"><h3 class="font-black text-slate-900">Trasmissione e storage</h3><p class="text-sm leading-relaxed text-slate-600">Il sito e le API usano HTTPS. Supabase applica cifratura in transito e cifratura a riposo alla propria infrastruttura gestita.</p></div>
+                    <div class="grid gap-3 p-5 md:grid-cols-[220px_1fr]"><h3 class="font-black text-slate-900">Pagamenti</h3><p class="text-sm leading-relaxed text-slate-600">Checkout, carta e portale abbonamenti sono gestiti da Stripe. Arch Time Pro conserva soltanto gli identificativi e lo stato necessari a riconoscere l’abbonamento.</p></div>
                 </div>
+            </div>
+        </section>
+
+        <section class="bg-white py-12 lg:py-16">
+            <div class="mx-auto grid max-w-6xl gap-8 px-5 sm:px-6 lg:grid-cols-2">
+                <article class="rounded-xl border border-amber-200 bg-amber-50 p-6">
+                    <div class="flex items-start gap-4">
+                        <i data-lucide="info" class="mt-0.5 h-5 w-5 shrink-0 text-amber-700"></i>
+                        <div>
+                            <h2 class="text-lg font-black text-amber-950">Limite dichiarato: niente cifratura end-to-end</h2>
+                            <p class="mt-2 text-sm leading-relaxed text-amber-900">Budget, costi, spese e margini sono protetti da autenticazione, isolamento e ruoli, ma non vengono cifrati nel browser con una chiave posseduta soltanto dal cliente. Possono quindi essere tecnicamente accessibili a personale autorizzato o fornitori infrastrutturali quando necessario per assistenza, sicurezza, manutenzione o obblighi di legge.</p>
+                        </div>
+                    </div>
+                </article>
+                <article class="rounded-xl border border-slate-200 bg-white p-6">
+                    <div class="flex items-start gap-4">
+                        <i data-lucide="key-round" class="mt-0.5 h-5 w-5 shrink-0 text-indigo-600"></i>
+                        <div>
+                            <h2 class="text-lg font-black text-slate-900">La sicurezza dipende anche dallo studio</h2>
+                            <p class="mt-2 text-sm leading-relaxed text-slate-600">Usa password uniche, non condividere account, assegna solo i ruoli necessari, rimuovi tempestivamente chi non collabora più e verifica i destinatari prima di esportare report o dati.</p>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="border-t border-slate-200 bg-slate-950 py-12 text-white">
+            <div class="mx-auto flex max-w-6xl flex-col items-start justify-between gap-6 px-5 sm:px-6 md:flex-row md:items-center">
+                <div><h2 class="text-2xl font-black">Segnala un problema di sicurezza.</h2><p class="mt-2 text-sm text-slate-300">Descrivi il problema senza includere password, chiavi o dati personali non necessari.</p></div>
+                <a href="mailto:info@archtimepro.it?subject=Segnalazione%20sicurezza%20Arch%20Time%20Pro" class="inline-flex items-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-black text-slate-950 hover:bg-indigo-50"><i data-lucide="mail" class="h-4 w-4"></i> info@archtimepro.it</a>
             </div>
         </section>
     </main>
-
-    <footer class="bg-slate-950 py-16 relative overflow-hidden">
-        <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
-        <div class="max-w-5xl mx-auto px-6 relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
-            <span class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">ARCH TIME PRO &copy; 2026</span>
-            <div class="flex flex-wrap justify-center gap-6 text-xs font-bold text-slate-400 uppercase tracking-widest">
-                <a href="index.html" class="hover:text-indigo-400 transition-colors">Home</a>
-                <a href="index.html#perche" class="hover:text-indigo-400 transition-colors">Perché</a>
-                <a href="guida.html" class="hover:text-indigo-400 transition-colors">Metodo</a>
-                <a href="tutorial.html" class="hover:text-indigo-400 transition-colors">Tutorial</a>
-                <a href="index.html#prezzi" class="hover:text-indigo-400 transition-colors">Prezzi</a>
-                <a href="feedback.html" class="hover:text-indigo-400 transition-colors">Feedback</a>
-                <a href="privacy.html" class="hover:text-indigo-400 transition-colors">Privacy</a>
-                <a href="termini.html" class="hover:text-indigo-400 transition-colors">Termini</a>
-            </div>
-        </div>
-    </footer>
-
-    <script>
-        lucide.createIcons();
-    </script>
+    <footer><div><a href="index.html">Arch Time Pro</a></div></footer>
+    <script>document.addEventListener('DOMContentLoaded', function () { if (window.lucide) lucide.createIcons(); });</script>
 </body>
 </html>

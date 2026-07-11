@@ -2,6 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
         <loc>https://www.archtimepro.it/</loc>
+        <lastmod>2026-07-11</lastmod>
     </url>
     <url>
         <loc>https://www.archtimepro.it/controllo-margini-studi-tecnici.html</loc>
@@ -38,5 +39,14 @@
     </url>
     <url>
         <loc>https://www.archtimepro.it/sicurezza.html</loc>
+        <lastmod>2026-07-11</lastmod>
+    </url>
+    <url>
+        <loc>https://www.archtimepro.it/privacy.html</loc>
+        <lastmod>2026-07-11</lastmod>
+    </url>
+    <url>
+        <loc>https://www.archtimepro.it/termini.html</loc>
+        <lastmod>2026-07-11</lastmod>
     </url>
 </urlset>
