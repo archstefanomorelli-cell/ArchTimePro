@@ -12,7 +12,6 @@
                         <nav class="hidden items-center gap-7 md:flex" aria-label="Navigazione principale">
                             <a href="index.html#perche" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Perché</a>
                             <a href="guida.html" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Metodo</a>
-                            <a href="tutorial.html" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Tutorial</a>
                             <a href="index.html#prezzi" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Prezzi</a>
                         </nav>
                         <a href="app.html" class="hidden text-sm font-bold text-slate-600 transition-colors hover:text-slate-900 sm:block">Accedi</a>
@@ -35,7 +34,6 @@
                     <nav class="flex flex-wrap justify-center gap-x-6 gap-y-3 text-xs font-bold text-slate-400" aria-label="Link nel piè di pagina">
                         <a href="calcolo-margine-commessa.html" class="hover:text-white">Calcolatore</a>
                         <a href="guida.html" class="hover:text-white">Metodo</a>
-                        <a href="tutorial.html" class="hover:text-white">Tutorial</a>
                         <a href="sicurezza.html" class="hover:text-white">Sicurezza</a>
                         <a href="privacy.html" class="hover:text-white">Privacy</a>
                         <a href="termini.html" class="hover:text-white">Termini</a>

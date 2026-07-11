@@ -43,6 +43,8 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         .hero-mesh { background-image: radial-gradient(at 40% 20%, hsla(228,100%,74%,0.15) 0px, transparent 50%), radial-gradient(at 80% 0%, hsla(189,100%,56%,0.15) 0px, transparent 50%); }
+        .method-demo-frame { aspect-ratio: 4 / 3; overflow: hidden; border: 1px solid #cbd5e1; border-radius: 8px; background: #0f172a; box-shadow: 0 24px 55px rgba(15, 23, 42, 0.14); }
+        .method-demo-video { display: block; width: 100%; height: 100%; object-fit: cover; object-position: left center; background: #0f172a; }
     </style>
     <script>
         tailwind.config = {
@@ -67,6 +69,7 @@
     <script src="assets/js/12-analytics.js?v=2026-06-14" defer></script>
     <link rel="stylesheet" href="assets/public-site.css?v=2026-07-11">
     <script src="assets/js/14-public-shell.js?v=2026-07-11" defer></script>
+    <script src="assets/js/15-method-demos.js?v=2026-07-11" defer></script>
 </head>
 <body class="selection:bg-indigo-100 selection:text-indigo-900 flex flex-col min-h-screen">
 
@@ -79,7 +82,6 @@
                 <nav class="hidden md:flex gap-8">
                     <a href="index.html#perche" class="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors">Perché</a>
                     <a href="guida.html" class="text-sm font-bold text-indigo-600 transition-colors">Metodo</a>
-                    <a href="tutorial.html" class="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors">Tutorial</a>
                     <a href="index.html#prezzi" class="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors">Prezzi</a>
                 </nav>
                 <div class="flex items-center gap-4">
@@ -111,63 +113,26 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div>
                     <div class="w-12 h-12 bg-indigo-600 text-white rounded-2xl flex items-center justify-center text-xl font-black shadow-lg mb-6">1</div>
-                    <span class="text-[10px] font-black text-indigo-600 uppercase tracking-widest block mb-2">Configurazione Base</span>
-                    <h3 class="text-3xl font-black text-slate-900 mb-4 tracking-tight">Definisci la tua identità</h3>
+                    <span class="text-[10px] font-black text-indigo-600 uppercase tracking-widest block mb-2">Prima commessa</span>
+                    <h3 class="text-3xl font-black text-slate-900 mb-4 tracking-tight">Parti da un lavoro reale</h3>
                     <p class="text-slate-500 leading-relaxed mb-6">
-                        In fase di registrazione fai la tua scelta: <strong>Studio Tecnico</strong> o <strong>Impresa Edile</strong>. Il sistema adatta istantaneamente interfacce e vocabolario. Una volta dentro, definisci il tuo <em>Catalogo Attività</em> per standardizzare i flussi e impedire al team di usare nomi diversi per la stessa mansione.
+                        Crea la prima commessa inserendo cliente, compenso e attività previste. Puoi partire da un modello già pronto e adattarlo al tuo lavoro, senza configurare prima ogni processo dello studio.
                     </p>
                     <div class="bg-amber-50 p-4 rounded-xl border border-amber-100 flex gap-3">
                         <i data-lucide="lightbulb" class="text-amber-600 w-5 h-5 shrink-0"></i>
-                        <p class="text-xs text-amber-800 leading-tight"><strong>Il vantaggio:</strong> Un catalogo pulito garantisce report professionali e SAL inattaccabili da presentare al cliente.</p>
+                        <p class="text-xs text-amber-800 leading-tight"><strong>Il vantaggio:</strong> Arrivi al primo budget in pochi passaggi e puoi correggere attività e importi mentre la commessa evolve.</p>
                     </div>
                 </div>
-                
-                <div class="select-none pointer-events-none">
-                    <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden">
-                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-3">Tipo di account</label>
-                        <div class="space-y-3">
-                            <label class="flex items-center gap-3 p-3 bg-white rounded-xl border border-primary-500 shadow-sm ring-1 ring-primary-500 relative">
-                                <div class="w-4 h-4 rounded-full border-4 border-primary-600"></div>
-                                <span class="text-sm font-bold text-slate-700">Manager (Crea Spazio di Lavoro)</span>
-                            </label>
-                            <div class="pl-4 border-l-2 border-primary-200 ml-3 mt-3">
-                                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-2">Seleziona il tuo settore:</label>
-                                <div class="flex gap-2">
-                                    <div class="flex-1 flex items-center justify-center gap-2 p-2.5 bg-white rounded-lg border border-primary-500 ring-1 ring-primary-500 shadow-sm">
-                                        <span class="text-xs font-bold text-slate-700">Studio Tecnico</span>
-                                    </div>
-                                    <div class="flex-1 flex items-center justify-center gap-2 p-2.5 bg-white rounded-lg border border-slate-200 shadow-sm opacity-50">
-                                        <span class="text-xs font-bold text-slate-700">Impresa Edile</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
+                <figure class="method-demo-frame">
+                    <video class="method-demo-video" muted loop playsinline preload="none" poster="docs/video-guide/frames-real/02-project-modal.png" data-demo-src="docs/video-guide/videos-real/02-nuovo-progetto.webm" aria-label="Creazione guidata di una nuova commessa in Arch Time Pro"></video>
+                </figure>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div class="order-2 lg:order-1 select-none pointer-events-none">
-                    <div class="p-5 border border-slate-200 rounded-2xl bg-white flex flex-col gap-4 shadow-sm relative overflow-hidden">
-                        <div class="absolute top-4 right-4 bg-slate-100 text-slate-500 text-[9px] font-bold px-2 py-1 rounded-md uppercase tracking-wider">Membro Staff</div>
-                        <div>
-                            <input type="text" readonly value="Ing. F. Bianchi" class="bg-transparent font-black text-slate-800 text-base w-full outline-none border-b border-transparent pb-1">
-                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">f.bianchi@studio.it</p>
-                        </div>
-                        <div class="flex items-center justify-between gap-2 mt-1">
-                            <div class="text-[11px] font-bold bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 uppercase text-slate-600">
-                                Staff
-                            </div>
-                            <div class="flex items-center gap-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 flex-1">
-                                <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">€/h</span>
-                                <input type="text" readonly value="35.00" class="w-full text-sm text-center font-black bg-transparent outline-none text-slate-800">
-                            </div>
-                            <div class="flex gap-1.5 shrink-0">
-                                <div class="bg-emerald-500 text-white p-2.5 rounded-xl shadow-sm"><i data-lucide="check" class="w-4 h-4"></i></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <figure class="method-demo-frame order-2 lg:order-1">
+                    <video class="method-demo-video" muted loop playsinline preload="none" poster="docs/video-guide/frames-real/05-team-costs.png" data-demo-src="docs/video-guide/videos-real/06-team-costi.webm" aria-label="Gestione del team e dei costi orari riservati in Arch Time Pro"></video>
+                </figure>
                 <div class="order-1 lg:order-2">
                     <div class="w-12 h-12 bg-emerald-500 text-white rounded-2xl flex items-center justify-center text-xl font-black shadow-lg mb-6">2</div>
                     <span class="text-[10px] font-black text-emerald-600 uppercase tracking-widest block mb-2">Risorse Umane</span>
@@ -186,7 +151,7 @@
                 <div>
                     <div class="w-12 h-12 bg-violet-500 text-white rounded-2xl flex items-center justify-center text-xl font-black shadow-lg mb-6">3</div>
                     <span class="text-[10px] font-black text-violet-600 uppercase tracking-widest block mb-2">Pianificazione</span>
-                    <h3 class="text-3xl font-black text-slate-900 mb-4 tracking-tight">Costruisci il Lavoro</h3>
+                    <h3 class="text-3xl font-black text-slate-900 mb-4 tracking-tight">Costruisci il budget</h3>
                     <p class="text-slate-500 leading-relaxed mb-6">
                         Apri un "Nuovo Progetto", inserisci il Budget e usa il <strong>Task Builder</strong>. Puoi richiamare un template preimpostato (es. "Ristrutturazione Tipo") o unire visivamente le "pillole" delle attività dal catalogo. Dimentica la scrittura manuale o i fogli di calcolo.
                     </p>
@@ -196,48 +161,15 @@
                     </div>
                 </div>
                 
-                <div class="select-none pointer-events-none">
-                    <div class="bg-slate-100 border border-slate-200/80 rounded-2xl p-6 shadow-md relative overflow-hidden">
-                        <h2 class="text-base font-black text-slate-800 tracking-tight mb-4 flex items-center gap-2"><i data-lucide="folder-plus" class="text-primary-500 w-4 h-4"></i> Nuovo Progetto</h2>
-                        <div class="bg-white shadow-sm p-3 rounded-xl border border-slate-200 mb-4 flex items-center gap-2">
-                            <span class="text-slate-400 font-bold text-sm">€</span><span class="text-sm font-bold text-slate-800">15.000,00</span>
-                        </div>
-                        <div class="pt-2">
-                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-2 ml-1">Flusso di lavoro (Fasi)</label>
-                            <div class="bg-white border border-slate-200 rounded-xl p-3.5 shadow-sm">
-                                <div class="flex justify-between items-center mb-3">
-                                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Attività Incluse</span>
-                                    <div class="bg-white text-slate-400 border border-slate-200 p-1 rounded-md shadow-sm"><i data-lucide="settings" class="w-3.5 h-3.5"></i></div>
-                                </div>
-                                <div class="flex flex-wrap gap-1.5">
-                                    <span class="inline-block bg-primary-50 text-primary-700 text-[10px] font-bold px-2 py-1 rounded-lg border border-primary-100 uppercase tracking-wider">1. Rilievo</span>
-                                    <span class="inline-block bg-primary-50 text-primary-700 text-[10px] font-bold px-2 py-1 rounded-lg border border-primary-100 uppercase tracking-wider">2. Progetto Definitivo</span>
-                                    <span class="inline-block bg-primary-50 text-primary-700 text-[10px] font-bold px-2 py-1 rounded-lg border border-primary-100 uppercase tracking-wider">3. Computo Metrico</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <figure class="method-demo-frame">
+                    <video class="method-demo-video" muted loop playsinline preload="none" poster="docs/video-guide/frames-real/02-project-modal.png" data-demo-src="docs/video-guide/videos-real/03-budget-libero-somma-attivita.webm" aria-label="Scelta tra budget libero e budget per attività in Arch Time Pro"></video>
+                </figure>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div class="order-2 lg:order-1 select-none pointer-events-none space-y-4">
-                    <div class="bg-slate-100 border border-slate-200/80 rounded-2xl p-6 shadow-md text-center relative overflow-hidden">
-                        <div class="flex justify-between items-center mb-4"><h2 class="text-sm font-black text-slate-800 tracking-tight flex items-center gap-2"><i data-lucide="clock" class="text-primary-500 w-4 h-4"></i> Timer Attivo</h2></div>
-                        <div class="text-4xl font-black tracking-tighter text-slate-800 tabular-nums mb-5 mt-2">02:14:55</div>
-                        <div class="w-full bg-red-500 text-white py-3 rounded-xl font-bold text-sm shadow-sm flex justify-center items-center gap-2"><i data-lucide="square" class="w-4 h-4"></i> FERMA E SALVA</div>
-                    </div>
-                    <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200">
-                        <h3 class="text-[11px] font-bold text-slate-600 uppercase tracking-wider border-b border-slate-200 pb-3 mb-4 flex items-center gap-2"><i data-lucide="receipt" class="w-4 h-4 text-amber-500"></i> Spese Extra</h3>
-                        <div class="bg-white p-3 rounded-xl border border-slate-200 flex justify-between items-center shadow-sm">
-                            <div>
-                                <p class="text-xs font-bold text-slate-700">Oneri Pratica Comunale</p>
-                                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-1">Oggi • Arch. Rossi</p>
-                            </div>
-                            <span class="font-black text-amber-600 text-sm tracking-tight">€150.00</span>
-                        </div>
-                    </div>
-                </div>
+                <figure class="method-demo-frame order-2 lg:order-1">
+                    <video class="method-demo-video" muted loop playsinline preload="none" poster="docs/video-guide/frames-real/01-dashboard.png" data-demo-src="docs/video-guide/videos-real/01-dashboard-timer.webm" aria-label="Avvio del timer su una commessa e una attività in Arch Time Pro"></video>
+                </figure>
                 <div class="order-1 lg:order-2">
                     <div class="w-12 h-12 bg-amber-500 text-white rounded-2xl flex items-center justify-center text-xl font-black shadow-lg mb-6">4</div>
                     <span class="text-[10px] font-black text-amber-600 uppercase tracking-widest block mb-2">Operatività Continua</span>
@@ -258,41 +190,17 @@
                     <span class="text-[10px] font-black text-red-600 uppercase tracking-widest block mb-2">Controllo Gestione</span>
                     <h3 class="text-3xl font-black text-slate-900 mb-4 tracking-tight">Affronta i tuoi Margini</h3>
                     <p class="text-slate-500 leading-relaxed mb-6">
-                        La dashboard globale aggrega automaticamente tutto. Le barre di avanzamento ti avvisano cromaticamente se stai esaurendo i fondi, permettendoti di intervenire *prima* della fine del lavoro. Esporta con un clic <strong>Report PDF formattati</strong> da allegare alla parcella.
+                        La dashboard globale aggrega automaticamente tutto. Le barre di avanzamento ti avvisano cromaticamente se stai esaurendo i fondi, permettendoti di intervenire <em>prima</em> della fine del lavoro. Esporta con un clic <strong>report PDF formattati</strong> da allegare alla parcella.
                     </p>
                     <div class="bg-red-50 p-4 rounded-xl border border-red-100 flex gap-3">
                         <i data-lucide="file-check-2" class="text-red-600 w-5 h-5 shrink-0"></i>
-                        <p class="text-xs text-red-800 leading-tight"><strong>Inattaccabile:</strong> Nessun cliente contesterà i costi extra davanti a un timesheet ufficiale così preciso e professionale.</p>
+                        <p class="text-xs text-red-800 leading-tight"><strong>Tracciabilità:</strong> Timesheet e report chiari rendono più semplice motivare ore e costi extra al cliente.</p>
                     </div>
                 </div>
                 
-                <div class="select-none pointer-events-none space-y-4">
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="bg-primary-50/60 border border-primary-100 rounded-xl p-4 shadow-sm relative overflow-hidden">
-                            <h3 class="text-[10px] font-bold uppercase text-slate-500 tracking-wider mb-1">Margine (Attivi)</h3>
-                            <div class="text-xl font-black text-primary-600 truncate tracking-tight">€ 4,250.00</div>
-                        </div>
-                        <div class="bg-emerald-50/60 border border-emerald-100 rounded-xl p-4 shadow-sm relative overflow-hidden">
-                            <h3 class="text-[10px] font-bold uppercase text-slate-500 tracking-wider mb-1">Utile (Archiviati)</h3>
-                            <div class="text-xl font-black text-slate-800 truncate tracking-tight">€ 1,800.00</div>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-white border border-slate-200 p-5 shadow-sm rounded-2xl relative overflow-hidden">
-                        <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <h3 class="font-black text-slate-800 text-base tracking-tight">Condominio Roma</h3>
-                                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Ristrutturazione</p>
-                            </div>
-                        </div>
-                        <div class="flex justify-between text-[10px] uppercase font-bold tracking-wider text-slate-500 mb-2">
-                            <span>Speso: €12500</span><span>Target: €15000</span>
-                        </div>
-                        <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                            <div class="bg-amber-400 h-full" style="width: 83%"></div>
-                        </div>
-                    </div>
-                </div>
+                <figure class="method-demo-frame">
+                    <video class="method-demo-video" muted loop playsinline preload="none" poster="docs/video-guide/frames-real/04-project-detail.png" data-demo-src="docs/video-guide/videos-real/05-dettaglio-progetto.webm" aria-label="Lettura di budget, costi, margine e ritmo di una commessa in Arch Time Pro"></video>
+                </figure>
             </div>
 
         </div>
@@ -318,7 +226,6 @@
                 <a href="index.html" class="hover:text-indigo-600 transition-colors">Home</a>
                 <a href="index.html#perche" class="hover:text-indigo-600 transition-colors">Perché</a>
                 <a href="guida.html" class="hover:text-indigo-600 transition-colors">Metodo</a>
-                <a href="tutorial.html" class="hover:text-indigo-600 transition-colors">Tutorial</a>
                 <a href="index.html#prezzi" class="hover:text-indigo-600 transition-colors">Prezzi</a>
                 <a href="feedback.html" class="hover:text-indigo-600 transition-colors">Feedback</a>
                 <a href="sicurezza.html" class="hover:text-indigo-600 transition-colors">Sicurezza</a>
