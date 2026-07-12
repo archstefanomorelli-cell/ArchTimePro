@@ -223,7 +223,7 @@ const methodClips = [
         ]
     },
     {
-        file: '03-budget-pulito-v2.webm',
+        file: '03-budget-chiaro.webm',
         scene: 'project-modal',
         steps: [
             ['1. Usa un budget unico per la commessa.', async page => {
@@ -232,20 +232,44 @@ const methodClips = [
             }],
             ['2. Oppure assegna un importo alle singole attività.', async page => {
                 await guidedClick(page, '#budget-mode-auto');
-                await moveCursor(page, '#edit-modal-budget');
+                await guidedFill(page, 'input.task-budget-input[data-task="Progetto definitivo"]', '4000');
             }],
             ['3. Il totale si aggiorna automaticamente.', async page => moveCursor(page, '#edit-modal-budget')]
         ]
     },
     {
-        file: '04-timer-pulito.webm',
+        file: '04-timer-chiaro.webm',
         scene: 'dashboard',
+        prepare: async page => page.evaluate(() => {
+            document.querySelector('#app-container > header')?.classList.add('force-hide');
+            document.querySelector('#app-container > nav')?.classList.add('force-hide');
+            document.getElementById('pwa-install-hint-app')?.classList.add('force-hide');
+            const main = document.querySelector('#app-container > main');
+            if (main) {
+                main.style.display = 'block';
+                main.style.padding = '8px';
+            }
+            const panel = document.querySelector('section[data-tab="operate"]');
+            if (panel) {
+                panel.style.maxWidth = '540px';
+                panel.style.margin = '0 auto';
+                panel.style.padding = '18px';
+            }
+            document.getElementById('timer-notes')?.parentElement?.classList.add('force-hide');
+            const timerDisplay = document.getElementById('timer-display')?.parentElement;
+            if (timerDisplay) {
+                timerDisplay.style.marginTop = '20px';
+                timerDisplay.style.marginBottom = '20px';
+            }
+        }),
         steps: [
             ['1. Scegli la commessa.', async page => guidedSelect(page, '#project-select', '0')],
             ['2. Scegli l’attività.', async page => guidedSelect(page, '#task-select', 'Progetto definitivo')],
             ['3. Avvia il timer con un clic.', async page => guidedClick(page, '#btn-toggle-timer', () => page.evaluate(() => {
                 document.getElementById('timer-display').innerText = '00:18:42';
-                document.getElementById('btn-text').innerText = 'Ferma timer';
+                const button = document.getElementById('btn-toggle-timer');
+                button.style.backgroundColor = '#ef4444';
+                button.innerHTML = '<span aria-hidden="true" style="font-size:14px;line-height:1">■</span><span id="btn-text">Ferma e salva</span>';
             }))]
         ]
     },
@@ -287,6 +311,7 @@ async function setupGuideOverlay(page, compact = false) {
         const style = document.createElement('style');
         style.textContent = `
             #analytics-consent-banner { display: none !important; }
+            #pwa-install-hint, #pwa-install-hint-app { display: none !important; }
             ${isCompact ? '#btn-save-project-edit { display: none !important; }' : ''}
             #video-caption-overlay {
                 position: fixed;
@@ -429,6 +454,7 @@ async function recordClip(browser, clip, options) {
     await page.goto(`${baseUrl}&scene=${encodeURIComponent(clip.scene)}&v=${Date.now()}`, { waitUntil: 'networkidle' });
     await page.waitForFunction(() => window.__ARCHTIME_VIDEO_DEMO_READY__ === true, null, { timeout: 10000 });
     await setupGuideOverlay(page, compact);
+    if (clip.prepare) await clip.prepare(page);
     await page.waitForTimeout(700);
 
     for (const [caption, action] of clip.steps) {

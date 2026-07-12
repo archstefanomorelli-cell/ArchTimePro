@@ -9,6 +9,9 @@ Thumbs.db
 # Local logs
 *.log
 
+# Temporary Playwright video recordings
+docs/video-guide/videos-method/page@*.webm
+
 # Desktop app build output
 desktop-timer/node_modules/
 desktop-timer/dist/
