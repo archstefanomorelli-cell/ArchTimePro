@@ -42,9 +42,10 @@
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .hero-mesh { background-image: radial-gradient(at 40% 20%, hsla(228,100%,74%,0.15) 0px, transparent 50%), radial-gradient(at 80% 0%, hsla(189,100%,56%,0.15) 0px, transparent 50%); }
+        .method-demo { min-width: 0; }
         .method-demo-frame { aspect-ratio: 4 / 3; overflow: hidden; border: 1px solid #cbd5e1; border-radius: 8px; background: #0f172a; box-shadow: 0 24px 55px rgba(15, 23, 42, 0.14); }
         .method-demo-video { display: block; width: 100%; height: 100%; object-fit: cover; object-position: left center; background: #0f172a; }
+        .method-demo-caption { display: flex; align-items: flex-start; gap: 10px; margin-top: 14px; color: #475569; font-size: 13px; font-weight: 700; line-height: 1.5; }
     </style>
     <script>
         tailwind.config = {
@@ -92,8 +93,7 @@
         </div>
     </header>
 
-    <section class="relative pt-40 pb-20 lg:pt-56 lg:pb-24 overflow-hidden hero-mesh border-b border-slate-200">
-        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-indigo-50/50 rounded-full blur-[120px] -z-10"></div>
+    <section class="relative overflow-hidden border-b border-slate-200 bg-white pb-20 pt-40 lg:pb-24 lg:pt-56">
         <div class="max-w-4xl mx-auto px-6 text-center relative z-10">
             <div class="inline-flex items-center px-4 py-1.5 rounded-full bg-white border border-slate-200 text-slate-500 text-[11px] font-black uppercase tracking-[0.2em] mb-8 shadow-sm">
                 Efficienza Operativa
@@ -124,14 +124,16 @@
                     </div>
                 </div>
 
-                <figure class="method-demo-frame">
-                    <video class="method-demo-video" muted loop playsinline preload="none" data-demo-src="docs/video-guide/videos-method/01-nuova-commessa.webm" aria-label="Creazione guidata di una nuova commessa in Arch Time Pro"></video>
+                <figure class="method-demo">
+                    <div class="method-demo-frame"><video class="method-demo-video" muted loop playsinline preload="none" data-demo-src="docs/video-guide/videos-method/01-commessa-pulita.webm" aria-label="Creazione guidata di una nuova commessa in Arch Time Pro"></video></div>
+                    <figcaption class="method-demo-caption"><i data-lucide="mouse-pointer-2" class="mt-0.5 h-4 w-4 shrink-0 text-indigo-600"></i><span>Nome, cliente, compenso e attività: la commessa nasce in un unico passaggio.</span></figcaption>
                 </figure>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-[1.22fr_0.78fr] gap-12 items-center">
-                <figure class="method-demo-frame order-2 lg:order-1">
-                    <video class="method-demo-video" muted loop playsinline preload="none" data-demo-src="docs/video-guide/videos-method/02-team-costi.webm" aria-label="Gestione del team e dei costi orari riservati in Arch Time Pro"></video>
+                <figure class="method-demo order-2 lg:order-1">
+                    <div class="method-demo-frame"><video class="method-demo-video" muted loop playsinline preload="none" data-demo-src="docs/video-guide/videos-method/02-team-pulito.webm" aria-label="Gestione del team e dei costi orari riservati in Arch Time Pro"></video></div>
+                    <figcaption class="method-demo-caption"><i data-lucide="mouse-pointer-2" class="mt-0.5 h-4 w-4 shrink-0 text-emerald-600"></i><span>Il costo orario del collaboratore resta riservato alla direzione.</span></figcaption>
                 </figure>
                 <div class="order-1 lg:order-2">
                     <div class="w-12 h-12 bg-emerald-500 text-white rounded-2xl flex items-center justify-center text-xl font-black shadow-lg mb-6">2</div>
@@ -161,14 +163,16 @@
                     </div>
                 </div>
                 
-                <figure class="method-demo-frame">
-                    <video class="method-demo-video" muted loop playsinline preload="none" data-demo-src="docs/video-guide/videos-method/03-budget-attivita.webm" aria-label="Scelta tra budget libero e budget per attività in Arch Time Pro"></video>
+                <figure class="method-demo">
+                    <div class="method-demo-frame"><video class="method-demo-video" muted loop playsinline preload="none" data-demo-src="docs/video-guide/videos-method/03-budget-pulito.webm" aria-label="Scelta tra budget libero e budget per attività in Arch Time Pro"></video></div>
+                    <figcaption class="method-demo-caption"><i data-lucide="mouse-pointer-2" class="mt-0.5 h-4 w-4 shrink-0 text-violet-600"></i><span>Budget unico oppure importi per attività: il totale si aggiorna automaticamente.</span></figcaption>
                 </figure>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-[1.22fr_0.78fr] gap-12 items-center">
-                <figure class="method-demo-frame order-2 lg:order-1">
-                    <video class="method-demo-video" muted loop playsinline preload="none" data-demo-src="docs/video-guide/videos-method/04-timer.webm" aria-label="Avvio del timer su una commessa e una attività in Arch Time Pro"></video>
+                <figure class="method-demo order-2 lg:order-1">
+                    <div class="method-demo-frame"><video class="method-demo-video" muted loop playsinline preload="none" data-demo-src="docs/video-guide/videos-method/04-timer-pulito.webm" aria-label="Avvio del timer su una commessa e una attività in Arch Time Pro"></video></div>
+                    <figcaption class="method-demo-caption"><i data-lucide="mouse-pointer-2" class="mt-0.5 h-4 w-4 shrink-0 text-amber-600"></i><span>Il collaboratore seleziona commessa e attività, poi avvia il timer.</span></figcaption>
                 </figure>
                 <div class="order-1 lg:order-2">
                     <div class="w-12 h-12 bg-amber-500 text-white rounded-2xl flex items-center justify-center text-xl font-black shadow-lg mb-6">4</div>
@@ -198,8 +202,9 @@
                     </div>
                 </div>
                 
-                <figure class="method-demo-frame">
-                    <video class="method-demo-video" muted loop playsinline preload="none" data-demo-src="docs/video-guide/videos-method/05-margine-commessa.webm" aria-label="Lettura di budget, costi, margine e ritmo di una commessa in Arch Time Pro"></video>
+                <figure class="method-demo">
+                    <div class="method-demo-frame"><video class="method-demo-video" muted loop playsinline preload="none" data-demo-src="docs/video-guide/videos-method/05-margine-pulito.webm" aria-label="Lettura di budget, costi, margine e ritmo di una commessa in Arch Time Pro"></video></div>
+                    <figcaption class="method-demo-caption"><i data-lucide="mouse-pointer-2" class="mt-0.5 h-4 w-4 shrink-0 text-red-600"></i><span>Costi, spese e avanzamento mostrano quanto margine resta.</span></figcaption>
                 </figure>
             </div>
 

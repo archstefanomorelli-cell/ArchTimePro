@@ -199,7 +199,7 @@ const clips = [
 
 const methodClips = [
     {
-        file: '01-nuova-commessa.webm',
+        file: '01-commessa-pulita.webm',
         scene: 'project-modal',
         steps: [
             ['1. Nome e cliente della commessa.', async page => {
@@ -214,7 +214,7 @@ const methodClips = [
         ]
     },
     {
-        file: '02-team-costi.webm',
+        file: '02-team-pulito.webm',
         scene: 'team',
         steps: [
             ['1. Assegna il costo orario interno.', async page => guidedFill(page, '#edit-team-cost', '42')],
@@ -223,7 +223,7 @@ const methodClips = [
         ]
     },
     {
-        file: '03-budget-attivita.webm',
+        file: '03-budget-pulito.webm',
         scene: 'project-modal',
         steps: [
             ['1. Usa un budget unico per la commessa.', async page => {
@@ -232,13 +232,13 @@ const methodClips = [
             }],
             ['2. Oppure assegna un importo alle singole attività.', async page => {
                 await guidedClick(page, '#budget-mode-auto');
-                await guidedFill(page, 'input.task-budget-input[data-task="Progetto definitivo"]', '4000');
+                await moveCursor(page, '#edit-modal-budget');
             }],
             ['3. Il totale si aggiorna automaticamente.', async page => moveCursor(page, '#edit-modal-budget')]
         ]
     },
     {
-        file: '04-timer.webm',
+        file: '04-timer-pulito.webm',
         scene: 'dashboard',
         steps: [
             ['1. Scegli la commessa.', async page => guidedSelect(page, '#project-select', '0')],
@@ -250,7 +250,7 @@ const methodClips = [
         ]
     },
     {
-        file: '05-margine-commessa.webm',
+        file: '05-margine-pulito.webm',
         scene: 'project-detail',
         steps: [
             ['1. Leggi costi, spese e budget nello stesso punto.', async page => moveCursor(page, '.project-detail-metrics')],
@@ -331,9 +331,11 @@ async function setupGuideOverlay(page, compact = false) {
         `;
         document.head.appendChild(style);
 
-        const caption = document.createElement('div');
-        caption.id = 'video-caption-overlay';
-        document.body.appendChild(caption);
+        if (!isCompact) {
+            const caption = document.createElement('div');
+            caption.id = 'video-caption-overlay';
+            document.body.appendChild(caption);
+        }
 
         const cursor = document.createElement('div');
         cursor.id = 'video-demo-cursor';
@@ -348,7 +350,8 @@ async function setupGuideOverlay(page, compact = false) {
 
 async function setCaption(page, text) {
     await page.evaluate(caption => {
-        document.getElementById('video-caption-overlay').textContent = caption;
+        const overlay = document.getElementById('video-caption-overlay');
+        if (overlay) overlay.textContent = caption;
     }, text);
 }
 

@@ -12,7 +12,7 @@ Questa cartella contiene clip registrate dalla UI reale di `app.html`, usando la
 - `videos-real/06-team-costi.webm`: team, costo orario e inviti collaboratori.
 - `videos-real/07-analisi.webm`: dettaglio analisi finanziaria.
 
-Le cinque clip ravvicinate usate nella pagina Metodo sono in `videos-method/`. Sono registrate a 560x420 con didascalie e cursore visibile, per restare leggibili anche su mobile.
+Le cinque clip ravvicinate usate nella pagina Metodo sono in `videos-method/`. Sono registrate a 560x420 con cursore visibile e senza testo incorporato; le didascalie restano nell'HTML della pagina per evitare sovrapposizioni.
 
 ## Frame di controllo
 
