@@ -856,6 +856,7 @@
 
             const { error } = await supabaseClient.from('projects').insert([payload]);
             if (error) return await appAlert("Configurazione richiesta", "Per salvare il Piano costi va prima aggiunta la colonna task_budgets in Supabase. Puoi lasciare vuoti i campi Piano costi oppure eseguire lo script SQL dedicato.", "danger");
+            if (typeof clearMarginCalculatorHandoff === 'function') clearMarginCalculatorHandoff();
             
             document.getElementById('edit-modal-name').value = ""; 
             document.getElementById('edit-modal-client').value = ""; 

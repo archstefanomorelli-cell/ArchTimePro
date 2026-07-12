@@ -14,7 +14,10 @@
     const errorBox = document.getElementById('calculator-error');
     const emptyResult = document.getElementById('result-empty');
     const resultContent = document.getElementById('result-content');
+    const calculatorCta = document.getElementById('calculator-cta');
+    const HANDOFF_KEY = 'archtime-margin-calculator-handoff';
     let startTracked = false;
+    let latestValidValues = null;
 
     const euroFormatter = new Intl.NumberFormat('it-IT', {
         style: 'currency',
@@ -103,6 +106,7 @@
         const breakEvenHours = Math.max(0, (values.fee - values.expenses) / values.hourlyCost);
         const hoursBuffer = breakEvenHours - totalHours;
         const state = resultState(margin, marginPercent);
+        latestValidValues = { ...values };
 
         setText('result-margin', euroFormatter.format(margin));
         setText('result-margin-percent', `${numberFormatter.format(marginPercent)}% del compenso`);
@@ -188,13 +192,30 @@
 
     document.getElementById('btn-reset').addEventListener('click', function () {
         form.reset();
+        latestValidValues = null;
         hideError();
         resultContent.classList.add('hidden');
         emptyResult.classList.remove('hidden');
         fields.fee.focus();
     });
 
-    document.getElementById('calculator-cta').addEventListener('click', function () {
+    calculatorCta.addEventListener('click', function () {
+        if (latestValidValues) {
+            const totalHours = latestValidValues.ownerHours + latestValidValues.teamHours;
+            const totalCost = (totalHours * latestValidValues.hourlyCost) + latestValidValues.expenses;
+            const margin = latestValidValues.fee - totalCost;
+            localStorage.setItem(HANDOFF_KEY, JSON.stringify({
+                version: 1,
+                savedAt: Date.now(),
+                values: latestValidValues,
+                result: {
+                    totalHours,
+                    totalCost,
+                    margin,
+                    marginPercent: (margin / latestValidValues.fee) * 100
+                }
+            }));
+        }
         track('margin_calculator_cta_clicked', { destination: '/app.html' });
     });
 })();

@@ -555,6 +555,23 @@
             </div>
 
             <div class="space-y-5">
+                <div id="onboarding-calculator-summary" class="force-hide border border-primary-200 bg-primary-50 rounded-2xl p-4">
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <p class="text-[10px] font-black uppercase tracking-wider text-primary-600">Dal calcolatore</p>
+                            <h3 class="mt-1 text-sm font-black text-slate-900">La tua commessa è già impostata</h3>
+                        </div>
+                        <button id="btn-clear-calculator-handoff" type="button" class="text-[10px] font-bold text-slate-500 hover:text-slate-800">Ignora dati</button>
+                    </div>
+                    <dl class="mt-3 grid grid-cols-2 gap-2 text-xs sm:grid-cols-4">
+                        <div class="rounded-lg bg-white p-2.5"><dt class="font-bold text-slate-400">Compenso</dt><dd id="handoff-fee" class="mt-1 font-black text-slate-800">0 €</dd></div>
+                        <div class="rounded-lg bg-white p-2.5"><dt class="font-bold text-slate-400">Ore stimate</dt><dd id="handoff-hours" class="mt-1 font-black text-slate-800">0 h</dd></div>
+                        <div class="rounded-lg bg-white p-2.5"><dt class="font-bold text-slate-400">Costo orario</dt><dd id="handoff-cost" class="mt-1 font-black text-slate-800">0 €/h</dd></div>
+                        <div class="rounded-lg bg-white p-2.5"><dt class="font-bold text-slate-400">Spese</dt><dd id="handoff-expenses" class="mt-1 font-black text-slate-800">0 €</dd></div>
+                    </dl>
+                    <p class="mt-3 text-[10px] font-semibold leading-relaxed text-primary-900">Compenso e costo orario sono precompilati. Ore e spese restano come riferimento: le registrerai sulle persone e sulle attività corrette.</p>
+                </div>
+
                 <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4">
                     <div class="flex items-center gap-2 mb-3">
                         <span class="w-6 h-6 rounded-lg bg-primary-600 text-white text-[11px] font-black flex items-center justify-center">1</span>
@@ -896,12 +913,12 @@
     </div>
     <script src="assets/js/00-runtime-config.js?v=stripe-founder-2026-06-29"></script>
     <script src="assets/js/01-core.js?v=stripe-founder-2026-06-29"></script>
-    <script src="assets/js/02-auth-account.js?v=stripe-portal-copy-2026-06-30"></script>
+    <script src="assets/js/02-auth-account.js?v=calculator-handoff-2026-07-12"></script>
     <script src="assets/js/03-team.js?v=phase3-team-modals-2026-05-12"></script>
-    <script src="assets/js/04-projects.js?v=phase3-project-detail-mobile-actions-2026-05-17"></script>
+    <script src="assets/js/04-projects.js?v=calculator-handoff-2026-07-12"></script>
     <script src="assets/js/05-time-entries.js?v=timer-reminder-2026-07-06"></script>
     <script src="assets/js/06-reports.js?v=phase3-final-ui-2026-05-02"></script>
-    <script src="assets/js/07-password-bootstrap.js?v=signup-business-type-2026-06-14"></script>
+    <script src="assets/js/07-password-bootstrap.js?v=calculator-handoff-2026-07-12"></script>
     <script src="assets/js/09-video-demo.js?v=video-demo-real-ui-2026-05-09"></script>
 </body>
 </html>

@@ -3,6 +3,35 @@ function getAppRedirectUrl() {
             return `${window.location.origin}/app.html`;
         }
 
+const MARGIN_HANDOFF_KEY = 'archtime-margin-calculator-handoff';
+const MARGIN_HANDOFF_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
+
+function getMarginCalculatorHandoff() {
+            try {
+                const handoff = JSON.parse(localStorage.getItem(MARGIN_HANDOFF_KEY) || 'null');
+                if (!handoff?.values || !handoff.savedAt || Date.now() - handoff.savedAt > MARGIN_HANDOFF_MAX_AGE) {
+                    localStorage.removeItem(MARGIN_HANDOFF_KEY);
+                    return null;
+                }
+                return handoff;
+            } catch (error) {
+                localStorage.removeItem(MARGIN_HANDOFF_KEY);
+                return null;
+            }
+        }
+
+function clearMarginCalculatorHandoff() {
+            localStorage.removeItem(MARGIN_HANDOFF_KEY);
+            document.getElementById('onboarding-calculator-summary')?.classList.add('force-hide');
+        }
+
+function formatHandoffNumber(value, digits = 0) {
+            return new Intl.NumberFormat('it-IT', {
+                minimumFractionDigits: digits,
+                maximumFractionDigits: digits
+            }).format(Number(value || 0));
+        }
+
 function switchAuthTab(mode) { 
             isSignupMode = (mode === 'signup'); 
             if (isSignupMode) window.archTimeAnalytics?.track('sign_up_start', { method: 'email' });
@@ -62,6 +91,10 @@ function switchAuthTab(mode) {
             document.querySelectorAll('input[name="main-role"]').forEach(input => { if(input.value === 'staff') input.checked = true; }); 
             document.getElementById('invite-code-input').value = urlParams.get('invite'); 
             toggleSignupOptions(); 
+        } else if (urlParams.get('source') === 'margin-calculator' && getMarginCalculatorHandoff()) {
+            switchAuthTab('signup');
+            const contextCopy = document.getElementById('auth-context-copy');
+            if (contextCopy) contextCopy.innerHTML = '<strong class="font-black">Il calcolo è pronto.</strong> Crea lo spazio di lavoro: ritroverai compenso, ore, costo orario e spese nel primo avvio.';
         }
 
         async function handleAuthAction() {
@@ -295,10 +328,23 @@ function switchAuthTab(mode) {
 
             document.getElementById('onboarding-studio-name').value = studioData?.name || '';
             document.getElementById('onboarding-business-label').innerText = currentBusinessType === 'impresa' ? 'Impresa Edile' : 'Studio Tecnico';
-            document.getElementById('onboarding-project-name').value = '';
+            const calculatorHandoff = getMarginCalculatorHandoff();
+            document.getElementById('onboarding-project-name').value = calculatorHandoff ? 'Commessa dal calcolatore' : '';
             document.getElementById('onboarding-project-client').value = '';
-            document.getElementById('onboarding-project-budget').value = '';
-            document.getElementById('onboarding-hourly-cost').value = userProfile?.hourly_cost || '';
+            document.getElementById('onboarding-project-budget').value = calculatorHandoff?.values?.fee || '';
+            document.getElementById('onboarding-hourly-cost').value = calculatorHandoff?.values?.hourlyCost || userProfile?.hourly_cost || '';
+
+            const summary = document.getElementById('onboarding-calculator-summary');
+            if (summary) {
+                summary.classList.toggle('force-hide', !calculatorHandoff);
+                if (calculatorHandoff) {
+                    const values = calculatorHandoff.values;
+                    document.getElementById('handoff-fee').innerText = `${formatHandoffNumber(values.fee)} €`;
+                    document.getElementById('handoff-hours').innerText = `${formatHandoffNumber(values.ownerHours + values.teamHours, 1)} h`;
+                    document.getElementById('handoff-cost').innerText = `${formatHandoffNumber(values.hourlyCost, 2)} €/h`;
+                    document.getElementById('handoff-expenses').innerText = `${formatHandoffNumber(values.expenses)} €`;
+                }
+            }
             modal.classList.remove('force-hide');
             lucide.createIcons();
         }
@@ -527,7 +573,7 @@ function switchAuthTab(mode) {
                 renderCatalogAndTemplatesUI(); 
                 await checkAndGenerateDemoData(); 
                 applyPlanLimitsUI(); 
-                if (shouldShowOwnerOnboarding()) setTimeout(openOwnerOnboarding, 500);
+                if (getMarginCalculatorHandoff() || shouldShowOwnerOnboarding()) setTimeout(openOwnerOnboarding, 500);
             }
             await restoreCloudTimer();
         }

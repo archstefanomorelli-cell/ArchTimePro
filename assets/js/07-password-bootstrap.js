@@ -52,6 +52,7 @@
             bindClick('btn-skip-onboarding', () => closeOwnerOnboarding(true));
             bindClick('btn-save-onboarding-identity', saveOnboardingIdentity);
             bindClick('btn-prepare-first-project', prepareFirstProjectFromOnboarding);
+            bindClick('btn-clear-calculator-handoff', clearMarginCalculatorHandoff);
             bindClick('btn-open-catalog-account', openCatalogModal);
             bindClick('btn-export-user-data', exportUserData);
             bindClick('btn-delete-account', deleteAccount);
