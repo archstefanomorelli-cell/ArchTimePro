@@ -57,6 +57,7 @@ jobs:
           mkdir -p dist/docs/video-guide
           cp -R docs/video-guide/frames-real dist/docs/video-guide/frames-real
           cp -R docs/video-guide/videos-real dist/docs/video-guide/videos-real
+          cp -R docs/video-guide/videos-method dist/docs/video-guide/videos-method
           cp -f mockup.png dist/ 2>/dev/null || true
           rm -f dist/assets/js/00-runtime-config.js
           cat > dist/assets/js/00-runtime-config.js <<EOF
