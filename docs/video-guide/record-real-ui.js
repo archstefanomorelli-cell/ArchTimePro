@@ -199,7 +199,7 @@ const clips = [
 
 const methodClips = [
     {
-        file: '01-commessa-pulita.webm',
+        file: '01-commessa-pulita-v2.webm',
         scene: 'project-modal',
         steps: [
             ['1. Nome e cliente della commessa.', async page => {
@@ -223,7 +223,7 @@ const methodClips = [
         ]
     },
     {
-        file: '03-budget-pulito.webm',
+        file: '03-budget-pulito-v2.webm',
         scene: 'project-modal',
         steps: [
             ['1. Usa un budget unico per la commessa.', async page => {
@@ -287,6 +287,7 @@ async function setupGuideOverlay(page, compact = false) {
         const style = document.createElement('style');
         style.textContent = `
             #analytics-consent-banner { display: none !important; }
+            ${isCompact ? '#btn-save-project-edit { display: none !important; }' : ''}
             #video-caption-overlay {
                 position: fixed;
                 left: ${isCompact ? '16px' : '32px'};

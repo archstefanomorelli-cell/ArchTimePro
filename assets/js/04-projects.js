@@ -840,6 +840,20 @@
             
             const payload = { name: name, client: client, budget: budget, tasks: [...newProjectTasks], studio_id: userProfile.studio_id };
             if (Object.keys(newProjectTaskBudgets).length > 0) payload.task_budgets = newProjectTaskBudgets;
+
+            if (typeof isVideoDemoMode === 'function' && isVideoDemoMode()) {
+                projects.unshift({
+                    id: `video-demo-${Date.now()}`,
+                    ...payload,
+                    is_archived: false,
+                    task_statuses: {}
+                });
+                closeEditProjectModal();
+                renderProjects();
+                await appAlert("Fatto", "Lavoro creato nella dimostrazione", "success");
+                return;
+            }
+
             const { error } = await supabaseClient.from('projects').insert([payload]);
             if (error) return await appAlert("Configurazione richiesta", "Per salvare il Piano costi va prima aggiunta la colonna task_budgets in Supabase. Puoi lasciare vuoti i campi Piano costi oppure eseguire lo script SQL dedicato.", "danger");
             
