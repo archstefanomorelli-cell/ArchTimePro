@@ -1,7 +1,7 @@
 use tauri::{
     menu::{CheckMenuItem, Menu, MenuItem, PredefinedMenuItem},
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
-    Manager, PhysicalPosition, PhysicalSize, WebviewWindow, WindowEvent,
+    LogicalSize, Manager, PhysicalPosition, WebviewWindow, WindowEvent,
 };
 use tauri_plugin_autostart::{MacosLauncher, ManagerExt};
 
@@ -44,30 +44,31 @@ fn set_compact_mode(window: WebviewWindow, compact: bool) -> Result<(), String> 
         (NORMAL_WIDTH, NORMAL_HEIGHT)
     };
 
-    let size = PhysicalSize::new(width, height);
-    if compact {
-        window
-            .set_min_size(Some(size))
-            .map_err(|error| error.to_string())?;
-        window
-            .set_max_size(Some(size))
-            .map_err(|error| error.to_string())?;
-    } else {
-        // The compact maximum must be relaxed before restoring the larger minimum.
-        window
-            .set_max_size(Some(size))
-            .map_err(|error| error.to_string())?;
-        window
-            .set_min_size(Some(size))
-            .map_err(|error| error.to_string())?;
-    }
+    let size = LogicalSize::new(f64::from(width), f64::from(height));
+
+    // Clear the previous fixed bounds first, then apply the new logical size.
+    // Logical units keep the widget stable with Windows display scaling enabled.
+    window
+        .set_min_size(Option::<LogicalSize<f64>>::None)
+        .map_err(|error| error.to_string())?;
+    window
+        .set_max_size(Option::<LogicalSize<f64>>::None)
+        .map_err(|error| error.to_string())?;
     window.set_size(size).map_err(|error| error.to_string())?;
+    window
+        .set_min_size(Some(size))
+        .map_err(|error| error.to_string())?;
+    window
+        .set_max_size(Some(size))
+        .map_err(|error| error.to_string())?;
 
     if compact {
-        if let Ok(Some(monitor)) = window.current_monitor() {
+        if let (Ok(Some(monitor)), Ok(window_size)) =
+            (window.current_monitor(), window.outer_size())
+        {
             let area = monitor.work_area();
-            let x = area.position.x + area.size.width as i32 - width as i32 - 18;
-            let y = area.position.y + area.size.height as i32 - height as i32 - 18;
+            let x = area.position.x + area.size.width as i32 - window_size.width as i32 - 18;
+            let y = area.position.y + area.size.height as i32 - window_size.height as i32 - 18;
             window
                 .set_position(PhysicalPosition::new(x, y))
                 .map_err(|error| error.to_string())?;
