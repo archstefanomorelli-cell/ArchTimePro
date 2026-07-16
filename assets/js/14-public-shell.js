@@ -9,10 +9,11 @@
                         <span class="public-brand text-xl font-black uppercase text-slate-900">Arch <span class="text-indigo-600">Time</span> Pro</span>
                     </a>
                     <div class="flex items-center gap-5 lg:gap-8">
-                        <nav class="hidden items-center gap-7 md:flex" aria-label="Navigazione principale">
+                        <nav class="hidden items-center gap-7 lg:flex" aria-label="Navigazione principale">
                             <a href="index.html#perche" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Perché</a>
                             <a href="guida.html" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Metodo</a>
                             <a href="index.html#prezzi" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Prezzi</a>
+                            <a href="timer-desktop.html" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Timer desktop</a>
                         </nav>
                         <a href="app.html" class="hidden text-sm font-bold text-slate-600 transition-colors hover:text-slate-900 sm:block">Accedi</a>
                         <a href="app.html" class="public-primary-cta rounded-lg bg-slate-900 px-4 py-2.5 text-xs font-black uppercase text-white shadow-lg transition-colors hover:bg-indigo-600 sm:px-5">Prova gratis</a>
@@ -34,6 +35,7 @@
                     <nav class="flex flex-wrap justify-center gap-x-6 gap-y-3 text-xs font-bold text-slate-400" aria-label="Link nel piè di pagina">
                         <a href="calcolo-margine-commessa.html" class="hover:text-white">Calcolatore</a>
                         <a href="guida.html" class="hover:text-white">Metodo</a>
+                        <a href="timer-desktop.html" class="hover:text-white">Timer desktop</a>
                         <a href="sicurezza.html" class="hover:text-white">Sicurezza</a>
                         <a href="privacy.html" class="hover:text-white">Privacy</a>
                         <a href="termini.html" class="hover:text-white">Termini</a>

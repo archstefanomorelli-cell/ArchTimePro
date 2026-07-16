@@ -16,8 +16,8 @@
         .bg-grid { background-image: radial-gradient(#e2e8f0 1px, transparent 1px); background-size: 30px 30px; }
     </style>
     <script src="assets/js/12-analytics.js?v=2026-06-14" defer></script>
-    <link rel="stylesheet" href="assets/public-site.css?v=2026-07-11">
-    <script src="assets/js/14-public-shell.js?v=2026-07-11b" defer></script>
+    <link rel="stylesheet" href="assets/public-site.css?v=2026-07-16">
+    <script src="assets/js/14-public-shell.js?v=2026-07-16" defer></script>
 </head>
 <body class="bg-white selection:bg-indigo-100 selection:text-indigo-900">
     <header><div><a href="index.html">Arch Time Pro</a></div></header>
@@ -26,7 +26,7 @@
             <div class="mx-auto max-w-5xl px-5 sm:px-6">
                 <p class="mb-3 text-xs font-extrabold uppercase text-indigo-600">Sicurezza attiva oggi</p>
                 <h1 class="text-4xl font-black text-slate-950 sm:text-5xl lg:text-6xl">Come proteggiamo i dati di Arch Time Pro.</h1>
-                <p class="mt-5 max-w-3xl text-base font-medium leading-relaxed text-slate-600 sm:text-lg">Questa pagina descrive le misure effettivamente utilizzate dal servizio e i relativi limiti, senza presentare funzionalità future come protezioni già disponibili.</p>
+                <p class="mt-5 max-w-3xl text-base font-medium leading-relaxed text-slate-600 sm:text-lg">Questa pagina descrive le misure effettivamente utilizzate dal servizio e i relativi limiti, senza presentare funzionalitÃ  future come protezioni giÃ  disponibili.</p>
                 <p class="mt-5 text-sm font-bold text-slate-500">Ultimo aggiornamento: 11 luglio 2026</p>
             </div>
         </section>
@@ -42,12 +42,12 @@
                     <article>
                         <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600"><i data-lucide="database" class="h-5 w-5"></i></div>
                         <h2 class="text-lg font-black text-slate-900">Studi separati</h2>
-                        <p class="mt-2 text-sm leading-relaxed text-slate-600">Le policy Row Level Security limitano l’accesso alle righe appartenenti allo studio dell’utente autenticato.</p>
+                        <p class="mt-2 text-sm leading-relaxed text-slate-600">Le policy Row Level Security limitano lâ€™accesso alle righe appartenenti allo studio dellâ€™utente autenticato.</p>
                     </article>
                     <article>
                         <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-amber-50 text-amber-600"><i data-lucide="eye-off" class="h-5 w-5"></i></div>
-                        <h2 class="text-lg font-black text-slate-900">Visibilità per ruolo</h2>
-                        <p class="mt-2 text-sm leading-relaxed text-slate-600">I collaboratori registrano il lavoro senza accedere nell’app a budget, costi orari, spese riservate e margini.</p>
+                        <h2 class="text-lg font-black text-slate-900">VisibilitÃ  per ruolo</h2>
+                        <p class="mt-2 text-sm leading-relaxed text-slate-600">I collaboratori registrano il lavoro senza accedere nellâ€™app a budget, costi orari, spese riservate e margini.</p>
                     </article>
                 </div>
             </div>
@@ -57,14 +57,14 @@
             <div class="mx-auto max-w-6xl px-5 sm:px-6">
                 <div class="mb-9 max-w-3xl">
                     <p class="mb-3 text-xs font-extrabold uppercase text-indigo-600">Architettura di protezione</p>
-                    <h2 class="text-3xl font-black text-slate-950 sm:text-4xl">Più livelli, ciascuno con un compito preciso.</h2>
+                    <h2 class="text-3xl font-black text-slate-950 sm:text-4xl">PiÃ¹ livelli, ciascuno con un compito preciso.</h2>
                 </div>
                 <div class="overflow-hidden rounded-xl border border-slate-200 bg-white">
-                    <div class="grid gap-3 border-b border-slate-100 p-5 md:grid-cols-[220px_1fr]"><h3 class="font-black text-slate-900">Autorizzazione database</h3><p class="text-sm leading-relaxed text-slate-600">Le tabelle esposte all’app usano policy RLS e controlli legati all’identità autenticata e allo studio di appartenenza.</p></div>
-                    <div class="grid gap-3 border-b border-slate-100 p-5 md:grid-cols-[220px_1fr]"><h3 class="font-black text-slate-900">Operazioni sensibili</h3><p class="text-sm leading-relaxed text-slate-600">Diverse operazioni su commesse, costi e collaboratori passano attraverso funzioni RPC o Edge Functions con verifiche di identità, ruolo e appartenenza allo studio.</p></div>
-                    <div class="grid gap-3 border-b border-slate-100 p-5 md:grid-cols-[220px_1fr]"><h3 class="font-black text-slate-900">Segreti tecnici</h3><p class="text-sm leading-relaxed text-slate-600">Chiavi Stripe, credenziali email e chiavi amministrative sono conservate nei secrets dell’ambiente server e non inserite nei file pubblici del sito.</p></div>
+                    <div class="grid gap-3 border-b border-slate-100 p-5 md:grid-cols-[220px_1fr]"><h3 class="font-black text-slate-900">Autorizzazione database</h3><p class="text-sm leading-relaxed text-slate-600">Le tabelle esposte allâ€™app usano policy RLS e controlli legati allâ€™identitÃ  autenticata e allo studio di appartenenza.</p></div>
+                    <div class="grid gap-3 border-b border-slate-100 p-5 md:grid-cols-[220px_1fr]"><h3 class="font-black text-slate-900">Operazioni sensibili</h3><p class="text-sm leading-relaxed text-slate-600">Diverse operazioni su commesse, costi e collaboratori passano attraverso funzioni RPC o Edge Functions con verifiche di identitÃ , ruolo e appartenenza allo studio.</p></div>
+                    <div class="grid gap-3 border-b border-slate-100 p-5 md:grid-cols-[220px_1fr]"><h3 class="font-black text-slate-900">Segreti tecnici</h3><p class="text-sm leading-relaxed text-slate-600">Chiavi Stripe, credenziali email e chiavi amministrative sono conservate nei secrets dellâ€™ambiente server e non inserite nei file pubblici del sito.</p></div>
                     <div class="grid gap-3 border-b border-slate-100 p-5 md:grid-cols-[220px_1fr]"><h3 class="font-black text-slate-900">Trasmissione e storage</h3><p class="text-sm leading-relaxed text-slate-600">Il sito e le API usano HTTPS. Supabase applica cifratura in transito e cifratura a riposo alla propria infrastruttura gestita.</p></div>
-                    <div class="grid gap-3 p-5 md:grid-cols-[220px_1fr]"><h3 class="font-black text-slate-900">Pagamenti</h3><p class="text-sm leading-relaxed text-slate-600">Checkout, carta e portale abbonamenti sono gestiti da Stripe. Arch Time Pro conserva soltanto gli identificativi e lo stato necessari a riconoscere l’abbonamento.</p></div>
+                    <div class="grid gap-3 p-5 md:grid-cols-[220px_1fr]"><h3 class="font-black text-slate-900">Pagamenti</h3><p class="text-sm leading-relaxed text-slate-600">Checkout, carta e portale abbonamenti sono gestiti da Stripe. Arch Time Pro conserva soltanto gli identificativi e lo stato necessari a riconoscere lâ€™abbonamento.</p></div>
                 </div>
             </div>
         </section>
@@ -85,7 +85,7 @@
                         <i data-lucide="key-round" class="mt-0.5 h-5 w-5 shrink-0 text-indigo-600"></i>
                         <div>
                             <h2 class="text-lg font-black text-slate-900">La sicurezza dipende anche dallo studio</h2>
-                            <p class="mt-2 text-sm leading-relaxed text-slate-600">Usa password uniche, non condividere account, assegna solo i ruoli necessari, rimuovi tempestivamente chi non collabora più e verifica i destinatari prima di esportare report o dati.</p>
+                            <p class="mt-2 text-sm leading-relaxed text-slate-600">Usa password uniche, non condividere account, assegna solo i ruoli necessari, rimuovi tempestivamente chi non collabora piÃ¹ e verifica i destinatari prima di esportare report o dati.</p>
                         </div>
                     </div>
                 </article>

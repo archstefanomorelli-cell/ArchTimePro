@@ -36,8 +36,8 @@
     }
     </script>
     <script src="assets/js/12-analytics.js?v=2026-06-14" defer></script>
-    <link rel="stylesheet" href="assets/public-site.css?v=2026-07-11">
-    <script src="assets/js/14-public-shell.js?v=2026-07-11b" defer></script>
+    <link rel="stylesheet" href="assets/public-site.css?v=2026-07-16">
+    <script src="assets/js/14-public-shell.js?v=2026-07-16" defer></script>
     <script src="assets/js/13-margin-calculator.js?v=calculator-handoff-2026-07-12" defer></script>
 </head>
 <body class="bg-white selection:bg-indigo-100 selection:text-indigo-900">
@@ -48,7 +48,7 @@
             </a>
             <div class="flex items-center gap-5 lg:gap-8">
                 <nav class="hidden items-center gap-7 md:flex" aria-label="Navigazione principale">
-                    <a href="index.html#perche" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Perché</a>
+                    <a href="index.html#perche" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">PerchÃ©</a>
                     <a href="guida.html" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Metodo</a>
                     <a href="index.html#prezzi" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Prezzi</a>
                 </nav>
@@ -62,7 +62,7 @@
         <section class="bg-grid border-b border-slate-100 pb-12 pt-28 lg:pb-16 lg:pt-32">
             <div class="mx-auto max-w-7xl px-5 sm:px-6">
                 <div class="mx-auto mb-9 max-w-3xl text-center">
-                    <p class="mb-3 text-xs font-extrabold uppercase text-indigo-600">Calcolatore gratuito · nessuna registrazione</p>
+                    <p class="mb-3 text-xs font-extrabold uppercase text-indigo-600">Calcolatore gratuito Â· nessuna registrazione</p>
                     <h1 class="mb-4 text-4xl font-black leading-tight text-slate-950 sm:text-5xl lg:text-6xl">
                         Quanto margine sta lasciando davvero la tua commessa?
                     </h1>
@@ -88,7 +88,7 @@
                                 <label class="block sm:col-span-2">
                                     <span class="mb-2 block text-sm font-bold text-slate-800">Compenso della commessa</span>
                                     <span class="number-field flex items-center rounded-lg border border-slate-300 bg-white transition-all">
-                                        <span class="pl-4 text-sm font-bold text-slate-400">€</span>
+                                        <span class="pl-4 text-sm font-bold text-slate-400">â‚¬</span>
                                         <input id="project-fee" name="projectFee" type="text" inputmode="decimal" autocomplete="off" placeholder="25.000" class="min-w-0 flex-1 rounded-lg border-0 bg-transparent px-3 py-3.5 text-base font-bold text-slate-900 outline-none" aria-describedby="project-fee-help">
                                     </span>
                                     <span id="project-fee-help" class="mt-1.5 block text-xs text-slate-500">L'importo riconosciuto dal cliente, escluse IVA e anticipazioni.</span>
@@ -113,7 +113,7 @@
                                 <label class="block">
                                     <span class="mb-2 block text-sm font-bold text-slate-800">Costo orario medio</span>
                                     <span class="number-field flex items-center rounded-lg border border-slate-300 bg-white transition-all">
-                                        <span class="pl-4 text-sm font-bold text-slate-400">€</span>
+                                        <span class="pl-4 text-sm font-bold text-slate-400">â‚¬</span>
                                         <input id="hourly-cost" name="hourlyCost" type="text" inputmode="decimal" autocomplete="off" placeholder="35" class="min-w-0 flex-1 rounded-lg border-0 bg-transparent px-3 py-3.5 text-base font-bold text-slate-900 outline-none">
                                         <span class="pr-4 text-xs font-bold text-slate-400">/ ora</span>
                                     </span>
@@ -122,7 +122,7 @@
                                 <label class="block">
                                     <span class="mb-2 block text-sm font-bold text-slate-800">Spese della commessa</span>
                                     <span class="number-field flex items-center rounded-lg border border-slate-300 bg-white transition-all">
-                                        <span class="pl-4 text-sm font-bold text-slate-400">€</span>
+                                        <span class="pl-4 text-sm font-bold text-slate-400">â‚¬</span>
                                         <input id="project-expenses" name="projectExpenses" type="text" inputmode="decimal" autocomplete="off" placeholder="1.800" class="min-w-0 flex-1 rounded-lg border-0 bg-transparent px-3 py-3.5 text-base font-bold text-slate-900 outline-none">
                                     </span>
                                 </label>
@@ -152,7 +152,7 @@
                             <div class="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-lg border border-slate-700 bg-slate-900 text-indigo-300">
                                 <i data-lucide="gauge" class="h-7 w-7"></i>
                             </div>
-                            <h2 id="result-title" class="text-xl font-black">Qui apparirà la fotografia della commessa</h2>
+                            <h2 id="result-title" class="text-xl font-black">Qui apparirÃ  la fotografia della commessa</h2>
                             <p class="mt-3 text-sm leading-relaxed text-slate-400">Il calcolo considera il costo economico di tutte le ore, comprese quelle del titolare.</p>
                         </div>
 
@@ -160,7 +160,7 @@
                             <div class="mb-6 flex items-start justify-between gap-4">
                                 <div>
                                     <p class="text-xs font-bold uppercase text-slate-400">Margine residuo indicativo</p>
-                                    <p id="result-margin" class="mt-2 text-4xl font-black text-white sm:text-5xl">€ 0</p>
+                                    <p id="result-margin" class="mt-2 text-4xl font-black text-white sm:text-5xl">â‚¬ 0</p>
                                     <p id="result-margin-percent" class="mt-2 text-sm font-bold text-emerald-300">0% del compenso</p>
                                 </div>
                                 <span id="result-status" class="rounded-lg border px-3 py-2 text-xs font-black uppercase">Risultato</span>
@@ -179,11 +179,11 @@
                             <dl class="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-slate-800 bg-slate-800">
                                 <div class="bg-slate-900 p-4">
                                     <dt class="text-xs font-bold text-slate-400">Costo delle ore</dt>
-                                    <dd id="result-labor-cost" class="mt-1.5 text-lg font-black text-white">€ 0</dd>
+                                    <dd id="result-labor-cost" class="mt-1.5 text-lg font-black text-white">â‚¬ 0</dd>
                                 </div>
                                 <div class="bg-slate-900 p-4">
                                     <dt class="text-xs font-bold text-slate-400">Costi complessivi</dt>
-                                    <dd id="result-total-cost" class="mt-1.5 text-lg font-black text-white">€ 0</dd>
+                                    <dd id="result-total-cost" class="mt-1.5 text-lg font-black text-white">â‚¬ 0</dd>
                                 </div>
                                 <div class="bg-slate-900 p-4">
                                     <dt class="text-xs font-bold text-slate-400">Ore registrate</dt>
@@ -203,7 +203,7 @@
                                     Prova su una commessa reale
                                     <i data-lucide="arrow-right" class="h-4 w-4"></i>
                                 </a>
-                                <p class="mt-3 text-center text-xs text-slate-500">30 giorni gratis · nessun costo per i collaboratori</p>
+                                <p class="mt-3 text-center text-xs text-slate-500">30 giorni gratis Â· nessun costo per i collaboratori</p>
                             </div>
                         </div>
                     </section>
@@ -216,7 +216,7 @@
                 <article>
                     <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600"><i data-lucide="clock-3" class="h-5 w-5"></i></div>
                     <h2 class="text-lg font-black text-slate-900">Le ore del titolare sono un costo</h2>
-                    <p class="mt-2 text-sm leading-relaxed text-slate-600">Se non vengono valorizzate, una commessa può sembrare redditizia anche quando assorbe tutto il tempo disponibile.</p>
+                    <p class="mt-2 text-sm leading-relaxed text-slate-600">Se non vengono valorizzate, una commessa puÃ² sembrare redditizia anche quando assorbe tutto il tempo disponibile.</p>
                 </article>
                 <article>
                     <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-amber-50 text-amber-600"><i data-lucide="receipt-text" class="h-5 w-5"></i></div>
@@ -225,8 +225,8 @@
                 </article>
                 <article>
                     <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600"><i data-lucide="scan-line" class="h-5 w-5"></i></div>
-                    <h2 class="text-lg font-black text-slate-900">Il dato utile è quello aggiornato</h2>
-                    <p class="mt-2 text-sm leading-relaxed text-slate-600">Un calcolo finale racconta cosa è successo. Un controllo continuo permette di intervenire prima che il margine finisca.</p>
+                    <h2 class="text-lg font-black text-slate-900">Il dato utile Ã¨ quello aggiornato</h2>
+                    <p class="mt-2 text-sm leading-relaxed text-slate-600">Un calcolo finale racconta cosa Ã¨ successo. Un controllo continuo permette di intervenire prima che il margine finisca.</p>
                 </article>
             </div>
         </section>
@@ -238,8 +238,8 @@
                 <p class="text-sm font-black uppercase">Arch <span class="text-indigo-400">Time</span> Pro</p>
                 <p class="mt-2 text-xs text-slate-400">Controllo semplice di ore, costi e margini per studi tecnici.</p>
             </div>
-            <nav class="flex flex-wrap justify-center gap-x-6 gap-y-3 text-xs font-bold text-slate-400" aria-label="Link nel piè di pagina">
-                <a href="index.html#perche" class="hover:text-white">Perché</a>
+            <nav class="flex flex-wrap justify-center gap-x-6 gap-y-3 text-xs font-bold text-slate-400" aria-label="Link nel piÃ¨ di pagina">
+                <a href="index.html#perche" class="hover:text-white">PerchÃ©</a>
                 <a href="guida.html" class="hover:text-white">Metodo</a>
                 <a href="sicurezza.html" class="hover:text-white">Sicurezza</a>
                 <a href="privacy.html" class="hover:text-white">Privacy</a>
