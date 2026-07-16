@@ -34,17 +34,19 @@ body {
 #public-site-header {
     min-height: 69px;
     background-color: rgba(255, 255, 255, 0.96) !important;
-    background-image: radial-gradient(circle, rgba(71, 85, 105, 0.3) 1px, transparent 1.1px);
-    background-size: 14px 14px;
+    background-image: radial-gradient(circle, rgba(71, 85, 105, 0.42) 1.25px, transparent 1.35px) !important;
+    background-size: 15px 15px !important;
+    background-position: 0 0 !important;
     box-shadow: 0 8px 24px rgba(15, 23, 42, 0.035);
 }
 
 .bg-grid,
 .page-grid,
 .public-page-dot-grid {
-    background-color: #fff;
-    background-image: radial-gradient(circle, rgba(71, 85, 105, 0.26) 1px, transparent 1.1px) !important;
-    background-size: 19px 19px !important;
+    background-color: #fff !important;
+    background-image: radial-gradient(circle, rgba(71, 85, 105, 0.38) 1.35px, transparent 1.45px) !important;
+    background-size: 20px 20px !important;
+    background-position: 0 0 !important;
 }
 
 @media (max-width: 420px) {
