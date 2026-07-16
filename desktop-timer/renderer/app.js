@@ -11,6 +11,9 @@
     let timerRunning = false;
     let timerStart = null;
     let timerTickHandle = null;
+    let timerSyncHandle = null;
+    let timerChannel = null;
+    let timerMutationInProgress = false;
 
     const $ = id => document.getElementById(id);
 
@@ -253,6 +256,85 @@
         lucide.createIcons();
     }
 
+    function applyRemoteTimerState(remoteProfile) {
+        if (!profile || timerMutationInProgress) return;
+
+        const remoteStart = remoteProfile?.active_timer_start
+            ? Number(remoteProfile.active_timer_start)
+            : null;
+
+        if (!remoteStart) {
+            if (!timerRunning) return;
+            timerRunning = false;
+            timerStart = null;
+            $('notes').value = '';
+            stopTimerUi();
+            setStatus('app-status', 'Timer fermato da web. Le ore sono già state salvate.', 'success');
+            return;
+        }
+
+        if (timerRunning && timerStart === remoteStart) return;
+
+        timerRunning = true;
+        timerStart = remoteStart;
+        profile.active_timer_start = remoteProfile.active_timer_start;
+        profile.active_timer_project = remoteProfile.active_timer_project;
+        profile.active_timer_task = remoteProfile.active_timer_task;
+        profile.active_timer_notes = remoteProfile.active_timer_notes;
+
+        const activeIndex = remoteProfile.active_timer_project;
+        if (activeIndex !== null && activeIndex !== '' && projects[Number(activeIndex)]) {
+            $('project-select').value = String(activeIndex);
+            renderTasks();
+        }
+        if (remoteProfile.active_timer_task) $('task-select').value = remoteProfile.active_timer_task;
+        $('notes').value = remoteProfile.active_timer_notes || '';
+        startTimerUi();
+        setStatus('app-status', 'Timer sincronizzato da un altro dispositivo.', 'success');
+    }
+
+    async function checkRemoteTimer() {
+        if (!client || !profile?.id || timerMutationInProgress) return;
+        const { data, error } = await client
+            .from('profiles')
+            .select('active_timer_start,active_timer_project,active_timer_task,active_timer_notes')
+            .eq('id', profile.id)
+            .single();
+        if (error) {
+            console.warn('Sincronizzazione timer non riuscita', error.message);
+            return;
+        }
+        applyRemoteTimerState(data);
+    }
+
+    function stopTimerSync() {
+        if (timerSyncHandle) {
+            clearInterval(timerSyncHandle);
+            timerSyncHandle = null;
+        }
+        if (timerChannel && client) {
+            client.removeChannel(timerChannel);
+            timerChannel = null;
+        }
+    }
+
+    function startTimerSync() {
+        stopTimerSync();
+        if (!client || !profile?.id) return;
+
+        timerChannel = client
+            .channel(`desktop-timer-${profile.id}`)
+            .on('postgres_changes', {
+                event: 'UPDATE',
+                schema: 'public',
+                table: 'profiles',
+                filter: `id=eq.${profile.id}`
+            }, payload => applyRemoteTimerState(payload.new))
+            .subscribe();
+
+        timerSyncHandle = setInterval(checkRemoteTimer, 5000);
+    }
+
     async function toggleTimer() {
         const project = getSelectedProject();
         const projectIndex = getSelectedProjectIndex();
@@ -261,41 +343,54 @@
         if (!project) return setStatus('app-status', 'Seleziona un progetto attivo.', 'error');
 
         if (!timerRunning) {
-            timerRunning = true;
-            timerStart = Date.now();
-            const { error } = await client.from('profiles').update({
-                active_timer_start: String(timerStart),
-                active_timer_project: String(projectIndex),
-                active_timer_task: task,
-                active_timer_notes: notes
-            }).eq('id', profile.id);
-            if (error) throw error;
-            rememberLastSelection();
-            startTimerUi();
-            setStatus('app-status', 'Timer avviato.', 'success');
-            return;
+            timerMutationInProgress = true;
+            try {
+                timerRunning = true;
+                timerStart = Date.now();
+                const { error } = await client.from('profiles').update({
+                    active_timer_start: String(timerStart),
+                    active_timer_project: String(projectIndex),
+                    active_timer_task: task,
+                    active_timer_notes: notes,
+                    active_timer_reminder_sent_at: null
+                }).eq('id', profile.id);
+                if (error) throw error;
+                rememberLastSelection();
+                startTimerUi();
+                setStatus('app-status', 'Timer avviato.', 'success');
+                return;
+            } finally {
+                timerMutationInProgress = false;
+            }
         }
 
-        timerRunning = false;
-        const startedAt = new Date(timerStart);
-        const endedAt = new Date();
-        const hours = (Date.now() - timerStart) / 3600000;
-        const startLabel = startedAt.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
-        const endLabel = endedAt.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
-        const timedNotes = notes ? `[${startLabel} - ${endLabel}] ${notes}` : `[${startLabel} - ${endLabel}]`;
+        timerMutationInProgress = true;
+        try {
+            timerRunning = false;
+            const startedAt = new Date(timerStart);
+            const endedAt = new Date();
+            const hours = (Date.now() - timerStart) / 3600000;
+            const startLabel = startedAt.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+            const endLabel = endedAt.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+            const timedNotes = notes ? `[${startLabel} - ${endLabel}] ${notes}` : `[${startLabel} - ${endLabel}]`;
 
-        const { error } = await client.from('profiles').update({
-            active_timer_start: null,
-            active_timer_project: null,
-            active_timer_task: null,
-            active_timer_notes: null
-        }).eq('id', profile.id);
-        if (error) throw error;
+            const { error } = await client.from('profiles').update({
+                active_timer_start: null,
+                active_timer_project: null,
+                active_timer_task: null,
+                active_timer_notes: null,
+                active_timer_reminder_sent_at: null
+            }).eq('id', profile.id);
+            if (error) throw error;
 
-        await saveEntry(project, task, hours, null, timedNotes);
-        $('notes').value = '';
-        stopTimerUi();
-        setStatus('app-status', `Ore salvate: ${formatTime(hours)}.`, 'success');
+            await saveEntry(project, task, hours, null, timedNotes);
+            timerStart = null;
+            $('notes').value = '';
+            stopTimerUi();
+            setStatus('app-status', `Ore salvate: ${formatTime(hours)}.`, 'success');
+        } finally {
+            timerMutationInProgress = false;
+        }
     }
 
     function calculateManualHours() {
@@ -350,6 +445,7 @@
     }
 
     async function logout() {
+        stopTimerSync();
         await client.auth.signOut();
         user = null;
         profile = null;
@@ -372,6 +468,7 @@
             await loadProjects();
             showView('timer');
             await restoreTimer();
+            startTimerSync();
             setStatus('app-status', '');
         } catch (error) {
             console.error(error);
