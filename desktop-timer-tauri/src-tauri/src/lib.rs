@@ -140,7 +140,8 @@ pub fn run() {
         .on_window_event(|window, event| {
             if let WindowEvent::CloseRequested { api, .. } = event {
                 api.prevent_close();
-                let _ = hide_main_window(window);
+                let _ = window.set_skip_taskbar(true);
+                let _ = window.hide();
             }
         })
         .run(tauri::generate_context!())
