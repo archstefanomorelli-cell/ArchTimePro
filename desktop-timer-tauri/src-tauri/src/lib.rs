@@ -7,7 +7,7 @@ use tauri_plugin_autostart::{MacosLauncher, ManagerExt};
 
 const NORMAL_WIDTH: u32 = 430;
 const NORMAL_HEIGHT: u32 = 740;
-const COMPACT_WIDTH: u32 = 244;
+const COMPACT_WIDTH: u32 = 292;
 const COMPACT_HEIGHT: u32 = 92;
 
 fn show_main_window(app: &tauri::AppHandle) {
@@ -45,12 +45,22 @@ fn set_compact_mode(window: WebviewWindow, compact: bool) -> Result<(), String> 
     };
 
     let size = PhysicalSize::new(width, height);
-    window
-        .set_min_size(Some(size))
-        .map_err(|error| error.to_string())?;
-    window
-        .set_max_size(Some(size))
-        .map_err(|error| error.to_string())?;
+    if compact {
+        window
+            .set_min_size(Some(size))
+            .map_err(|error| error.to_string())?;
+        window
+            .set_max_size(Some(size))
+            .map_err(|error| error.to_string())?;
+    } else {
+        // The compact maximum must be relaxed before restoring the larger minimum.
+        window
+            .set_max_size(Some(size))
+            .map_err(|error| error.to_string())?;
+        window
+            .set_min_size(Some(size))
+            .map_err(|error| error.to_string())?;
+    }
     window.set_size(size).map_err(|error| error.to_string())?;
 
     if compact {

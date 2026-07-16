@@ -488,6 +488,7 @@
         $('btn-logout').addEventListener('click', logout);
         $('btn-window-minimize')?.addEventListener('click', () => window.archTimeDesktop?.minimizeWindow?.());
         $('btn-window-close')?.addEventListener('click', () => window.archTimeDesktop?.closeWindow?.());
+        $('btn-expand-compact')?.addEventListener('click', () => setDesktopCompactMode(false));
         $('btn-toggle-timer').addEventListener('click', () => toggleTimer().catch(error => setStatus('app-status', error.message, 'error')));
         $('btn-save-manual').addEventListener('click', () => saveManual().catch(error => setStatus('app-status', error.message, 'error')));
         $('btn-refresh').addEventListener('click', () => loadProjects().then(() => setStatus('app-status', 'Progetti aggiornati.', 'success')).catch(error => setStatus('app-status', error.message, 'error')));
