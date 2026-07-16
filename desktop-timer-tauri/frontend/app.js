@@ -73,6 +73,15 @@
         window.archTimeDesktop?.setCompactMode?.(Boolean(isCompact));
     }
 
+    function minimizeDesktopWindow() {
+        if (timerRunning) {
+            updateCompactContext();
+            setDesktopCompactMode(true);
+            return;
+        }
+        window.archTimeDesktop?.minimizeWindow?.();
+    }
+
     function updateCompactContext(project = getSelectedProject(), task = $('task-select')?.value || 'Generico') {
         const projectName = project?.name || 'Progetto';
         $('compact-context').textContent = `${projectName} · ${task || 'Generico'}`;
@@ -486,7 +495,7 @@
         client = window.supabase.createClient(supabaseUrl, supabaseKey);
         $('btn-login').addEventListener('click', login);
         $('btn-logout').addEventListener('click', logout);
-        $('btn-window-minimize')?.addEventListener('click', () => window.archTimeDesktop?.minimizeWindow?.());
+        $('btn-window-minimize')?.addEventListener('click', minimizeDesktopWindow);
         $('btn-window-close')?.addEventListener('click', () => window.archTimeDesktop?.closeWindow?.());
         $('btn-expand-compact')?.addEventListener('click', () => setDesktopCompactMode(false));
         $('btn-toggle-timer').addEventListener('click', () => toggleTimer().catch(error => setStatus('app-status', error.message, 'error')));

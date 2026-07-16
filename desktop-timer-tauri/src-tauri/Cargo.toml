@@ -1,6 +1,6 @@
 [package]
 name = "arch-time-mini-timer-light"
-version = "0.2.1"
+version = "0.2.2"
 description = "Arch Time Pro desktop timer"
 authors = ["Arch Time Pro"]
 edition = "2021"
