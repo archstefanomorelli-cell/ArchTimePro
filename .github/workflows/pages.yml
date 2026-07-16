@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
@@ -50,6 +50,7 @@ jobs:
           cp apple-touch-icon*.png dist/
           cp assets/app.css dist/assets/app.css
           cp assets/app-pro.css dist/assets/app-pro.css
+          cp assets/public-site.css dist/assets/public-site.css
           cp -R assets/icons dist/assets/icons
           cp -R assets/js dist/assets/js
           cp -R downloads dist/downloads
