@@ -680,6 +680,44 @@ html.theme-pro [id^="card-"] {
     min-height: auto;
 }
 
+html.theme-pro .analytics-section-heading {
+    margin: 0 0 0.7rem 0.15rem;
+}
+
+html.theme-pro .analytics-section-heading h2 {
+    color: #172033;
+    font-size: 1.05rem;
+    line-height: 1.2;
+    font-weight: 900;
+}
+
+html.theme-pro .analytics-section-heading p {
+    margin-top: 0.22rem;
+    color: #64748b;
+    font-size: 0.68rem;
+    line-height: 1.4;
+    font-weight: 600;
+}
+
+html.theme-pro .analytics-primary-grid {
+    margin-bottom: 0.625rem;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.625rem;
+}
+
+html.theme-pro .analytics-kpi-primary::before {
+    background: #4f46e5;
+}
+
+html.theme-pro .analytics-kpi-profit::before {
+    background: var(--pro-accent);
+}
+
+html.theme-pro .analytics-kpi-utilization::before {
+    background: #d97706;
+}
+
 html.theme-pro .analytics-summary-row {
     width: 100%;
     min-height: 4.25rem;
@@ -862,10 +900,6 @@ html.theme-pro .analytics-kpi::before {
     width: 2px;
     border-radius: 0 3px 3px 0;
     background: #cbd5e1;
-}
-
-html.theme-pro .analytics-kpi:first-child::before {
-    background: #334155;
 }
 
 html.theme-pro .analytics-kpi-danger::before {
@@ -1112,6 +1146,36 @@ html.theme-pro .analytics-priority-value.is-danger {
 }
 
 @media (max-width: 639px) {
+    html.theme-pro .analytics-section-heading {
+        margin-bottom: 0.6rem;
+    }
+
+    html.theme-pro .analytics-section-heading h2 {
+        font-size: 0.95rem;
+    }
+
+    html.theme-pro .analytics-primary-grid {
+        gap: 0.45rem;
+    }
+
+    html.theme-pro .analytics-primary-grid .analytics-kpi {
+        min-height: 6.15rem;
+        padding: 0.62rem 0.55rem;
+    }
+
+    html.theme-pro .analytics-primary-grid .analytics-kpi h3 {
+        min-height: 1.5rem;
+        font-size: 0.54rem;
+    }
+
+    html.theme-pro .analytics-primary-grid .analytics-kpi-value {
+        font-size: 0.9rem;
+    }
+
+    html.theme-pro .analytics-primary-grid .analytics-kpi > p {
+        font-size: 0.5rem;
+    }
+
     html.theme-pro .analytics-summary-row {
         grid-template-columns: 2rem minmax(0, 1fr) auto;
         gap: 0.55rem;

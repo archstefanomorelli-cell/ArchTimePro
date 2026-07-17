@@ -1332,10 +1332,29 @@
             const margin = totalBudget - totalSpent;
             const utilization = totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0;
             const overBudgetProjects = projectRows.filter(row => row.budget > 0 && row.margin < 0);
-            const unbudgetedProjects = projectRows.filter(row => row.budget <= 0 && row.spent > 0);
             const attentionProjects = projectRows.filter(row => row.visualStatus.tone !== 'healthy');
-            const offPaceProjects = attentionProjects.filter(row => row.budget > 0 && row.margin >= 0);
             const alertCount = attentionProjects.length;
+            const taskStats = {};
+            let totalTaskHours = 0;
+            activeEntries.forEach(entry => {
+                const hrs = Number(entry.duration || 0);
+                const taskName = entry.task || 'Altro';
+                if (!taskStats[taskName]) taskStats[taskName] = { hours: 0, cost: 0 };
+                taskStats[taskName].hours += hrs;
+                taskStats[taskName].cost += Number(entry.rate || 0);
+                totalTaskHours += hrs;
+            });
+            const topTasks = Object.entries(taskStats).sort((a,b) => b[1].hours - a[1].hours).slice(0, 6);
+            const summaryWeekStart = new Date();
+            summaryWeekStart.setHours(0, 0, 0, 0);
+            const summaryDay = summaryWeekStart.getDay() || 7;
+            summaryWeekStart.setDate(summaryWeekStart.getDate() - summaryDay + 1);
+            const summaryWeekCost = activeEntries
+                .filter(entry => new Date(entry.created_at) >= summaryWeekStart)
+                .reduce((sum, entry) => sum + Number(entry.rate || 0), 0)
+                + activeExpenses
+                    .filter(expense => new Date(expense.created_at) >= summaryWeekStart)
+                    .reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
 
             const profitCard = document.getElementById('card-profit'); 
             const profitLabel = document.getElementById('label-profit');
@@ -1356,28 +1375,19 @@
                 : `Su ${activeProjects.length} lavori attivi`;
             document.getElementById('kpi-utilization').innerText = `${Math.round(utilization)}%`;
             document.getElementById('kpi-utilization-note').innerText = `${formatMoney(totalSpent, 0)} su ${formatMoney(totalBudget, 0)}`;
-            document.getElementById('kpi-alert-count').innerText = String(alertCount);
-            document.getElementById('kpi-alert-note').innerText = overBudgetProjects.length > 0
-                ? `${overBudgetProjects.length} fuori budget${offPaceProjects.length > 0 ? ` · ${offPaceProjects.length} fuori ritmo` : ''}`
-                : (unbudgetedProjects.length > 0
-                    ? `${unbudgetedProjects.length} senza budget${offPaceProjects.length > 0 ? ` · ${offPaceProjects.length} sotto attese` : ''}`
-                    : (offPaceProjects.length > 0 ? `${offPaceProjects.length} sotto il margine atteso` : 'Nessuna criticità'));
             document.getElementById('analytics-data-summary').innerText = activeProjects.length === 1
                 ? '1 lavoro attivo'
                 : `${activeProjects.length} lavori attivi`;
-            document.getElementById('analytics-inline-margin').innerText = formatMoney(margin, 0);
-            document.getElementById('analytics-inline-utilization').innerText = `${Math.round(utilization)}%`;
             document.getElementById('analytics-inline-alerts').innerText = String(alertCount);
+            document.getElementById('analytics-inline-week-cost').innerText = formatMoney(summaryWeekCost, 0);
+            const topTaskSummary = document.getElementById('analytics-inline-top-task');
+            topTaskSummary.innerText = topTasks[0]?.[0] || '-';
+            topTaskSummary.title = topTasks[0]?.[0] || 'Nessuna attività registrata';
 
             const utilizationEl = document.getElementById('kpi-utilization');
             utilizationEl.classList.toggle('text-red-600', utilization > 100);
             utilizationEl.classList.toggle('text-amber-700', utilization >= 75 && utilization <= 100);
             utilizationEl.classList.toggle('text-slate-800', utilization < 75);
-            const alertEl = document.getElementById('kpi-alert-count');
-            alertEl.classList.toggle('text-red-600', overBudgetProjects.length > 0);
-            alertEl.classList.toggle('text-amber-700', overBudgetProjects.length === 0 && (offPaceProjects.length > 0 || unbudgetedProjects.length > 0));
-            alertEl.classList.toggle('text-emerald-700', alertCount === 0);
-            alertEl.classList.remove('text-slate-800');
 
             const inlineAlerts = document.getElementById('analytics-inline-alerts');
             inlineAlerts.classList.toggle('is-danger', overBudgetProjects.length > 0);
@@ -1414,18 +1424,6 @@
                     return tones[b.visualStatus.tone] - tones[a.visualStatus.tone] || bGap - aGap || b.spent - a.spent;
                 })
                 .slice(0, 6);
-
-            const taskStats = {}; 
-            let totalTaskHours = 0;
-            activeEntries.forEach(entry => { 
-                const hrs = Number(entry.duration || 0); 
-                const taskName = entry.task || 'Altro';
-                if (!taskStats[taskName]) taskStats[taskName] = { hours: 0, cost: 0 };
-                taskStats[taskName].hours += hrs;
-                taskStats[taskName].cost += Number(entry.rate || 0);
-                totalTaskHours += hrs; 
-            });
-            const topTasks = Object.entries(taskStats).sort((a,b) => b[1].hours - a[1].hours).slice(0, 6);
 
             const priorityList = document.getElementById('analytics-priority-list');
             if (priorityList) {
