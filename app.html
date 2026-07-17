@@ -65,7 +65,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="assets/app.css?v=phase3-budget-libero-2026-05-09">
-    <link rel="stylesheet" href="assets/app-pro.css?v=analytics-workspace-2026-07-17-01">
+    <link rel="stylesheet" href="assets/app-pro.css?v=analytics-collapse-2026-07-17-02">
     <script src="assets/js/12-analytics.js?v=2026-06-14" defer></script>
 </head>
 <body class="text-slate-800 pb-20 lg:pb-0">
@@ -351,13 +351,28 @@
             <div class="lg:col-span-8 flex flex-col gap-6 lg:gap-8">
                 
                 <section class="admin-only mobile-tab" data-tab="analyze">
-                    <div class="pl-1 mb-4 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
-                        <div>
-                            <h2 class="text-lg lg:text-xl font-black text-slate-800 tracking-tight">Controllo economico</h2>
-                            <p class="text-xs text-slate-500 font-medium mt-1">Dove si sta concentrando il costo e quali commesse richiedono attenzione.</p>
+                    <button id="btn-toggle-analytics" type="button" class="analytics-summary-row" data-ui-action="toggle-analytics" aria-expanded="false" aria-controls="analytics-details">
+                        <span class="analytics-summary-icon"><i data-lucide="chart-no-axes-combined"></i></span>
+                        <span class="analytics-summary-heading">
+                            <strong>Controllo economico</strong>
+                            <small id="analytics-data-summary">Lavori attivi</small>
+                        </span>
+                        <span class="analytics-summary-metrics">
+                            <span><small>Margine</small><strong id="analytics-inline-margin">€ 0,00</strong></span>
+                            <span><small>Assorbito</small><strong id="analytics-inline-utilization">0%</strong></span>
+                            <span><small>Da monitorare</small><strong id="analytics-inline-alerts">0</strong></span>
+                        </span>
+                        <span class="analytics-summary-action">
+                            <span id="analytics-toggle-label">Apri analisi</span>
+                            <i id="analytics-toggle-icon" data-lucide="chevron-down"></i>
+                        </span>
+                    </button>
+
+                    <div id="analytics-details" class="force-hide mt-3">
+                        <div class="analytics-detail-heading">
+                            <h2>Analisi finanziaria</h2>
+                            <p>Dove si sta concentrando il costo e quali commesse richiedono attenzione.</p>
                         </div>
-                        <span id="analytics-data-summary" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Lavori attivi</span>
-                    </div>
                     <div class="analytics-kpi-grid grid grid-cols-2 xl:grid-cols-4 gap-3 mb-4">
                         <div class="analytics-kpi border border-slate-200 bg-white">
                             <h3>Margine residuo</h3>
@@ -422,6 +437,7 @@
                             <div class="analytics-chart-wrap"><canvas id="chart-tasks-dist"></canvas></div>
                             <div id="empty-tasks" class="analytics-empty force-hide"><i data-lucide="timer-reset"></i><span>Le attività compariranno dopo le prime ore registrate.</span></div>
                         </div>
+                    </div>
                     </div>
                 </section>
 
@@ -909,10 +925,10 @@
     <script src="assets/js/01-core.js?v=stripe-founder-2026-06-29"></script>
     <script src="assets/js/02-auth-account.js?v=calculator-handoff-2026-07-12"></script>
     <script src="assets/js/03-team.js?v=phase3-team-modals-2026-05-12"></script>
-    <script src="assets/js/04-projects.js?v=analytics-workspace-2026-07-17-01"></script>
+    <script src="assets/js/04-projects.js?v=analytics-collapse-2026-07-17-02"></script>
     <script src="assets/js/05-time-entries.js?v=timer-reminder-2026-07-06"></script>
     <script src="assets/js/06-reports.js?v=phase3-final-ui-2026-05-02"></script>
-    <script src="assets/js/07-password-bootstrap.js?v=analytics-workspace-2026-07-17-01"></script>
+    <script src="assets/js/07-password-bootstrap.js?v=analytics-collapse-2026-07-17-02"></script>
     <script src="assets/js/09-video-demo.js?v=analytics-workspace-2026-07-17-01"></script>
 </body>
 </html>

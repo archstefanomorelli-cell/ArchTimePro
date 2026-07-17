@@ -197,6 +197,8 @@
                         return deleteEntry(entryId);
                     case 'switch-tab':
                         return switchAppTab(trigger.dataset.tab);
+                    case 'toggle-analytics':
+                        return toggleAnalyticsPanel();
                     case 'generate-pdf-report':
                         return generatePDFReport();
                     default:

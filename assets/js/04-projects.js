@@ -1271,6 +1271,31 @@
             await appAlert("Fatto", "Spesa aggiornata correttamente.", "success");
         }
 
+        function toggleAnalyticsPanel() {
+            const panel = document.getElementById('analytics-details');
+            const button = document.getElementById('btn-toggle-analytics');
+            const label = document.getElementById('analytics-toggle-label');
+            const icon = document.getElementById('analytics-toggle-icon');
+            if (!panel || !button) return;
+
+            const shouldOpen = panel.classList.contains('force-hide');
+            panel.classList.toggle('force-hide', !shouldOpen);
+            button.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+            button.classList.toggle('is-open', shouldOpen);
+            if (label) label.innerText = shouldOpen ? 'Chiudi analisi' : 'Apri analisi';
+            icon?.classList.toggle('rotate-180', shouldOpen);
+
+            if (shouldOpen) {
+                setTimeout(renderStrategicCharts, 30);
+            } else {
+                ['marginTrend', 'risk', 'tasks'].forEach(chartKey => {
+                    if (!charts[chartKey]) return;
+                    charts[chartKey].destroy();
+                    charts[chartKey] = null;
+                });
+            }
+        }
+
         function renderStrategicCharts() {
             if(!document.body.classList.contains('is-admin')) return;
             const activeProjects = projects.filter(p => !p.is_archived);
@@ -1340,6 +1365,9 @@
             document.getElementById('analytics-data-summary').innerText = activeProjects.length === 1
                 ? '1 lavoro attivo'
                 : `${activeProjects.length} lavori attivi`;
+            document.getElementById('analytics-inline-margin').innerText = formatMoney(margin, 0);
+            document.getElementById('analytics-inline-utilization').innerText = `${Math.round(utilization)}%`;
+            document.getElementById('analytics-inline-alerts').innerText = String(alertCount);
 
             const utilizationEl = document.getElementById('kpi-utilization');
             utilizationEl.classList.toggle('text-red-600', utilization > 100);
@@ -1350,6 +1378,20 @@
             alertEl.classList.toggle('text-amber-700', overBudgetProjects.length === 0 && (offPaceProjects.length > 0 || unbudgetedProjects.length > 0));
             alertEl.classList.toggle('text-emerald-700', alertCount === 0);
             alertEl.classList.remove('text-slate-800');
+
+            const inlineAlerts = document.getElementById('analytics-inline-alerts');
+            inlineAlerts.classList.toggle('is-danger', overBudgetProjects.length > 0);
+            inlineAlerts.classList.toggle('is-warning', overBudgetProjects.length === 0 && alertCount > 0);
+            const analyticsDetails = document.getElementById('analytics-details');
+            if (!analyticsDetails || analyticsDetails.classList.contains('force-hide')) {
+                ['marginTrend', 'risk', 'tasks'].forEach(chartKey => {
+                    if (!charts[chartKey]) return;
+                    charts[chartKey].destroy();
+                    charts[chartKey] = null;
+                });
+                lucide.createIcons();
+                return;
+            }
 
             const theme = THEMES[currentBusinessType];
             Chart.defaults.font.family = "'Inter', sans-serif";
