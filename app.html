@@ -65,7 +65,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="assets/app.css?v=phase3-budget-libero-2026-05-09">
-    <link rel="stylesheet" href="assets/app-pro.css?v=project-list-2026-07-17-05">
+    <link rel="stylesheet" href="assets/app-pro.css?v=project-actions-2026-07-17-07">
     <script src="assets/js/12-analytics.js?v=2026-06-14" defer></script>
 </head>
 <body class="text-slate-800 pb-20 lg:pb-0">
@@ -445,8 +445,8 @@
                                 <button type="button" data-ui-action="set-project-view" data-project-view="grid" title="Vista griglia" aria-label="Vista griglia"><i data-lucide="layout-grid"></i></button>
                                 <button type="button" data-ui-action="set-project-view" data-project-view="list" title="Vista lista" aria-label="Vista lista"><i data-lucide="list"></i></button>
                             </div>
-                            <button id="btn-open-project-modal" class="secondary-action compact dark !text-white" style="color:#fff !important;">Nuovo progetto</button>
-                            <button id="toggle-archived-btn" class="secondary-action compact">Archivio</button>
+                            <button id="btn-open-project-modal" class="secondary-action compact dark project-toolbar-action !text-white" style="color:#fff !important;"><i data-lucide="plus"></i><span>Nuovo progetto</span></button>
+                            <button id="toggle-archived-btn" class="secondary-action compact project-toolbar-action"><i data-lucide="archive"></i><span>Archivio</span></button>
                         </div>
                     </div>
                     <div id="projects-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
