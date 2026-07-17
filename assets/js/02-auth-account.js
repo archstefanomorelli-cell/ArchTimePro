@@ -515,7 +515,15 @@ function switchAuthTab(mode) {
             }
 
             if(nextTab === 'analyze' && isAdmin) {
-                setTimeout(renderStrategicCharts, 50); 
+                const analyticsDetails = document.getElementById('analytics-details');
+                const shouldAutoOpen = window.matchMedia('(max-width: 1023px)').matches
+                    && analyticsDetails?.classList.contains('force-hide');
+
+                if (shouldAutoOpen) {
+                    setTimeout(toggleAnalyticsPanel, 50);
+                } else {
+                    setTimeout(renderStrategicCharts, 50);
+                }
             }
             window.scrollTo(0, 0); 
         }
