@@ -256,12 +256,67 @@
                 </div>`;
         }
 
+        function projectListRowHtml(project) {
+            const summary = getProjectCostSummary(project);
+            const visualStatus = getProjectVisualStatus(project, summary);
+            const rhythm = visualStatus.rhythm;
+            const projectId = escapeAttr(project.id);
+            const costPercent = Math.round(rhythm ? rhythm.costPercent : summary.percent);
+            const progressPercent = Math.round(rhythm ? rhythm.operationalPercent : summary.percent);
+
+            return `
+                <div data-ui-action="show-project-detail" data-project-id="${projectId}" data-project-tone="${visualStatus.tone}" class="project-list-row ${project.is_archived ? 'is-archived' : ''}">
+                    <div class="project-list-identity">
+                        <span class="project-life-dot" aria-hidden="true" title="${escapeAttr(visualStatus.title)}"></span>
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <h3>${escapeHtml(project.name)}</h3>
+                                ${project.is_archived ? '<span class="project-list-archived">Archiviato</span>' : ''}
+                            </div>
+                            <p>${escapeHtml(project.client || 'Interno')}</p>
+                        </div>
+                    </div>
+                    <div class="project-list-metric"><small>Costi</small><strong>${formatMoney(summary.totalCost, 0)}</strong></div>
+                    <div class="project-list-metric"><small>Budget</small><strong>${formatMoney(summary.budget, 0)}</strong></div>
+                    <div class="project-list-metric"><small>Margine</small><strong class="${summary.marginClass}">${formatMoney(summary.margin, 0)}</strong></div>
+                    <div class="project-list-progress">
+                        <div>
+                            <span>${escapeHtml(visualStatus.label)}</span>
+                            <small>Costi ${costPercent}%${rhythm ? ` · Piano ${progressPercent}%` : ''}</small>
+                        </div>
+                        <div class="project-list-progress-track">
+                            <span class="${rhythm ? rhythm.barClass : summary.barClass}" style="width:${Math.min(costPercent, 100)}%"></span>
+                            ${rhythm ? `<i class="${rhythm.markerClass}" style="left:calc(${Math.min(progressPercent, 100)}% - 2px)"></i>` : ''}
+                        </div>
+                    </div>
+                    <div class="project-list-actions admin-only">
+                        <button data-ui-action="toggle-project-archive" data-project-id="${projectId}" data-archived="${project.is_archived ? 'true' : 'false'}" title="${project.is_archived ? 'Ripristina progetto' : 'Archivia progetto'}" aria-label="${project.is_archived ? 'Ripristina progetto' : 'Archivia progetto'}"><i data-lucide="archive"></i></button>
+                        <button data-ui-action="delete-project" data-project-id="${projectId}" title="Elimina progetto" aria-label="Elimina progetto"><i data-lucide="trash-2"></i></button>
+                    </div>
+                </div>`;
+        }
+
+        function setProjectViewMode(mode) {
+            if (!['grid', 'list'].includes(mode)) return;
+            projectViewMode = mode;
+            localStorage.setItem('archtime_project_view', mode);
+            renderProjects();
+        }
+
         function renderProjects() {
             const container = document.getElementById('projects-list');
             document.getElementById('project-select').innerHTML = projectSelectOptionsHtml();
             const visibleProjects = getVisibleProjects();
+            container.className = projectViewMode === 'list'
+                ? 'projects-list-view'
+                : 'grid grid-cols-1 sm:grid-cols-2 gap-4';
+            document.querySelectorAll('[data-ui-action="set-project-view"]').forEach(button => {
+                const isActive = button.dataset.projectView === projectViewMode;
+                button.classList.toggle('is-active', isActive);
+                button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+            });
             container.innerHTML = visibleProjects.length > 0
-                ? visibleProjects.map(projectCardHtml).join('')
+                ? visibleProjects.map(projectViewMode === 'list' ? projectListRowHtml : projectCardHtml).join('')
                 : richEmptyStateHtml(
                     showArchived ? 'archive' : 'folder-plus',
                     showArchived ? 'Nessun progetto archiviato' : 'Nessun progetto attivo',
@@ -1105,11 +1160,198 @@
                 </div>`;
         }
 
+        function renderProjectAnalyticsPanel(data) {
+            const projectId = escapeAttr(data.project.id);
+            return `
+                <div class="project-analytics-shell admin-only mb-4">
+                    <button type="button" class="project-analytics-toggle" data-ui-action="toggle-project-analytics" data-project-id="${projectId}" aria-expanded="false" aria-controls="project-analytics-content">
+                        <span class="project-analytics-icon"><i data-lucide="chart-no-axes-combined"></i></span>
+                        <span class="project-analytics-heading">
+                            <strong>Grafici commessa</strong>
+                            <small>${formatTime(data.totalHours)} registrate · ${formatMoney(data.totalSpent, 0)} rilevati</small>
+                        </span>
+                        <span class="project-analytics-action">
+                            <span id="project-analytics-toggle-label">Apri grafici</span>
+                            <i data-lucide="chevron-down"></i>
+                        </span>
+                    </button>
+                    <div id="project-analytics-content" class="project-analytics-content force-hide">
+                        <div class="project-analytics-chart-panel">
+                            <div class="project-analytics-chart-heading">
+                                <h3>Costi per settimana</h3>
+                                <p>Ore valorizzate e spese extra nelle ultime 8 settimane.</p>
+                            </div>
+                            <div class="project-analytics-chart-wrap"><canvas id="project-chart-costs"></canvas></div>
+                            <div id="project-chart-costs-empty" class="project-analytics-empty force-hide"><i data-lucide="bar-chart-3"></i><span>I costi compariranno dopo le prime registrazioni.</span></div>
+                        </div>
+                        <div class="project-analytics-chart-panel">
+                            <div class="project-analytics-chart-heading">
+                                <h3>Ore per attività</h3>
+                                <p>Distribuzione del tempo impiegato nella commessa.</p>
+                            </div>
+                            <div class="project-analytics-chart-wrap"><canvas id="project-chart-tasks"></canvas></div>
+                            <div id="project-chart-tasks-empty" class="project-analytics-empty force-hide"><i data-lucide="timer-reset"></i><span>Registra delle ore per visualizzare le attività.</span></div>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        function destroyProjectAnalyticsCharts() {
+            ['projectCosts', 'projectTasks'].forEach(chartKey => {
+                if (!charts[chartKey]) return;
+                charts[chartKey].destroy();
+                charts[chartKey] = null;
+            });
+        }
+
+        function toggleProjectAnalytics(projectId) {
+            const content = document.getElementById('project-analytics-content');
+            const button = document.querySelector('[data-ui-action="toggle-project-analytics"]');
+            const label = document.getElementById('project-analytics-toggle-label');
+            if (!content || !button) return;
+
+            const shouldOpen = content.classList.contains('force-hide');
+            content.classList.toggle('force-hide', !shouldOpen);
+            button.classList.toggle('is-open', shouldOpen);
+            button.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+            if (label) label.innerText = shouldOpen ? 'Chiudi grafici' : 'Apri grafici';
+
+            if (shouldOpen) setTimeout(() => renderProjectAnalytics(projectId), 30);
+            else destroyProjectAnalyticsCharts();
+        }
+
+        function renderProjectAnalytics(projectId) {
+            const data = getProjectDetailData(projectId);
+            if (!data || document.getElementById('project-analytics-content')?.classList.contains('force-hide')) return;
+
+            const projectEntries = entries.filter(entry => entry.project_id === projectId);
+            const projectExpenses = expenses.filter(expense => expense.project_id === projectId);
+            const theme = THEMES[currentBusinessType];
+            const gridColor = '#e8edf2';
+            const tickFont = { size: 9, weight: '600' };
+            const tooltip = {
+                backgroundColor: '#0f172a',
+                titleFont: { weight: 'bold', size: 11 },
+                bodyFont: { weight: '600', size: 10 },
+                padding: 9,
+                cornerRadius: 7
+            };
+
+            const currentWeekStart = new Date();
+            currentWeekStart.setHours(0, 0, 0, 0);
+            const currentDay = currentWeekStart.getDay() || 7;
+            currentWeekStart.setDate(currentWeekStart.getDate() - currentDay + 1);
+            const firstWeek = new Date(currentWeekStart);
+            firstWeek.setDate(firstWeek.getDate() - 7 * 7);
+            const weeklyCosts = Array.from({ length: 8 }, (_, index) => {
+                const weekStart = new Date(firstWeek);
+                weekStart.setDate(firstWeek.getDate() + index * 7);
+                const nextWeek = new Date(weekStart);
+                nextWeek.setDate(weekStart.getDate() + 7);
+                const labor = projectEntries
+                    .filter(entry => {
+                        const date = new Date(entry.created_at);
+                        return date >= weekStart && date < nextWeek;
+                    })
+                    .reduce((sum, entry) => sum + Number(entry.rate || 0), 0);
+                const extras = projectExpenses
+                    .filter(expense => {
+                        const date = new Date(expense.created_at);
+                        return date >= weekStart && date < nextWeek;
+                    })
+                    .reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
+                return {
+                    label: index === 7 ? 'Questa' : weekStart.toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit' }),
+                    labor,
+                    extras
+                };
+            });
+            const taskRows = Object.entries(data.taskStats)
+                .filter(([, stat]) => Number(stat.h || 0) > 0)
+                .sort((a, b) => Number(b[1].h || 0) - Number(a[1].h || 0))
+                .slice(0, 6);
+
+            const toggleEmpty = (chartKey, canvasId, emptyId, hasData) => {
+                const canvas = document.getElementById(canvasId);
+                const empty = document.getElementById(emptyId);
+                canvas?.parentElement?.classList.toggle('force-hide', !hasData);
+                empty?.classList.toggle('force-hide', hasData);
+                if (!hasData && charts[chartKey]) {
+                    charts[chartKey].destroy();
+                    charts[chartKey] = null;
+                }
+                return hasData && canvas;
+            };
+
+            const hasCosts = weeklyCosts.some(week => week.labor > 0 || week.extras > 0);
+            if (charts.projectCosts) charts.projectCosts.destroy();
+            if (toggleEmpty('projectCosts', 'project-chart-costs', 'project-chart-costs-empty', hasCosts)) {
+                charts.projectCosts = new Chart(document.getElementById('project-chart-costs'), {
+                    type: 'bar',
+                    data: {
+                        labels: weeklyCosts.map(week => week.label),
+                        datasets: [
+                            { label: 'Lavoro', data: weeklyCosts.map(week => week.labor), backgroundColor: theme.chartMainColor, borderRadius: 3, borderSkipped: false },
+                            { label: 'Spese extra', data: weeklyCosts.map(week => week.extras), backgroundColor: '#f59e0b', borderRadius: 3, borderSkipped: false }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { stacked: true, grid: { display: false }, ticks: { font: tickFont, maxRotation: 0 } },
+                            y: { stacked: true, beginAtZero: true, grid: { color: gridColor }, ticks: { callback: value => formatMoney(value, 0), font: tickFont } }
+                        },
+                        plugins: {
+                            legend: { position: 'bottom', align: 'start', labels: { usePointStyle: true, pointStyle: 'rectRounded', boxWidth: 7, boxHeight: 7, padding: 12, font: tickFont } },
+                            tooltip: { ...tooltip, callbacks: { label: context => `${context.dataset.label}: ${formatMoney(context.raw, 0)}` } }
+                        }
+                    }
+                });
+            }
+
+            const hasTasks = taskRows.length > 0;
+            if (charts.projectTasks) charts.projectTasks.destroy();
+            if (toggleEmpty('projectTasks', 'project-chart-tasks', 'project-chart-tasks-empty', hasTasks)) {
+                charts.projectTasks = new Chart(document.getElementById('project-chart-tasks'), {
+                    type: 'bar',
+                    data: {
+                        labels: taskRows.map(([task]) => task.length > 20 ? `${task.slice(0, 19)}…` : task),
+                        datasets: [{ label: 'Ore', data: taskRows.map(([, stat]) => stat.h), backgroundColor: theme.chartMainColor, borderRadius: 4, barThickness: 11 }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { beginAtZero: true, grid: { color: gridColor }, ticks: { callback: value => `${value}h`, font: tickFont } },
+                            y: { grid: { display: false }, ticks: { font: tickFont } }
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                ...tooltip,
+                                callbacks: {
+                                    title: items => taskRows[items[0].dataIndex][0],
+                                    label: context => {
+                                        const stat = taskRows[context.dataIndex][1];
+                                        return `${formatTime(stat.h)} · ${formatMoney(stat.c, 0)}`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            lucide.createIcons();
+        }
+
         function renderProjectDetail(data) {
             const projectId = escapeAttr(data.project.id);
             return `
             ${renderProjectDetailHeader(data.project)}
             ${renderProjectMetrics(data)}
+            ${renderProjectAnalyticsPanel(data)}
             ${renderProjectRhythmPanel(data)}
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-5 pb-5 lg:pb-0">
                 <div class="space-y-4">
@@ -1122,12 +1364,16 @@
         function showProjectDetail(id) {
             const data = getProjectDetailData(id);
             if (!data) return;
+            destroyProjectAnalyticsCharts();
             document.getElementById('detail-content').innerHTML = renderProjectDetail(data);
             document.getElementById('modal-detail').classList.remove('force-hide');
             lucide.createIcons();
         }
 
-        function closeDetail() { document.getElementById('modal-detail').classList.add('force-hide'); }
+        function closeDetail() {
+            destroyProjectAnalyticsCharts();
+            document.getElementById('modal-detail').classList.add('force-hide');
+        }
 
         async function setTaskStatus(projectId, taskName, status) {
             const project = projects.find(item => item.id === projectId);

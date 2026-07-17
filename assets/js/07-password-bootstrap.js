@@ -141,6 +141,8 @@
                         return openEditTeamMemberModal(trigger.dataset.profileId);
                     case 'show-project-detail':
                         return showProjectDetail(projectId);
+                    case 'set-project-view':
+                        return setProjectViewMode(trigger.dataset.projectView);
                     case 'toggle-project-archive':
                         return toggleArchive(projectId, trigger.dataset.archived === 'true');
                     case 'delete-project':
@@ -199,6 +201,8 @@
                         return switchAppTab(trigger.dataset.tab);
                     case 'toggle-analytics':
                         return toggleAnalyticsPanel();
+                    case 'toggle-project-analytics':
+                        return toggleProjectAnalytics(projectId);
                     case 'generate-pdf-report':
                         return generatePDFReport();
                     default:

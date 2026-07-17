@@ -61,6 +61,7 @@ const ARCH_TIME_CONFIG = window.ARCH_TIME_CONFIG || {};
         let userProfile = null, studioData = null, isSignupMode = false;
         let projects = [], entries = [], profiles = [], expenses = [];
         let showArchived = false, timerRunning = false, startTime, timerInterval;
+        let projectViewMode = localStorage.getItem('archtime_project_view') === 'list' ? 'list' : 'grid';
         let charts = { global: null, tasks: null };
         let activePlan = 'premium'; 
         let showInactiveMembers = false; 
