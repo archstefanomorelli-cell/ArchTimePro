@@ -1271,26 +1271,9 @@
             await appAlert("Fatto", "Spesa aggiornata correttamente.", "success");
         }
 
-        function openAnalyticsDetail() {
-            document.getElementById('modal-analytics-detail')?.classList.remove('force-hide');
-            renderStrategicCharts();
-            lucide.createIcons();
-        }
-
-        function closeAnalyticsDetail() {
-            document.getElementById('modal-analytics-detail')?.classList.add('force-hide');
-            ['marginTrend', 'risk', 'tasks'].forEach(chartKey => {
-                if (charts[chartKey]) {
-                    charts[chartKey].destroy();
-                    charts[chartKey] = null;
-                }
-            });
-        }
-        
         function renderStrategicCharts() {
             if(!document.body.classList.contains('is-admin')) return;
             const activeProjects = projects.filter(p => !p.is_archived);
-            let totalBudget = 0, totalSpent = 0, projectSpend = {};
             const activeProjectIds = new Set(activeProjects.map(project => project.id));
             const projectRows = activeProjects.map(project => {
                 const hoursCost = entries.filter(entry => entry.project_id === project.id).reduce((sum, entry) => sum + Number(entry.rate || 0), 0);
@@ -1299,80 +1282,96 @@
                 const budget = Number(project.budget || 0);
                 const margin = budget - spent;
                 const percent = budget > 0 ? (spent / budget) * 100 : (spent > 0 ? 100 : 0);
-                return { project, budget, spent, margin, percent };
+                const costSummary = getProjectCostSummary(project);
+                const visualStatus = getProjectVisualStatus(project, costSummary);
+                const analyticsStatus = budget <= 0 && spent > 0
+                    ? { ...visualStatus, tone: 'warning', label: 'Budget da impostare' }
+                    : visualStatus;
+                return { project, budget, spent, margin, percent, hoursCost, expenseCost, visualStatus: analyticsStatus };
             });
-            
-            projectRows.forEach(row => { 
-                totalBudget += row.budget; 
-                totalSpent += row.spent; 
-                projectSpend[row.project.name] = row.spent; 
-            });
-            
-            const archivedBudget = projects.filter(p => p.is_archived).reduce((s,p) => s + p.budget, 0); 
-            const archivedHrs = entries.filter(e => projects.find(p => p.id === e.project_id && p.is_archived)).reduce((s,e) => s + Number(e.rate), 0); 
-            const archivedExp = expenses.filter(ex => projects.find(p => p.id === ex.project_id && p.is_archived)).reduce((s,ex) => s + Number(ex.amount), 0);
-            
-            const profit = archivedBudget - (archivedHrs + archivedExp); 
+
+            const totalBudget = projectRows.reduce((sum, row) => sum + row.budget, 0);
+            const totalSpent = projectRows.reduce((sum, row) => sum + row.spent, 0);
+            const activeEntries = entries.filter(entry => activeProjectIds.has(entry.project_id));
+            const activeExpenses = expenses.filter(expense => activeProjectIds.has(expense.project_id));
+            const archivedProjects = projects.filter(project => project.is_archived);
+            const archivedProjectIds = new Set(archivedProjects.map(project => project.id));
+            const archivedBudget = archivedProjects.reduce((sum, project) => sum + Number(project.budget || 0), 0);
+            const archivedCosts = entries
+                .filter(entry => archivedProjectIds.has(entry.project_id))
+                .reduce((sum, entry) => sum + Number(entry.rate || 0), 0)
+                + expenses
+                    .filter(expense => archivedProjectIds.has(expense.project_id))
+                    .reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
+            const profit = archivedBudget - archivedCosts;
             const margin = totalBudget - totalSpent;
+            const utilization = totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0;
+            const overBudgetProjects = projectRows.filter(row => row.budget > 0 && row.margin < 0);
+            const unbudgetedProjects = projectRows.filter(row => row.budget <= 0 && row.spent > 0);
+            const attentionProjects = projectRows.filter(row => row.visualStatus.tone !== 'healthy');
+            const offPaceProjects = attentionProjects.filter(row => row.budget > 0 && row.margin >= 0);
+            const alertCount = attentionProjects.length;
+
             const profitCard = document.getElementById('card-profit'); 
             const profitLabel = document.getElementById('label-profit');
-            const profitAccent = document.getElementById('profit-card-accent');
             const profitValue = document.getElementById('kpi-profit');
-            
-            profitValue.innerText = `€ ${profit.toFixed(2)}`;
-            
-            if (profit < 0) { 
-                profitLabel.innerText = "Perdita archiviati"; 
-                profitCard.classList.remove('from-emerald-50', 'to-emerald-100', 'border-emerald-200');
-                profitCard.classList.add('from-red-50', 'to-red-100', 'border-red-200');
-                profitLabel.classList.remove('text-emerald-700');
-                profitLabel.classList.add('text-red-700');
-                profitValue.classList.remove('text-emerald-700');
-                profitValue.classList.add('text-red-600');
-                profitAccent?.classList.remove('bg-emerald-500');
-                profitAccent?.classList.add('bg-red-500');
-            } else { 
-                profitLabel.innerText = "Utile archiviati"; 
-                profitCard.classList.remove('from-red-50', 'to-red-100', 'border-red-200');
-                profitCard.classList.add('from-emerald-50', 'to-emerald-100', 'border-emerald-200');
-                profitLabel.classList.remove('text-red-700');
-                profitLabel.classList.add('text-emerald-700');
-                profitValue.classList.remove('text-red-600');
-                profitValue.classList.add('text-emerald-700');
-                profitAccent?.classList.remove('bg-red-500');
-                profitAccent?.classList.add('bg-emerald-500');
-            }
-            
+
+            profitValue.innerText = formatMoney(profit);
+            profitLabel.innerText = profit < 0 ? 'Perdita lavori chiusi' : 'Utile lavori chiusi';
+            profitValue.classList.toggle('text-red-600', profit < 0);
+            profitValue.classList.toggle('text-emerald-700', profit >= 0);
+            profitCard?.classList.toggle('analytics-kpi-danger', profit < 0);
+
             const marginEl = document.getElementById('kpi-margin'); 
-            marginEl.innerText = `€ ${margin.toFixed(2)}`;
-            if (margin < 0) marginEl.classList.replace('text-primary-600', 'text-red-500'); 
-            else marginEl.classList.replace('text-red-500', 'text-primary-600');
-            
-            let topBurner = "-", maxSpent = 0; 
-            for(let name in projectSpend) {
-                if(projectSpend[name] > maxSpent) { maxSpent = projectSpend[name]; topBurner = name; } 
-            }
-            document.getElementById('kpi-burner').innerText = topBurner;
-            
+            marginEl.innerText = formatMoney(margin);
+            marginEl.classList.toggle('text-red-600', margin < 0);
+            marginEl.classList.toggle('text-primary-600', margin >= 0);
+            document.getElementById('kpi-margin-note').innerText = activeProjects.length === 1
+                ? 'Su 1 lavoro attivo'
+                : `Su ${activeProjects.length} lavori attivi`;
+            document.getElementById('kpi-utilization').innerText = `${Math.round(utilization)}%`;
+            document.getElementById('kpi-utilization-note').innerText = `${formatMoney(totalSpent, 0)} su ${formatMoney(totalBudget, 0)}`;
+            document.getElementById('kpi-alert-count').innerText = String(alertCount);
+            document.getElementById('kpi-alert-note').innerText = overBudgetProjects.length > 0
+                ? `${overBudgetProjects.length} fuori budget${offPaceProjects.length > 0 ? ` · ${offPaceProjects.length} fuori ritmo` : ''}`
+                : (unbudgetedProjects.length > 0
+                    ? `${unbudgetedProjects.length} senza budget${offPaceProjects.length > 0 ? ` · ${offPaceProjects.length} sotto attese` : ''}`
+                    : (offPaceProjects.length > 0 ? `${offPaceProjects.length} sotto il margine atteso` : 'Nessuna criticità'));
+            document.getElementById('analytics-data-summary').innerText = activeProjects.length === 1
+                ? '1 lavoro attivo'
+                : `${activeProjects.length} lavori attivi`;
+
+            const utilizationEl = document.getElementById('kpi-utilization');
+            utilizationEl.classList.toggle('text-red-600', utilization > 100);
+            utilizationEl.classList.toggle('text-amber-700', utilization >= 75 && utilization <= 100);
+            utilizationEl.classList.toggle('text-slate-800', utilization < 75);
+            const alertEl = document.getElementById('kpi-alert-count');
+            alertEl.classList.toggle('text-red-600', overBudgetProjects.length > 0);
+            alertEl.classList.toggle('text-amber-700', overBudgetProjects.length === 0 && (offPaceProjects.length > 0 || unbudgetedProjects.length > 0));
+            alertEl.classList.toggle('text-emerald-700', alertCount === 0);
+            alertEl.classList.remove('text-slate-800');
+
             const theme = THEMES[currentBusinessType];
             Chart.defaults.font.family = "'Inter', sans-serif";
             Chart.defaults.color = '#64748b';
             const chartTooltip = {
                 backgroundColor: '#0f172a',
                 titleFont: { weight: 'bold', size: 12 },
-                bodyFont: { weight: 'bold', size: 11 },
+                bodyFont: { weight: '600', size: 11 },
                 padding: 10,
-                cornerRadius: 10,
-                displayColors: false
+                cornerRadius: 7
             };
 
-            const gridColor = '#f1f5f9';
-            const tickFont = { size: 10, weight: 'bold' };
-            const activeEntries = entries.filter(entry => activeProjectIds.has(entry.project_id));
-            const activeExpenses = expenses.filter(expense => activeProjectIds.has(expense.project_id));
-            const overBudgetProjects = projectRows.filter(row => row.margin < 0);
-            const warningProjects = projectRows.filter(row => row.margin >= 0 && row.percent > 75);
-            const sortedRiskRows = [...projectRows].sort((a, b) => b.percent - a.percent).slice(0, 6);
+            const gridColor = '#e8edf2';
+            const tickFont = { size: 10, weight: '600' };
+            const sortedRiskRows = [...projectRows]
+                .sort((a, b) => {
+                    const tones = { danger: 2, warning: 1, healthy: 0 };
+                    const aGap = Number(a.visualStatus.rhythm?.gap || a.percent);
+                    const bGap = Number(b.visualStatus.rhythm?.gap || b.percent);
+                    return tones[b.visualStatus.tone] - tones[a.visualStatus.tone] || bGap - aGap || b.spent - a.spent;
+                })
+                .slice(0, 6);
 
             const taskStats = {}; 
             let totalTaskHours = 0;
@@ -1386,57 +1385,35 @@
             });
             const topTasks = Object.entries(taskStats).sort((a,b) => b[1].hours - a[1].hours).slice(0, 6);
 
-            const topTask = topTasks[0];
-            const worstProject = sortedRiskRows[0];
-            const insightItems = [
-                {
-                    icon: overBudgetProjects.length > 0 ? 'octagon-alert' : 'check-circle-2',
-                    label: 'Fuori budget',
-                    value: `${overBudgetProjects.length}`,
-                    text: overBudgetProjects.length > 0 ? 'Progetti con margine negativo' : 'Nessun progetto oltre budget',
-                    tone: overBudgetProjects.length > 0 ? 'red' : 'emerald'
-                },
-                {
-                    icon: warningProjects.length > 0 ? 'circle-alert' : 'shield-check',
-                    label: 'Da monitorare',
-                    value: `${warningProjects.length}`,
-                    text: 'Oltre il 75% del budget',
-                    tone: warningProjects.length > 0 ? 'amber' : 'slate'
-                },
-                {
-                    icon: 'timer',
-                    label: 'Assorbimento',
-                    value: topTask ? topTask[0] : '-',
-                    text: topTask ? `${formatTime(topTask[1].hours)} registrate` : 'Nessuna ora sui lavori attivi',
-                    tone: 'primary'
-                }
-            ];
-
-            const toneClasses = {
-                red: 'bg-red-50 border-red-200 text-red-700',
-                amber: 'bg-amber-50 border-amber-200 text-amber-700',
-                emerald: 'bg-emerald-50 border-emerald-200 text-emerald-700',
-                primary: 'bg-primary-50 border-primary-200 text-primary-700',
-                slate: 'bg-slate-50 border-slate-200 text-slate-600'
-            };
-
-            const insights = document.getElementById('analytics-insights');
-            if (insights) {
-                insights.innerHTML = insightItems.map(item => `
-                    <div class="border rounded-xl px-3 py-2 ${toneClasses[item.tone]}">
-                        <div class="flex items-center gap-2">
-                            <i data-lucide="${item.icon}" class="w-3.5 h-3.5 shrink-0"></i>
-                            <span class="text-[9px] font-black uppercase tracking-wider whitespace-nowrap">${escapeHtml(item.label)}</span>
-                            <span class="text-sm font-black tracking-tight ml-auto truncate">${escapeHtml(item.value)}</span>
-                        </div>
-                        <p class="text-[9px] font-bold uppercase tracking-wider opacity-75 mt-1 truncate">${escapeHtml(item.text)}</p>
-                    </div>
-                `).join('');
+            const priorityList = document.getElementById('analytics-priority-list');
+            if (priorityList) {
+                priorityList.innerHTML = sortedRiskRows.length > 0
+                    ? sortedRiskRows.map(row => {
+                        const tone = row.visualStatus.tone;
+                        const state = row.visualStatus.label;
+                        const progressText = row.visualStatus.rhythm
+                            ? `costi ${Math.round(row.percent)}% · avanzamento ${Math.round(row.visualStatus.rhythm.operationalPercent)}%`
+                            : `${Math.round(row.percent)}% assorbito`;
+                        return `
+                            <button type="button" class="analytics-priority-row" data-ui-action="show-project-detail" data-project-id="${escapeAttr(row.project.id)}">
+                                <span class="analytics-priority-dot is-${tone}" aria-hidden="true"></span>
+                                <span class="analytics-priority-main">
+                                    <strong>${escapeHtml(row.project.name)}</strong>
+                                    <small>${escapeHtml(state)} · ${escapeHtml(progressText)}</small>
+                                </span>
+                                <span class="analytics-priority-value ${tone === 'danger' ? 'is-danger' : ''}">${formatMoney(row.margin, 0)}</span>
+                                <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                            </button>`;
+                    }).join('')
+                    : `<div class="analytics-priority-empty"><i data-lucide="folder-kanban"></i><span>Le priorità compariranno quando creerai il primo lavoro.</span></div>`;
             }
 
             const weekStarts = [];
-            const start = new Date();
-            start.setHours(0, 0, 0, 0);
+            const currentWeekStart = new Date();
+            currentWeekStart.setHours(0, 0, 0, 0);
+            const currentDay = currentWeekStart.getDay() || 7;
+            currentWeekStart.setDate(currentWeekStart.getDate() - currentDay + 1);
+            const start = new Date(currentWeekStart);
             start.setDate(start.getDate() - 7 * 7);
             for (let i = 0; i < 8; i++) {
                 const week = new Date(start);
@@ -1444,104 +1421,101 @@
                 weekStarts.push(week);
             }
 
-            const marginTrend = weekStarts.map((weekStart, index) => {
+            const weeklyCosts = weekStarts.map((weekStart, index) => {
                 const nextWeek = new Date(weekStart);
                 nextWeek.setDate(weekStart.getDate() + 7);
-                const cumulativeEntryCost = activeEntries
-                    .filter(entry => new Date(entry.created_at) < nextWeek)
+                const labor = activeEntries
+                    .filter(entry => {
+                        const date = new Date(entry.created_at);
+                        return date >= weekStart && date < nextWeek;
+                    })
                     .reduce((sum, entry) => sum + Number(entry.rate || 0), 0);
-                const cumulativeExpenseCost = activeExpenses
-                    .filter(expense => new Date(expense.created_at) < nextWeek)
+                const extras = activeExpenses
+                    .filter(expense => {
+                        const date = new Date(expense.created_at);
+                        return date >= weekStart && date < nextWeek;
+                    })
                     .reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
                 return {
-                    label: index === weekStarts.length - 1 ? 'Ora' : weekStart.toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit' }),
-                    margin: totalBudget - cumulativeEntryCost - cumulativeExpenseCost
+                    label: index === weekStarts.length - 1 ? 'Questa settimana' : weekStart.toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit' }),
+                    labor,
+                    extras,
+                    total: labor + extras
                 };
             });
 
-            const trendDelta = marginTrend.length > 1 ? marginTrend[marginTrend.length - 1].margin - marginTrend[marginTrend.length - 2].margin : 0;
-            const trendText = Math.abs(trendDelta) < 0.01
-                ? 'Margine invariato'
-                : (trendDelta < 0 ? `- ${formatMoney(Math.abs(trendDelta), 0)} margine` : `+ ${formatMoney(trendDelta, 0)} margine`);
-            const trendClass = trendDelta < 0
-                ? 'text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-lg border bg-red-50 text-red-700 border-red-200'
-                : 'text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-lg border bg-emerald-50 text-emerald-700 border-emerald-200';
-            ['analytics-trend-label', 'analytics-modal-trend-label'].forEach(id => {
-                const el = document.getElementById(id);
-                if (!el) return;
-                el.innerText = trendText;
-                el.className = trendClass;
-            });
+            const currentWeekCost = weeklyCosts[weeklyCosts.length - 1]?.total || 0;
+            const trendLabel = document.getElementById('analytics-trend-label');
+            trendLabel.innerText = currentWeekCost > 0 ? `Settimana ${formatMoney(currentWeekCost, 0)}` : 'Settimana senza costi';
+            trendLabel.classList.toggle('is-active', currentWeekCost > 0);
 
-            const analyticsModal = document.getElementById('modal-analytics-detail');
-            if (!analyticsModal || analyticsModal.classList.contains('force-hide')) {
-                lucide.createIcons();
-                return;
-            }
-            
+            const toggleChartEmpty = (chartKey, canvasId, emptyId, hasData) => {
+                const canvas = document.getElementById(canvasId);
+                const empty = document.getElementById(emptyId);
+                canvas?.parentElement?.classList.toggle('force-hide', !hasData);
+                empty?.classList.toggle('force-hide', hasData);
+                if (!hasData && charts[chartKey]) {
+                    charts[chartKey].destroy();
+                    charts[chartKey] = null;
+                }
+                return hasData && canvas;
+            };
+
+            const hasWeeklyCosts = weeklyCosts.some(week => week.total > 0);
+            const hasRiskRows = sortedRiskRows.some(row => row.budget > 0 || row.spent > 0);
+            const hasTasks = topTasks.some(task => task[1].hours > 0);
+
             if(charts.marginTrend) charts.marginTrend.destroy();
-            charts.marginTrend = new Chart(document.getElementById('chart-margin-trend'), { 
-                type: 'line', 
+            if (toggleChartEmpty('marginTrend', 'chart-margin-trend', 'empty-margin-trend', hasWeeklyCosts)) charts.marginTrend = new Chart(document.getElementById('chart-margin-trend'), {
+                type: 'bar',
                 data: { 
-                    labels: marginTrend.map(item => item.label), 
-                    datasets: [{
-                        label: 'Margine residuo',
-                        data: marginTrend.map(item => item.margin),
-                        borderColor: theme.chartMainColor,
-                        backgroundColor: `${theme.chartMainColor}18`,
-                        fill: true,
-                        tension: 0.35,
-                        borderWidth: 3,
-                        pointRadius: 3,
-                        pointHoverRadius: 5,
-                        pointBackgroundColor: '#ffffff',
-                        pointBorderColor: theme.chartMainColor,
-                        pointBorderWidth: 2
-                    }]
+                    labels: weeklyCosts.map(item => item.label),
+                    datasets: [
+                        { label: 'Lavoro', data: weeklyCosts.map(item => item.labor), backgroundColor: theme.chartMainColor, borderRadius: 4, borderSkipped: false },
+                        { label: 'Spese extra', data: weeklyCosts.map(item => item.extras), backgroundColor: '#f59e0b', borderRadius: 4, borderSkipped: false }
+                    ]
                 }, 
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        x: { grid: { display: false }, ticks: { font: tickFont } },
-                        y: { grid: { color: gridColor }, ticks: { callback: value => formatMoney(value, 0), font: { size: 10 } } }
+                        x: { stacked: true, grid: { display: false }, ticks: { font: tickFont, maxRotation: 0, autoSkip: true } },
+                        y: { stacked: true, beginAtZero: true, grid: { color: gridColor }, ticks: { callback: value => formatMoney(value, 0), font: { size: 10 } } }
                     },
                     plugins: {
-                        legend: { display: false },
-                        tooltip: chartTooltip
+                        legend: { position: 'bottom', align: 'start', labels: { usePointStyle: true, pointStyle: 'rectRounded', boxWidth: 7, boxHeight: 7, padding: 16, font: tickFont } },
+                        tooltip: { ...chartTooltip, callbacks: { label: context => `${context.dataset.label}: ${formatMoney(context.raw, 0)}`, footer: items => `Totale: ${formatMoney(weeklyCosts[items[0].dataIndex].total, 0)}` } }
                     }
                 } 
             });
 
             if(charts.risk) charts.risk.destroy();
-            charts.risk = new Chart(document.getElementById('chart-risk'), { 
+            if (toggleChartEmpty('risk', 'chart-risk', 'empty-risk', hasRiskRows)) charts.risk = new Chart(document.getElementById('chart-risk'), {
                 type: 'bar', 
                 data: { 
                     labels: sortedRiskRows.map(row => row.project.name), 
-                    datasets: [{
-                        label: 'Budget consumato',
-                        data: sortedRiskRows.map(row => Math.min(row.percent, 130)),
-                        backgroundColor: sortedRiskRows.map(row => row.margin < 0 ? '#ef4444' : (row.percent > 75 ? '#f59e0b' : theme.chartMainColor)),
-                        borderRadius: 8,
-                        barThickness: 18
-                    }]
+                    datasets: [
+                        { label: 'Budget', data: sortedRiskRows.map(row => row.budget), backgroundColor: '#dbe2ea', borderRadius: 4, barThickness: 9 },
+                        { label: 'Costi', data: sortedRiskRows.map(row => row.spent), backgroundColor: sortedRiskRows.map(row => row.margin < 0 ? '#dc2626' : (row.percent >= 75 ? '#d97706' : theme.chartMainColor)), borderRadius: 4, barThickness: 9 }
+                    ]
                 }, 
                 options: {
                     indexAxis: 'y',
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        x: { min: 0, max: 130, grid: { color: gridColor }, ticks: { callback: value => `${value}%`, font: { size: 10 } } },
+                        x: { beginAtZero: true, grid: { color: gridColor }, ticks: { callback: value => formatMoney(value, 0), font: { size: 10 } } },
                         y: { grid: { display: false }, ticks: { font: tickFont } }
                     },
                     plugins: {
-                        legend: { display: false },
+                        legend: { position: 'bottom', align: 'start', labels: { usePointStyle: true, pointStyle: 'rectRounded', boxWidth: 7, boxHeight: 7, padding: 14, font: tickFont } },
                         tooltip: {
                             ...chartTooltip,
                             callbacks: {
-                                label: context => {
-                                    const row = sortedRiskRows[context.dataIndex];
-                                    return `${Math.round(row.percent)}% consumato - margine ${formatMoney(row.margin, 0)}`;
+                                label: context => `${context.dataset.label}: ${formatMoney(context.raw, 0)}`,
+                                footer: items => {
+                                    const row = sortedRiskRows[items[0].dataIndex];
+                                    return `Margine: ${formatMoney(row.margin, 0)} · ${Math.round(row.percent)}% assorbito`;
                                 }
                             }
                         }
@@ -1550,16 +1524,16 @@
             });
 
             if(charts.tasks) charts.tasks.destroy();
-            charts.tasks = new Chart(document.getElementById('chart-tasks-dist'), { 
+            if (toggleChartEmpty('tasks', 'chart-tasks-dist', 'empty-tasks', hasTasks)) charts.tasks = new Chart(document.getElementById('chart-tasks-dist'), {
                 type: 'bar', 
                 data: { 
-                    labels: topTasks.map(task => task[0]), 
+                    labels: topTasks.map(task => task[0].length > 22 ? `${task[0].slice(0, 21)}…` : task[0]),
                     datasets: [{
                         label: 'Ore registrate',
                         data: topTasks.map(task => task[1].hours),
-                        backgroundColor: topTasks.map((task, index) => theme.chartPalette[index % theme.chartPalette.length]),
-                        borderRadius: 8,
-                        barThickness: 18
+                        backgroundColor: theme.chartMainColor,
+                        borderRadius: 4,
+                        barThickness: 12
                     }]
                 }, 
                 options: { 
@@ -1575,10 +1549,11 @@
                         tooltip: {
                             ...chartTooltip,
                             callbacks: {
+                                title: items => topTasks[items[0].dataIndex][0],
                                 label: context => {
                                     const task = topTasks[context.dataIndex];
                                     const percent = totalTaskHours > 0 ? Math.round((task[1].hours / totalTaskHours) * 100) : 0;
-                                    return `${formatTime(task[1].hours)} - ${percent}% del tempo attivo`;
+                                    return `${formatTime(task[1].hours)} · ${percent}% del tempo · ${formatMoney(task[1].cost, 0)}`;
                                 }
                             }
                         }

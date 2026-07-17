@@ -676,61 +676,306 @@ html.theme-pro [id^="card-"] {
     min-height: auto;
 }
 
-html.theme-pro [data-tab="analyze"] .grid > div,
-html.theme-pro [data-tab="analyze"] .bg-gradient-to-br {
-    padding: 1rem;
+html.theme-pro .analytics-kpi-grid {
+    gap: 0.625rem;
 }
 
-html.theme-pro [data-tab="analyze"] .bg-gradient-to-br {
-    overflow: hidden;
+html.theme-pro .analytics-kpi {
+    min-width: 0;
+    min-height: 5.65rem;
+    padding: 0.8rem 0.85rem;
+    border-radius: 9px;
+    position: relative;
 }
 
-html.theme-pro [data-tab="analyze"] .bg-gradient-to-br > .absolute.inset-0 {
-    display: none;
-}
-
-html.theme-pro [data-tab="analyze"] .bg-gradient-to-br::after {
+html.theme-pro .analytics-kpi::before {
     content: "";
     position: absolute;
-    right: 1rem;
-    top: 1rem;
-    width: 0.5rem;
-    height: 0.5rem;
+    left: 0;
+    top: 0.75rem;
+    bottom: 0.75rem;
+    width: 2px;
+    border-radius: 0 3px 3px 0;
+    background: #cbd5e1;
+}
+
+html.theme-pro .analytics-kpi:first-child::before {
+    background: #334155;
+}
+
+html.theme-pro .analytics-kpi-danger::before {
+    background: var(--pro-danger);
+}
+
+html.theme-pro .analytics-kpi h3,
+html.theme-pro .analytics-panel-heading h3 {
+    margin: 0;
+    color: #475569;
+    font-size: 0.625rem;
+    line-height: 1.2;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+html.theme-pro .analytics-kpi-value {
+    margin-top: 0.35rem;
+    overflow: hidden;
+    font-size: 1.2rem;
+    line-height: 1.1;
+    font-weight: 900;
+    letter-spacing: 0;
+    font-variant-numeric: tabular-nums;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+html.theme-pro .analytics-kpi > p {
+    margin-top: 0.35rem;
+    overflow: hidden;
+    color: #94a3b8;
+    font-size: 0.58rem;
+    line-height: 1.2;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+html.theme-pro #kpi-alert-note {
+    overflow: visible;
+    line-height: 1.3;
+    text-overflow: clip;
+    white-space: normal;
+}
+
+html.theme-pro .analytics-workspace {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    background: #ffffff;
+}
+
+html.theme-pro .analytics-chart-panel,
+html.theme-pro .analytics-priority-panel {
+    min-width: 0;
+    padding: 1rem;
+    border-bottom: 1px solid var(--pro-border-soft);
+}
+
+html.theme-pro .analytics-workspace > :last-child {
+    border-bottom: 0;
+}
+
+html.theme-pro .analytics-panel-heading {
+    min-height: 2.6rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+html.theme-pro .analytics-panel-heading p {
+    margin-top: 0.25rem;
+    color: #94a3b8;
+    font-size: 0.66rem;
+    line-height: 1.35;
+    font-weight: 600;
+}
+
+html.theme-pro .analytics-status-chip {
+    flex: 0 0 auto;
+    padding: 0.28rem 0.45rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background: #f8fafc;
+    color: #64748b;
+    font-size: 0.55rem;
+    line-height: 1.2;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+html.theme-pro .analytics-status-chip.is-active {
+    border-color: #cbd5e1;
+    background: #f1f5f9;
+    color: #334155;
+}
+
+html.theme-pro .analytics-chart-wrap {
+    position: relative;
+    width: 100%;
+    height: 13rem;
+}
+
+html.theme-pro .analytics-chart-tall {
+    height: 14rem;
+}
+
+html.theme-pro .analytics-chart-wrap canvas {
+    filter: saturate(0.82);
+}
+
+html.theme-pro .analytics-empty,
+html.theme-pro .analytics-priority-empty {
+    min-height: 10rem;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    color: #94a3b8;
+    font-size: 0.68rem;
+    line-height: 1.4;
+    font-weight: 700;
+    text-align: center;
+}
+
+html.theme-pro .analytics-empty svg,
+html.theme-pro .analytics-priority-empty svg {
+    width: 1.15rem;
+    height: 1.15rem;
+    stroke-width: 1.7;
+}
+
+html.theme-pro .analytics-priority-list {
+    display: flex;
+    flex-direction: column;
+}
+
+html.theme-pro .analytics-priority-row {
+    width: 100%;
+    min-height: 3.25rem;
+    padding: 0.55rem 0;
+    display: grid;
+    grid-template-columns: 0.45rem minmax(0, 1fr) auto 0.9rem;
+    align-items: center;
+    gap: 0.55rem;
+    border-bottom: 1px solid #eef2f6;
+    color: #64748b;
+    text-align: left;
+}
+
+html.theme-pro .analytics-priority-row:last-child {
+    border-bottom: 0;
+}
+
+html.theme-pro .analytics-priority-row:hover strong,
+html.theme-pro .analytics-priority-row:focus-visible strong {
+    color: #0f172a;
+}
+
+html.theme-pro .analytics-priority-row:focus-visible {
+    outline: 2px solid #94a3b8;
+    outline-offset: 2px;
+}
+
+html.theme-pro .analytics-priority-dot {
+    width: 0.42rem;
+    height: 0.42rem;
     border-radius: 999px;
-    background: #94a3b8;
-}
-
-html.theme-pro [data-tab="analyze"] .bg-gradient-to-br.from-primary-50::after {
-    background: #172033;
-}
-
-html.theme-pro [data-tab="analyze"] .bg-gradient-to-br.from-emerald-50::after {
     background: var(--pro-accent);
 }
 
-html.theme-pro [data-tab="analyze"] .bg-gradient-to-br.from-amber-50::after {
-    background: var(--pro-warn);
+html.theme-pro .analytics-priority-dot.is-warning {
+    background: #f59e0b;
 }
 
-html.theme-pro [data-tab="analyze"] h3 {
-    color: #475569 !important;
-    font-size: 0.6875rem;
+html.theme-pro .analytics-priority-dot.is-danger {
+    background: #dc2626;
 }
 
-html.theme-pro [data-tab="analyze"] .text-2xl,
-html.theme-pro [data-tab="analyze"] .text-3xl {
-    font-size: 1.375rem;
-    line-height: 1.1;
+html.theme-pro .analytics-priority-main {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.16rem;
+}
+
+html.theme-pro .analytics-priority-main strong {
+    overflow: hidden;
+    color: #334155;
+    font-size: 0.7rem;
+    line-height: 1.2;
+    font-weight: 850;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+html.theme-pro .analytics-priority-main small {
+    overflow: hidden;
+    color: #94a3b8;
+    font-size: 0.56rem;
+    line-height: 1.2;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+html.theme-pro .analytics-priority-value {
+    color: #334155;
+    font-size: 0.65rem;
+    font-weight: 900;
     font-variant-numeric: tabular-nums;
+    white-space: nowrap;
 }
 
-html.theme-pro #modal-analytics-detail .grid > .bg-white {
-    border-radius: 10px !important;
-    box-shadow: none !important;
+html.theme-pro .analytics-priority-value.is-danger {
+    color: var(--pro-danger);
 }
 
-html.theme-pro #modal-analytics-detail canvas {
-    filter: saturate(0.8);
+@media (min-width: 1280px) {
+    html.theme-pro .analytics-workspace {
+        grid-template-columns: minmax(0, 1.35fr) minmax(15rem, 0.85fr);
+    }
+
+    html.theme-pro .analytics-chart-wide,
+    html.theme-pro .analytics-priority-panel {
+        border-bottom: 1px solid var(--pro-border-soft);
+    }
+
+    html.theme-pro .analytics-chart-wide,
+    html.theme-pro .analytics-chart-panel:nth-last-child(2) {
+        border-right: 1px solid var(--pro-border-soft);
+    }
+
+    html.theme-pro .analytics-workspace > :nth-last-child(-n + 2) {
+        border-bottom: 0;
+    }
+}
+
+@media (max-width: 639px) {
+    html.theme-pro .analytics-kpi {
+        padding: 0.72rem;
+    }
+
+    html.theme-pro .analytics-kpi-value {
+        font-size: 1.05rem;
+    }
+
+    html.theme-pro .analytics-chart-panel,
+    html.theme-pro .analytics-priority-panel {
+        padding: 0.85rem;
+    }
+
+    html.theme-pro .analytics-panel-heading {
+        min-height: 0;
+        margin-bottom: 0.65rem;
+    }
+
+    html.theme-pro .analytics-status-chip {
+        max-width: 8rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    html.theme-pro .analytics-chart-wrap,
+    html.theme-pro .analytics-chart-tall {
+        height: 12rem;
+    }
 }
 
 html.theme-pro #entries-list tr,

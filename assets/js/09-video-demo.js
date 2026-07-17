@@ -148,7 +148,6 @@
             if (scene === 'project-detail') showProjectDetail('demo-villa');
             if (scene === 'team') openVideoDemoTeamEdit();
             if (scene === 'manual-entry') openVideoDemoManualEntry();
-            if (scene === 'analytics') openAnalyticsDetail();
             if (scene === 'onboarding') openOwnerOnboarding();
             if (scene === 'timer-running') {
                 document.getElementById('timer-display').innerText = '00:18:42';

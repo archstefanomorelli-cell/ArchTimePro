@@ -65,7 +65,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="assets/app.css?v=phase3-budget-libero-2026-05-09">
-    <link rel="stylesheet" href="assets/app-pro.css?v=pro-studio-2026-05-17-01">
+    <link rel="stylesheet" href="assets/app-pro.css?v=analytics-workspace-2026-07-17-01">
     <script src="assets/js/12-analytics.js?v=2026-06-14" defer></script>
 </head>
 <body class="text-slate-800 pb-20 lg:pb-0">
@@ -351,51 +351,76 @@
             <div class="lg:col-span-8 flex flex-col gap-6 lg:gap-8">
                 
                 <section class="admin-only mobile-tab" data-tab="analyze">
-                    <div class="pl-1 mb-4">
-                        <h2 class="text-lg lg:text-xl font-black text-slate-800 tracking-tight">Salute finanziaria</h2>
-                        <p class="text-xs text-slate-500 font-medium mt-1">Margini, utile e assorbimenti principali.</p>
+                    <div class="pl-1 mb-4 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
+                        <div>
+                            <h2 class="text-lg lg:text-xl font-black text-slate-800 tracking-tight">Controllo economico</h2>
+                            <p class="text-xs text-slate-500 font-medium mt-1">Dove si sta concentrando il costo e quali commesse richiedono attenzione.</p>
+                        </div>
+                        <span id="analytics-data-summary" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Lavori attivi</span>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                        <div class="bg-gradient-to-br from-primary-50 via-white to-primary-100 border border-primary-200 rounded-2xl p-5 shadow-sm relative overflow-hidden">
-                            <div class="absolute top-0 left-0 right-0 h-1 bg-primary-500"></div>
-                            <div class="absolute inset-0 z-0 pointer-events-none">
-                                <i data-lucide="trending-up" class="absolute -right-4 -bottom-4 w-24 h-24 text-primary-300 opacity-55"></i>
-                            </div>
-                            <div class="relative z-10">
-                                <h3 class="text-[11px] font-bold uppercase text-primary-700 tracking-wider mb-1">Margine lavori attivi</h3>
-                                <div id="kpi-margin" class="text-2xl lg:text-3xl font-black text-primary-600 truncate tracking-tight transition-colors duration-500">€ 0.00</div>
-                                <p class="text-[10px] text-slate-500 font-bold mt-2 uppercase tracking-wider">Progetti in corso</p>
-                            </div>
+                    <div class="analytics-kpi-grid grid grid-cols-2 xl:grid-cols-4 gap-3 mb-4">
+                        <div class="analytics-kpi border border-slate-200 bg-white">
+                            <h3>Margine residuo</h3>
+                            <div id="kpi-margin" class="analytics-kpi-value text-primary-600">€ 0,00</div>
+                            <p id="kpi-margin-note">Sui lavori attivi</p>
                         </div>
-                        <div id="card-profit" class="bg-gradient-to-br from-emerald-50 via-white to-emerald-100 border border-emerald-200 rounded-2xl p-5 shadow-sm relative overflow-hidden transition-all duration-500">
-                            <div id="profit-card-accent" class="absolute top-0 left-0 right-0 h-1 bg-emerald-500"></div>
-                            <div class="absolute inset-0 z-0 pointer-events-none">
-                                <i data-lucide="euro" class="absolute -right-4 -bottom-4 w-24 h-24 text-emerald-300 opacity-55"></i>
-                            </div>
-                            <div class="relative z-10">
-                                <h3 id="label-profit" class="text-[11px] font-bold uppercase text-emerald-700 tracking-wider mb-1 transition-colors duration-500">Utile archiviati</h3>
-                                <div id="kpi-profit" class="text-2xl lg:text-3xl font-black text-emerald-700 truncate tracking-tight">€ 0.00</div>
-                                <p class="text-[10px] text-slate-500 font-bold mt-2 uppercase tracking-wider">Lavori chiusi</p>
-                            </div>
+                        <div class="analytics-kpi border border-slate-200 bg-white">
+                            <h3>Budget assorbito</h3>
+                            <div id="kpi-utilization" class="analytics-kpi-value text-slate-800">0%</div>
+                            <p id="kpi-utilization-note">€ 0,00 su € 0,00</p>
                         </div>
-                        <div id="card-burn" class="bg-gradient-to-br from-amber-50 via-white to-orange-100 border border-amber-200 rounded-2xl p-5 shadow-sm relative overflow-hidden">
-                            <div class="absolute top-0 left-0 right-0 h-1 bg-amber-500"></div>
-                            <div class="absolute inset-0 z-0 pointer-events-none">
-                                <i data-lucide="alert-triangle" class="absolute -right-4 -bottom-4 w-24 h-24 text-amber-300 opacity-55"></i>
-                            </div>
-                            <div class="relative z-10">
-                                <h3 class="text-[11px] font-bold uppercase text-amber-700 tracking-wider mb-1">Progetto più oneroso</h3>
-                                <div id="kpi-burner" class="text-lg font-bold text-slate-800 mt-2 truncate">-</div>
-                                <p class="text-[10px] text-slate-500 font-bold mt-2 uppercase tracking-wider">Costo maggiore tra gli attivi</p>
-                            </div>
+                        <div class="analytics-kpi border border-slate-200 bg-white">
+                            <h3>Da monitorare</h3>
+                            <div id="kpi-alert-count" class="analytics-kpi-value text-slate-800">0</div>
+                            <p id="kpi-alert-note">Nessuna criticità</p>
+                        </div>
+                        <div id="card-profit" class="analytics-kpi border border-slate-200 bg-white">
+                            <h3 id="label-profit">Utile lavori chiusi</h3>
+                            <div id="kpi-profit" class="analytics-kpi-value text-emerald-700">€ 0,00</div>
+                            <p>Consuntivo archiviati</p>
                         </div>
                     </div>
-                    <div class="bg-white border border-slate-200 rounded-2xl px-3.5 py-3 shadow-sm">
-                        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-                            <div id="analytics-insights" class="grid grid-cols-1 sm:grid-cols-3 gap-2 flex-1"></div>
-                            <div class="flex items-center justify-end border-t lg:border-t-0 lg:border-l border-slate-100 pt-3 lg:pt-0 lg:pl-3">
-                                <button id="btn-open-analytics-detail" class="secondary-action compact"><i data-lucide="bar-chart-3" class="w-3.5 h-3.5"></i> Dettaglio</button>
+
+                    <div class="analytics-workspace bg-white border border-slate-200 rounded-2xl overflow-hidden">
+                        <div class="analytics-chart-panel analytics-chart-wide">
+                            <div class="analytics-panel-heading">
+                                <div>
+                                    <h3>Costi registrati per settimana</h3>
+                                    <p>Ore valorizzate e spese extra nelle ultime 8 settimane.</p>
+                                </div>
+                                <span id="analytics-trend-label" class="analytics-status-chip">Ultime 8 settimane</span>
                             </div>
+                            <div class="analytics-chart-wrap analytics-chart-tall"><canvas id="chart-margin-trend"></canvas></div>
+                            <div id="empty-margin-trend" class="analytics-empty force-hide"><i data-lucide="bar-chart-3"></i><span>Registra ore o spese per vedere l'andamento.</span></div>
+                        </div>
+                        <div class="analytics-priority-panel">
+                            <div class="analytics-panel-heading">
+                                <div>
+                                    <h3>Priorità commesse</h3>
+                                    <p>Ordinate per rischio economico.</p>
+                                </div>
+                            </div>
+                            <div id="analytics-priority-list" class="analytics-priority-list"></div>
+                        </div>
+                        <div class="analytics-chart-panel">
+                            <div class="analytics-panel-heading">
+                                <div>
+                                    <h3>Budget e costi</h3>
+                                    <p>Confronto sulle commesse più assorbenti.</p>
+                                </div>
+                            </div>
+                            <div class="analytics-chart-wrap"><canvas id="chart-risk"></canvas></div>
+                            <div id="empty-risk" class="analytics-empty force-hide"><i data-lucide="wallet-cards"></i><span>Crea una commessa con budget per confrontare i costi.</span></div>
+                        </div>
+                        <div class="analytics-chart-panel">
+                            <div class="analytics-panel-heading">
+                                <div>
+                                    <h3>Tempo per attività</h3>
+                                    <p>Dove si concentrano le ore dei lavori attivi.</p>
+                                </div>
+                            </div>
+                            <div class="analytics-chart-wrap"><canvas id="chart-tasks-dist"></canvas></div>
+                            <div id="empty-tasks" class="analytics-empty force-hide"><i data-lucide="timer-reset"></i><span>Le attività compariranno dopo le prime ore registrate.</span></div>
                         </div>
                     </div>
                 </section>
@@ -880,46 +905,15 @@
         </div>
     </div>
 
-    <div id="modal-analytics-detail" class="force-hide fixed inset-0 z-[200] modal flex items-end lg:items-center justify-center lg:p-4">
-        <div class="w-full h-[92vh] lg:h-auto lg:max-w-5xl lg:max-h-[92vh] overflow-y-auto p-6 lg:p-8 shadow-xl border border-slate-200 relative rounded-t-3xl lg:rounded-2xl bg-white">
-            <button id="btn-close-analytics-detail" class="sticky top-0 ml-auto -mr-2 lg:-mr-3 text-slate-400 hover:text-slate-700 bg-white/95 hover:bg-slate-100 backdrop-blur rounded-full p-2 transition-colors z-20 shadow-sm border border-slate-200 flex"><i data-lucide="x" class="w-4 h-4"></i></button>
-            <div class="mb-5 -mt-4 lg:-mt-2 pr-10">
-                <h2 class="text-lg lg:text-xl font-black text-slate-800 tracking-tight flex items-center gap-2"><i data-lucide="bar-chart-3" class="text-primary-500 w-5 h-5"></i> Analisi finanziaria</h2>
-                <p class="text-xs text-slate-500 font-medium mt-1">Trend, progetti a rischio e attività che assorbono più tempo.</p>
-            </div>
-            <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
-                <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm xl:col-span-2">
-                    <div class="flex flex-wrap items-start justify-between gap-3 mb-3">
-                        <div>
-                            <h3 class="text-[11px] font-bold uppercase text-slate-500 tracking-wider">Andamento margine</h3>
-                            <p class="text-[11px] text-slate-400 font-medium mt-1">Margine residuo cumulato nelle ultime settimane.</p>
-                        </div>
-                        <span id="analytics-modal-trend-label" class="text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-lg border bg-slate-50 text-slate-500 border-slate-200">Trend</span>
-                    </div>
-                    <div class="relative w-full h-56 lg:h-72"><canvas id="chart-margin-trend"></canvas></div>
-                </div>
-                <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-                    <h3 class="text-[11px] font-bold uppercase text-slate-500 tracking-wider mb-1">Progetti a rischio</h3>
-                    <p class="text-[11px] text-slate-400 font-medium mb-3">Budget consumato sui lavori attivi.</p>
-                    <div class="relative w-full h-56 lg:h-64"><canvas id="chart-risk"></canvas></div>
-                </div>
-                <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-                    <h3 class="text-[11px] font-bold uppercase text-slate-500 tracking-wider mb-1">Attività assorbenti</h3>
-                    <p class="text-[11px] text-slate-400 font-medium mb-3">Attività con più ore operative.</p>
-                    <div class="relative w-full h-56 lg:h-64"><canvas id="chart-tasks-dist"></canvas></div>
-                </div>
-            </div>
-        </div>
-    </div>
     <script src="assets/js/00-runtime-config.js?v=stripe-founder-2026-06-29"></script>
     <script src="assets/js/01-core.js?v=stripe-founder-2026-06-29"></script>
     <script src="assets/js/02-auth-account.js?v=calculator-handoff-2026-07-12"></script>
     <script src="assets/js/03-team.js?v=phase3-team-modals-2026-05-12"></script>
-    <script src="assets/js/04-projects.js?v=calculator-handoff-2026-07-12"></script>
+    <script src="assets/js/04-projects.js?v=analytics-workspace-2026-07-17-01"></script>
     <script src="assets/js/05-time-entries.js?v=timer-reminder-2026-07-06"></script>
     <script src="assets/js/06-reports.js?v=phase3-final-ui-2026-05-02"></script>
-    <script src="assets/js/07-password-bootstrap.js?v=calculator-handoff-2026-07-12"></script>
-    <script src="assets/js/09-video-demo.js?v=video-demo-real-ui-2026-05-09"></script>
+    <script src="assets/js/07-password-bootstrap.js?v=analytics-workspace-2026-07-17-01"></script>
+    <script src="assets/js/09-video-demo.js?v=analytics-workspace-2026-07-17-01"></script>
 </body>
 </html>
 
