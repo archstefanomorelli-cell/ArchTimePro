@@ -1584,8 +1584,14 @@
             const profit = archivedBudget - archivedCosts;
             const margin = totalBudget - totalSpent;
             const utilization = totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0;
+            const alignedProjects = projectRows.filter(row => row.budget > 0 && row.visualStatus.tone === 'healthy');
+            const attentionProjects = projectRows.filter(row => (
+                row.budget > 0
+                && row.margin >= 0
+                && row.visualStatus.tone !== 'healthy'
+            ));
             const overBudgetProjects = projectRows.filter(row => row.budget > 0 && row.margin < 0);
-            const attentionProjects = projectRows.filter(row => row.visualStatus.tone !== 'healthy');
+            const criticalAttentionProjects = attentionProjects.filter(row => row.visualStatus.tone === 'danger');
             const alertCount = attentionProjects.length;
             const taskStats = {};
             let totalTaskHours = 0;
@@ -1628,10 +1634,9 @@
                 : `Su ${activeProjects.length} lavori attivi`;
             document.getElementById('kpi-utilization').innerText = `${Math.round(utilization)}%`;
             document.getElementById('kpi-utilization-note').innerText = `${formatMoney(totalSpent, 0)} su ${formatMoney(totalBudget, 0)}`;
-            document.getElementById('analytics-data-summary').innerText = activeProjects.length === 1
-                ? '1 lavoro attivo'
-                : `${activeProjects.length} lavori attivi`;
+            document.getElementById('analytics-inline-aligned').innerText = String(alignedProjects.length);
             document.getElementById('analytics-inline-alerts').innerText = String(alertCount);
+            document.getElementById('analytics-inline-over-budget').innerText = String(overBudgetProjects.length);
             document.getElementById('analytics-inline-week-cost').innerText = formatMoney(summaryWeekCost, 0);
             const topTaskSummary = document.getElementById('analytics-inline-top-task');
             topTaskSummary.innerText = topTasks[0]?.[0] || '-';
@@ -1643,8 +1648,9 @@
             utilizationEl.classList.toggle('text-slate-800', utilization < 75);
 
             const inlineAlerts = document.getElementById('analytics-inline-alerts');
-            inlineAlerts.classList.toggle('is-danger', overBudgetProjects.length > 0);
-            inlineAlerts.classList.toggle('is-warning', overBudgetProjects.length === 0 && alertCount > 0);
+            inlineAlerts.classList.toggle('is-danger', criticalAttentionProjects.length > 0);
+            inlineAlerts.classList.toggle('is-warning', criticalAttentionProjects.length === 0 && alertCount > 0);
+            document.getElementById('analytics-inline-over-budget')?.classList.toggle('is-danger', overBudgetProjects.length > 0);
             const analyticsDetails = document.getElementById('analytics-details');
             if (!analyticsDetails || analyticsDetails.classList.contains('force-hide')) {
                 ['marginTrend', 'risk', 'tasks'].forEach(chartKey => {
