@@ -1,26 +1,123 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#172033"><meta name="robots" content="index, follow">
-    <meta name="description" content="Come rendicontare una commessa con timesheet, ore, attivitÃ  e spese: dal preventivo al consuntivo per studi tecnici e professionali.">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#172033">
+    <meta name="robots" content="index, follow">
+    <meta name="description" content="Software per rendicontazione commesse e timesheet negli studi tecnici: raccogli ore, attivit&agrave;, spese e costi e genera consuntivi verificabili.">
     <link rel="canonical" href="https://www.archtimepro.it/rendicontazione-commesse-timesheet.html">
-    <title>Rendicontazione commesse e timesheet per studi tecnici | Arch Time Pro</title>
-    <script src="https://cdn.tailwindcss.com"></script><script src="https://unpkg.com/lucide@latest"></script>
-    <style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');body{font-family:'Inter',sans-serif;color:#0f172a;-webkit-font-smoothing:antialiased}.bg-grid{background-image:radial-gradient(#e2e8f0 1px,transparent 1px);background-size:30px 30px}</style>
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Rendicontazione commesse e timesheet per studi tecnici","description":"Metodo per raccogliere ore, attivitÃ  e spese e produrre un consuntivo attendibile.","author":{"@type":"Organization","name":"Arch Time Pro"},"dateModified":"2026-06-28","mainEntityOfPage":"https://www.archtimepro.it/rendicontazione-commesse-timesheet.html"}</script>
-    <script src="assets/js/12-analytics.js?v=2026-06-14" defer></script>
-    <link rel="stylesheet" href="assets/public-site.css?v=2026-07-16-4">
-    <script src="assets/js/14-public-shell.js?v=2026-07-16" defer></script>
+    <meta property="og:title" content="Software rendicontazione commesse e timesheet | Arch Time Pro">
+    <meta property="og:description" content="Dalla registrazione quotidiana al consuntivo: un metodo per ricostruire il costo reale delle commesse.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://www.archtimepro.it/rendicontazione-commesse-timesheet.html">
+    <title>Software rendicontazione commesse e timesheet | Arch Time Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script type="application/ld+json">
+    {
+      "@context":"https://schema.org",
+      "@type":"Article",
+      "headline":"Software per rendicontazione commesse e timesheet negli studi tecnici",
+      "description":"Metodo per raccogliere ore, attivita, spese e costi e produrre un consuntivo attendibile.",
+      "author":{"@type":"Person","name":"Stefano Morelli","jobTitle":"Architetto e sviluppatore di Arch Time Pro"},
+      "publisher":{"@type":"Organization","name":"Arch Time Pro"},
+      "dateModified":"2026-07-17",
+      "mainEntityOfPage":"https://www.archtimepro.it/rendicontazione-commesse-timesheet.html"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context":"https://schema.org",
+      "@type":"FAQPage",
+      "mainEntity":[
+        {"@type":"Question","name":"Cosa deve contenere un report di commessa?","acceptedAnswer":{"@type":"Answer","text":"Ore per persona e fase, attivita svolte, spese, costi e confronto con il budget previsto."}},
+        {"@type":"Question","name":"Quando vanno registrate le ore?","acceptedAnswer":{"@type":"Answer","text":"Il prima possibile, idealmente durante o subito dopo il lavoro, per ridurre dimenticanze e stime a posteriori."}},
+        {"@type":"Question","name":"Un timesheet misura il margine?","acceptedAnswer":{"@type":"Answer","text":"Solo se le ore vengono valorizzate come costo e collegate a compenso, spese e budget della commessa."}}
+      ]
+    }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        body { font-family: 'Inter', sans-serif; color: #0f172a; -webkit-font-smoothing: antialiased; }
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+    </style>
+    <script src="assets/js/12-analytics.js?v=2026-07-17-1" defer></script>
+    <link rel="stylesheet" href="assets/public-site.css?v=2026-07-17-5">
+    <script src="assets/js/14-public-shell.js?v=2026-07-17-2" defer></script>
 </head>
 <body class="bg-white selection:bg-indigo-100 selection:text-indigo-900">
-    <header class="fixed top-0 w-full bg-white/80 backdrop-blur-xl border-b border-slate-100 z-50"><div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center"><a href="index.html"><span class="text-xl font-black tracking-tighter uppercase">Arch <span class="text-indigo-600">Time</span> Pro</span></a><div class="flex items-center gap-8"><nav class="hidden md:flex gap-8"><a href="index.html#perche" class="text-sm font-bold text-slate-500">PerchÃ©</a><a href="guida.html" class="text-sm font-bold text-slate-500">Metodo</a><a href="index.html#prezzi" class="text-sm font-bold text-slate-500">Prezzi</a></nav><a href="app.html" class="bg-slate-900 text-white text-xs font-black uppercase tracking-widest px-6 py-3 rounded-lg hover:bg-indigo-600">Prova gratis</a></div></div></header>
+    <header class="fixed top-0 z-50 w-full border-b border-slate-100 bg-white/90 backdrop-blur-xl"><div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-6"><a href="index.html"><span class="text-xl font-black uppercase">Arch <span class="text-indigo-600">Time</span> Pro</span></a><div class="flex items-center gap-5"><nav class="hidden gap-7 lg:flex"><a href="index.html#perche" class="text-sm font-bold text-slate-500">Perch&eacute;</a><a href="metodo.html" class="text-sm font-bold text-slate-500">Metodo</a><a href="index.html#prezzi" class="text-sm font-bold text-slate-500">Prezzi</a></nav><a href="app.html" class="rounded-lg bg-slate-900 px-4 py-2.5 text-xs font-black uppercase text-white">Prova gratis</a></div></div></header>
+
     <main>
-        <section class="pt-28 pb-10 lg:pt-36 lg:pb-12 bg-grid border-b border-slate-100"><div class="max-w-5xl mx-auto px-6 text-center"><p class="text-[11px] font-black text-indigo-600 uppercase tracking-[0.2em] mb-4">Dal lavoro al consuntivo</p><h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight mb-6">Rendicontazione delle commesse: ore, attivitÃ  e spese in un unico consuntivo.</h1><p class="text-lg lg:text-xl text-slate-500 font-medium leading-relaxed max-w-3xl mx-auto">Un timesheet attendibile non Ã¨ un elenco compilato a fine mese. Ãˆ una registrazione semplice e continua che permette di ricostruire il costo reale del lavoro.</p></div></section>
-        <section class="py-10 lg:py-12"><div class="max-w-6xl mx-auto px-6"><div class="max-w-3xl mb-8"><p class="text-[11px] font-black text-indigo-600 uppercase tracking-[0.2em] mb-3">Metodo essenziale</p><h2 class="text-3xl lg:text-4xl font-black tracking-tight mb-4">Raccogliere pochi dati, ma raccoglierli bene.</h2><p class="text-slate-500 text-lg">Quando ore, note e spese sono sparse tra fogli, messaggi e memoria personale, il consuntivo non misura davvero la commessa. Ogni registrazione dovrebbe rispondere a quattro domande.</p></div><div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4"><article class="border border-slate-200 rounded-lg p-6"><i data-lucide="user-round" class="w-6 h-6 text-indigo-600 mb-3"></i><h3 class="font-black text-lg mb-2">Chi?</h3><p class="text-sm text-slate-500">La persona che ha svolto il lavoro e il relativo costo interno.</p></article><article class="border border-slate-200 rounded-lg p-6"><i data-lucide="calendar-days" class="w-6 h-6 text-emerald-600 mb-3"></i><h3 class="font-black text-lg mb-2">Quando?</h3><p class="text-sm text-slate-500">La data effettiva, registrata senza aspettare la fine del mese.</p></article><article class="border border-slate-200 rounded-lg p-6"><i data-lucide="layers-3" class="w-6 h-6 text-amber-600 mb-3"></i><h3 class="font-black text-lg mb-2">Dove?</h3><p class="text-sm text-slate-500">La commessa e la fase progettuale a cui attribuire il costo.</p></article><article class="border border-slate-200 rounded-lg p-6"><i data-lucide="notebook-pen" class="w-6 h-6 text-rose-600 mb-3"></i><h3 class="font-black text-lg mb-2">Per cosa?</h3><p class="text-sm text-slate-500">Un'attivitÃ  sintetica, utile a spiegare il tempo impiegato.</p></article></div></div></section>
-        <section class="py-10 lg:py-12 bg-slate-50 border-y border-slate-100"><div class="max-w-6xl mx-auto px-6 grid lg:grid-cols-2 gap-10"><div><h2 class="text-3xl lg:text-4xl font-black tracking-tight mb-4">Cosa deve contenere il report di commessa.</h2><p class="text-slate-500 leading-relaxed mb-5">Il report deve essere utile sia alla direzione sia nel confronto con cliente e consulenti. Deve poter mostrare il dettaglio senza esporre informazioni economiche riservate.</p><a href="ore-budget-commessa.html" class="font-bold text-indigo-600">Approfondisci il controllo di ore e budget &rarr;</a></div><div class="bg-white border border-slate-200 rounded-lg p-6 space-y-4"><div class="flex gap-3"><i data-lucide="check" class="w-5 h-5 text-emerald-600 shrink-0"></i><p>Ore per persona, attivitÃ , fase e periodo.</p></div><div class="flex gap-3"><i data-lucide="check" class="w-5 h-5 text-emerald-600 shrink-0"></i><p>Spese, consulenze e costi esterni attribuiti alla commessa.</p></div><div class="flex gap-3"><i data-lucide="check" class="w-5 h-5 text-emerald-600 shrink-0"></i><p>Confronto tra preventivo, costo maturato e residuo.</p></div><div class="flex gap-3"><i data-lucide="check" class="w-5 h-5 text-emerald-600 shrink-0"></i><p>Esportazione PDF per SAL, extra e verifiche interne.</p></div></div></div></section>
-        <section class="py-10 lg:py-12 bg-slate-950 text-white"><div class="max-w-5xl mx-auto px-6"><h2 class="text-3xl lg:text-4xl font-black tracking-tight mb-4">Il dato perfetto inserito tardi vale meno di un dato semplice inserito subito.</h2><p class="text-slate-300 text-lg leading-relaxed">Per rendere sostenibile il metodo, la registrazione deve richiedere pochi secondi anche da smartphone. La direzione puÃ² cosÃ¬ leggere costi e margini, mentre i collaboratori vedono soltanto le informazioni necessarie al proprio lavoro.</p><p class="text-slate-300 mt-5">Scopri come questo flusso entra nella <a href="gestione-commesse-progettazione.html" class="font-bold text-indigo-300">gestione delle commesse di progettazione</a>.</p></div></section>
-        <section class="py-10 lg:py-12 bg-indigo-50 text-center"><div class="max-w-3xl mx-auto px-6"><h2 class="text-3xl lg:text-4xl font-black tracking-tight mb-4">Crea un consuntivo attendibile fin dal primo giorno.</h2><p class="text-slate-500 text-lg mb-8">Registra ore e spese sulla commessa e genera il report quando serve.</p><a href="app.html" class="inline-flex items-center gap-3 bg-indigo-600 text-white font-bold px-8 py-4 rounded-lg hover:bg-indigo-700">Prova gratis <i data-lucide="arrow-right" class="w-5 h-5"></i></a></div></section>
+        <section class="public-page-dot-grid border-b border-slate-100 pb-14 pt-28 lg:pb-16 lg:pt-36">
+            <div class="mx-auto max-w-5xl px-5 text-center sm:px-6">
+                <p class="mb-3 text-xs font-extrabold uppercase text-indigo-600">Dal lavoro al consuntivo</p>
+                <h1 class="text-4xl font-black leading-tight text-slate-950 sm:text-5xl lg:text-6xl">Software per rendicontazione commesse e timesheet.</h1>
+                <p class="mx-auto mt-5 max-w-3xl text-base font-medium leading-relaxed text-slate-600 sm:text-lg">Raccogli ore, attivit&agrave; e spese mentre il lavoro procede. Il report finale diventa la conseguenza di dati ordinati, non una ricostruzione fatta a memoria a fine mese.</p>
+                <div class="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row"><a href="calcolo-margine-commessa.html?source=rendicontazione" class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-6 py-3.5 text-sm font-black text-white shadow-lg shadow-indigo-500/20 hover:bg-indigo-700 sm:w-auto"><i data-lucide="calculator" class="h-4 w-4"></i>Calcola una commessa</a><a href="#metodo-rendicontazione" class="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-6 py-3.5 text-sm font-black text-slate-700 hover:bg-slate-50 sm:w-auto">Vedi cosa registrare<i data-lucide="arrow-down" class="h-4 w-4"></i></a></div>
+                <p class="mt-4 text-xs font-semibold text-slate-500">Timesheet per persona e fase &middot; spese di commessa &middot; report PDF</p>
+            </div>
+        </section>
+
+        <section id="metodo-rendicontazione" class="border-b border-slate-100 bg-white py-14 lg:py-16">
+            <div class="mx-auto max-w-6xl px-5 sm:px-6">
+                <div class="mb-9 max-w-3xl"><p class="mb-3 text-xs font-extrabold uppercase text-indigo-600">Metodo essenziale</p><h2 class="text-3xl font-black text-slate-950 sm:text-4xl">Quattro informazioni per rendere attendibile ogni ora.</h2><p class="mt-4 leading-relaxed text-slate-600">Un dato semplice inserito subito vale pi&ugrave; di un dato perfetto ricostruito settimane dopo.</p></div>
+                <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <article class="rounded-lg border border-slate-200 p-6"><i data-lucide="user-round" class="h-6 w-6 text-indigo-600"></i><h3 class="mt-4 text-lg font-black">Chi</h3><p class="mt-2 text-sm leading-relaxed text-slate-600">La persona che ha svolto il lavoro e il relativo costo interno.</p></article>
+                    <article class="rounded-lg border border-slate-200 p-6"><i data-lucide="calendar-days" class="h-6 w-6 text-emerald-600"></i><h3 class="mt-4 text-lg font-black">Quando</h3><p class="mt-2 text-sm leading-relaxed text-slate-600">La data effettiva, senza aspettare la chiusura del mese.</p></article>
+                    <article class="rounded-lg border border-slate-200 p-6"><i data-lucide="layers-3" class="h-6 w-6 text-amber-600"></i><h3 class="mt-4 text-lg font-black">Dove</h3><p class="mt-2 text-sm leading-relaxed text-slate-600">La commessa e la fase a cui attribuire tempo e costo.</p></article>
+                    <article class="rounded-lg border border-slate-200 p-6"><i data-lucide="notebook-pen" class="h-6 w-6 text-rose-600"></i><h3 class="mt-4 text-lg font-black">Per cosa</h3><p class="mt-2 text-sm leading-relaxed text-slate-600">Una nota sintetica che renda comprensibile l&rsquo;attivit&agrave; svolta.</p></article>
+                </div>
+            </div>
+        </section>
+
+        <section class="border-b border-slate-200 bg-slate-50 py-14 lg:py-16">
+            <div class="mx-auto grid max-w-6xl gap-10 px-5 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+                <div><p class="mb-3 text-xs font-extrabold uppercase text-indigo-600">Dal timesheet al costo</p><h2 class="text-3xl font-black text-slate-950 sm:text-4xl">Registrare ore non basta: devono diventare un dato economico.</h2><p class="mt-4 leading-relaxed text-slate-600">Il costo delle ore si ottiene valorizzando il tempo delle persone. A questo si aggiungono spese e consulenze. Solo allora il consuntivo pu&ograve; essere confrontato con il compenso.</p><a href="ore-budget-commessa.html" class="mt-5 inline-flex items-center gap-2 text-sm font-black text-indigo-600">Approfondisci ore e budget<i data-lucide="arrow-right" class="h-4 w-4"></i></a></div>
+                <div class="rounded-lg border border-slate-200 bg-white p-6">
+                    <p class="text-xs font-black uppercase text-slate-500">Esempio di calcolo</p>
+                    <div class="mt-5 space-y-4 text-sm"><div class="flex justify-between border-b border-slate-100 pb-3"><span class="text-slate-600">320 ore &times; 38 &euro;</span><strong>12.160 &euro;</strong></div><div class="flex justify-between border-b border-slate-100 pb-3"><span class="text-slate-600">Spese e consulenze</span><strong>2.400 &euro;</strong></div><div class="flex justify-between border-b border-slate-100 pb-3"><span class="text-slate-600">Costo maturato</span><strong>14.560 &euro;</strong></div><div class="flex justify-between text-base"><span class="font-black">Compenso 22.000 &euro;</span><strong class="text-emerald-700">Margine 7.440 &euro;</strong></div></div>
+                    <a href="calcolo-margine-commessa.html?source=rendicontazione-example" class="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-slate-950 px-5 py-3 text-sm font-black text-white hover:bg-indigo-600">Usa i tuoi valori<i data-lucide="calculator" class="h-4 w-4"></i></a>
+                </div>
+            </div>
+        </section>
+
+        <section class="border-b border-slate-100 bg-white py-14 lg:py-16">
+            <div class="mx-auto max-w-6xl px-5 sm:px-6">
+                <div class="mb-9 max-w-3xl"><p class="mb-3 text-xs font-extrabold uppercase text-indigo-600">Report di commessa</p><h2 class="text-3xl font-black text-slate-950 sm:text-4xl">Un consuntivo utile deve rispondere a domande precise.</h2></div>
+                <div class="grid gap-6 md:grid-cols-2">
+                    <div class="border-l-2 border-indigo-500 pl-5"><h3 class="font-black">Quanto tempo &egrave; stato impiegato?</h3><p class="mt-2 text-sm leading-relaxed text-slate-600">Ore per persona, attivit&agrave;, fase e intervallo di date.</p></div>
+                    <div class="border-l-2 border-emerald-500 pl-5"><h3 class="font-black">Quale fase ha assorbito di pi&ugrave;?</h3><p class="mt-2 text-sm leading-relaxed text-slate-600">Confronto tra budget assegnato e costo maturato per attivit&agrave;.</p></div>
+                    <div class="border-l-2 border-amber-500 pl-5"><h3 class="font-black">Quali costi sono esterni alle ore?</h3><p class="mt-2 text-sm leading-relaxed text-slate-600">Spese, trasferte, consulenze e altri costi attribuiti alla commessa.</p></div>
+                    <div class="border-l-2 border-rose-500 pl-5"><h3 class="font-black">Cosa pu&ograve; essere documentato?</h3><p class="mt-2 text-sm leading-relaxed text-slate-600">Note e timesheet esportabili per extra, SAL e verifiche interne.</p></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-slate-950 py-14 text-white lg:py-16">
+            <div class="mx-auto grid max-w-6xl items-center gap-8 px-5 sm:px-6 lg:grid-cols-[1fr_auto]">
+                <div><p class="mb-3 text-xs font-extrabold uppercase text-indigo-300">Raccolta continua</p><h2 class="text-3xl font-black sm:text-4xl">Il report non si prepara alla fine. Si costruisce ogni giorno.</h2><p class="mt-4 max-w-2xl leading-relaxed text-slate-300">Timer web e desktop, inserimento manuale e promemoria dopo otto ore aiutano il team a mantenere affidabile la base dati.</p></div>
+                <a href="metodo.html" class="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-6 py-3.5 text-sm font-black text-slate-950 hover:bg-indigo-50">Guarda il Metodo<i data-lucide="arrow-right" class="h-4 w-4"></i></a>
+            </div>
+        </section>
+
+        <section class="bg-slate-50 py-14 lg:py-16">
+            <div class="mx-auto max-w-3xl px-5 sm:px-6">
+                <div class="mb-7 text-center"><p class="mb-3 text-xs font-extrabold uppercase text-indigo-600">Domande frequenti</p><h2 class="text-3xl font-black">Rendicontazione e timesheet</h2></div>
+                <div class="space-y-3">
+                    <details class="group rounded-lg border border-slate-200 bg-white"><summary class="flex cursor-pointer items-center justify-between gap-4 p-5 text-sm font-black">Cosa deve contenere un report di commessa?<i data-lucide="chevron-down" class="h-4 w-4 text-slate-400 group-open:rotate-180"></i></summary><p class="border-t border-slate-100 px-5 pb-5 pt-4 text-sm leading-relaxed text-slate-600">Ore per persona e fase, attivit&agrave; svolte, spese, costi e confronto con il budget previsto.</p></details>
+                    <details class="group rounded-lg border border-slate-200 bg-white"><summary class="flex cursor-pointer items-center justify-between gap-4 p-5 text-sm font-black">Quando vanno registrate le ore?<i data-lucide="chevron-down" class="h-4 w-4 text-slate-400 group-open:rotate-180"></i></summary><p class="border-t border-slate-100 px-5 pb-5 pt-4 text-sm leading-relaxed text-slate-600">Il prima possibile, idealmente durante o subito dopo il lavoro, per ridurre dimenticanze e stime a posteriori.</p></details>
+                    <details class="group rounded-lg border border-slate-200 bg-white"><summary class="flex cursor-pointer items-center justify-between gap-4 p-5 text-sm font-black">Un timesheet misura il margine?<i data-lucide="chevron-down" class="h-4 w-4 text-slate-400 group-open:rotate-180"></i></summary><p class="border-t border-slate-100 px-5 pb-5 pt-4 text-sm leading-relaxed text-slate-600">Solo se le ore vengono valorizzate come costo e collegate a compenso, spese e budget della commessa.</p></details>
+                </div>
+                <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row"><a href="calcolo-margine-commessa.html?source=rendicontazione-bottom" class="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-6 py-3.5 text-sm font-black text-white hover:bg-indigo-700">Calcola una commessa<i data-lucide="calculator" class="h-4 w-4"></i></a><a href="app.html?source=rendicontazione" class="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-6 py-3.5 text-sm font-black text-slate-700 hover:bg-slate-50">Prova 30 giorni gratis<i data-lucide="arrow-right" class="h-4 w-4"></i></a></div>
+                <p class="mt-7 text-center text-xs leading-relaxed text-slate-500">Contenuto curato da Stefano Morelli, architetto e sviluppatore di Arch Time Pro. Aggiornato il 17 luglio 2026.</p>
+            </div>
+        </section>
     </main>
-    <footer class="bg-slate-950 py-10"><div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between gap-5 text-xs font-bold text-slate-400 uppercase tracking-widest"><span>ARCH TIME PRO &copy; 2026</span><div class="flex flex-wrap gap-5"><a href="index.html">Home</a><a href="gestionale-studio-architettura.html">Studi di architettura</a><a href="software-gestione-commesse.html">Commesse</a><a href="privacy.html">Privacy</a></div></div></footer><script>lucide.createIcons();</script>
+
+    <footer class="bg-slate-950 py-10 text-white"><div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-7 px-5 sm:px-6 lg:flex-row"><p class="text-sm font-black uppercase">Arch <span class="text-indigo-400">Time</span> Pro</p><nav class="flex flex-wrap gap-5 text-xs font-bold text-slate-400"><a href="calcolo-margine-commessa.html">Calcolatore</a><a href="metodo.html">Metodo</a><a href="privacy.html">Privacy</a></nav></div></footer>
+    <script>document.addEventListener('DOMContentLoaded', function () { if (window.lucide) lucide.createIcons(); });</script>
 </body>
 </html>

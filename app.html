@@ -66,7 +66,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="assets/app.css?v=phase3-budget-libero-2026-05-09">
     <link rel="stylesheet" href="assets/app-pro.css?v=project-actions-2026-07-17-07">
-    <script src="assets/js/12-analytics.js?v=2026-06-14" defer></script>
+    <script src="assets/js/12-analytics.js?v=2026-07-17-1" defer></script>
 </head>
 <body class="text-slate-800 pb-20 lg:pb-0">
 
@@ -110,25 +110,10 @@
                         <div class="p-4 sm:p-5 bg-slate-50 rounded-xl border border-slate-200">
                             <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-3">Tipo di account</label>
                             <div class="space-y-3">
-                                <div>
-                                    <label class="flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-primary-300 transition-all shadow-sm">
-                                        <input type="radio" name="main-role" value="owner" class="w-4 h-4 text-primary-600 focus:ring-primary-500">
-                                        <span class="text-sm font-bold text-slate-700">Manager (crea spazio di lavoro)</span>
-                                    </label>
-                                    <div id="sector-selection" class="force-hide pl-4 border-l-2 border-primary-200 ml-3 mt-3 transition-all duration-300">
-                                        <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-2">Seleziona il tuo settore:</label>
-                                        <div class="flex gap-2">
-                                            <label data-business-option="studio" for="business-type-studio" class="flex-1 flex items-center justify-center gap-2 p-2.5 bg-white rounded-lg border border-primary-500 ring-1 ring-primary-500 cursor-pointer hover:border-primary-300 transition-all shadow-sm relative">
-                                                <input id="business-type-studio" type="radio" name="business-type" value="studio" checked class="sr-only">
-                                                <span class="text-xs font-bold text-slate-700">Studio Tecnico</span>
-                                            </label>
-                                            <label data-business-option="impresa" for="business-type-impresa" class="flex-1 flex items-center justify-center gap-2 p-2.5 bg-white rounded-lg border border-slate-200 cursor-pointer hover:border-amber-300 transition-all shadow-sm relative">
-                                                <input id="business-type-impresa" type="radio" name="business-type" value="impresa" class="sr-only">
-                                                <span class="text-xs font-bold text-slate-700">Impresa Edile</span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
+                                <label class="flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-primary-300 transition-all shadow-sm">
+                                    <input type="radio" name="main-role" value="owner" class="w-4 h-4 text-primary-600 focus:ring-primary-500">
+                                    <span class="text-sm font-bold text-slate-700">Manager (crea spazio di lavoro)</span>
+                                </label>
                                 <label class="flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-primary-300 transition-all shadow-sm">
                                     <input type="radio" name="main-role" value="staff" class="w-4 h-4 text-primary-600 focus:ring-primary-500">
                                     <span class="text-sm font-bold text-slate-700">Collaboratore (unisciti)</span>
@@ -923,13 +908,12 @@
 
     <script src="assets/js/00-runtime-config.js?v=stripe-founder-2026-06-29"></script>
     <script src="assets/js/01-core.js?v=project-list-2026-07-17-05"></script>
-    <script src="assets/js/02-auth-account.js?v=mobile-analytics-open-2026-07-17-06"></script>
+    <script src="assets/js/02-auth-account.js?v=signup-errors-2026-07-18-01"></script>
     <script src="assets/js/03-team.js?v=phase3-team-modals-2026-05-12"></script>
     <script src="assets/js/04-projects.js?v=project-list-2026-07-17-05"></script>
     <script src="assets/js/05-time-entries.js?v=timer-reminder-2026-07-06"></script>
     <script src="assets/js/06-reports.js?v=phase3-final-ui-2026-05-02"></script>
-    <script src="assets/js/07-password-bootstrap.js?v=project-list-2026-07-17-05"></script>
+    <script src="assets/js/07-password-bootstrap.js?v=signup-simple-2026-07-18-01"></script>
     <script src="assets/js/09-video-demo.js?v=analytics-workspace-2026-07-17-01"></script>
 </body>
 </html>
-

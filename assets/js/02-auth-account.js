@@ -32,6 +32,31 @@ function formatHandoffNumber(value, digits = 0) {
             }).format(Number(value || 0));
         }
 
+function getReadableAuthError(error, fallbackMessage) {
+            const code = String(error?.code || '').toLowerCase();
+            const status = Number(error?.status || 0);
+            const rawMessage = [error?.message, error?.error_description, error?.msg]
+                .find(value => typeof value === 'string' && value.trim());
+            const message = String(rawMessage || '').trim();
+            const normalized = `${code} ${message}`.toLowerCase();
+
+            if (normalized.includes('user_already_exists') || normalized.includes('already registered')) {
+                return "Questa email è già associata a un account. Accedi oppure usa 'Password dimenticata'.";
+            }
+            if (normalized.includes('email rate limit') || status === 429) {
+                return 'Sono state richieste troppe email in poco tempo. Attendi qualche minuto e riprova.';
+            }
+            if (normalized.includes('weak_password') || normalized.includes('password')) {
+                return 'La password non rispetta i requisiti di sicurezza. Usane una più lunga e riprova.';
+            }
+            if (normalized.includes('invalid') && normalized.includes('email')) {
+                return "L'indirizzo email non è valido. Controllalo e riprova.";
+            }
+            if (message && message !== '{}' && message !== '[object Object]') return message;
+
+            return fallbackMessage;
+        }
+
 function switchAuthTab(mode) { 
             isSignupMode = (mode === 'signup'); 
             if (isSignupMode) window.archTimeAnalytics?.track('sign_up_start', { method: 'email' });
@@ -58,7 +83,6 @@ function switchAuthTab(mode) {
             const checkedRole = document.querySelector('input[name="main-role"]:checked');
             if(!checkedRole) {
                 document.getElementById('invite-code-container').classList.add('force-hide'); 
-                document.getElementById('sector-selection').classList.add('force-hide');
                 const trialInfo = document.getElementById('trial-info-container'); 
                 if (trialInfo) trialInfo.classList.add('force-hide');
                 return;
@@ -66,25 +90,10 @@ function switchAuthTab(mode) {
             const role = checkedRole.value; 
             const isStaff = role === 'staff';
             document.getElementById('invite-code-container').classList.toggle('force-hide', !isStaff); 
-            document.getElementById('sector-selection').classList.toggle('force-hide', isStaff);
             const trialInfo = document.getElementById('trial-info-container'); 
             if (trialInfo) trialInfo.classList.toggle('force-hide', isStaff); 
         }
 
-        function updateBusinessTypeSelection() {
-            const selected = document.querySelector('input[name="business-type"]:checked')?.value || 'studio';
-            document.querySelectorAll('[data-business-option]').forEach(option => {
-                const isSelected = option.dataset.businessOption === selected;
-                const isImpresa = option.dataset.businessOption === 'impresa';
-                option.classList.toggle('border-slate-200', !isSelected);
-                option.classList.toggle('border-primary-500', isSelected && !isImpresa);
-                option.classList.toggle('ring-primary-500', isSelected && !isImpresa);
-                option.classList.toggle('border-amber-500', isSelected && isImpresa);
-                option.classList.toggle('ring-amber-500', isSelected && isImpresa);
-                option.classList.toggle('ring-1', isSelected);
-            });
-        }
-        
         const urlParams = new URLSearchParams(window.location.search);
         if(urlParams.get('invite')) { 
             switchAuthTab('signup'); 
@@ -113,23 +122,49 @@ function switchAuthTab(mode) {
                 const isOwnerChoice = role === 'owner';
                 const finalRole = isOwnerChoice ? 'admin' : role; 
                 const isStaff = finalRole === 'staff';
-                const selectedBusinessType = document.querySelector('input[name="business-type"]:checked');
-                if(!isStaff && !selectedBusinessType) return await appAlert("Attenzione", "Seleziona Studio Tecnico oppure Impresa Edile.", "danger");
-                const businessType = isStaff ? 'studio' : selectedBusinessType.value;
+                const businessType = 'studio';
                 const code = document.getElementById('invite-code-input').value.trim();
                 
                 if(isStaff && !code) return await appAlert("Attenzione", "Inserisci il codice invito!", "danger");
                 if(!fullName) return await appAlert("Attenzione", "Inserisci il tuo nome e cognome.", "danger");
                 
-                const { error } = await supabaseClient.auth.signUp({ 
-                    email, password, 
-                    options: {
-                        emailRedirectTo: getAppRedirectUrl(),
-                        data: { full_name: fullName, role: finalRole, is_owner: isOwnerChoice, business_type: businessType, studio_id: isStaff ? code : null }
-                    } 
-                });
-                
-                if(error) await appAlert("Errore", error.message, "danger"); else {
+                let signupResult;
+                try {
+                    signupResult = await supabaseClient.auth.signUp({
+                        email, password,
+                        options: {
+                            emailRedirectTo: getAppRedirectUrl(),
+                            data: { full_name: fullName, role: finalRole, is_owner: isOwnerChoice, business_type: businessType, studio_id: isStaff ? code : null }
+                        }
+                    });
+                } catch (error) {
+                    console.error('Registrazione Supabase non riuscita', error);
+                    return await appAlert(
+                        "Registrazione non riuscita",
+                        getReadableAuthError(error, "Non è stato possibile creare l'account. Se hai già usato questa email, prova ad accedere o a recuperare la password."),
+                        "danger"
+                    );
+                }
+
+                const { data, error } = signupResult;
+                if (error) {
+                    console.error('Registrazione Supabase rifiutata', error);
+                    return await appAlert(
+                        "Registrazione non riuscita",
+                        getReadableAuthError(error, "Non è stato possibile creare l'account. Se hai già usato questa email, prova ad accedere o a recuperare la password."),
+                        "danger"
+                    );
+                }
+
+                if (data?.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+                    return await appAlert(
+                        "Account già esistente",
+                        "Questa email è già associata a un account. Accedi oppure usa 'Password dimenticata'.",
+                        "info"
+                    );
+                }
+
+                {
                     window.archTimeAnalytics?.track('sign_up', {
                         method: 'email',
                         account_type: isStaff ? 'staff' : 'owner',

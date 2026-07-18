@@ -125,6 +125,16 @@
             let destination;
             try { destination = new URL(link.href, window.location.href); }
             catch (error) { return; }
+
+            if (destination.pathname.endsWith('/calcolo-margine-commessa.html')) {
+                track('calculator_cta_click', {
+                    cta_text: (link.textContent || 'Apri calcolatore').trim().replace(/\s+/g, ' ').slice(0, 80),
+                    source_page: window.location.pathname,
+                    destination: destination.pathname
+                });
+                return;
+            }
+
             if (!destination.pathname.endsWith('/app.html')) return;
 
             track('cta_click', {

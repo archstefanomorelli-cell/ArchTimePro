@@ -296,11 +296,6 @@
                 input.addEventListener('change', toggleSignupOptions);
             });
 
-            document.querySelectorAll('input[name="business-type"]').forEach(input => {
-                input.addEventListener('change', updateBusinessTypeSelection);
-            });
-            updateBusinessTypeSelection();
-
             ['invite-code-input', 'full-name', 'email', 'password'].forEach(id => {
                 document.getElementById(id)?.addEventListener('keydown', event => {
                     if (event.key === 'Enter') {
