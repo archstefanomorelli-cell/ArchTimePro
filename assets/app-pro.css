@@ -1061,7 +1061,7 @@ html.theme-pro .analytics-summary-heading small {
 html.theme-pro .analytics-summary-metrics {
     min-width: 0;
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr) minmax(0, 1.7fr);
     border-left: 1px solid #e5e9ef;
 }
 
@@ -1097,6 +1097,13 @@ html.theme-pro .analytics-summary-metrics strong {
     white-space: nowrap;
 }
 
+html.theme-pro #analytics-inline-top-task {
+    display: block;
+    overflow: visible;
+    overflow-wrap: anywhere;
+    white-space: normal;
+}
+
 html.theme-pro #analytics-inline-alerts.is-warning {
     color: var(--pro-warn);
 }
@@ -1111,9 +1118,10 @@ html.theme-pro .analytics-summary-action {
     align-items: center;
     justify-content: flex-end;
     gap: 0.35rem;
+    border: 1px solid #dbe2ea;
     border-radius: 7px;
-    background: #172033;
-    color: #ffffff;
+    background: #ffffff;
+    color: #475569;
     font-size: 0.58rem;
     font-weight: 900;
     text-transform: uppercase;
@@ -1123,7 +1131,8 @@ html.theme-pro .analytics-summary-action {
 
 html.theme-pro .analytics-summary-row:hover .analytics-summary-action,
 html.theme-pro .analytics-summary-row:focus-visible .analytics-summary-action {
-    background: #0f172a;
+    border-color: #cbd5e1;
+    background: #f8fafc;
 }
 
 html.theme-pro .analytics-summary-action svg {
@@ -1619,6 +1628,7 @@ html.theme-pro .analytics-priority-value.is-danger {
         grid-column: 1 / -1;
         grid-row: 2;
         width: 100%;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         padding-top: 0.55rem;
         border-top: 1px solid #eef2f6;
         border-left: 0;
@@ -1629,6 +1639,10 @@ html.theme-pro .analytics-priority-value.is-danger {
     }
 
     html.theme-pro .analytics-summary-metrics > span:last-child {
+        grid-column: 1 / -1;
+        margin-top: 0.5rem;
+        padding: 0.5rem 0 0;
+        border-top: 1px solid #eef2f6;
         padding-right: 0;
         border-right: 0;
     }
