@@ -6,7 +6,7 @@ Questa checklist fotografa cio che il frontend usa oggi. Prima del deploy va con
 
 ### `profiles`
 
-Campi usati dall'app:
+Campi usati dall'app e dalle automazioni:
 
 - `id`
 - `studio_id`
@@ -20,12 +20,20 @@ Campi usati dall'app:
 - `active_timer_task`
 - `active_timer_notes`
 - `active_timer_reminder_sent_at`
+- `lifecycle_emails_enabled`
+- `lifecycle_email_token`
 
 Operazioni frontend:
 
 - `select`
 - `update`
 - `delete`
+
+### `lifecycle_email_log`
+
+Registro tecnico degli invii automatici durante la prova. La coppia
+`studio_id + event_key` e unica e impedisce invii duplicati. La tabella ha RLS
+attivo e viene usata soltanto dalla Edge Function con service role.
 
 ### `studios`
 

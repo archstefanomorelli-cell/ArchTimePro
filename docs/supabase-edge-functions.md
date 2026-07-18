@@ -246,6 +246,92 @@ Una seconda esecuzione sullo stesso timer deve restituire `sent: 0`. Quando il
 timer viene fermato o ne viene avviato uno nuovo,
 `active_timer_reminder_sent_at` torna a `NULL`.
 
+## Email automatiche durante la prova
+
+Funzione:
+
+```text
+trial-lifecycle-email
+```
+
+La funzione invia email operative ai manager che stanno usando i 30 giorni di
+prova senza un abbonamento Stripe. Gli eventi previsti sono:
+
+```text
+no_project_24h
+project_no_hours_48h
+inactive_7d
+trial_7d
+trial_3d
+trial_1d
+trial_expired
+```
+
+Ogni evento viene inviato una sola volta per studio. La tabella
+`lifecycle_email_log` registra il claim e l'invio; un claim interrotto torna
+disponibile dopo due ore. Le email includono un link con token UUID per
+disattivare i suggerimenti durante la prova.
+
+Prima del deploy eseguire nel SQL Editor:
+
+```text
+docs/sql/trial-lifecycle-emails.sql
+```
+
+La funzione riutilizza i secrets SMTP esistenti:
+
+```text
+SMTP_HOST
+SMTP_PORT
+SMTP_USER
+SMTP_PASS
+SMTP_FROM_EMAIL
+SMTP_FROM_NAME
+APP_URL=https://www.archtimepro.it/app.html
+```
+
+Aggiungere un secret casuale dedicato:
+
+```text
+LIFECYCLE_EMAIL_CRON_SECRET=UNA_PASSWORD_LUNGA_E_CASUALE
+```
+
+Deploy:
+
+```text
+supabase functions deploy trial-lifecycle-email --no-verify-jwt
+```
+
+Nel Dashboard Supabase aprire:
+
+```text
+Integrations > Cron > Create job
+```
+
+Configurare:
+
+```text
+Name: trial-lifecycle-email-daily
+Schedule: 15 7 * * *
+Type: Supabase Edge Function
+Function: trial-lifecycle-email
+Method: POST
+Header: x-lifecycle-email-secret
+Header value: lo stesso valore di LIFECYCLE_EMAIL_CRON_SECRET
+```
+
+La pianificazione e espressa in UTC: l'invio avviene in mattinata in Italia.
+
+### Verifica senza attendere
+
+Per rendere eleggibile uno studio di prova senza progetti, modificare
+temporaneamente `studios.created_at` portandolo a due giorni prima. Avviare il
+job manualmente: la risposta deve indicare `sent: 1` e l'evento
+`no_project_24h`. Una seconda esecuzione deve restituire `sent: 0`.
+
+Per ripetere un test eliminare esclusivamente la riga di prova dalla tabella
+`lifecycle_email_log`, quindi ripristinare `studios.created_at`.
+
 ## Stripe webhook per Tariffa Fondatori
 
 Funzione:
