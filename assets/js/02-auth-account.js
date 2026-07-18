@@ -252,9 +252,16 @@ function switchAuthTab(mode) {
             
             if(userProfile.is_owner) {
                 document.getElementById('billing-section').classList.remove('force-hide');
-                document.getElementById('account-plan-name').innerText = activePlan === 'starter' || activePlan === 'premium' ? 'FONDATORI' : activePlan.toUpperCase();
-                document.getElementById('account-upgrade-btn-container').classList.add('force-hide');
+                const status = studioData?.subscription_status || 'trialing';
+                const hasStripeSubscription = Boolean(studioData?.stripe_customer_id && studioData?.stripe_subscription_id);
+                const planLabel = status === 'trialing'
+                    ? 'PROVA GRATUITA'
+                    : (activePlan === 'starter' || activePlan === 'premium' ? 'FONDATORI' : activePlan.toUpperCase());
+
+                document.getElementById('account-plan-name').innerText = planLabel;
+                document.getElementById('account-upgrade-btn-container').classList.toggle('force-hide', hasStripeSubscription || status === 'free');
                 document.getElementById('account-downgrade-btn-container').classList.add('force-hide');
+                document.getElementById('account-stripe-portal-btn')?.classList.toggle('force-hide', !hasStripeSubscription || status === 'free');
             } else {
                 document.getElementById('billing-section').classList.add('force-hide');
             }
