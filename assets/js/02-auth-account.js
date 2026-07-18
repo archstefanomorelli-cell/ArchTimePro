@@ -170,6 +170,9 @@ function switchAuthTab(mode) {
                         account_type: isStaff ? 'staff' : 'owner',
                         business_type: businessType
                     });
+                    if (!isStaff) {
+                        window.archTimeAnalytics?.trackAdsConversion('AW-18190596284/RCALCNbqsdIcELzx-eFD');
+                    }
                     await appAlert("Controlla la tua email", "Ti abbiamo inviato un link per confermare la registrazione. Dopo la conferma potrai accedere ad Arch Time Pro.", "success");
                     switchAuthTab('login');
                 }

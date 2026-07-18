@@ -111,12 +111,22 @@
         window.gtag('event', eventName, parameters || {});
     }
 
+    function trackAdsConversion(sendTo, parameters) {
+        if (getConsent() !== 'granted' || !sendTo) return;
+        loadGoogleTag();
+        window.gtag('event', 'conversion', {
+            send_to: sendTo,
+            ...(parameters || {})
+        });
+    }
+
     window.archTimeAnalytics = {
         accept: function () { setConsent('granted'); },
         reject: function () { setConsent('denied'); },
         getConsent: getConsent,
         showPreferences: showBanner,
-        track: track
+        track: track,
+        trackAdsConversion: trackAdsConversion
     };
 
     document.addEventListener('DOMContentLoaded', function () {
