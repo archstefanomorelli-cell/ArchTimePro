@@ -65,6 +65,7 @@ Campi usati dall'app:
 - `budget`
 - `tasks`
 - `is_archived`
+- `is_demo`
 
 Operazioni frontend:
 

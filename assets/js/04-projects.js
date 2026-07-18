@@ -912,6 +912,10 @@
             const { error } = await supabaseClient.from('projects').insert([payload]);
             if (error) return await appAlert("Configurazione richiesta", "Per salvare il Piano costi va prima aggiunta la colonna task_budgets in Supabase. Puoi lasciare vuoti i campi Piano costi oppure eseguire lo script SQL dedicato.", "danger");
             if (typeof clearMarginCalculatorHandoff === 'function') clearMarginCalculatorHandoff();
+            window.archTimeAnalytics?.track('project_created', {
+                has_budget: budget > 0,
+                task_count: newProjectTasks.length
+            });
             
             document.getElementById('edit-modal-name').value = ""; 
             document.getElementById('edit-modal-client').value = ""; 
@@ -1532,6 +1536,9 @@
             icon?.classList.toggle('rotate-180', shouldOpen);
 
             if (shouldOpen) {
+                window.archTimeAnalytics?.track('financial_analysis_opened', {
+                    active_project_count: projects.filter(project => !project.is_archived && !project.is_demo).length
+                });
                 setTimeout(renderStrategicCharts, 30);
             } else {
                 ['marginTrend', 'risk', 'tasks'].forEach(chartKey => {

@@ -195,6 +195,11 @@ function switchAuthTab(mode) {
             if (!isUsableStripeLink(link)) {
                 return appAlert("Accesso gratuito", "I pagamenti Stripe non sono ancora attivi. In fase di lancio puoi continuare a usare Arch Time Pro senza scegliere un piano.", "info");
             }
+            window.archTimeAnalytics?.track('checkout_started', {
+                plan: plan || 'founder',
+                subscription_status: studioData?.subscription_status || 'unknown',
+                transport_type: 'beacon'
+            });
             window.location.href = `${link}?client_reference_id=${userProfile.studio_id}`; 
         }
 
@@ -388,12 +393,18 @@ function switchAuthTab(mode) {
                 }
             }
             modal.classList.remove('force-hide');
+            window.archTimeAnalytics?.track('onboarding_view', {
+                has_calculator_handoff: Boolean(calculatorHandoff)
+            });
             lucide.createIcons();
         }
 
         function closeOwnerOnboarding(markDone = true) {
             document.getElementById('modal-owner-onboarding')?.classList.add('force-hide');
-            if (markDone) markOwnerOnboardingDone();
+            if (markDone) {
+                markOwnerOnboardingDone();
+                window.archTimeAnalytics?.track('onboarding_closed');
+            }
         }
 
         async function saveOnboardingIdentity() {
@@ -410,6 +421,7 @@ function switchAuthTab(mode) {
             document.getElementById('account-studio-name').value = name;
             applyTheme(businessType);
             renderNewProjectUI();
+            window.archTimeAnalytics?.track('onboarding_identity_saved');
             await appAlert("Fatto", "Identità salvata.", "success");
         }
 
@@ -437,6 +449,10 @@ function switchAuthTab(mode) {
             newProjectTasks = defaults.length > 0 ? defaults : ['Generico'];
             renderNewProjectUI();
             switchAppTab('operate');
+            window.archTimeAnalytics?.track('onboarding_project_prepared', {
+                has_budget: Boolean(Number(budget) > 0),
+                from_calculator: Boolean(getMarginCalculatorHandoff())
+            });
             closeOwnerOnboarding(true);
             document.getElementById('edit-modal-name')?.focus();
         }
@@ -650,7 +666,7 @@ function switchAuthTab(mode) {
                 await supabaseClient.from('studios').update({ demo_generated: true }).eq('id', userProfile.studio_id);
                 const t = THEMES[currentBusinessType];
                 const { data: pData } = await supabaseClient.from('projects').insert([ 
-                    { studio_id: userProfile.studio_id, name: t.demoProject, client: t.demoClient, budget: 15000, tasks: [t.demoTask, 'Riunioni'] } 
+                    { studio_id: userProfile.studio_id, name: t.demoProject, client: t.demoClient, budget: 15000, tasks: [t.demoTask, 'Riunioni'], is_demo: true }
                 ]).select();
                 
                 if(pData && pData.length > 0) {

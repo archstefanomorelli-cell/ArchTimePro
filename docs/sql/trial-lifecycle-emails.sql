@@ -1,5 +1,19 @@
 begin;
 
+alter table public.projects
+add column if not exists is_demo boolean not null default false;
+
+update public.projects as project
+set is_demo = true
+from public.studios as studio
+where project.studio_id = studio.id
+  and studio.demo_generated = true
+  and project.is_demo = false
+  and (
+    (project.name = 'Villa sul Lago' and project.client = 'Famiglia Rossi')
+    or (project.name = 'Cantiere Via Roma' and project.client = 'Condominio Roma')
+  );
+
 alter table public.profiles
 add column if not exists lifecycle_emails_enabled boolean not null default true;
 
@@ -95,11 +109,14 @@ begin
       select count(*)::integer as project_count
       from public.projects pr
       where pr.studio_id = s.id
+        and pr.is_demo = false
     ) project_stats on true
     left join lateral (
       select count(*)::integer as entry_count, max(e.created_at) as last_entry_at
       from public.entries e
+      join public.projects pr on pr.id = e.project_id
       where e.studio_id = s.id
+        and pr.is_demo = false
     ) entry_stats on true
     where s.subscription_status = 'trialing'
       and s.stripe_subscription_id is null

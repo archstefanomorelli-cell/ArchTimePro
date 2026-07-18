@@ -359,7 +359,7 @@
                 let n = document.getElementById('timer-notes').value.trim();
                 n = n ? `${timeString} ${n}` : timeString;
 
-                saveEntry(projects[pIdx], tVal, (Date.now() - startTime) / 3600000, null, n);
+                saveEntry(projects[pIdx], tVal, (Date.now() - startTime) / 3600000, null, n, 'timer');
                 
                 document.getElementById('timer-display').innerText = "00:00:00"; 
                 document.getElementById('timer-notes').value = ""; 
@@ -386,9 +386,10 @@
             return true;
         }
 
-        async function saveEntry(proj, task, hours, customDate = null, notes = "") {
+        async function saveEntry(proj, task, hours, customDate = null, notes = "", source = "manual") {
             const createdViaRpc = await createEntryViaRpc(proj, task, hours, customDate, notes);
             if (createdViaRpc) {
+                window.archTimeAnalytics?.track('time_entry_created', { source, is_demo_project: Boolean(proj.is_demo) });
                 fetchEntries();
                 return;
             }
@@ -396,7 +397,8 @@
             const { data: prof } = await supabaseClient.from('profiles').select('*').eq('id', userProfile.id).single();
             const payload = { project_id: proj.id, project_name: proj.name, task, duration: hours, user_email: userProfile.email, user_name: prof.full_name, rate: (prof ? prof.hourly_cost : 0) * hours, studio_id: userProfile.studio_id, notes: notes };
             if(customDate) payload.created_at = entryDateToIso(customDate);
-            await supabaseClient.from('entries').insert([payload]); 
+            const { error } = await supabaseClient.from('entries').insert([payload]);
+            if (!error) window.archTimeAnalytics?.track('time_entry_created', { source, is_demo_project: Boolean(proj.is_demo) });
             fetchEntries();
         }
 
@@ -447,7 +449,7 @@
                 n = n ? `${timeString} ${n}` : timeString;
             }
 
-            await saveEntry(projects[pIdx], t, h, d, n); 
+            await saveEntry(projects[pIdx], t, h, d, n, 'manual');
             document.getElementById('manual-notes').value = ""; 
             closeManualEntry(); 
         }
