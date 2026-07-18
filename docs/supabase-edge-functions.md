@@ -322,6 +322,12 @@ Header value: lo stesso valore di LIFECYCLE_EMAIL_CRON_SECRET
 
 La pianificazione e espressa in UTC: l'invio avviene in mattinata in Italia.
 
+In produzione il job `trial-lifecycle-email-daily` e configurato con `pg_cron`
+alle `15 7 * * *`. Il valore dell'header non e salvato nel comando del job:
+viene letto da Supabase Vault con il nome `trial_lifecycle_cron_secret`. Il job
+deve risultare attivo e il comando deve continuare a usare
+`vault.decrypted_secrets`.
+
 ### Verifica senza attendere
 
 Per rendere eleggibile uno studio di prova senza progetti, modificare

@@ -19,3 +19,4 @@ desktop-timer/dist/
 # Local Supabase secrets
 supabase/.env
 supabase/.env.*
+supabase/.temp/
