@@ -1532,7 +1532,7 @@
             panel.classList.toggle('force-hide', !shouldOpen);
             button.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
             button.classList.toggle('is-open', shouldOpen);
-            if (label) label.innerText = shouldOpen ? 'Chiudi analisi' : 'Apri analisi';
+            if (label) label.innerText = shouldOpen ? 'Chiudi grafici' : 'Apri grafici';
             icon?.classList.toggle('rotate-180', shouldOpen);
 
             if (shouldOpen) {
