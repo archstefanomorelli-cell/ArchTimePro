@@ -6,6 +6,13 @@ add column if not exists subscription_status text default 'trialing';
 alter table public.studios
 add column if not exists plan_type text default 'founder';
 
+-- ADD COLUMN IF NOT EXISTS non aggiorna il default di una colonna già presente.
+alter table public.studios
+alter column plan_type set default 'founder';
+
+alter table public.studios
+alter column subscription_status set default 'trialing';
+
 alter table public.studios
 add column if not exists stripe_customer_id text;
 
