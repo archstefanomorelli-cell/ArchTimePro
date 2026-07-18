@@ -2,8 +2,10 @@
     'use strict';
 
     const MEASUREMENT_ID = 'G-96GHF6505E';
+    const GOOGLE_ADS_ID = 'AW-18190596284';
     const CONSENT_KEY = 'archtime_analytics_consent_v1';
     let googleTagLoaded = false;
+    let googleTagConfigured = false;
 
     window.dataLayer = window.dataLayer || [];
     window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
@@ -15,14 +17,26 @@
         wait_for_update: 500
     });
 
+    function installGoogleTag() {
+        if (googleTagLoaded) return;
+        googleTagLoaded = true;
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(GOOGLE_ADS_ID);
+        document.head.appendChild(script);
+    }
+
+    installGoogleTag();
+
     function getConsent() {
         try { return localStorage.getItem(CONSENT_KEY); }
         catch (error) { return null; }
     }
 
     function loadGoogleTag() {
-        if (googleTagLoaded || getConsent() !== 'granted') return;
-        googleTagLoaded = true;
+        if (googleTagConfigured || getConsent() !== 'granted') return;
+        googleTagConfigured = true;
+        installGoogleTag();
         window.gtag('consent', 'update', { analytics_storage: 'granted' });
         window.gtag('js', new Date());
         window.gtag('config', MEASUREMENT_ID, {
@@ -30,11 +44,10 @@
             allow_google_signals: false,
             allow_ad_personalization_signals: false
         });
-
-        const script = document.createElement('script');
-        script.async = true;
-        script.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(MEASUREMENT_ID);
-        document.head.appendChild(script);
+        window.gtag('config', GOOGLE_ADS_ID, {
+            allow_google_signals: false,
+            allow_ad_personalization_signals: false
+        });
     }
 
     function clearAnalyticsCookies() {
@@ -56,7 +69,7 @@
         banner.innerHTML =
             '<div class="mx-auto flex max-w-6xl flex-col items-start justify-between gap-4 md:flex-row md:items-center">' +
                 '<p class="max-w-3xl text-xs leading-relaxed text-slate-300">' +
-                    '<strong class="text-white">Le statistiche, solo se vuoi.</strong> Usiamo cookie tecnici necessari e, con il tuo consenso, Google Analytics per capire quali pagine sono utili e migliorare Arch Time Pro. Puoi rifiutare senza limitazioni. ' +
+                    '<strong class="text-white">La misurazione, solo se vuoi.</strong> Usiamo cookie tecnici necessari e, con il tuo consenso, Google Analytics e Google Ads per capire quali pagine e campagne sono utili. Puoi rifiutare senza limitazioni. ' +
                     '<a href="privacy.html" class="font-bold text-white underline underline-offset-2">Privacy Policy</a>.' +
                 '</p>' +
                 '<div class="flex shrink-0 gap-2">' +
