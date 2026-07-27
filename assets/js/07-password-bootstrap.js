@@ -33,7 +33,8 @@
             bindClick('btn-open-manual-entry', openManualEntry);
             bindClick('btn-toggle-timer', toggleTimer);
             bindClick('btn-manage-templates', openTemplatesModal);
-            bindClick('btn-open-project-modal', openCreateProjectModal);
+            bindClick('btn-open-project-modal', openProjectTypeModal);
+            bindClick('btn-close-project-type', closeProjectTypeModal);
             bindClick('btn-open-team-report', openTeamReportModal);
             bindClick('btn-generate-invite', generateInviteLink);
             bindClick('btn-close-team-invite', closeTeamInviteModal);
@@ -143,6 +144,12 @@
                         return showProjectDetail(projectId);
                     case 'set-project-view':
                         return setProjectViewMode(trigger.dataset.projectView);
+                    case 'select-project-type':
+                        return selectProjectSetupType(trigger.dataset.projectType);
+                    case 'toggle-normative-service':
+                        return toggleNormativeService(trigger);
+                    case 'toggle-normative-phase':
+                        return toggleNormativePhase(trigger.dataset.phaseId);
                     case 'toggle-project-archive':
                         return toggleArchive(projectId, trigger.dataset.archived === 'true');
                     case 'delete-project':

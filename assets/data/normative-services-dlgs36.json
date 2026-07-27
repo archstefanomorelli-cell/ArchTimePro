@@ -1,0 +1,386 @@
+[
+  {
+    "id": "a1",
+    "name": "Studi di fattibilità",
+    "services": [
+      {
+        "code": "QaI.01",
+        "label": "Relazione illustrativa"
+      },
+      {
+        "code": "QaI.02",
+        "label": "Relazione illustrativa, Elaborati progettuali e tecnico economici"
+      },
+      {
+        "code": "QaI.03",
+        "label": "Supporto al RUP: accertamenti e verifiche preliminari"
+      }
+    ]
+  },
+  {
+    "id": "a2",
+    "name": "Stime e valutazioni",
+    "services": [
+      {
+        "code": "QaII.01",
+        "label": "Sintetiche, basate su elementi sintetici e globali, vani, metri cubi, etc. (d.P.R. 327/2001)"
+      },
+      {
+        "code": "QaII.02",
+        "label": "Particolareggiate, complete di criteri di valutazione, relazione motivata, descrizioni, computi e tipi (d.P.R. 327/2001)"
+      },
+      {
+        "code": "QaII.03",
+        "label": "Analitiche, integrate con specifiche e distinte, sullo stato e valore dei singoli componenti (d.P.R. 327/2001)"
+      }
+    ]
+  },
+  {
+    "id": "b1",
+    "name": "Progetto di fattibilità tecnico-economica",
+    "services": [
+      {
+        "code": "QbI.01",
+        "label": "Relazioni, planimetrie, elaborati grafici"
+      },
+      {
+        "code": "QbI.02",
+        "label": "Calcolo sommario spesa, quadro economico di progetto"
+      },
+      {
+        "code": "QbI.03",
+        "label": "Piano particellare preliminare delle aree o rilievo di massima degli immobili"
+      },
+      {
+        "code": "QbI.04",
+        "label": "Piano economico e finanziario di massima"
+      },
+      {
+        "code": "QbI.05",
+        "label": "Capitolato speciale descrittivo e prestazionale, schema di contratto"
+      },
+      {
+        "code": "QbI.06",
+        "label": "Relazione geotecnica"
+      },
+      {
+        "code": "QbI.07",
+        "label": "Relazione idrologica"
+      },
+      {
+        "code": "QbI.08",
+        "label": "Relazione idraulica"
+      },
+      {
+        "code": "QbI.09",
+        "label": "Relazione sismica e sulle strutture"
+      },
+      {
+        "code": "QbI.10",
+        "label": "Relazione archeologica"
+      },
+      {
+        "code": "QbI.11",
+        "label": "Relazione geologica"
+      },
+      {
+        "code": "QbI.12",
+        "label": "Progettazione integrale e coordinata - Integrazione delle prestazioni specialistiche"
+      },
+      {
+        "code": "QbI.13",
+        "label": "Studio di inserimento urbanistico"
+      },
+      {
+        "code": "QbI.14",
+        "label": "Relazione tecnica sullo stato di consistenza degli immobili da ristrutturare"
+      },
+      {
+        "code": "QbI.15",
+        "label": "Prime indicazioni di progettazione antincendio (d.m. 6/02/1982)"
+      },
+      {
+        "code": "QbI.16",
+        "label": "Prime indicazioni e prescrizioni per la stesura dei Piani di Sicurezza"
+      },
+      {
+        "code": "QbI.17",
+        "label": "Studi di prefattibilità ambientale"
+      },
+      {
+        "code": "QbI.18",
+        "label": "Piano di monitoraggio ambientale"
+      },
+      {
+        "code": "QbI.19",
+        "label": "Supporto al RUP: supervisione e coordinamento della progettazione preliminare"
+      },
+      {
+        "code": "QbI.20",
+        "label": "Supporto al RUP: verifica della progettazione preliminare"
+      },
+      {
+        "code": "QbI.21",
+        "label": "Prime indicazioni piano di manutenzione"
+      },
+      {
+        "code": "QbII.01",
+        "label": "Relazioni generale e tecniche, Elaborati grafici, Calcolo delle strutture e degli impianti, eventuali Relazione sulla risoluzione delle interferenze e Relazione sulla gestione materie"
+      },
+      {
+        "code": "QbII.02",
+        "label": "Rilievi dei manufatti"
+      },
+      {
+        "code": "QbII.03",
+        "label": "Disciplinare descrittivo e prestazionale"
+      },
+      {
+        "code": "QbII.04",
+        "label": "Piano particellare d'esproprio"
+      },
+      {
+        "code": "QbII.06",
+        "label": "Studio di inserimento urbanistico"
+      },
+      {
+        "code": "QbII.07",
+        "label": "Rilievi planoaltimetrici"
+      },
+      {
+        "code": "QbII.08",
+        "label": "Schema di contratto, Capitolato speciale d'appalto"
+      },
+      {
+        "code": "QbII.09",
+        "label": "Relazione geotecnica"
+      },
+      {
+        "code": "QbII.10",
+        "label": "Relazione idrologica"
+      },
+      {
+        "code": "QbII.11",
+        "label": "Relazione idraulica"
+      },
+      {
+        "code": "QbII.12",
+        "label": "Relazione sismica e sulle strutture"
+      },
+      {
+        "code": "QbII.13",
+        "label": "Relazione geologica"
+      },
+      {
+        "code": "QbII.17",
+        "label": "Progettazione integrale e coordinata - Integrazione delle prestazioni specialistiche"
+      },
+      {
+        "code": "QbII.18",
+        "label": "Elaborati di progettazione antincendio (d.m. 16/02/1982)"
+      },
+      {
+        "code": "QbII.19",
+        "label": "Relazione paesaggistica (d.lgs. 42/2004)"
+      },
+      {
+        "code": "QbII.20",
+        "label": "Elaborati e relazioni per requisiti acustici (Legge 447/95-d.p.c.m. 512/97)"
+      },
+      {
+        "code": "QbII.21",
+        "label": "Relazione energetica (ex Legge 10/91 e s.m.i.)"
+      },
+      {
+        "code": "QbII.22",
+        "label": "Diagnosi energetica (ex Legge 10/91 e s.m.i.) degli edifici esistenti, esclusi i rilievi e le indagini"
+      },
+      {
+        "code": "QbII.23",
+        "label": "Aggiornamento delle prime indicazioni e prescrizioni per la redazione del PSC"
+      },
+      {
+        "code": "QbII.24",
+        "label": "Studio di impatto ambientale o di fattibilità ambientale (VIA-VAS- AIA)"
+      },
+      {
+        "code": "QbII.25",
+        "label": "Piano di monitoraggio ambientale"
+      },
+      {
+        "code": "QbII.26",
+        "label": "Supporto al RUP: supervisione e coordinamento della prog. def."
+      },
+      {
+        "code": "QbII.27",
+        "label": "Supporto RUP: verifica della prog. def."
+      },
+      {
+        "code": "QbIII.03a",
+        "label": "Computo metrico estimativo, Quadro economico, Elenco prezzi e eventuale analisi, Quadro dell'incidenza percentuale della quantità di manodopera"
+      },
+      {
+        "code": "QbIII.04a",
+        "label": "Schema di contratto, capitolato speciale d'appalto, cronoprogramma"
+      },
+      {
+        "code": "QbIII.05a",
+        "label": "Piano di manutenzione dell'opera"
+      },
+      {
+        "code": "QbIII.07a",
+        "label": "Piano di Sicurezza e Coordinamento"
+      }
+    ]
+  },
+  {
+    "id": "b2",
+    "name": "Progettazione esecutiva",
+    "services": [
+      {
+        "code": "QbII.05",
+        "label": "Elenco prezzi unitari ed eventuali analisi, Computo metrico estimativo, Quadro economico"
+      },
+      {
+        "code": "QbIII.01",
+        "label": "Relazione generale e specialistiche, Elaborati grafici, Calcoli esecutivi"
+      },
+      {
+        "code": "QbIII.02",
+        "label": "Particolari costruttivi e decorativi"
+      },
+      {
+        "code": "QbIII.03b",
+        "label": "Computo metrico estimativo, Quadro economico, Elenco prezzi e eventuale analisi, Quadro dell'incidenza percentuale della quantità di manodopera"
+      },
+      {
+        "code": "QbIII.03",
+        "label": "Computo metrico estimativo, Quadro economico, Elenco prezzi e eventuale analisi, Quadro dell'incidenza percentuale della quantità di manodopera"
+      },
+      {
+        "code": "QbIII.04b",
+        "label": "Schema di contratto, capitolato speciale d'appalto, cronoprogramma"
+      },
+      {
+        "code": "QbIII.04",
+        "label": "Schema di contratto, capitolato speciale d'appalto, cronoprogramma"
+      },
+      {
+        "code": "QbIII.05b",
+        "label": "Piano di manutenzione dell'opera"
+      },
+      {
+        "code": "QbIII.05",
+        "label": "Piano di manutenzione dell'opera"
+      },
+      {
+        "code": "QbIII.06",
+        "label": "Progettazione integrale e coordinata - Integrazione delle prestazioni specialistiche"
+      },
+      {
+        "code": "QbIII.07b",
+        "label": "Piano di Sicurezza e Coordinamento"
+      },
+      {
+        "code": "QbIII.07",
+        "label": "Piano di Sicurezza e Coordinamento"
+      },
+      {
+        "code": "QbIII.08",
+        "label": "Supporto al RUP: per la supervisione e coordinamento della progettazione esecutiva"
+      },
+      {
+        "code": "QbIII.09",
+        "label": "Supporto al RUP: per la verifica della progettazione esecutiva"
+      },
+      {
+        "code": "QbIII.10",
+        "label": "Supporto al RUP: per la programmazione e progettazione appalto"
+      },
+      {
+        "code": "QbIII.11",
+        "label": "Supporto al RUP: per la validazione del progetto"
+      }
+    ]
+  },
+  {
+    "id": "c1",
+    "name": "Esecuzione dei lavori",
+    "services": [
+      {
+        "code": "QcI.01",
+        "label": "Direzione lavori, assistenza al collaudo, prove di accettazione"
+      },
+      {
+        "code": "QcI.02",
+        "label": "Liquidazione - Rendicontazioni e liquidazione tecnico contabile"
+      },
+      {
+        "code": "QcI.03",
+        "label": "Controllo aggiornamento elaborati di progetto, aggiornamento dei manuali d'uso e manutenzione"
+      },
+      {
+        "code": "QcI.04",
+        "label": "Coordinamento e supervisione dell'ufficio di direzione lavori"
+      },
+      {
+        "code": "QcI.05",
+        "label": "Ufficio della direzione lavori, per ogni addetto con qualifica di direttore operativo"
+      },
+      {
+        "code": "QcI.05.01",
+        "label": "Ufficio della direzione lavori, per ogni addetto con qualifica di direttore operativo “GEOLOGO”"
+      },
+      {
+        "code": "QcI.06",
+        "label": "Ufficio della direzione lavori, per ogni addetto con qualifica di ispettore di cantiere"
+      },
+      {
+        "code": "QcI.07",
+        "label": "Variante delle quantità del progetto in corso d'opera"
+      },
+      {
+        "code": "QcI.08",
+        "label": "Variante del progetto in corso d'opera"
+      },
+      {
+        "code": "QcI.09a",
+        "label": "Contabilità dei lavori a misura"
+      },
+      {
+        "code": "QcI.10a",
+        "label": "Contabilità dei lavori a corpo"
+      },
+      {
+        "code": "QcI.11",
+        "label": "Certificato di regolare esecuzione"
+      },
+      {
+        "code": "QcI.12",
+        "label": "Coordinamento della sicurezza in esecuzione"
+      },
+      {
+        "code": "QcI.13",
+        "label": "Supporto al RUP: per la supervisione e coordinamento della D.L. e della C.S.E."
+      }
+    ]
+  },
+  {
+    "id": "d1",
+    "name": "Verifiche e collaudi",
+    "services": [
+      {
+        "code": "QdI.01",
+        "label": "Collaudo tecnico amministrativo"
+      },
+      {
+        "code": "QdI.02",
+        "label": "Revisione tecnico contabile"
+      },
+      {
+        "code": "QdI.05",
+        "label": "Attestato di certificazione energetica (art.6 d.lgs. 311/2006) esclusa diagnosi energetica15"
+      }
+    ]
+  }
+]

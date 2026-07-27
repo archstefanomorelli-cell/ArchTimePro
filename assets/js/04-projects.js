@@ -6,7 +6,7 @@
         }
 
         function projectSelectColumns() {
-            return isAdminUser() ? '*' : 'id,studio_id,name,client,tasks,is_archived';
+            return isAdminUser() ? '*' : 'id,studio_id,name,client,tasks,is_archived,project_setup_type,normative_data';
         }
 
         function entrySelectColumns() {
@@ -525,12 +525,146 @@
             else editProjectTaskBudgets = budgets;
         }
 
+        function isNormativeProjectMode() {
+            return projectSetupType === 'normative';
+        }
+
+        async function loadNormativeLibrary() {
+            if (normativeLibrary.length > 0) return normativeLibrary;
+            const response = await fetch('assets/data/normative-services-dlgs36.json?v=2026-07-27-01');
+            if (!response.ok) throw new Error('Libreria delle prestazioni non disponibile');
+            const data = await response.json();
+            if (!Array.isArray(data) || data.length === 0) throw new Error('Libreria delle prestazioni non valida');
+            normativeLibrary = data;
+            return normativeLibrary;
+        }
+
+        function getSelectedNormativeServicesSnapshot() {
+            const selected = [];
+            normativeLibrary.forEach(phase => {
+                phase.services.forEach(service => {
+                    if (!normativeSelectedServices.has(service.code)) return;
+                    selected.push({
+                        code: service.code,
+                        label: service.label,
+                        phase_id: phase.id,
+                        phase_name: phase.name
+                    });
+                });
+            });
+            return selected;
+        }
+
+        function getNormativePhaseTasks() {
+            return normativeLibrary
+                .filter(phase => phase.services.some(service => normativeSelectedServices.has(service.code)))
+                .map(phase => phase.name);
+        }
+
+        function syncNormativeTasksFromSelection() {
+            const tasks = getNormativePhaseTasks();
+            const budgets = collectCurrentProjectTaskBudgets();
+            const nextBudgets = {};
+            tasks.forEach(task => {
+                if (Number(budgets[task] || 0) > 0) nextBudgets[task] = Number(budgets[task]);
+            });
+            setCurrentProjectModalTasks(tasks);
+            setCurrentProjectModalBudgets(nextBudgets);
+            renderProjectModalTasks();
+        }
+
+        function captureOpenNormativePhases() {
+            document.querySelectorAll('#project-normative-phases details[data-phase-id]').forEach(detail => {
+                if (detail.open) normativeOpenPhaseIds.add(detail.dataset.phaseId);
+                else normativeOpenPhaseIds.delete(detail.dataset.phaseId);
+            });
+        }
+
+        function renderNormativeProjectBuilder() {
+            const container = document.getElementById('project-normative-phases');
+            if (!container || !isNormativeProjectMode()) return;
+            captureOpenNormativePhases();
+            container.innerHTML = normativeLibrary.map((phase, phaseIndex) => {
+                const selectedCount = phase.services.filter(service => normativeSelectedServices.has(service.code)).length;
+                const isOpen = normativeOpenPhaseIds.has(phase.id) || (phaseIndex === 0 && normativeOpenPhaseIds.size === 0);
+                const services = phase.services.map(service => `
+                    <label class="normative-service-row">
+                        <input type="checkbox" data-ui-action="toggle-normative-service" data-service-code="${escapeAttr(service.code)}" ${normativeSelectedServices.has(service.code) ? 'checked' : ''}>
+                        <span class="normative-service-code">${escapeHtml(service.code)}</span>
+                        <span class="normative-service-label">${escapeHtml(service.label)}</span>
+                    </label>`).join('');
+                return `
+                    <details data-phase-id="${escapeAttr(phase.id)}" class="normative-phase" ${isOpen ? 'open' : ''}>
+                        <summary>
+                            <span class="normative-phase-index">${phaseIndex + 1}</span>
+                            <span class="min-w-0">
+                                <strong>${escapeHtml(phase.name)}</strong>
+                                <small>${selectedCount} di ${phase.services.length} selezionate</small>
+                            </span>
+                            <i data-lucide="chevron-down" class="normative-phase-chevron"></i>
+                        </summary>
+                        <div class="normative-phase-body">
+                            <button type="button" data-ui-action="toggle-normative-phase" data-phase-id="${escapeAttr(phase.id)}" class="normative-phase-toggle">${selectedCount === phase.services.length ? 'Deseleziona tutte' : 'Seleziona tutte'}</button>
+                            <div class="normative-services-list">${services}</div>
+                        </div>
+                    </details>`;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        function phaseHasTrackedEntries(phaseName) {
+            const projectId = document.getElementById('edit-modal-proj-id')?.value;
+            return Boolean(projectId && entries.some(entry => entry.project_id === projectId && entry.task === phaseName));
+        }
+
+        async function toggleNormativeService(checkbox) {
+            const code = checkbox?.dataset.serviceCode;
+            if (!code) return;
+            const phase = normativeLibrary.find(item => item.services.some(service => service.code === code));
+            if (!phase) return;
+
+            if (checkbox.checked) {
+                normativeSelectedServices.add(code);
+            } else {
+                const remainingInPhase = phase.services.filter(service => service.code !== code && normativeSelectedServices.has(service.code));
+                if (remainingInPhase.length === 0 && phaseHasTrackedEntries(phase.name)) {
+                    checkbox.checked = true;
+                    return await appAlert('Attività già utilizzata', `Non puoi rimuovere ${phase.name} perché contiene ore registrate.`, 'danger');
+                }
+                normativeSelectedServices.delete(code);
+            }
+
+            captureOpenNormativePhases();
+            syncNormativeTasksFromSelection();
+            renderNormativeProjectBuilder();
+        }
+
+        async function toggleNormativePhase(phaseId) {
+            const phase = normativeLibrary.find(item => item.id === phaseId);
+            if (!phase) return;
+            const allSelected = phase.services.every(service => normativeSelectedServices.has(service.code));
+            if (allSelected && phaseHasTrackedEntries(phase.name)) {
+                return await appAlert('Attività già utilizzata', `Non puoi rimuovere ${phase.name} perché contiene ore registrate.`, 'danger');
+            }
+            phase.services.forEach(service => {
+                if (allSelected) normativeSelectedServices.delete(service.code);
+                else normativeSelectedServices.add(service.code);
+            });
+            normativeOpenPhaseIds.add(phase.id);
+            syncNormativeTasksFromSelection();
+            renderNormativeProjectBuilder();
+        }
+
         function currentProjectBudgetMode() {
             return isProjectModalCreateMode() ? 'new' : 'edit';
         }
 
         function collectCurrentProjectTaskBudgets() {
-            return collectVisibleTaskBudgets(currentProjectBudgetMode());
+            const mode = currentProjectBudgetMode();
+            const selector = mode === 'edit' ? '[data-budget-mode="edit"]' : '[data-budget-mode="new"]';
+            return document.querySelectorAll(selector).length > 0
+                ? collectVisibleTaskBudgets(mode)
+                : { ...getCurrentProjectModalBudgets() };
         }
 
         function getTaskBudgetsTotal(tasks = getCurrentProjectModalTasks(), budgets = collectCurrentProjectTaskBudgets()) {
@@ -560,6 +694,7 @@
         }
 
         function setProjectBudgetMode(mode) {
+            setCurrentProjectModalBudgets(collectCurrentProjectTaskBudgets());
             projectBudgetMode = mode === 'auto' ? 'auto' : 'manual';
             if (projectBudgetMode === 'auto') fillProjectBudgetFromTaskBudgets(false);
             refreshProjectBudgetModeUI();
@@ -576,9 +711,10 @@
         function inlineProjectTaskHtml(task, index, budgets, mode) {
             const budgetValue = Number(budgets?.[task] || 0);
             const isAutoBudget = projectBudgetMode === 'auto';
+            const isLocked = isNormativeProjectMode();
             return `
-                <div draggable="true" data-ui-action="project-task-drag" data-task-index="${index}" class="project-task-row grid ${isAutoBudget ? 'grid-cols-[auto_minmax(0,1fr)_104px_auto]' : 'grid-cols-[auto_minmax(0,1fr)_auto]'} gap-2 items-center bg-white border border-slate-200 rounded-xl px-2.5 py-2 shadow-sm cursor-grab active:cursor-grabbing touch-none">
-                    <span class="text-slate-300"><i data-lucide="grip-vertical" class="w-4 h-4"></i></span>
+                <div ${isLocked ? '' : 'draggable="true" data-ui-action="project-task-drag"'} data-task-index="${index}" class="project-task-row grid ${isAutoBudget ? 'grid-cols-[auto_minmax(0,1fr)_104px_auto]' : 'grid-cols-[auto_minmax(0,1fr)_auto]'} gap-2 items-center bg-white border border-slate-200 rounded-xl px-2.5 py-2 shadow-sm ${isLocked ? '' : 'cursor-grab active:cursor-grabbing touch-none'}">
+                    <span class="${isLocked ? 'text-primary-400' : 'text-slate-300'}"><i data-lucide="${isLocked ? 'lock-keyhole' : 'grip-vertical'}" class="w-4 h-4"></i></span>
                     <div class="min-w-0">
                         <span class="block text-[11px] font-bold text-slate-700 truncate"><span class="text-primary-600 font-black">${index + 1}.</span> ${escapeHtml(task)}</span>
                         ${isAutoBudget ? `<span class="block text-[8px] font-black uppercase tracking-wider ${budgetValue > 0 ? 'text-primary-500' : 'text-slate-400'}">${budgetValue > 0 ? 'Pesa sul ritmo' : 'Fuori piano'}</span>` : ''}
@@ -588,7 +724,9 @@
                         <span class="text-[10px] font-black text-slate-400">€</span>
                         <input type="text" data-budget-mode="${mode}" data-task="${escapeAttr(task)}" value="${escapeAttr(getTaskBudgetInputValue(budgets, task))}" placeholder="Fuori piano" inputmode="decimal" class="task-budget-input w-full bg-transparent outline-none text-[11px] font-mono font-bold text-slate-700 placeholder:text-[8px] placeholder:font-sans placeholder:uppercase placeholder:tracking-wider">
                     </div>` : ''}
-                    <button type="button" data-ui-action="remove-inline-project-task" data-task-index="${index}" class="p-1.5 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
+                    ${isLocked
+                        ? '<span class="p-1.5 text-primary-400" title="Macrofase generata dalle prestazioni selezionate"><i data-lucide="shield-check" class="w-3.5 h-3.5"></i></span>'
+                        : `<button type="button" data-ui-action="remove-inline-project-task" data-task-index="${index}" class="p-1.5 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>`}
                 </div>`;
         }
 
@@ -763,25 +901,66 @@
                 icon.className = 'text-primary-500 w-5 h-5';
                 title.replaceChildren(icon, document.createTextNode(isCreate ? ' Nuovo progetto' : ' Modifica progetto'));
             }
-            if (desc) desc.textContent = isCreate ? 'Imposta anagrafica, budget e flusso di lavoro in un unico passaggio.' : 'Aggiorna anagrafica, budget e attività incluse.';
+            if (desc) {
+                desc.textContent = isCreate
+                    ? (isNormativeProjectMode()
+                        ? 'Scegli le prestazioni di dettaglio e controlla il progetto attraverso le relative macrofasi.'
+                        : 'Imposta anagrafica, budget e flusso di lavoro in un unico passaggio.')
+                    : (isNormativeProjectMode()
+                        ? 'Aggiorna prestazioni, anagrafica e budget. Il timer continuerà a usare le macrofasi.'
+                        : 'Aggiorna anagrafica, budget e attività incluse.');
+            }
             if (saveButton) saveButton.textContent = isCreate ? 'Crea progetto' : 'Salva modifiche';
         }
 
-        function openCreateProjectModal() {
+        function openProjectTypeModal() {
             if (activePlan === 'starter') {
                 const activeCount = projects.filter(p => p.is_archived !== true).length;
                 if (activeCount >= 5) return openUpgradeModal('Lavori Illimitati');
             }
+            document.getElementById('modal-project-type')?.classList.remove('force-hide');
+            lucide.createIcons();
+        }
+
+        function closeProjectTypeModal() {
+            document.getElementById('modal-project-type')?.classList.add('force-hide');
+        }
+
+        function resetProjectModalScroll() {
+            const modalCard = document.querySelector('#modal-edit-project > div');
+            const phases = document.getElementById('project-normative-phases');
+            if (modalCard) modalCard.scrollTop = 0;
+            if (phases) phases.scrollTop = 0;
+        }
+
+        async function selectProjectSetupType(type) {
+            projectSetupType = type === 'normative' ? 'normative' : 'studio';
+            if (isNormativeProjectMode()) {
+                try {
+                    await loadNormativeLibrary();
+                } catch (error) {
+                    return await appAlert('Libreria non disponibile', 'Non è stato possibile caricare le prestazioni parametriche. Riprova tra poco.', 'danger');
+                }
+            }
+            closeProjectTypeModal();
+            openCreateProjectModal(projectSetupType);
+        }
+
+        function openCreateProjectModal(type = 'studio') {
+            projectSetupType = type === 'normative' ? 'normative' : 'studio';
             document.getElementById('edit-modal-proj-id').value = '';
             document.getElementById('edit-modal-name').value = '';
             document.getElementById('edit-modal-client').value = '';
             document.getElementById('edit-modal-budget').value = '';
             newProjectTasks = [];
             newProjectTaskBudgets = {};
+            normativeSelectedServices = new Set();
+            normativeOpenPhaseIds = new Set();
             setProjectBudgetMode('manual');
             setProjectModalMode('create');
             renderNewProjectUI();
             document.getElementById('modal-edit-project').classList.remove('force-hide');
+            resetProjectModalScroll();
             lucide.createIcons();
         }
 
@@ -799,16 +978,32 @@
 
         function renderNewProjectUI() {
             const selectTpl = document.getElementById('new-proj-template');
+            const studioControls = document.getElementById('project-studio-task-controls');
+            const customControls = document.getElementById('project-custom-task-controls');
+            const normativeBuilder = document.getElementById('project-normative-builder');
+            const sectionTitle = document.getElementById('project-task-section-title');
+            const timerLabel = document.getElementById('project-timer-activities-label');
+            const orderHint = document.getElementById('project-task-order-hint');
+            const isNormative = isNormativeProjectMode();
+
+            studioControls?.classList.toggle('force-hide', isNormative);
+            customControls?.classList.toggle('force-hide', isNormative);
+            normativeBuilder?.classList.toggle('force-hide', !isNormative);
+            if (sectionTitle) sectionTitle.textContent = isNormative ? 'Prestazioni parametriche' : 'Template e attività';
+            if (timerLabel) timerLabel.textContent = isNormative ? 'Macrofasi disponibili nel timer' : 'Attività incluse';
+            if (orderHint) orderHint.textContent = isNormative ? 'Generate dalla selezione' : 'Trascina per ordinare';
+
             if (selectTpl) {
                 if(activePlan === 'starter') { selectTpl.innerHTML = optionHtml('', 'I Template sono nel piano PREMIUM', true, true); selectTpl.disabled = true; selectTpl.classList.add('locked-feature'); } 
                 else { selectTpl.innerHTML = optionHtml('', '-- Scegli da un Template --', true, true) + projectTemplates.map((t, i) => optionHtml(i, t.name)).join(''); selectTpl.disabled = false; selectTpl.classList.remove('locked-feature'); }
             }
+            if (isNormative) renderNormativeProjectBuilder();
             renderProjectModalTasks();
             lucide.createIcons();
         }
 
         function applyTemplateToNewProject() {
-            if(activePlan==='starter') return;
+            if(activePlan==='starter' || isNormativeProjectMode()) return;
             const val = document.getElementById('new-proj-template').value;
             const templateTasks = val !== "" ? [...projectTemplates[val].tasks] : [];
             if (isProjectModalCreateMode()) {
@@ -823,6 +1018,7 @@
         }
 
         function addInlineProjectTask() {
+            if (isNormativeProjectMode()) return;
             const select = document.getElementById('project-inline-task-select');
             const task = select?.value;
             if (!task) return;
@@ -833,6 +1029,7 @@
         }
 
         async function createInlineProjectTask() {
+            if (isNormativeProjectMode()) return;
             const input = document.getElementById('project-inline-new-task');
             const val = input?.value.trim();
             if (!val) return;
@@ -849,6 +1046,7 @@
         }
 
         function removeInlineProjectTask(index) {
+            if (isNormativeProjectMode()) return;
             const tasks = getCurrentProjectModalTasks();
             const budgets = collectCurrentProjectTaskBudgets();
             const removedTask = tasks[index];
@@ -861,6 +1059,7 @@
         }
 
         function reorderInlineProjectTasks(fromIndex, toIndex) {
+            if (isNormativeProjectMode()) return;
             if (fromIndex === toIndex || fromIndex < 0 || toIndex < 0) return;
             const tasks = [...getCurrentProjectModalTasks()];
             if (fromIndex >= tasks.length || toIndex >= tasks.length) return;
@@ -890,11 +1089,25 @@
             if (projectBudgetMode === 'auto') fillProjectBudgetFromTaskBudgets(false);
             const name = document.getElementById('edit-modal-name').value.trim(); const client = document.getElementById('edit-modal-client').value.trim(); const budget = parseFloat(document.getElementById('edit-modal-budget').value) || 0;
             if(!name) return await appAlert("Attenzione", "Inserisci il nome del lavoro", "danger"); 
-            if(newProjectTasks.length === 0) return await appAlert("Attenzione", "Configura almeno un'attività", "danger");
+            if(newProjectTasks.length === 0) {
+                return await appAlert(
+                    "Attenzione",
+                    isNormativeProjectMode() ? "Seleziona almeno una prestazione parametrica" : "Configura almeno un'attività",
+                    "danger"
+                );
+            }
             newProjectTaskBudgets = collectVisibleTaskBudgets('new');
             
             const payload = { name: name, client: client, budget: budget, tasks: [...newProjectTasks], studio_id: userProfile.studio_id };
             if (Object.keys(newProjectTaskBudgets).length > 0) payload.task_budgets = newProjectTaskBudgets;
+            if (isNormativeProjectMode()) {
+                payload.project_setup_type = 'normative';
+                payload.normative_data = {
+                    reference: NORMATIVE_PROJECT_REFERENCE,
+                    library_version: NORMATIVE_PROJECT_LIBRARY_VERSION,
+                    selected_services: getSelectedNormativeServicesSnapshot()
+                };
+            }
 
             if (typeof isVideoDemoMode === 'function' && isVideoDemoMode()) {
                 projects.unshift({
@@ -910,11 +1123,22 @@
             }
 
             const { error } = await supabaseClient.from('projects').insert([payload]);
-            if (error) return await appAlert("Configurazione richiesta", "Per salvare il Piano costi va prima aggiunta la colonna task_budgets in Supabase. Puoi lasciare vuoti i campi Piano costi oppure eseguire lo script SQL dedicato.", "danger");
+            if (error) {
+                const needsNormativeSetup = isNormativeProjectMode() && /project_setup_type|normative_data/i.test(error.message || '');
+                return await appAlert(
+                    "Configurazione richiesta",
+                    needsNormativeSetup
+                        ? "Per creare progetti parametrici esegui prima lo script SQL dedicato in Supabase."
+                        : "Per salvare il Piano costi va prima aggiunta la colonna task_budgets in Supabase. Puoi lasciare vuoti i campi Piano costi oppure eseguire lo script SQL dedicato.",
+                    "danger"
+                );
+            }
             if (typeof clearMarginCalculatorHandoff === 'function') clearMarginCalculatorHandoff();
             window.archTimeAnalytics?.track('project_created', {
                 has_budget: budget > 0,
-                task_count: newProjectTasks.length
+                task_count: newProjectTasks.length,
+                setup_type: projectSetupType,
+                normative_service_count: isNormativeProjectMode() ? normativeSelectedServices.size : 0
             });
             
             document.getElementById('edit-modal-name').value = ""; 
@@ -1054,6 +1278,44 @@
             const idleClass = 'bg-white text-slate-500 border-slate-200 hover:border-primary-200 hover:text-primary-600';
 
             return `<button data-ui-action="set-task-status" data-project-id="${escapeAttr(projectId)}" data-task="${escapeAttr(taskName)}" data-status="${value}" class="px-2 py-1 rounded-md border text-[9px] font-black uppercase tracking-wider transition-all whitespace-nowrap ${isActive ? activeClass : idleClass}">${label}</button>`;
+        }
+
+        function normativeServicesForTask(project, taskName) {
+            if (project?.project_setup_type !== 'normative' || !Array.isArray(project.normative_data?.selected_services)) return [];
+            return project.normative_data.selected_services.filter(service => service.phase_name === taskName);
+        }
+
+        function normativeTaskServicesHtml(project, taskName) {
+            const services = normativeServicesForTask(project, taskName);
+            if (services.length === 0) return '';
+            return `
+                <div class="normative-task-services">
+                    ${services.map(service => `<span><b>${escapeHtml(service.code)}</b> ${escapeHtml(service.label)}</span>`).join('')}
+                </div>`;
+        }
+
+        function renderNormativeScopePanel(project) {
+            if (project?.project_setup_type !== 'normative') return '';
+            const tasks = project.tasks || [];
+            const rows = tasks.map((taskName, index) => `
+                <div class="normative-scope-row">
+                    <div class="normative-scope-heading">
+                        <span>${index + 1}</span>
+                        <strong>${escapeHtml(taskName)}</strong>
+                    </div>
+                    ${normativeTaskServicesHtml(project, taskName)}
+                </div>`).join('');
+            return `
+                <div class="normative-scope-panel bg-white border border-slate-200 rounded-2xl p-3 shadow-sm mb-4">
+                    <div class="flex items-start gap-2 border-b border-slate-100 pb-2 mb-2">
+                        <i data-lucide="landmark" class="w-3.5 h-3.5 text-primary-500 mt-0.5"></i>
+                        <div>
+                            <h3 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Prestazioni parametriche</h3>
+                            <p class="text-[10px] text-slate-400 font-medium mt-1">${escapeHtml(project.normative_data?.reference || NORMATIVE_PROJECT_REFERENCE)}</p>
+                        </div>
+                    </div>
+                    <div class="normative-scope-list">${rows}</div>
+                </div>`;
         }
 
         function renderProjectRhythmPanel(data) {
@@ -1356,6 +1618,7 @@
             ${renderProjectDetailHeader(data.project)}
             ${renderProjectMetrics(data)}
             ${renderProjectAnalyticsPanel(data)}
+            ${renderNormativeScopePanel(data.project)}
             ${renderProjectRhythmPanel(data)}
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-5 pb-5 lg:pb-0">
                 <div class="space-y-4">
@@ -1421,8 +1684,16 @@
             document.getElementById('modal-edit-expense').classList.add('force-hide');
         }
 
-        function openEditProjectModal(id) {
+        async function openEditProjectModal(id) {
             const p = projects.find(x => x.id === id); if(!p) return;
+            projectSetupType = p.project_setup_type === 'normative' ? 'normative' : 'studio';
+            if (isNormativeProjectMode()) {
+                try {
+                    await loadNormativeLibrary();
+                } catch (error) {
+                    return await appAlert('Libreria non disponibile', 'Non è stato possibile caricare le prestazioni parametriche. Riprova tra poco.', 'danger');
+                }
+            }
             setProjectModalMode('edit');
             document.getElementById('edit-modal-proj-id').value = id; 
             document.getElementById('edit-modal-name').value = p.name; 
@@ -1432,6 +1703,12 @@
             if (templateSelect) templateSelect.value = '';
             editProjectTasks = p.tasks && p.tasks.length > 0 ? [...p.tasks] : [];
             editProjectTaskBudgets = getProjectTaskBudgets(p);
+            normativeSelectedServices = new Set(
+                isNormativeProjectMode() && Array.isArray(p.normative_data?.selected_services)
+                    ? p.normative_data.selected_services.map(service => service.code).filter(Boolean)
+                    : []
+            );
+            normativeOpenPhaseIds = new Set();
             const taskBudgetTotal = getTaskBudgetsTotal(editProjectTasks, editProjectTaskBudgets);
             projectBudgetMode = taskBudgetTotal > 0 ? 'auto' : 'manual';
             refreshProjectBudgetModeUI();
@@ -1439,6 +1716,7 @@
             renderEditProjectTasks();
             document.getElementById('modal-detail').classList.add('force-hide'); 
             document.getElementById('modal-edit-project').classList.remove('force-hide'); 
+            resetProjectModalScroll();
             lucide.createIcons();
         }
 
@@ -1457,14 +1735,37 @@
             const client = document.getElementById('edit-modal-client').value.trim(); 
             const budget = parseFloat(document.getElementById('edit-modal-budget').value) || 0;
             if(!name) return await appAlert("Attenzione", "Inserisci il nome", "danger"); 
-            if(editProjectTasks.length === 0) return await appAlert("Attenzione", "Configura almeno un'attività", "danger");
+            if(editProjectTasks.length === 0) {
+                return await appAlert(
+                    "Attenzione",
+                    isNormativeProjectMode() ? "Seleziona almeno una prestazione parametrica" : "Configura almeno un'attività",
+                    "danger"
+                );
+            }
             editProjectTaskBudgets = collectVisibleTaskBudgets('edit');
             const originalProject = projects.find(project => project.id === id);
             const hadTaskBudgets = originalProject && Object.keys(getProjectTaskBudgets(originalProject)).length > 0;
             const updatePayload = { name, client, budget, tasks: editProjectTasks };
             if (hadTaskBudgets || Object.keys(editProjectTaskBudgets).length > 0) updatePayload.task_budgets = editProjectTaskBudgets;
+            if (isNormativeProjectMode()) {
+                updatePayload.project_setup_type = 'normative';
+                updatePayload.normative_data = {
+                    reference: NORMATIVE_PROJECT_REFERENCE,
+                    library_version: NORMATIVE_PROJECT_LIBRARY_VERSION,
+                    selected_services: getSelectedNormativeServicesSnapshot()
+                };
+            }
             const { error } = await supabaseClient.from('projects').update(updatePayload).eq('id', id); 
-            if (error) return await appAlert("Configurazione richiesta", "Per salvare il Piano costi va prima aggiunta la colonna task_budgets in Supabase. Puoi eseguire lo script SQL dedicato e riprovare.", "danger");
+            if (error) {
+                const needsNormativeSetup = isNormativeProjectMode() && /project_setup_type|normative_data/i.test(error.message || '');
+                return await appAlert(
+                    "Configurazione richiesta",
+                    needsNormativeSetup
+                        ? "Per modificare progetti parametrici esegui prima lo script SQL dedicato in Supabase."
+                        : "Per salvare il Piano costi va prima aggiunta la colonna task_budgets in Supabase. Puoi eseguire lo script SQL dedicato e riprovare.",
+                    "danger"
+                );
+            }
             await supabaseClient.from('entries').update({ project_name: name }).eq('project_id', id);
             await fetchProjects(); await fetchEntries();
             closeEditProjectModal(); showProjectDetail(id); 

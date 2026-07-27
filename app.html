@@ -65,7 +65,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="assets/app.css?v=phase3-budget-libero-2026-05-09">
-    <link rel="stylesheet" href="assets/app-pro.css?v=dashboard-summary-2026-07-18-13">
+    <link rel="stylesheet" href="assets/app-pro.css?v=normative-projects-2026-07-27-01">
     <script src="assets/js/12-analytics.js?v=google-ads-conversion-2026-07-18-02" defer></script>
 </head>
 <body class="text-slate-800 pb-20 lg:pb-0">
@@ -784,6 +784,32 @@
         </div>
     </div>
     
+    <div id="modal-project-type" class="force-hide fixed inset-0 z-[120] modal flex items-center justify-center p-4">
+        <div class="w-full max-w-xl p-6 lg:p-8 shadow-xl border border-slate-200 rounded-2xl relative bg-white">
+            <button id="btn-close-project-type" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+            <h2 class="text-lg font-black text-slate-800 tracking-tight mb-1 flex items-center gap-2 pr-10"><i data-lucide="folder-plus" class="text-primary-500 w-5 h-5"></i> Come vuoi impostare il progetto?</h2>
+            <p class="text-xs text-slate-500 font-medium mb-6 pr-10">Scegli la struttura delle attività. Potrai definire budget e anagrafica nel passaggio successivo.</p>
+            <div class="project-type-options">
+                <button type="button" data-ui-action="select-project-type" data-project-type="studio" class="project-type-option">
+                    <span class="project-type-icon"><i data-lucide="sliders-horizontal" class="w-5 h-5"></i></span>
+                    <span class="min-w-0 text-left">
+                        <strong>Attività dello studio</strong>
+                        <small>Usa template e attività personalizzabili dello studio.</small>
+                    </span>
+                    <i data-lucide="chevron-right" class="project-type-chevron"></i>
+                </button>
+                <button type="button" data-ui-action="select-project-type" data-project-type="normative" class="project-type-option">
+                    <span class="project-type-icon is-normative"><i data-lucide="landmark" class="w-5 h-5"></i></span>
+                    <span class="min-w-0 text-left">
+                        <strong>Prestazioni parametriche</strong>
+                        <small>Scegli le prestazioni normative; nel timer saranno aggregate per macrofase.</small>
+                    </span>
+                    <i data-lucide="chevron-right" class="project-type-chevron"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div id="modal-edit-project" class="force-hide fixed inset-0 z-[100] modal flex items-center justify-center p-4">
         <div class="w-full max-w-5xl max-h-[92vh] p-6 lg:p-8 shadow-xl border border-slate-200 rounded-2xl relative bg-white overflow-y-auto">
             <button id="btn-close-edit-project" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
@@ -808,24 +834,36 @@
                     </div>
                 </div>
                 <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4">
-                    <div class="flex items-center gap-2 text-[11px] font-black text-slate-600 uppercase tracking-wider mb-3"><span class="w-5 h-5 rounded-md bg-primary-600 text-white flex items-center justify-center text-[10px]">2</span>Template e attività</div>
-                    <div class="flex gap-2 mb-3">
+                    <div class="flex items-center gap-2 text-[11px] font-black text-slate-600 uppercase tracking-wider mb-3"><span class="w-5 h-5 rounded-md bg-primary-600 text-white flex items-center justify-center text-[10px]">2</span><span id="project-task-section-title">Template e attività</span></div>
+                    <div id="project-studio-task-controls" class="flex gap-2 mb-3">
                         <select id="new-proj-template" class="flex-1 border border-slate-200 rounded-xl p-3 text-sm bg-white shadow-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all appearance-none cursor-pointer text-slate-700"><option value="" selected disabled>Scegli un template</option></select>
                         <button id="btn-manage-templates" class="secondary-action icon-only" title="Gestisci template"><i data-lucide="layers" class="w-4 h-4"></i></button>
                     </div>
+                    <div id="project-normative-builder" class="force-hide">
+                        <div class="project-normative-note">
+                            <i data-lucide="landmark" class="w-4 h-4"></i>
+                            <div>
+                                <strong>Prestazioni di dettaglio</strong>
+                                <span>Scegli le voci applicabili. Arch Time Pro le raggrupperà nelle macrofasi usate dal timer.</span>
+                            </div>
+                        </div>
+                        <div id="project-normative-phases" class="project-normative-phases"></div>
+                    </div>
                     <div class="bg-white border border-slate-200 rounded-xl p-3.5 shadow-sm">
                         <div class="flex justify-between items-center mb-2.5">
-                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Attività incluse</span>
-                            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Trascina per ordinare</span>
+                            <span id="project-timer-activities-label" class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Attività incluse</span>
+                            <span id="project-task-order-hint" class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Trascina per ordinare</span>
                         </div>
                         <div id="edit-proj-selected-tasks" class="space-y-2 min-h-[44px]"></div>
-                        <div class="mt-3 pt-3 border-t border-slate-100 grid grid-cols-[minmax(0,1fr)_auto] gap-2">
-                            <select id="project-inline-task-select" class="min-w-0 border border-slate-200 rounded-xl p-2.5 text-xs bg-white shadow-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all appearance-none cursor-pointer text-slate-700"></select>
-                            <button type="button" data-ui-action="add-inline-project-task" class="secondary-action compact"><i data-lucide="plus" class="w-3.5 h-3.5"></i> Aggiungi</button>
-                        </div>
-                        <div class="mt-2 grid grid-cols-[minmax(0,1fr)_auto] gap-2">
-                            <input type="text" id="project-inline-new-task" placeholder="Nuova attività al volo" class="min-w-0 border border-slate-200 rounded-xl p-2.5 text-xs bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all">
-                            <button type="button" data-ui-action="create-inline-project-task" class="secondary-action compact">Crea</button>
+                        <div id="project-custom-task-controls">
+                            <div class="mt-3 pt-3 border-t border-slate-100 grid grid-cols-[minmax(0,1fr)_auto] gap-2">
+                                <select id="project-inline-task-select" class="min-w-0 border border-slate-200 rounded-xl p-2.5 text-xs bg-white shadow-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all appearance-none cursor-pointer text-slate-700"></select>
+                                <button type="button" data-ui-action="add-inline-project-task" class="secondary-action compact"><i data-lucide="plus" class="w-3.5 h-3.5"></i> Aggiungi</button>
+                            </div>
+                            <div class="mt-2 grid grid-cols-[minmax(0,1fr)_auto] gap-2">
+                                <input type="text" id="project-inline-new-task" placeholder="Nuova attività al volo" class="min-w-0 border border-slate-200 rounded-xl p-2.5 text-xs bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all">
+                                <button type="button" data-ui-action="create-inline-project-task" class="secondary-action compact">Crea</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -904,13 +942,13 @@
     </div>
 
     <script src="assets/js/00-runtime-config.js?v=stripe-founder-2026-06-29"></script>
-    <script src="assets/js/01-core.js?v=project-list-2026-07-17-05"></script>
+    <script src="assets/js/01-core.js?v=normative-projects-2026-07-27-01"></script>
     <script src="assets/js/02-auth-account.js?v=google-ads-conversion-2026-07-18-02"></script>
     <script src="assets/js/03-team.js?v=phase3-team-modals-2026-05-12"></script>
-    <script src="assets/js/04-projects.js?v=dashboard-summary-2026-07-18-13"></script>
+    <script src="assets/js/04-projects.js?v=normative-projects-2026-07-27-01"></script>
     <script src="assets/js/05-time-entries.js?v=activation-funnel-2026-07-18-01"></script>
     <script src="assets/js/06-reports.js?v=phase3-final-ui-2026-05-02"></script>
-    <script src="assets/js/07-password-bootstrap.js?v=signup-simple-2026-07-18-01"></script>
+    <script src="assets/js/07-password-bootstrap.js?v=normative-projects-2026-07-27-01"></script>
     <script src="assets/js/09-video-demo.js?v=analytics-workspace-2026-07-17-01"></script>
 </body>
 </html>

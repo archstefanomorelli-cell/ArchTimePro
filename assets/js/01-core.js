@@ -334,9 +334,16 @@ const ARCH_TIME_CONFIG = window.ARCH_TIME_CONFIG || {};
             lucide.createIcons();
         }
 
+        const NORMATIVE_PROJECT_REFERENCE = 'D.M. 17 giugno 2016 e D.Lgs. 36/2023, Allegato I.13';
+        const NORMATIVE_PROJECT_LIBRARY_VERSION = '2026-07';
+
         let activityCatalog = [], projectTemplates = [], newProjectTasks = [], editProjectTasks = [], newTemplateTasks = [];
         let newProjectTaskBudgets = {}, editProjectTaskBudgets = {};
         let projectBudgetMode = 'manual';
+        let projectSetupType = 'studio';
+        let normativeLibrary = [];
+        let normativeSelectedServices = new Set();
+        let normativeOpenPhaseIds = new Set();
         let editingTemplateIndex = null, editingCatalogTask = null, taskBuilderMode = 'new', tempBuilderTasks = [];
 
         function showCustomDialog(options) {

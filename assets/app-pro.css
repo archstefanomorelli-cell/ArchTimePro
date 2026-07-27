@@ -362,6 +362,303 @@ html.theme-pro .modal:not(.force-hide) > div {
     box-shadow: 0 24px 80px rgba(15, 23, 42, 0.18) !important;
 }
 
+html.theme-pro .project-type-options {
+    display: grid;
+    gap: 0.65rem;
+}
+
+html.theme-pro .project-type-option {
+    width: 100%;
+    min-height: 5rem;
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr) 1rem;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.9rem;
+    border: 1px solid #d8dee6;
+    background: #ffffff;
+    color: #172033;
+    text-align: left;
+    transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+}
+
+html.theme-pro .project-type-option:hover {
+    border-color: #818cf8;
+    background: #f8faff;
+    box-shadow: 0 8px 22px rgba(79, 70, 229, 0.08);
+}
+
+html.theme-pro .project-type-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: #f1f5f9;
+    color: #475569;
+}
+
+html.theme-pro .project-type-icon.is-normative {
+    background: #eef2ff;
+    color: #4f46e5;
+}
+
+html.theme-pro .project-type-option strong {
+    display: block;
+    font-size: 0.84rem;
+    line-height: 1.2;
+    color: #172033;
+}
+
+html.theme-pro .project-type-option small {
+    display: block;
+    margin-top: 0.28rem;
+    font-size: 0.69rem;
+    line-height: 1.4;
+    font-weight: 600;
+    color: #64748b;
+}
+
+html.theme-pro .project-type-chevron {
+    width: 1rem;
+    height: 1rem;
+    color: #94a3b8;
+}
+
+html.theme-pro .project-normative-note {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.65rem;
+    align-items: start;
+    margin-bottom: 0.7rem;
+    padding: 0.7rem 0.75rem;
+    border: 1px solid #c7d2fe;
+    border-radius: 8px;
+    background: #f5f7ff;
+    color: #4f46e5;
+}
+
+html.theme-pro .project-normative-note strong,
+html.theme-pro .project-normative-note span {
+    display: block;
+}
+
+html.theme-pro .project-normative-note strong {
+    font-size: 0.65rem;
+    line-height: 1.2;
+    text-transform: uppercase;
+}
+
+html.theme-pro .project-normative-note span {
+    margin-top: 0.2rem;
+    font-size: 0.65rem;
+    line-height: 1.4;
+    font-weight: 600;
+    color: #64748b;
+}
+
+html.theme-pro .project-normative-phases {
+    max-height: 17.5rem;
+    overflow-y: auto;
+    display: grid;
+    gap: 0.45rem;
+    margin-bottom: 0.75rem;
+    padding-right: 0.2rem;
+}
+
+html.theme-pro .normative-phase {
+    border: 1px solid #d8dee6;
+    border-radius: 8px;
+    background: #ffffff;
+    overflow: hidden;
+}
+
+html.theme-pro .normative-phase summary {
+    min-height: 3.05rem;
+    display: grid;
+    grid-template-columns: 1.65rem minmax(0, 1fr) 1rem;
+    gap: 0.6rem;
+    align-items: center;
+    padding: 0.55rem 0.65rem;
+    cursor: pointer;
+    list-style: none;
+}
+
+html.theme-pro .normative-phase summary::-webkit-details-marker {
+    display: none;
+}
+
+html.theme-pro .normative-phase summary strong,
+html.theme-pro .normative-phase summary small {
+    display: block;
+}
+
+html.theme-pro .normative-phase summary strong {
+    font-size: 0.71rem;
+    line-height: 1.25;
+    color: #334155;
+}
+
+html.theme-pro .normative-phase summary small {
+    margin-top: 0.12rem;
+    font-size: 0.58rem;
+    line-height: 1.2;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #94a3b8;
+}
+
+html.theme-pro .normative-phase-index {
+    width: 1.65rem;
+    height: 1.65rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    background: #eef2ff;
+    color: #4f46e5;
+    font-size: 0.65rem;
+    font-weight: 900;
+}
+
+html.theme-pro .normative-phase-chevron {
+    width: 0.95rem;
+    height: 0.95rem;
+    color: #94a3b8;
+    transition: transform 160ms ease;
+}
+
+html.theme-pro .normative-phase[open] .normative-phase-chevron {
+    transform: rotate(180deg);
+}
+
+html.theme-pro .normative-phase-body {
+    padding: 0 0.65rem 0.65rem;
+    border-top: 1px solid #eef2f7;
+}
+
+html.theme-pro .normative-phase-toggle {
+    margin: 0.5rem 0;
+    padding: 0.32rem 0.5rem;
+    border: 1px solid #d8dee6;
+    background: #f8fafc;
+    color: #475569;
+    font-size: 0.58rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+html.theme-pro .normative-services-list {
+    display: grid;
+    gap: 0.3rem;
+}
+
+html.theme-pro .normative-service-row {
+    display: grid;
+    grid-template-columns: 0.9rem 3.35rem minmax(0, 1fr);
+    gap: 0.45rem;
+    align-items: start;
+    padding: 0.38rem 0.45rem;
+    border: 1px solid #eef2f7;
+    border-radius: 6px;
+    background: #ffffff;
+    cursor: pointer;
+}
+
+html.theme-pro .normative-service-row:has(input:checked) {
+    border-color: #c7d2fe;
+    background: #f8faff;
+}
+
+html.theme-pro .normative-service-row input {
+    width: 0.85rem;
+    height: 0.85rem;
+    min-height: 0 !important;
+    margin-top: 0.08rem;
+    padding: 0 !important;
+    accent-color: #4f46e5;
+}
+
+html.theme-pro .normative-service-code {
+    font-size: 0.61rem;
+    line-height: 1.35;
+    font-weight: 900;
+    color: #4f46e5;
+}
+
+html.theme-pro .normative-service-label {
+    font-size: 0.63rem;
+    line-height: 1.35;
+    font-weight: 600;
+    color: #64748b;
+}
+
+html.theme-pro .normative-task-services {
+    max-height: 4.8rem;
+    overflow-y: auto;
+    display: grid;
+    gap: 0.16rem;
+    margin-top: 0.3rem;
+    padding-left: 0.45rem;
+    border-left: 2px solid #e2e8f0;
+}
+
+html.theme-pro .normative-task-services span {
+    display: block;
+    font-size: 0.57rem;
+    line-height: 1.35;
+    font-weight: 600;
+    color: #94a3b8;
+}
+
+html.theme-pro .normative-task-services b {
+    margin-right: 0.2rem;
+    color: #64748b;
+}
+
+html.theme-pro .normative-scope-list {
+    display: grid;
+    gap: 0.45rem;
+}
+
+html.theme-pro .normative-scope-row {
+    padding: 0.55rem 0.65rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #fbfcfe;
+}
+
+html.theme-pro .normative-scope-heading {
+    display: grid;
+    grid-template-columns: 1.35rem minmax(0, 1fr);
+    gap: 0.45rem;
+    align-items: center;
+}
+
+html.theme-pro .normative-scope-heading > span {
+    width: 1.35rem;
+    height: 1.35rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    background: #eef2ff;
+    color: #4f46e5;
+    font-size: 0.58rem;
+    font-weight: 900;
+}
+
+html.theme-pro .normative-scope-heading strong {
+    font-size: 0.72rem;
+    line-height: 1.25;
+    color: #475569;
+}
+
+html.theme-pro .normative-scope-row .normative-task-services {
+    margin-left: 1.8rem;
+}
+
 html.theme-pro #trial-badge,
 html.theme-pro #plan-badge,
 html.theme-pro span[class*="rounded-full"],
