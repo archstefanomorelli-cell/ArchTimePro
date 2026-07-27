@@ -65,7 +65,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="assets/app.css?v=phase3-budget-libero-2026-05-09">
-    <link rel="stylesheet" href="assets/app-pro.css?v=normative-projects-2026-07-27-01">
+    <link rel="stylesheet" href="assets/app-pro.css?v=parametric-fees-2026-07-27-01">
     <script src="assets/js/12-analytics.js?v=google-ads-conversion-2026-07-18-02" defer></script>
 </head>
 <body class="text-slate-800 pb-20 lg:pb-0">
@@ -802,7 +802,7 @@
                     <span class="project-type-icon is-normative"><i data-lucide="landmark" class="w-5 h-5"></i></span>
                     <span class="min-w-0 text-left">
                         <strong>Prestazioni parametriche</strong>
-                        <small>Scegli le prestazioni normative; nel timer saranno aggregate per macrofase.</small>
+                        <small>Calcola il compenso dall'opera e usa le prestazioni come macrofasi del timer.</small>
                     </span>
                     <i data-lucide="chevron-right" class="project-type-chevron"></i>
                 </button>
@@ -821,7 +821,7 @@
                     <div class="flex items-center gap-2 text-[11px] font-black text-slate-600 uppercase tracking-wider"><span class="w-5 h-5 rounded-md bg-primary-600 text-white flex items-center justify-center text-[10px]">1</span>Anagrafica</div>
                     <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Nome</label><input type="text" id="edit-modal-name" placeholder="Nome lavoro" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all"></div>
                     <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Cliente</label><input type="text" id="edit-modal-client" placeholder="Nome cliente" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all"></div>
-                    <div>
+                    <div id="project-budget-control">
                         <div class="flex items-center justify-between gap-3 mb-1.5 ml-1">
                             <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Budget totale</label>
                             <div class="flex items-center gap-1 rounded-lg border border-slate-200 bg-white p-0.5">
@@ -840,11 +840,54 @@
                         <button id="btn-manage-templates" class="secondary-action icon-only" title="Gestisci template"><i data-lucide="layers" class="w-4 h-4"></i></button>
                     </div>
                     <div id="project-normative-builder" class="force-hide">
+                        <div class="normative-calculation-card">
+                            <div class="normative-calculation-heading">
+                                <div>
+                                    <span>Parametri dell'opera</span>
+                                    <strong>Calcolo automatico del compenso</strong>
+                                </div>
+                                <i data-lucide="calculator" class="w-4 h-4"></i>
+                            </div>
+                            <div class="normative-calculation-grid">
+                                <label class="normative-field normative-field-wide">
+                                    <span>Valore dell'opera (V)</span>
+                                    <div class="normative-money-input">
+                                        <b>€</b>
+                                        <input type="text" id="normative-work-value" inputmode="decimal" placeholder="0">
+                                    </div>
+                                </label>
+                                <label id="normative-inhabitants-field" class="normative-field normative-field-wide force-hide">
+                                    <span>Numero di abitanti</span>
+                                    <div class="normative-money-input">
+                                        <i data-lucide="users" class="w-3.5 h-3.5 text-slate-400"></i>
+                                        <input type="text" id="normative-inhabitants" inputmode="numeric" placeholder="0">
+                                    </div>
+                                </label>
+                                <label class="normative-field">
+                                    <span>Categoria d'opera</span>
+                                    <select id="normative-category"></select>
+                                </label>
+                                <label class="normative-field">
+                                    <span>Tipologia</span>
+                                    <select id="normative-destination"></select>
+                                </label>
+                                <label class="normative-field normative-field-wide">
+                                    <span>Grado di complessità</span>
+                                    <select id="normative-complexity"></select>
+                                </label>
+                            </div>
+                            <div class="normative-calculation-summary">
+                                <span><small>Parametro P</small><strong id="normative-parameter-p">0,0000%</strong></span>
+                                <span><small>Complessità G</small><strong id="normative-complexity-g">-</strong></span>
+                                <span class="is-total"><small>Compenso CP</small><strong id="normative-fee-total">€ 0</strong></span>
+                            </div>
+                            <p class="normative-calculation-disclaimer">Spese, oneri accessori ed eventuale maggiorazione BIM non inclusi.</p>
+                        </div>
                         <div class="project-normative-note">
                             <i data-lucide="landmark" class="w-4 h-4"></i>
                             <div>
                                 <strong>Prestazioni di dettaglio</strong>
-                                <span>Scegli le voci applicabili. Arch Time Pro le raggrupperà nelle macrofasi usate dal timer.</span>
+                                <span>Ogni voce selezionata calcola la propria quota di compenso. Arch Time Pro la raggruppa nella macrofase usata dal timer.</span>
                             </div>
                         </div>
                         <div id="project-normative-phases" class="project-normative-phases"></div>
@@ -942,13 +985,13 @@
     </div>
 
     <script src="assets/js/00-runtime-config.js?v=stripe-founder-2026-06-29"></script>
-    <script src="assets/js/01-core.js?v=normative-projects-2026-07-27-01"></script>
+    <script src="assets/js/01-core.js?v=parametric-fees-2026-07-27-01"></script>
     <script src="assets/js/02-auth-account.js?v=google-ads-conversion-2026-07-18-02"></script>
     <script src="assets/js/03-team.js?v=phase3-team-modals-2026-05-12"></script>
-    <script src="assets/js/04-projects.js?v=normative-projects-2026-07-27-01"></script>
+    <script src="assets/js/04-projects.js?v=parametric-fees-2026-07-27-01"></script>
     <script src="assets/js/05-time-entries.js?v=activation-funnel-2026-07-18-01"></script>
     <script src="assets/js/06-reports.js?v=phase3-final-ui-2026-05-02"></script>
-    <script src="assets/js/07-password-bootstrap.js?v=normative-projects-2026-07-27-01"></script>
+    <script src="assets/js/07-password-bootstrap.js?v=parametric-fees-2026-07-27-01"></script>
     <script src="assets/js/09-video-demo.js?v=analytics-workspace-2026-07-17-01"></script>
 </body>
 </html>

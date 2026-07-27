@@ -205,6 +205,7 @@
             const cardStatus = getProjectVisualStatus(project, summary);
             const rhythm = cardStatus.rhythm;
             const projectId = escapeAttr(project.id);
+            const economicValueLabel = project.project_setup_type === 'normative' ? 'Compenso' : 'Budget';
 
             return `
                 <div data-ui-action="show-project-detail" data-project-id="${projectId}" data-project-tone="${cardStatus.tone}" class="bg-white border border-slate-200 p-5 lg:p-6 shadow-sm hover:shadow-md hover:border-primary-200 rounded-2xl cursor-pointer relative group transition-all ${project.is_archived ? 'is-archived' : ''}">
@@ -231,7 +232,7 @@
                             <p class="text-xs font-black text-slate-800 mt-0.5">${formatMoney(summary.totalCost, 0)}</p>
                         </div>
                         <div>
-                            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Budget</p>
+                            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">${economicValueLabel}</p>
                             <p class="text-xs font-black text-slate-800 mt-0.5">${formatMoney(summary.budget, 0)}</p>
                         </div>
                         <div>
@@ -250,7 +251,7 @@
                         </div>
                         <div class="flex justify-between text-[10px] lg:text-[11px] font-black text-slate-500 mt-2">
                             <span>Costi ${Math.round(rhythm ? rhythm.costPercent : summary.percent)}%</span>
-                            ${rhythm ? `<span>${rhythm.usesTaskBudgets ? 'Piano costi' : 'Avanz. attività'} ${Math.round(rhythm.operationalPercent)}%</span>` : `<span>Budget ${Math.round(summary.percent)}%</span>`}
+                            ${rhythm ? `<span>${rhythm.usesTaskBudgets ? 'Piano costi' : 'Avanz. attività'} ${Math.round(rhythm.operationalPercent)}%</span>` : `<span>${economicValueLabel} ${Math.round(summary.percent)}%</span>`}
                         </div>
                     </div>
                 </div>`;
@@ -263,6 +264,7 @@
             const projectId = escapeAttr(project.id);
             const costPercent = Math.round(rhythm ? rhythm.costPercent : summary.percent);
             const progressPercent = Math.round(rhythm ? rhythm.operationalPercent : summary.percent);
+            const economicValueLabel = project.project_setup_type === 'normative' ? 'Compenso' : 'Budget';
 
             return `
                 <div data-ui-action="show-project-detail" data-project-id="${projectId}" data-project-tone="${visualStatus.tone}" class="project-list-row ${project.is_archived ? 'is-archived' : ''}">
@@ -277,7 +279,7 @@
                         </div>
                     </div>
                     <div class="project-list-metric"><small>Costi</small><strong>${formatMoney(summary.totalCost, 0)}</strong></div>
-                    <div class="project-list-metric"><small>Budget</small><strong>${formatMoney(summary.budget, 0)}</strong></div>
+                    <div class="project-list-metric"><small>${economicValueLabel}</small><strong>${formatMoney(summary.budget, 0)}</strong></div>
                     <div class="project-list-metric"><small>Margine</small><strong class="${summary.marginClass}">${formatMoney(summary.margin, 0)}</strong></div>
                     <div class="project-list-progress">
                         <div>
@@ -530,25 +532,143 @@
         }
 
         async function loadNormativeLibrary() {
-            if (normativeLibrary.length > 0) return normativeLibrary;
-            const response = await fetch('assets/data/normative-services-dlgs36.json?v=2026-07-27-01');
-            if (!response.ok) throw new Error('Libreria delle prestazioni non disponibile');
-            const data = await response.json();
-            if (!Array.isArray(data) || data.length === 0) throw new Error('Libreria delle prestazioni non valida');
-            normativeLibrary = data;
+            if (normativeLibrary.length > 0 && normativeCalculationLibrary?.categories?.length > 0) return normativeLibrary;
+            const [servicesResponse, calculationResponse] = await Promise.all([
+                fetch('assets/data/normative-services-dlgs36.json?v=2026-07-27-02'),
+                fetch('assets/data/normative-calculation-dlgs36.json?v=2026-07-27-01')
+            ]);
+            if (!servicesResponse.ok || !calculationResponse.ok) throw new Error('Libreria delle prestazioni non disponibile');
+            const [servicesData, calculationData] = await Promise.all([
+                servicesResponse.json(),
+                calculationResponse.json()
+            ]);
+            if (!Array.isArray(servicesData) || servicesData.length === 0) throw new Error('Libreria delle prestazioni non valida');
+            if (!Array.isArray(calculationData?.categories) || calculationData.categories.length === 0) throw new Error('Parametri di calcolo non validi');
+            normativeLibrary = servicesData;
+            normativeCalculationLibrary = calculationData;
             return normativeLibrary;
         }
 
+        function getNormativeCategory() {
+            return normativeCalculationLibrary?.categories?.find(category => category.id === normativeCalculationState.categoryId)
+                || normativeCalculationLibrary?.categories?.[0]
+                || null;
+        }
+
+        function getNormativeDestination() {
+            const category = getNormativeCategory();
+            return category?.destinations?.find(destination => destination.id === normativeCalculationState.destinationId)
+                || category?.destinations?.[0]
+                || null;
+        }
+
+        function getNormativeComplexity() {
+            const destination = getNormativeDestination();
+            return destination?.levels?.find(level => level.id === normativeCalculationState.complexityId)
+                || destination?.levels?.[0]
+                || null;
+        }
+
+        function normativeParameterP(value) {
+            const effectiveValue = Math.max(Number(value || 0), 25000);
+            return Number(value || 0) > 0 ? 0.03 + (10 / Math.pow(effectiveValue, 0.4)) : 0;
+        }
+
+        function parseNormativeQ(value) {
+            const raw = String(value ?? '').trim();
+            if (!raw.startsWith('[')) return Number(raw) || 0;
+            return raw.slice(1, -1).split(',').map(item => item.trim() === 'i' ? Infinity : Number(item.trim()));
+        }
+
+        function calculateNormativeServiceFee(workValue, complexity, qValue, options = {}) {
+            const value = Number(workValue || 0);
+            const g = Number(complexity || 0);
+            const inhabitants = Number(options.inhabitants || 0);
+            const q = parseNormativeQ(qValue);
+            if (value <= 0 || g <= 0) return 0;
+            if (!Array.isArray(q)) return value * g * normativeParameterP(value) * q;
+
+            const segments = [0, q[1], ...q];
+            let total = 0;
+            for (let index = 0; index < segments.length - 2; index += 2) {
+                const lowerBound = segments[index];
+                const lowerQ = segments[index + 1];
+                const upperBound = segments[index + 2];
+                const upperQ = segments[index + 3];
+                if (options.usePopulation && inhabitants > 0) {
+                    const populationInSegment = Math.max(inhabitants - lowerBound, 0) - Math.max(inhabitants - upperBound, 0);
+                    if (populationInSegment <= 0) continue;
+                    const segmentValue = Math.max(populationInSegment * (value / inhabitants), 25000);
+                    total += segmentValue * g * normativeParameterP(segmentValue) * upperQ;
+                    continue;
+                }
+                const segmentValue = Math.max(value - lowerBound, 0) - Math.max(value - upperBound, 0);
+                if (segmentValue <= 0) continue;
+                const reachedValue = segmentValue + lowerBound;
+                const interpolatedQ = upperBound === Infinity
+                    ? upperQ
+                    : ((upperQ - lowerQ) * (reachedValue - lowerBound) / (upperBound - lowerBound)) + lowerQ;
+                total += segmentValue * g * normativeParameterP(segmentValue) * interpolatedQ;
+            }
+            return total;
+        }
+
+        function getSupportedNormativeServices(phase) {
+            const qMap = getNormativeCategory()?.q || {};
+            return phase.services.filter(service => Object.prototype.hasOwnProperty.call(qMap, service.code));
+        }
+
+        function getNormativeCalculation() {
+            const category = getNormativeCategory();
+            const destination = getNormativeDestination();
+            const complexity = getNormativeComplexity();
+            const workValue = Number(normativeCalculationState.workValue || 0);
+            const inhabitants = Number(normativeCalculationState.inhabitants || 0);
+            const g = Number(complexity?.g || 0);
+            const serviceAmounts = {};
+            const taskBudgets = {};
+            let total = 0;
+
+            normativeLibrary.forEach(phase => {
+                getSupportedNormativeServices(phase).forEach(service => {
+                    if (!normativeSelectedServices.has(service.code)) return;
+                    const amount = calculateNormativeServiceFee(workValue, g, category?.q?.[service.code], {
+                        inhabitants,
+                        usePopulation: service.code === 'Qa.0.01' || service.code === 'Qa.0.02'
+                    });
+                    serviceAmounts[service.code] = amount;
+                    taskBudgets[phase.name] = Number(taskBudgets[phase.name] || 0) + amount;
+                    total += amount;
+                });
+            });
+
+            return {
+                workValue,
+                inhabitants,
+                category,
+                destination,
+                complexity,
+                parameterP: normativeParameterP(workValue),
+                serviceAmounts,
+                taskBudgets,
+                total
+            };
+        }
+
         function getSelectedNormativeServicesSnapshot() {
+            const calculation = getNormativeCalculation();
+            const qMap = calculation.category?.q || {};
             const selected = [];
             normativeLibrary.forEach(phase => {
-                phase.services.forEach(service => {
+                getSupportedNormativeServices(phase).forEach(service => {
                     if (!normativeSelectedServices.has(service.code)) return;
                     selected.push({
                         code: service.code,
                         label: service.label,
                         phase_id: phase.id,
-                        phase_name: phase.name
+                        phase_name: phase.name,
+                        q: qMap[service.code],
+                        fee: Number(calculation.serviceAmounts[service.code] || 0)
                     });
                 });
             });
@@ -557,20 +677,107 @@
 
         function getNormativePhaseTasks() {
             return normativeLibrary
-                .filter(phase => phase.services.some(service => normativeSelectedServices.has(service.code)))
+                .filter(phase => getSupportedNormativeServices(phase).some(service => normativeSelectedServices.has(service.code)))
                 .map(phase => phase.name);
         }
 
         function syncNormativeTasksFromSelection() {
             const tasks = getNormativePhaseTasks();
-            const budgets = collectCurrentProjectTaskBudgets();
-            const nextBudgets = {};
-            tasks.forEach(task => {
-                if (Number(budgets[task] || 0) > 0) nextBudgets[task] = Number(budgets[task]);
-            });
+            const calculation = getNormativeCalculation();
+            const nextBudgets = Object.fromEntries(
+                tasks.map(task => [task, Number(calculation.taskBudgets[task] || 0)])
+                    .filter(([, amount]) => amount > 0)
+            );
             setCurrentProjectModalTasks(tasks);
             setCurrentProjectModalBudgets(nextBudgets);
+            projectBudgetMode = 'auto';
+            const budgetInput = document.getElementById('edit-modal-budget');
+            if (budgetInput) budgetInput.value = calculation.total > 0 ? calculation.total.toFixed(2) : '';
             renderProjectModalTasks();
+            refreshNormativeCalculationSummary();
+        }
+
+        function renderNormativeCalculationControls() {
+            if (!isNormativeProjectMode() || !normativeCalculationLibrary) return;
+            const category = getNormativeCategory();
+            if (category && category.id !== normativeCalculationState.categoryId) normativeCalculationState.categoryId = category.id;
+            const destination = getNormativeDestination();
+            if (destination && destination.id !== normativeCalculationState.destinationId) normativeCalculationState.destinationId = destination.id;
+            const complexity = getNormativeComplexity();
+            if (complexity && complexity.id !== normativeCalculationState.complexityId) normativeCalculationState.complexityId = complexity.id;
+
+            const workValueInput = document.getElementById('normative-work-value');
+            const inhabitantsInput = document.getElementById('normative-inhabitants');
+            const inhabitantsField = document.getElementById('normative-inhabitants-field');
+            const categorySelect = document.getElementById('normative-category');
+            const destinationSelect = document.getElementById('normative-destination');
+            const complexitySelect = document.getElementById('normative-complexity');
+            if (workValueInput) workValueInput.value = normativeCalculationState.workValue > 0 ? String(normativeCalculationState.workValue).replace('.', ',') : '';
+            if (inhabitantsInput) inhabitantsInput.value = normativeCalculationState.inhabitants > 0 ? String(normativeCalculationState.inhabitants) : '';
+            const supportsPopulationServices = ['Qa.0.01', 'Qa.0.02'].some(code => Object.prototype.hasOwnProperty.call(category?.q || {}, code));
+            inhabitantsField?.classList.toggle('force-hide', !supportsPopulationServices);
+            if (categorySelect) {
+                categorySelect.innerHTML = normativeCalculationLibrary.categories.map(item => optionHtml(item.id, item.name, item.id === category?.id)).join('');
+                categorySelect.value = category?.id || '';
+            }
+            if (destinationSelect) {
+                destinationSelect.innerHTML = (category?.destinations || []).map(item => optionHtml(item.id, item.name, item.id === destination?.id)).join('');
+                destinationSelect.value = destination?.id || '';
+            }
+            if (complexitySelect) {
+                complexitySelect.innerHTML = (destination?.levels || []).map(item => optionHtml(item.id, `${item.label} · G ${Number(item.g).toFixed(2).replace('.', ',')}`, item.id === complexity?.id)).join('');
+                complexitySelect.value = complexity?.id || '';
+            }
+            refreshNormativeCalculationSummary();
+        }
+
+        function refreshNormativeCalculationSummary() {
+            if (!isNormativeProjectMode()) return;
+            const calculation = getNormativeCalculation();
+            const pElement = document.getElementById('normative-parameter-p');
+            const gElement = document.getElementById('normative-complexity-g');
+            const totalElement = document.getElementById('normative-fee-total');
+            if (pElement) pElement.textContent = `${(calculation.parameterP * 100).toLocaleString('it-IT', { minimumFractionDigits: 4, maximumFractionDigits: 8 })}%`;
+            if (gElement) gElement.textContent = calculation.complexity ? Number(calculation.complexity.g).toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-';
+            if (totalElement) totalElement.textContent = formatMoney(calculation.total, 2);
+        }
+
+        function handleNormativeWorkValue(value) {
+            normativeCalculationState.workValue = Math.max(parseMoneyInput(value) || 0, 0);
+            syncNormativeTasksFromSelection();
+            renderNormativeProjectBuilder();
+        }
+
+        function handleNormativeInhabitants(value) {
+            normativeCalculationState.inhabitants = Math.max(parseInt(String(value || '').replace(/\D/g, ''), 10) || 0, 0);
+            syncNormativeTasksFromSelection();
+            renderNormativeProjectBuilder();
+        }
+
+        function handleNormativeCategory(categoryId) {
+            normativeCalculationState.categoryId = categoryId;
+            normativeCalculationState.destinationId = '';
+            normativeCalculationState.complexityId = '';
+            normativeCalculationState.inhabitants = 0;
+            const supportedCodes = new Set(Object.keys(getNormativeCategory()?.q || {}));
+            normativeSelectedServices = new Set([...normativeSelectedServices].filter(code => supportedCodes.has(code)));
+            renderNormativeCalculationControls();
+            syncNormativeTasksFromSelection();
+            renderNormativeProjectBuilder();
+        }
+
+        function handleNormativeDestination(destinationId) {
+            normativeCalculationState.destinationId = destinationId;
+            normativeCalculationState.complexityId = '';
+            renderNormativeCalculationControls();
+            syncNormativeTasksFromSelection();
+            renderNormativeProjectBuilder();
+        }
+
+        function handleNormativeComplexity(complexityId) {
+            normativeCalculationState.complexityId = complexityId;
+            syncNormativeTasksFromSelection();
+            renderNormativeProjectBuilder();
         }
 
         function captureOpenNormativePhases() {
@@ -584,14 +791,21 @@
             const container = document.getElementById('project-normative-phases');
             if (!container || !isNormativeProjectMode()) return;
             captureOpenNormativePhases();
-            container.innerHTML = normativeLibrary.map((phase, phaseIndex) => {
-                const selectedCount = phase.services.filter(service => normativeSelectedServices.has(service.code)).length;
+            const calculation = getNormativeCalculation();
+            const visiblePhases = normativeLibrary.filter(phase => getSupportedNormativeServices(phase).length > 0);
+            container.innerHTML = visiblePhases.map((phase, phaseIndex) => {
+                const supportedServices = getSupportedNormativeServices(phase);
+                const selectedCount = supportedServices.filter(service => normativeSelectedServices.has(service.code)).length;
                 const isOpen = normativeOpenPhaseIds.has(phase.id) || (phaseIndex === 0 && normativeOpenPhaseIds.size === 0);
-                const services = phase.services.map(service => `
+                const services = supportedServices.map(service => `
                     <label class="normative-service-row">
                         <input type="checkbox" data-ui-action="toggle-normative-service" data-service-code="${escapeAttr(service.code)}" ${normativeSelectedServices.has(service.code) ? 'checked' : ''}>
                         <span class="normative-service-code">${escapeHtml(service.code)}</span>
                         <span class="normative-service-label">${escapeHtml(service.label)}</span>
+                        <span class="normative-service-amount">${normativeCalculationState.workValue > 0 ? formatMoney(calculation.serviceAmounts[service.code] || calculateNormativeServiceFee(calculation.workValue, calculation.complexity?.g, calculation.category?.q?.[service.code], {
+                            inhabitants: calculation.inhabitants,
+                            usePopulation: service.code === 'Qa.0.01' || service.code === 'Qa.0.02'
+                        }), 0) : '—'}</span>
                     </label>`).join('');
                 return `
                     <details data-phase-id="${escapeAttr(phase.id)}" class="normative-phase" ${isOpen ? 'open' : ''}>
@@ -599,16 +813,17 @@
                             <span class="normative-phase-index">${phaseIndex + 1}</span>
                             <span class="min-w-0">
                                 <strong>${escapeHtml(phase.name)}</strong>
-                                <small>${selectedCount} di ${phase.services.length} selezionate</small>
+                                <small>${selectedCount} di ${supportedServices.length} selezionate</small>
                             </span>
                             <i data-lucide="chevron-down" class="normative-phase-chevron"></i>
                         </summary>
                         <div class="normative-phase-body">
-                            <button type="button" data-ui-action="toggle-normative-phase" data-phase-id="${escapeAttr(phase.id)}" class="normative-phase-toggle">${selectedCount === phase.services.length ? 'Deseleziona tutte' : 'Seleziona tutte'}</button>
+                            ${supportedServices.length > 0 ? `<button type="button" data-ui-action="toggle-normative-phase" data-phase-id="${escapeAttr(phase.id)}" class="normative-phase-toggle">${selectedCount === supportedServices.length ? 'Deseleziona tutte' : 'Seleziona tutte'}</button>` : ''}
                             <div class="normative-services-list">${services}</div>
                         </div>
                     </details>`;
             }).join('');
+            refreshNormativeCalculationSummary();
             lucide.createIcons();
         }
 
@@ -642,11 +857,13 @@
         async function toggleNormativePhase(phaseId) {
             const phase = normativeLibrary.find(item => item.id === phaseId);
             if (!phase) return;
-            const allSelected = phase.services.every(service => normativeSelectedServices.has(service.code));
+            const supportedServices = getSupportedNormativeServices(phase);
+            if (supportedServices.length === 0) return;
+            const allSelected = supportedServices.every(service => normativeSelectedServices.has(service.code));
             if (allSelected && phaseHasTrackedEntries(phase.name)) {
                 return await appAlert('Attività già utilizzata', `Non puoi rimuovere ${phase.name} perché contiene ore registrate.`, 'danger');
             }
-            phase.services.forEach(service => {
+            supportedServices.forEach(service => {
                 if (allSelected) normativeSelectedServices.delete(service.code);
                 else normativeSelectedServices.add(service.code);
             });
@@ -660,6 +877,7 @@
         }
 
         function collectCurrentProjectTaskBudgets() {
+            if (isNormativeProjectMode()) return { ...getCurrentProjectModalBudgets() };
             const mode = currentProjectBudgetMode();
             const selector = mode === 'edit' ? '[data-budget-mode="edit"]' : '[data-budget-mode="new"]';
             return document.querySelectorAll(selector).length > 0
@@ -719,7 +937,10 @@
                         <span class="block text-[11px] font-bold text-slate-700 truncate"><span class="text-primary-600 font-black">${index + 1}.</span> ${escapeHtml(task)}</span>
                         ${isAutoBudget ? `<span class="block text-[8px] font-black uppercase tracking-wider ${budgetValue > 0 ? 'text-primary-500' : 'text-slate-400'}">${budgetValue > 0 ? 'Pesa sul ritmo' : 'Fuori piano'}</span>` : ''}
                     </div>
-                    ${isAutoBudget ? `
+                    ${isAutoBudget && isLocked ? `
+                    <div class="flex items-center justify-end min-w-[104px] rounded-lg px-2 py-1.5 bg-primary-50 border border-primary-100">
+                        <span class="text-[10px] font-black text-primary-700">${formatMoney(budgetValue, 0)}</span>
+                    </div>` : isAutoBudget ? `
                     <div class="flex items-center gap-1 border border-slate-200 rounded-lg px-2 py-1.5 bg-slate-50 focus-within:bg-white focus-within:border-primary-400 focus-within:ring-2 focus-within:ring-primary-500/10" title="${budgetValue > 0 ? 'Importo usato come peso nel ritmo progetto' : 'Lascia vuoto se questa attività non deve pesare sul ritmo'}">
                         <span class="text-[10px] font-black text-slate-400">€</span>
                         <input type="text" data-budget-mode="${mode}" data-task="${escapeAttr(task)}" value="${escapeAttr(getTaskBudgetInputValue(budgets, task))}" placeholder="Fuori piano" inputmode="decimal" class="task-budget-input w-full bg-transparent outline-none text-[11px] font-mono font-bold text-slate-700 placeholder:text-[8px] placeholder:font-sans placeholder:uppercase placeholder:tracking-wider">
@@ -904,10 +1125,10 @@
             if (desc) {
                 desc.textContent = isCreate
                     ? (isNormativeProjectMode()
-                        ? 'Scegli le prestazioni di dettaglio e controlla il progetto attraverso le relative macrofasi.'
+                        ? 'Definisci l’opera e scegli le prestazioni: il compenso viene calcolato automaticamente.'
                         : 'Imposta anagrafica, budget e flusso di lavoro in un unico passaggio.')
                     : (isNormativeProjectMode()
-                        ? 'Aggiorna prestazioni, anagrafica e budget. Il timer continuerà a usare le macrofasi.'
+                        ? 'Aggiorna i parametri dell’opera e le prestazioni. Il compenso viene ricalcolato automaticamente.'
                         : 'Aggiorna anagrafica, budget e attività incluse.');
             }
             if (saveButton) saveButton.textContent = isCreate ? 'Crea progetto' : 'Salva modifiche';
@@ -956,6 +1177,13 @@
             newProjectTaskBudgets = {};
             normativeSelectedServices = new Set();
             normativeOpenPhaseIds = new Set();
+            normativeCalculationState = {
+                workValue: 0,
+                inhabitants: 0,
+                categoryId: normativeCalculationLibrary?.categories?.[0]?.id || '1',
+                destinationId: '',
+                complexityId: ''
+            };
             setProjectBudgetMode('manual');
             setProjectModalMode('create');
             renderNewProjectUI();
@@ -981,6 +1209,7 @@
             const studioControls = document.getElementById('project-studio-task-controls');
             const customControls = document.getElementById('project-custom-task-controls');
             const normativeBuilder = document.getElementById('project-normative-builder');
+            const budgetControl = document.getElementById('project-budget-control');
             const sectionTitle = document.getElementById('project-task-section-title');
             const timerLabel = document.getElementById('project-timer-activities-label');
             const orderHint = document.getElementById('project-task-order-hint');
@@ -989,6 +1218,7 @@
             studioControls?.classList.toggle('force-hide', isNormative);
             customControls?.classList.toggle('force-hide', isNormative);
             normativeBuilder?.classList.toggle('force-hide', !isNormative);
+            budgetControl?.classList.toggle('force-hide', isNormative);
             if (sectionTitle) sectionTitle.textContent = isNormative ? 'Prestazioni parametriche' : 'Template e attività';
             if (timerLabel) timerLabel.textContent = isNormative ? 'Macrofasi disponibili nel timer' : 'Attività incluse';
             if (orderHint) orderHint.textContent = isNormative ? 'Generate dalla selezione' : 'Trascina per ordinare';
@@ -997,7 +1227,11 @@
                 if(activePlan === 'starter') { selectTpl.innerHTML = optionHtml('', 'I Template sono nel piano PREMIUM', true, true); selectTpl.disabled = true; selectTpl.classList.add('locked-feature'); } 
                 else { selectTpl.innerHTML = optionHtml('', '-- Scegli da un Template --', true, true) + projectTemplates.map((t, i) => optionHtml(i, t.name)).join(''); selectTpl.disabled = false; selectTpl.classList.remove('locked-feature'); }
             }
-            if (isNormative) renderNormativeProjectBuilder();
+            if (isNormative) {
+                renderNormativeCalculationControls();
+                syncNormativeTasksFromSelection();
+                renderNormativeProjectBuilder();
+            }
             renderProjectModalTasks();
             lucide.createIcons();
         }
@@ -1086,9 +1320,19 @@
                 const activeCount = projects.filter(p => p.is_archived !== true).length;
                 if (activeCount >= 5) return openUpgradeModal('Lavori Illimitati');
             }
-            if (projectBudgetMode === 'auto') fillProjectBudgetFromTaskBudgets(false);
-            const name = document.getElementById('edit-modal-name').value.trim(); const client = document.getElementById('edit-modal-client').value.trim(); const budget = parseFloat(document.getElementById('edit-modal-budget').value) || 0;
+            if (isNormativeProjectMode()) syncNormativeTasksFromSelection();
+            else if (projectBudgetMode === 'auto') fillProjectBudgetFromTaskBudgets(false);
+            const normativeCalculation = isNormativeProjectMode() ? getNormativeCalculation() : null;
+            const name = document.getElementById('edit-modal-name').value.trim();
+            const client = document.getElementById('edit-modal-client').value.trim();
+            const budget = normativeCalculation ? normativeCalculation.total : (parseFloat(document.getElementById('edit-modal-budget').value) || 0);
             if(!name) return await appAlert("Attenzione", "Inserisci il nome del lavoro", "danger"); 
+            if (isNormativeProjectMode() && normativeCalculation.workValue <= 0) {
+                return await appAlert("Attenzione", "Inserisci il valore dell’opera", "danger");
+            }
+            if (isNormativeProjectMode() && ['Qa.0.01', 'Qa.0.02'].some(code => normativeSelectedServices.has(code)) && normativeCalculation.inhabitants <= 0) {
+                return await appAlert("Attenzione", "Inserisci il numero di abitanti richiesto dalla prestazione urbanistica selezionata", "danger");
+            }
             if(newProjectTasks.length === 0) {
                 return await appAlert(
                     "Attenzione",
@@ -1096,7 +1340,9 @@
                     "danger"
                 );
             }
-            newProjectTaskBudgets = collectVisibleTaskBudgets('new');
+            newProjectTaskBudgets = isNormativeProjectMode()
+                ? { ...normativeCalculation.taskBudgets }
+                : collectVisibleTaskBudgets('new');
             
             const payload = { name: name, client: client, budget: budget, tasks: [...newProjectTasks], studio_id: userProfile.studio_id };
             if (Object.keys(newProjectTaskBudgets).length > 0) payload.task_budgets = newProjectTaskBudgets;
@@ -1105,6 +1351,23 @@
                 payload.normative_data = {
                     reference: NORMATIVE_PROJECT_REFERENCE,
                     library_version: NORMATIVE_PROJECT_LIBRARY_VERSION,
+                    work_value: normativeCalculation.workValue,
+                    inhabitants: normativeCalculation.inhabitants,
+                    category: {
+                        id: normativeCalculation.category?.id,
+                        name: normativeCalculation.category?.name
+                    },
+                    destination: {
+                        id: normativeCalculation.destination?.id,
+                        name: normativeCalculation.destination?.name
+                    },
+                    complexity: {
+                        id: normativeCalculation.complexity?.id,
+                        name: normativeCalculation.complexity?.label,
+                        g: normativeCalculation.complexity?.g
+                    },
+                    parameter_p: normativeCalculation.parameterP,
+                    compensation: normativeCalculation.total,
                     selected_services: getSelectedNormativeServicesSnapshot()
                 };
             }
@@ -1147,6 +1410,8 @@
             document.getElementById('new-proj-template').value = ""; 
             newProjectTasks = [];
             newProjectTaskBudgets = {};
+            normativeSelectedServices = new Set();
+            normativeCalculationState = { workValue: 0, inhabitants: 0, categoryId: '1', destinationId: '', complexityId: '' };
             setProjectBudgetMode('manual');
             
             renderNewProjectUI(); 
@@ -1290,7 +1555,11 @@
             if (services.length === 0) return '';
             return `
                 <div class="normative-task-services">
-                    ${services.map(service => `<span><b>${escapeHtml(service.code)}</b> ${escapeHtml(service.label)}</span>`).join('')}
+                    ${services.map(service => `
+                        <span>
+                            <span><b>${escapeHtml(service.code)}</b> ${escapeHtml(service.label)}</span>
+                            ${Number(service.fee || 0) > 0 ? `<em>${formatMoney(service.fee, 0)}</em>` : ''}
+                        </span>`).join('')}
                 </div>`;
         }
 
@@ -1314,6 +1583,13 @@
                             <p class="text-[10px] text-slate-400 font-medium mt-1">${escapeHtml(project.normative_data?.reference || NORMATIVE_PROJECT_REFERENCE)}</p>
                         </div>
                     </div>
+                    ${Number(project.normative_data?.work_value || 0) > 0 ? `
+                        <div class="normative-scope-summary">
+                            <span><small>Valore opera</small><strong>${formatMoney(project.normative_data.work_value, 0)}</strong></span>
+                            <span><small>Categoria</small><strong>${escapeHtml(project.normative_data?.category?.name || '-')}</strong></span>
+                            <span><small>Complessità</small><strong>G ${Number(project.normative_data?.complexity?.g || 0).toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong></span>
+                            <span><small>Compenso CP</small><strong>${formatMoney(project.normative_data?.compensation || project.budget, 0)}</strong></span>
+                        </div>` : ''}
                     <div class="normative-scope-list">${rows}</div>
                 </div>`;
         }
@@ -1708,9 +1984,18 @@
                     ? p.normative_data.selected_services.map(service => service.code).filter(Boolean)
                     : []
             );
+            normativeCalculationState = isNormativeProjectMode()
+                ? {
+                    workValue: Number(p.normative_data?.work_value || 0),
+                    inhabitants: Number(p.normative_data?.inhabitants || 0),
+                    categoryId: p.normative_data?.category?.id || '1',
+                    destinationId: p.normative_data?.destination?.id || '',
+                    complexityId: p.normative_data?.complexity?.id || ''
+                }
+                : { workValue: 0, inhabitants: 0, categoryId: '1', destinationId: '', complexityId: '' };
             normativeOpenPhaseIds = new Set();
             const taskBudgetTotal = getTaskBudgetsTotal(editProjectTasks, editProjectTaskBudgets);
-            projectBudgetMode = taskBudgetTotal > 0 ? 'auto' : 'manual';
+            projectBudgetMode = isNormativeProjectMode() || taskBudgetTotal > 0 ? 'auto' : 'manual';
             refreshProjectBudgetModeUI();
             renderNewProjectUI();
             renderEditProjectTasks();
@@ -1730,11 +2015,19 @@
         async function saveModalProjectEdit() {
             const id = document.getElementById('edit-modal-proj-id').value; 
             if (!id) return createNewProject();
-            if (projectBudgetMode === 'auto') fillProjectBudgetFromTaskBudgets(false);
+            if (isNormativeProjectMode()) syncNormativeTasksFromSelection();
+            else if (projectBudgetMode === 'auto') fillProjectBudgetFromTaskBudgets(false);
+            const normativeCalculation = isNormativeProjectMode() ? getNormativeCalculation() : null;
             const name = document.getElementById('edit-modal-name').value.trim(); 
             const client = document.getElementById('edit-modal-client').value.trim(); 
-            const budget = parseFloat(document.getElementById('edit-modal-budget').value) || 0;
+            const budget = normativeCalculation ? normativeCalculation.total : (parseFloat(document.getElementById('edit-modal-budget').value) || 0);
             if(!name) return await appAlert("Attenzione", "Inserisci il nome", "danger"); 
+            if (isNormativeProjectMode() && normativeCalculation.workValue <= 0) {
+                return await appAlert("Attenzione", "Inserisci il valore dell’opera", "danger");
+            }
+            if (isNormativeProjectMode() && ['Qa.0.01', 'Qa.0.02'].some(code => normativeSelectedServices.has(code)) && normativeCalculation.inhabitants <= 0) {
+                return await appAlert("Attenzione", "Inserisci il numero di abitanti richiesto dalla prestazione urbanistica selezionata", "danger");
+            }
             if(editProjectTasks.length === 0) {
                 return await appAlert(
                     "Attenzione",
@@ -1742,7 +2035,9 @@
                     "danger"
                 );
             }
-            editProjectTaskBudgets = collectVisibleTaskBudgets('edit');
+            editProjectTaskBudgets = isNormativeProjectMode()
+                ? { ...normativeCalculation.taskBudgets }
+                : collectVisibleTaskBudgets('edit');
             const originalProject = projects.find(project => project.id === id);
             const hadTaskBudgets = originalProject && Object.keys(getProjectTaskBudgets(originalProject)).length > 0;
             const updatePayload = { name, client, budget, tasks: editProjectTasks };
@@ -1752,6 +2047,23 @@
                 updatePayload.normative_data = {
                     reference: NORMATIVE_PROJECT_REFERENCE,
                     library_version: NORMATIVE_PROJECT_LIBRARY_VERSION,
+                    work_value: normativeCalculation.workValue,
+                    inhabitants: normativeCalculation.inhabitants,
+                    category: {
+                        id: normativeCalculation.category?.id,
+                        name: normativeCalculation.category?.name
+                    },
+                    destination: {
+                        id: normativeCalculation.destination?.id,
+                        name: normativeCalculation.destination?.name
+                    },
+                    complexity: {
+                        id: normativeCalculation.complexity?.id,
+                        name: normativeCalculation.complexity?.label,
+                        g: normativeCalculation.complexity?.g
+                    },
+                    parameter_p: normativeCalculation.parameterP,
+                    compensation: normativeCalculation.total,
                     selected_services: getSelectedNormativeServicesSnapshot()
                 };
             }

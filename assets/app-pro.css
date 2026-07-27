@@ -426,6 +426,169 @@ html.theme-pro .project-type-chevron {
     color: #94a3b8;
 }
 
+html.theme-pro .normative-calculation-card {
+    margin-bottom: 0.7rem;
+    padding: 0.75rem;
+    border: 1px solid #d8dee6;
+    border-radius: 8px;
+    background: #ffffff;
+}
+
+html.theme-pro .normative-calculation-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.65rem;
+    color: #4f46e5;
+}
+
+html.theme-pro .normative-calculation-heading span,
+html.theme-pro .normative-calculation-heading strong {
+    display: block;
+}
+
+html.theme-pro .normative-calculation-heading span {
+    font-size: 0.56rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #94a3b8;
+}
+
+html.theme-pro .normative-calculation-heading strong {
+    margin-top: 0.12rem;
+    font-size: 0.75rem;
+    color: #334155;
+}
+
+html.theme-pro .normative-calculation-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.55rem;
+}
+
+html.theme-pro .normative-field {
+    min-width: 0;
+}
+
+html.theme-pro .normative-field-wide {
+    grid-column: 1 / -1;
+}
+
+html.theme-pro .normative-field > span {
+    display: block;
+    margin: 0 0 0.28rem 0.15rem;
+    font-size: 0.57rem;
+    line-height: 1.2;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #64748b;
+}
+
+html.theme-pro .normative-field select,
+html.theme-pro .normative-money-input {
+    width: 100%;
+    min-height: 2.35rem;
+    border: 1px solid #d8dee6;
+    border-radius: 7px;
+    background: #f8fafc;
+    color: #334155;
+    font-size: 0.68rem;
+    font-weight: 700;
+    outline: none;
+}
+
+html.theme-pro .normative-field select {
+    padding: 0.55rem 0.65rem;
+}
+
+html.theme-pro .normative-field select:focus,
+html.theme-pro .normative-money-input:focus-within {
+    border-color: #818cf8;
+    box-shadow: 0 0 0 3px rgb(99 102 241 / 10%);
+    background: #ffffff;
+}
+
+html.theme-pro .normative-money-input {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0 0.65rem;
+}
+
+html.theme-pro .normative-money-input b {
+    font-size: 0.72rem;
+    color: #94a3b8;
+}
+
+html.theme-pro .normative-money-input input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    font-size: 0.74rem;
+    font-weight: 800;
+    color: #334155;
+    outline: none;
+}
+
+html.theme-pro .normative-calculation-summary {
+    display: grid;
+    grid-template-columns: 0.7fr 0.7fr 1.35fr;
+    margin-top: 0.65rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 7px;
+    overflow: hidden;
+}
+
+html.theme-pro .normative-calculation-summary > span {
+    min-width: 0;
+    padding: 0.5rem 0.6rem;
+    border-right: 1px solid #e2e8f0;
+    background: #f8fafc;
+}
+
+html.theme-pro .normative-calculation-summary > span:last-child {
+    border-right: 0;
+}
+
+html.theme-pro .normative-calculation-summary small,
+html.theme-pro .normative-calculation-summary strong {
+    display: block;
+}
+
+html.theme-pro .normative-calculation-summary small {
+    font-size: 0.52rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #94a3b8;
+}
+
+html.theme-pro .normative-calculation-summary strong {
+    margin-top: 0.12rem;
+    overflow-wrap: anywhere;
+    font-size: 0.66rem;
+    color: #334155;
+}
+
+html.theme-pro .normative-calculation-summary .is-total {
+    background: #eef2ff;
+}
+
+html.theme-pro .normative-calculation-summary .is-total strong {
+    color: #4338ca;
+    font-size: 0.78rem;
+}
+
+html.theme-pro .normative-calculation-disclaimer {
+    margin-top: 0.4rem;
+    font-size: 0.53rem;
+    line-height: 1.35;
+    font-weight: 700;
+    color: #94a3b8;
+}
+
 html.theme-pro .project-normative-note {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
@@ -556,7 +719,7 @@ html.theme-pro .normative-services-list {
 
 html.theme-pro .normative-service-row {
     display: grid;
-    grid-template-columns: 0.9rem 3.35rem minmax(0, 1fr);
+    grid-template-columns: 0.9rem 3.35rem minmax(0, 1fr) auto;
     gap: 0.45rem;
     align-items: start;
     padding: 0.38rem 0.45rem;
@@ -594,6 +757,30 @@ html.theme-pro .normative-service-label {
     color: #64748b;
 }
 
+html.theme-pro .normative-service-amount {
+    align-self: center;
+    white-space: nowrap;
+    font-size: 0.6rem;
+    line-height: 1.2;
+    font-weight: 900;
+    color: #94a3b8;
+}
+
+html.theme-pro .normative-service-row:has(input:checked) .normative-service-amount {
+    color: #4338ca;
+}
+
+html.theme-pro .normative-service-empty {
+    padding: 0.7rem;
+    border: 1px dashed #d8dee6;
+    border-radius: 7px;
+    font-size: 0.62rem;
+    line-height: 1.4;
+    font-weight: 700;
+    color: #94a3b8;
+    text-align: center;
+}
+
 html.theme-pro .normative-task-services {
     max-height: 4.8rem;
     overflow-y: auto;
@@ -604,8 +791,11 @@ html.theme-pro .normative-task-services {
     border-left: 2px solid #e2e8f0;
 }
 
-html.theme-pro .normative-task-services span {
-    display: block;
+html.theme-pro .normative-task-services > span {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.5rem;
+    align-items: baseline;
     font-size: 0.57rem;
     line-height: 1.35;
     font-weight: 600;
@@ -615,6 +805,53 @@ html.theme-pro .normative-task-services span {
 html.theme-pro .normative-task-services b {
     margin-right: 0.2rem;
     color: #64748b;
+}
+
+html.theme-pro .normative-task-services em {
+    white-space: nowrap;
+    font-style: normal;
+    font-weight: 900;
+    color: #64748b;
+}
+
+html.theme-pro .normative-scope-summary {
+    display: grid;
+    grid-template-columns: 0.75fr 1.25fr 0.65fr 0.8fr;
+    margin-bottom: 0.7rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 7px;
+    overflow: hidden;
+}
+
+html.theme-pro .normative-scope-summary > span {
+    min-width: 0;
+    padding: 0.48rem 0.55rem;
+    border-right: 1px solid #e2e8f0;
+    background: #f8fafc;
+}
+
+html.theme-pro .normative-scope-summary > span:last-child {
+    border-right: 0;
+    background: #eef2ff;
+}
+
+html.theme-pro .normative-scope-summary small,
+html.theme-pro .normative-scope-summary strong {
+    display: block;
+}
+
+html.theme-pro .normative-scope-summary small {
+    font-size: 0.5rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #94a3b8;
+}
+
+html.theme-pro .normative-scope-summary strong {
+    margin-top: 0.12rem;
+    overflow-wrap: anywhere;
+    font-size: 0.62rem;
+    color: #475569;
 }
 
 html.theme-pro .normative-scope-list {
@@ -2650,5 +2887,44 @@ html.theme-pro #custom-dialog-msg {
 
     html.theme-pro .project-metric-card p:last-child {
         font-size: 0.84rem;
+    }
+
+    html.theme-pro .normative-calculation-grid {
+        grid-template-columns: 1fr;
+    }
+
+    html.theme-pro .normative-field-wide {
+        grid-column: auto;
+    }
+
+    html.theme-pro .normative-calculation-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    html.theme-pro .normative-calculation-summary .is-total {
+        grid-column: 1 / -1;
+        border-top: 1px solid #e2e8f0;
+    }
+
+    html.theme-pro .normative-service-row {
+        grid-template-columns: 0.9rem 3rem minmax(0, 1fr);
+    }
+
+    html.theme-pro .normative-service-amount {
+        grid-column: 3;
+        margin-top: -0.15rem;
+        text-align: left;
+    }
+
+    html.theme-pro .normative-scope-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    html.theme-pro .normative-scope-summary > span:nth-child(2) {
+        border-right: 0;
+    }
+
+    html.theme-pro .normative-scope-summary > span:nth-child(n+3) {
+        border-top: 1px solid #e2e8f0;
     }
 }

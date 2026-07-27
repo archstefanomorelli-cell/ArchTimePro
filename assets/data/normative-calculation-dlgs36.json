@@ -1,0 +1,1390 @@
+{
+  "version": "2026-07-27",
+  "reference": "D.M. 17 giugno 2016 e D.Lgs. 36/2023, Allegato I.13",
+  "source_url": "https://www.professionearchitetto.it/tools/parametri-2023/",
+  "formula": {
+    "expression": "CP = Σ(V × G × Q × P)",
+    "parameter_p": "P = 0.03 + 10 / V^0.4",
+    "minimum_v_for_p": 25000
+  },
+  "categories": [
+    {
+      "id": "1",
+      "name": "Edilizia",
+      "destinations": [
+        {
+          "id": "1",
+          "name": "Insediamenti Produttivi Agricoltura- Industria-Artigianato",
+          "levels": [
+            {
+              "id": "1",
+              "g": 0.65,
+              "label": "E.01 - Edifici rurali per l'attività agricola con corredi tecnici di tipo semplice (quali tettoie, depositi e ricoveri) - Edifici industriali  o artigianali di importanza  costruttiva  corrente con corredi tecnici di base."
+            },
+            {
+              "id": "2",
+              "g": 0.95,
+              "label": "E.02 - Edifici rurali per l'attività agricola con corredi tecnici di tipo complesso  - Edifici industriali  o artigianali  con organizzazione e corredi tecnici di tipo complesso."
+            }
+          ]
+        },
+        {
+          "id": "2",
+          "name": "Industria Alberghiera, Turismo e Commercio e Servizi per la Mobilità",
+          "levels": [
+            {
+              "id": "3",
+              "g": 0.95,
+              "label": "E.03 - Ostelli, Pensioni, Case albergo – Ristoranti  - Motel e stazioni di servizio - negozi - mercati coperti di tipo semplice"
+            },
+            {
+              "id": "4",
+              "g": 1.2,
+              "label": "E.04 - Alberghi, Villaggi turistici - Mercati e Centri commerciali  complessi"
+            }
+          ]
+        },
+        {
+          "id": "3",
+          "name": "Residenza",
+          "levels": [
+            {
+              "id": "5",
+              "g": 0.65,
+              "label": "E.05 - Edifici, pertinenze,  autorimesse  semplici, senza particolari  esigenze tecniche. Edifici provvisori  di modesta importanza"
+            },
+            {
+              "id": "6",
+              "g": 0.95,
+              "label": "E.06 - Edilizia residenziale  privata e pubblica di tipo corrente con costi di costruzione  nella media di mercato e con tipologie standardizzate."
+            },
+            {
+              "id": "7",
+              "g": 1.2,
+              "label": "E.07 - Edifici residenziali  di tipo pregiato con costi di costruzione  eccedenti la media di mercato e con tipologie diversificate."
+            }
+          ]
+        },
+        {
+          "id": "4",
+          "name": "Sanità, istruzione, ricerca",
+          "levels": [
+            {
+              "id": "8",
+              "g": 0.95,
+              "label": "E.08 - Sede Azienda Sanitaria, Distretto sanitario, Ambulatori  di base. Asilo Nido, Scuola Materna, Scuola elementare,  Scuole secondarie  di primo grado fino a 24 classi, Scuole secondarie  di secondo grado fino a 25 classi"
+            },
+            {
+              "id": "9",
+              "g": 1.15,
+              "label": "E.09 - Scuole secondarie  di primo grado oltre 24 classi-Istituti scolastici superiori oltre 25 classi- Case di cura"
+            },
+            {
+              "id": "10",
+              "g": 1.2,
+              "label": "E.10 - Poliambulatori, Ospedali, Istituti di ricerca, Centri di riabilitazione, Poli scolastici,  Università,  Accademie,  Istituti di ricerca universitaria"
+            }
+          ]
+        },
+        {
+          "id": "5",
+          "name": "Cultura, vita sociale, sport, culto",
+          "levels": [
+            {
+              "id": "11",
+              "g": 0.95,
+              "label": "E.11 - Padiglioni  provvisori  per esposizioni  - Costruzioni  relative ad opere cimiteriali  di tipo normale (colombari,  ossari, loculari, edicole funerarie con caratteristiche costruttive  semplici),  Case parrocchiali, Oratori - Stabilimenti  balneari - Aree ed attrezzature  per lo sport all'aperto,  Campo sportivo e servizi annessi, di tipo semplice"
+            },
+            {
+              "id": "12",
+              "g": 1.15,
+              "label": "E.12 - Aree ed attrezzature  per lo sport all'aperto,  Campo sportivo e servizi annessi, di tipo complesso-  Palestre e piscine coperte"
+            },
+            {
+              "id": "13",
+              "g": 1.2,
+              "label": "E.13 - Biblioteca,  Cinema, Teatro, Pinacoteca,  Centro Culturale,  Sede congressuale, Auditorium,  Museo, Galleria d'arte, Discoteca,  Studio radiofonico  o televisivo  o di produzione  cinematografica - Opere cimiteriali  di tipo monumentale, Monumenti  commemorativi, Palasport,  Stadio, Chiese"
+            }
+          ]
+        },
+        {
+          "id": "6",
+          "name": "Sedi amministrative, giudiziarie, delle forze dell'ordine",
+          "levels": [
+            {
+              "id": "14",
+              "g": 0.65,
+              "label": "E.14 - Edifici provvisori  di modesta importanza  a servizio di caserme"
+            },
+            {
+              "id": "15",
+              "g": 0.95,
+              "label": "E.15 - Caserme con corredi tecnici di importanza  corrente"
+            },
+            {
+              "id": "16",
+              "g": 1.2,
+              "label": "E.16 - Sedi ed Uffici di Società ed Enti, Sedi ed Uffici comunali,  Sedi ed Uffici provinciali,  Sedi ed Uffici regionali, Sedi ed Uffici ministeriali,  Pretura, Tribunale,  Palazzo di giustizia, Penitenziari, Caserme con corredi tecnici di importanza  maggiore,  Questura"
+            }
+          ]
+        },
+        {
+          "id": "7",
+          "name": "Arredi, Forniture, Aree esterne pertinenziali allestite",
+          "levels": [
+            {
+              "id": "17",
+              "g": 0.65,
+              "label": "E.17 - Verde  ed opere di arredo urbano improntate  a grande semplicità,  pertinenziali  agli edifici ed alla viabilità, Campeggi  e simili"
+            },
+            {
+              "id": "18",
+              "g": 0.95,
+              "label": "E.18 - Arredamenti con elementi acquistati dal mercato, Giardini, Parchi gioco, Piazze e spazi pubblici all’aperto"
+            },
+            {
+              "id": "19",
+              "g": 1.2,
+              "label": "E.19 - Arredamenti con elementi singolari, Parchi urbani, Parchi ludici attrezzati,  Giardini e piazze storiche, Opere di riqualificazione paesaggistica e ambientale  di aree urbane."
+            }
+          ]
+        },
+        {
+          "id": "8",
+          "name": "Edifici e manufatti esistenti",
+          "levels": [
+            {
+              "id": "20",
+              "g": 0.95,
+              "label": "E.20 - Interventi  di manutenzione straordinaria, ristrutturazione, riqualificazione, su edifici e manufatti esistenti"
+            },
+            {
+              "id": "21",
+              "g": 1.2,
+              "label": "E.21 - Interventi  di manutenzione straordinaria, restauro, ristrutturazione, riqualificazione, su edifici e manufatti di interesse storico artistico non soggetti a tutela ai sensi del D.Lgs 42/2004"
+            },
+            {
+              "id": "22",
+              "g": 1.55,
+              "label": "E.22 - Interventi  di manutenzione, restauro, risanamento  conservativo, riqualificazione, su edifici e manufatti di interesse storico artistico soggetti a tutela ai sensi del D.Lgs 42/2004, oppure di particolare  importanza"
+            }
+          ]
+        }
+      ],
+      "q": {
+        "QaI.01": "0.045",
+        "QaI.02": "0.090",
+        "QaI.03": "0.020",
+        "QaII.01": "0.040",
+        "QaII.02": "0.080",
+        "QaII.03": "0.160",
+        "QbI.01": "0.090",
+        "QbI.02": "0.010",
+        "QbI.03": "0.020",
+        "QbI.04": "0.030",
+        "QbI.05": "0.070",
+        "QbI.06": "0.030",
+        "QbI.07": "0.015",
+        "QbI.08": "0.015",
+        "QbI.09": "0.015",
+        "QbI.10": "0.015",
+        "QbI.11": "[250000,0.039,500000,0.010,1000000,0.013,2500000,0.018,10000000,0.022,i,0.021]",
+        "QbI.12": "0.020",
+        "QbI.13": "0.030",
+        "QbI.14": "0.030",
+        "QbI.15": "0.005",
+        "QbI.16": "0.010",
+        "QbI.17": "[5000000,0.030,20000000,0.015,i,0.005]",
+        "QbI.18": "[5000000,0.018,20000000,0.008,i,0.004]",
+        "QbI.19": "0.010",
+        "QbI.20": "0.060",
+        "QbI.21": "0.010",
+        "QbII.01": "0.230",
+        "QbII.02": "0.04",
+        "QbII.03": "0.010",
+        "QbII.04": "0.04",
+        "QbII.06": "0.030",
+        "QbII.07": "0.020",
+        "QbII.08": "0.070",
+        "QbII.09": "0.060",
+        "QbII.10": "0.030",
+        "QbII.11": "0.030",
+        "QbII.12": "0.030",
+        "QbII.13": "[250000,0.064,500000,0.019,1000000,0.021,2500000,0.029,10000000,0.038,i,0.028]",
+        "QbII.17": "0.050",
+        "QbII.18": "0.060",
+        "QbII.19": "0.020",
+        "QbII.20": "0.020",
+        "QbII.21": "0.030",
+        "QbII.22": "0.020",
+        "QbII.23": "0.010",
+        "QbII.24": "[5000000,0.090,20000000,0.045,i,0.015]",
+        "QbII.25": "[5000000,0.018,20000000,0.008,i,0.004]",
+        "QbII.26": "0.010",
+        "QbII.27": "0.130",
+        "QbIII.03a": "0.020",
+        "QbIII.04a": "0.010",
+        "QbIII.05a": "0.010",
+        "QbIII.07a": "0.050",
+        "QbII.05": "0.070",
+        "QbIII.01": "0.070",
+        "QbIII.02": "0.130",
+        "QbIII.03b": "0.020",
+        "QbIII.03": "0.040",
+        "QbIII.04b": "0.010",
+        "QbIII.04": "0.020",
+        "QbIII.05b": "0.010",
+        "QbIII.05": "0.020",
+        "QbIII.06": "0.030",
+        "QbIII.07b": "0.050",
+        "QbIII.07": "0.100",
+        "QbIII.08": "0.010",
+        "QbIII.09": "0.130",
+        "QbIII.10": "0.040",
+        "QbIII.11": "0.010",
+        "QcI.01": "0.320",
+        "QcI.02": "0.030",
+        "QcI.03": "0.020",
+        "QcI.04": "0.020",
+        "QcI.05": "0.100",
+        "QcI.05.01": "[250000,0.039,500000,0.010,1000000,0.013,2500000,0.018,10000000,0.022,i,0.021]",
+        "QcI.06": "0.060",
+        "QcI.07": "0.140",
+        "QcI.08": "0.410",
+        "QcI.09a": "[500000,0.060,i,0.12]",
+        "QcI.10a": "[500000,0.045,i,0.090]",
+        "QcI.11": "0.040",
+        "QcI.12": "0.250",
+        "QcI.13": "0.040",
+        "QdI.01": "0.080",
+        "QdI.02": "0.020",
+        "QdI.05": "0.030"
+      }
+    },
+    {
+      "id": "21",
+      "name": "Strutture (A)",
+      "destinations": [
+        {
+          "id": "9",
+          "name": "Strutture, Opere infrastrutturali puntuali, non soggette ad azioni sismiche, ai sensi delle Norme Tecniche per le Costruzioni",
+          "levels": [
+            {
+              "id": "1",
+              "g": 0.7,
+              "label": "S.01 - Strutture o parti di strutture in cemento armato, non soggette ad azioni sismiche - riparazione o intervento locale - Verifiche strutturali relative - Ponteggi, centinature e strutture provvisionali di durata inferiore a due anni"
+            }
+          ]
+        },
+        {
+          "id": "10",
+          "name": "Strutture, Opere infrastrutturali puntuali",
+          "levels": [
+            {
+              "id": "3",
+              "g": 0.95,
+              "label": "S.03 - Strutture o parti di strutture in cemento armato - Verifiche strutturali relative - Ponteggi, centinature e strutture provvisionali di durata superiore a due anni."
+            }
+          ]
+        }
+      ],
+      "q": {
+        "QaI.01": "0.045",
+        "QaI.02": "0.090",
+        "QaI.03": "0.020",
+        "QaII.01": "0.040",
+        "QaII.02": "0.080",
+        "QaII.03": "0.160",
+        "QbI.01": "0.090",
+        "QbI.02": "0.010",
+        "QbI.03": "0.020",
+        "QbI.04": "0.030",
+        "QbI.05": "0.070",
+        "QbI.06": "0.030",
+        "QbI.07": "0.015",
+        "QbI.08": "0.015",
+        "QbI.09": "0.015",
+        "QbI.10": "0.015",
+        "QbI.11": "[250000,0.039,500000,0.010,1000000,0.013,2500000,0.018,10000000,0.022,i,0.021]",
+        "QbI.12": "0.020",
+        "QbI.13": "0.030",
+        "QbI.14": "0.030",
+        "QbI.15": "0.005",
+        "QbI.16": "0.010",
+        "QbI.17": "[5000000,0.035,20000000,0.020,i,0.008]",
+        "QbI.18": "[5000000,0.020,20000000,0.010,i,0.005]",
+        "QbI.19": "0.010",
+        "QbI.20": "0.060",
+        "QbI.21": "0.010",
+        "QbII.01": "0.180",
+        "QbII.02": "0.04",
+        "QbII.03": "0.010",
+        "QbII.04": "0.04",
+        "QbII.06": "0.030",
+        "QbII.07": "0.020",
+        "QbII.08": "0.070",
+        "QbII.09": "0.060",
+        "QbII.10": "0.030",
+        "QbII.11": "0.030",
+        "QbII.12": "0.030",
+        "QbII.13": "[250000,0.064,500000,0.019,1000000,0.021,2500000,0.029,10000000,0.038,i,0.028]",
+        "QbII.14": "0.090",
+        "QbII.15": "0.120",
+        "QbII.16": "0.180",
+        "QbII.17": "0.050",
+        "QbII.18": "0.060",
+        "QbII.19": "0.020",
+        "QbII.20": "0.020",
+        "QbII.21": "0.030",
+        "QbII.22": "0.020",
+        "QbII.23": "0.010",
+        "QbII.24": "[5000000,0.100,20000000,0.060,i,0.025]",
+        "QbII.25": "[5000000,0.020,20000000,0.010,i,0.005]",
+        "QbII.26": "0.010",
+        "QbII.27": "0.130",
+        "QbIII.03a": "0.015",
+        "QbIII.04a": "0.005",
+        "QbIII.05a": "0.013",
+        "QbIII.07a": "0.050",
+        "QbII.05": "0.040",
+        "QbIII.01": "0.120",
+        "QbIII.02": "0.130",
+        "QbIII.03b": "0.015",
+        "QbIII.03": "0.030",
+        "QbIII.04b": "0.005",
+        "QbIII.04": "0.010",
+        "QbIII.05b": "0.013",
+        "QbIII.05": "0.025",
+        "QbIII.06": "0.030",
+        "QbIII.07b": "0.050",
+        "QbIII.07": "0.100",
+        "QbIII.08": "0.010",
+        "QbIII.09": "0.130",
+        "QbIII.10": "0.040",
+        "QbIII.11": "0.010",
+        "QcI.01": "0.380",
+        "QcI.02": "0.020",
+        "QcI.03": "0.020",
+        "QcI.04": "0.020",
+        "QcI.05": "0.100",
+        "QcI.05.01": "[250000,0.039,500000,0.010,1000000,0.013,2500000,0.018,10000000,0.022,i,0.021]",
+        "QcI.06": "0.060",
+        "QcI.07": "0.090",
+        "QcI.08": "0.430",
+        "QcI.09a": "[500000,0.060,i,0.12]",
+        "QcI.10a": "[500000,0.045,i,0.090]",
+        "QcI.11": "0.040",
+        "QcI.12": "0.250",
+        "QcI.13": "0.040",
+        "QdI.01": "0.080",
+        "QdI.02": "0.020",
+        "QdI.03": "0.220",
+        "QdI.05": "0.030"
+      }
+    },
+    {
+      "id": "22",
+      "name": "Strutture (B)",
+      "destinations": [
+        {
+          "id": "9",
+          "name": "Strutture, Opere infrastrutturali puntuali, non soggette ad azioni sismiche, ai sensi delle Norme Tecniche per le Costruzioni",
+          "levels": [
+            {
+              "id": "2",
+              "g": 0.5,
+              "label": "S.02 - Strutture o parti di strutture in muratura, legno, metallo, non soggette ad azioni sismiche - riparazione o intervento locale - Verifiche strutturali relative,"
+            }
+          ]
+        },
+        {
+          "id": "10",
+          "name": "Strutture, Opere infrastrutturali puntuali",
+          "levels": [
+            {
+              "id": "4",
+              "g": 0.9,
+              "label": "S.04 - Strutture o parti di strutture in muratura, legno, metallo - Verifiche strutturali relative - Consolidamento delle opere di fondazione di manufatti dissestati - Ponti, Paratie e tiranti, Consolidamento di pendii e di fronti rocciosi ed opere connesse, di tipo corrente - Verifiche strutturali relative."
+            }
+          ]
+        },
+        {
+          "id": "11",
+          "name": "Strutture speciali",
+          "levels": [
+            {
+              "id": "5",
+              "g": 1.05,
+              "label": "S.05 - Dighe, Conche, Elevatori, Opere di ritenuta e di difesa, rilevati, colmate. Gallerie, Opere sotterranee e subacquee, Fondazioni speciali."
+            },
+            {
+              "id": "6",
+              "g": 1.15,
+              "label": "S.06 - Opere strutturali di notevole importanza costruttiva e richiedenti calcolazioni particolari - Verifiche strutturali relative - Strutture con metodologie normative che richiedono modellazione particolare: edifici alti con necessità di valutazioni di secondo ordine."
+            }
+          ]
+        }
+      ],
+      "q": {
+        "QaI.01": "0.045",
+        "QaI.02": "0.090",
+        "QaI.03": "0.020",
+        "QaII.01": "0.040",
+        "QaII.02": "0.080",
+        "QaII.03": "0.160",
+        "QbI.01": "0.090",
+        "QbI.02": "0.010",
+        "QbI.03": "0.020",
+        "QbI.04": "0.030",
+        "QbI.05": "0.070",
+        "QbI.06": "0.030",
+        "QbI.07": "0.015",
+        "QbI.08": "0.015",
+        "QbI.09": "0.015",
+        "QbI.10": "0.015",
+        "QbI.11": "[250000,0.053,500000,0.048,1000000,0.044,2500000,0.042,10000000,0.027,i,0.025]",
+        "QbI.12": "0.020",
+        "QbI.13": "0.030",
+        "QbI.14": "0.030",
+        "QbI.15": "0.005",
+        "QbI.16": "0.010",
+        "QbI.17": "[5000000,0.035,20000000,0.020,i,0.008]",
+        "QbI.18": "[5000000,0.020,20000000,0.010,i,0.005]",
+        "QbI.19": "0.010",
+        "QbI.20": "0.060",
+        "QbI.21": "0.010",
+        "QbII.01": "0.180",
+        "QbII.02": "0.04",
+        "QbII.03": "0.010",
+        "QbII.04": "0.04",
+        "QbII.06": "0.030",
+        "QbII.07": "0.020",
+        "QbII.08": "0.070",
+        "QbII.09": "0.060",
+        "QbII.10": "0.030",
+        "QbII.11": "0.030",
+        "QbII.12": "0.030",
+        "QbII.13": "[250000,0.133,500000,0.107,1000000,0.096,2500000,0.079,10000000,0.054,i,0.035]",
+        "QbII.14": "0.090",
+        "QbII.15": "0.120",
+        "QbII.16": "0.180",
+        "QbII.17": "0.050",
+        "QbII.18": "0.060",
+        "QbII.19": "0.020",
+        "QbII.20": "0.020",
+        "QbII.21": "0.030",
+        "QbII.22": "0.020",
+        "QbII.23": "0.010",
+        "QbII.24": "[5000000,0.100,20000000,0.060,i,0.025]",
+        "QbII.25": "[5000000,0.020,20000000,0.010,i,0.005]",
+        "QbII.26": "0.010",
+        "QbII.27": "0.130",
+        "QbIII.03a": "0.015",
+        "QbIII.04a": "0.005",
+        "QbIII.05a": "0.013",
+        "QbIII.07a": "0.050",
+        "QbII.05": "0.040",
+        "QbIII.01": "0.120",
+        "QbIII.02": "0.130",
+        "QbIII.03b": "0.015",
+        "QbIII.03": "0.030",
+        "QbIII.04b": "0.005",
+        "QbIII.04": "0.010",
+        "QbIII.05b": "0.013",
+        "QbIII.05": "0.025",
+        "QbIII.06": "0.030",
+        "QbIII.07b": "0.050",
+        "QbIII.07": "0.100",
+        "QbIII.08": "0.010",
+        "QbIII.09": "0.130",
+        "QbIII.10": "0.040",
+        "QbIII.11": "0.010",
+        "QcI.01": "0.380",
+        "QcI.02": "0.020",
+        "QcI.03": "0.020",
+        "QcI.04": "0.020",
+        "QcI.05": "0.100",
+        "QcI.05.01": "[250000,0.095,500000,0.081,1000000,0.071,2500000,0.052,10000000,0.042,i,0.030]",
+        "QcI.06": "0.060",
+        "QcI.07": "0.090",
+        "QcI.08": "0.430",
+        "QcI.09a": "[500000,0.060,i,0.12]",
+        "QcI.10a": "[500000,0.045,i,0.090]",
+        "QcI.11": "0.040",
+        "QcI.12": "0.250",
+        "QcI.13": "0.040",
+        "QdI.01": "0.080",
+        "QdI.02": "0.020",
+        "QdI.03": "0.220",
+        "QdI.05": "0.030"
+      }
+    },
+    {
+      "id": "31",
+      "name": "Impianti (A)",
+      "destinations": [
+        {
+          "id": "12",
+          "name": "Impianti meccanici a fluido a servizio delle costruzioni",
+          "levels": [
+            {
+              "id": "1",
+              "g": 0.75,
+              "label": "IA.01 - Impianti per l'approvvigionamento, la preparazione e la distribuzione di acqua nell'interno di edifici o per scopi industriali - Impianti sanitari - Impianti di fognatura domestica od industriale ed opere relative al trattamento delle acque di rifiuto - Reti di distribuzione di combustibili liquidi o gassosi - Impianti per la distribuzione dell'aria compress"
+            },
+            {
+              "id": "2",
+              "g": 0.85,
+              "label": "IA.02 - Impianti di riscaldamento - Impianto di raffrescamento, climatizzazione, trattamento dell'aria - Impianti meccanici di distribuzione fluidi - Impianto solare termico"
+            }
+          ]
+        },
+        {
+          "id": "13",
+          "name": "Impianti elettrici e speciali a servizio delle costruzioni - Singole apparecchiature per laboratori e impianti pilota",
+          "levels": [
+            {
+              "id": "3",
+              "g": 1.15,
+              "label": "IA.03 - Impianti elettrici in genere, impianti di illuminazione, telefonici, di rivelazione incendi, fotovoltaici, a corredo di edifici e costruzioni di importanza corrente - singole apparecchiature per laboratori e impianti pilota di tipo semplice"
+            },
+            {
+              "id": "4",
+              "g": 1.3,
+              "label": "IA.04 - Impianti elettrici in genere, impianti di illuminazione, telefonici, di sicurezza , di rivelazione incendi , fotovoltaici, a corredo di edifici e costruzioni complessi - cablaggi strutturati - impianti in fibra ottica - singole apparecchiature per laboratori e impianti pilota di tipo complesso"
+            }
+          ]
+        }
+      ],
+      "q": {
+        "QaI.01": "0.045",
+        "QaI.02": "0.090",
+        "QaI.03": "0.020",
+        "QaII.01": "0.040",
+        "QaII.02": "0.080",
+        "QaII.03": "0.160",
+        "QbI.01": "0.090",
+        "QbI.02": "0.010",
+        "QbI.03": "0.020",
+        "QbI.04": "0.030",
+        "QbI.05": "0.070",
+        "QbI.06": "0.030",
+        "QbI.07": "0.015",
+        "QbI.08": "0.015",
+        "QbI.09": "0.015",
+        "QbI.10": "0.015",
+        "QbI.11": "[250000,0.039,500000,0.010,1000000,0.013,2500000,0.018,10000000,0.022,i,0.021]",
+        "QbI.12": "0.020",
+        "QbI.13": "0.010",
+        "QbI.14": "0.030",
+        "QbI.15": "0.005",
+        "QbI.16": "0.010",
+        "QbI.17": "[5000000,0.030,20000000,0.015,i,0.005]",
+        "QbI.18": "[5000000,0.018,20000000,0.008,i,0.004]",
+        "QbI.19": "0.010",
+        "QbI.20": "0.060",
+        "QbI.21": "0.010",
+        "QbII.01": "0.16",
+        "QbII.02": "0.04",
+        "QbII.03": "0.010",
+        "QbII.04": "0.04",
+        "QbII.06": "0.010",
+        "QbII.07": "0.020",
+        "QbII.08": "0.080",
+        "QbII.09": "0.060",
+        "QbII.10": "0.030",
+        "QbII.11": "0.030",
+        "QbII.12": "0.030",
+        "QbII.13": "[250000,0.064,500000,0.019,1000000,0.021,2500000,0.029,10000000,0.038,i,0.028]",
+        "QbII.17": "0.050",
+        "QbII.18": "0.060",
+        "QbII.19": "0.020",
+        "QbII.20": "0.020",
+        "QbII.21": "0.030",
+        "QbII.22": "0.020",
+        "QbII.23": "0.010",
+        "QbII.24": "[5000000,0.090,20000000,0.045,i,0.015]",
+        "QbII.25": "[5000000,0.018,20000000,0.008,i,0.004]",
+        "QbII.26": "0.010",
+        "QbII.27": "0.130",
+        "QbIII.03a": "0.025",
+        "QbIII.04a": "0.010",
+        "QbIII.05a": "0.015",
+        "QbIII.07a": "0.050",
+        "QbII.05": "0.070",
+        "QbIII.01": "0.15",
+        "QbIII.02": "0.050",
+        "QbIII.03b": "0.025",
+        "QbIII.03": "0.050",
+        "QbIII.04b": "0.010",
+        "QbIII.04": "0.020",
+        "QbIII.05b": "0.015",
+        "QbIII.05": "0.030",
+        "QbIII.06": "0.030",
+        "QbIII.07b": "0.050",
+        "QbIII.07": "0.100",
+        "QbIII.08": "0.010",
+        "QbIII.09": "0.130",
+        "QbIII.10": "0.040",
+        "QbIII.11": "0.010",
+        "QcI.01": "0.32",
+        "QcI.02": "0.030",
+        "QcI.03": "0.020",
+        "QcI.04": "0.020",
+        "QcI.05": "0.100",
+        "QcI.05.01": "[250000,0.039,500000,0.010,1000000,0.013,2500000,0.018,10000000,0.022,i,0.021]",
+        "QcI.06": "0.060",
+        "QcI.07": "0.150",
+        "QcI.08": "0.320",
+        "QcI.09a": "[500000,0.045,i,0.090]",
+        "QcI.10a": "[500000,0.035,i,0.070]",
+        "QcI.11": "0.040",
+        "QcI.12": "0.250",
+        "QcI.13": "0.040",
+        "QdI.01": "0.080",
+        "QdI.02": "0.020",
+        "QdI.04": "0.180",
+        "QdI.05": "0.030"
+      }
+    },
+    {
+      "id": "32",
+      "name": "Impianti (B)",
+      "destinations": [
+        {
+          "id": "14",
+          "name": "Impianti industriali - Impianti pilota e impianti di depurazione con ridotte problematiche tecniche - Discariche inerti",
+          "levels": [
+            {
+              "id": "4",
+              "g": 0.55,
+              "label": "IB.04 - Depositi e discariche senza trattamento dei rifiuti."
+            },
+            {
+              "id": "5",
+              "g": 0.7,
+              "label": "IB.05 - Impianti per le industrie molitorie, cartarie, alimentari, delle fibre tessili naturali, del legno, del cuoio e simili."
+            }
+          ]
+        },
+        {
+          "id": "15",
+          "name": "Impianti industriali – Impianti pilota e impianti di depurazione complessi - Discariche con trattamenti e termovalorizzatori",
+          "levels": [
+            {
+              "id": "6",
+              "g": 0.7,
+              "label": "IB.06 - Impianti della industria chimica inorganica - Impianti della preparazione e distillazione dei combustibili - Impianti siderurgici - Officine meccaniche e laboratori - Cantieri navali - Fabbriche di cemento, calce, laterizi, vetrerie e ceramiche - Impianti per le industrie della fermentazione, chimico-alimentari e tintorie - Impianti termovalorizzatori e impi"
+            },
+            {
+              "id": "7",
+              "g": 0.75,
+              "label": "IB.07 - Gli impianti precedentemente esposti quando siano di complessità particolarmente rilevante o comportanti rischi e problematiche ambientali molto rilevanti"
+            }
+          ]
+        },
+        {
+          "id": "16",
+          "name": "Opere elettriche per reti di trasmissione e distribuzione energia e segnali - Laboratori con ridotte problematiche tecniche",
+          "levels": [
+            {
+              "id": "8",
+              "g": 0.5,
+              "label": "IB.08 - Impianti di linee e reti per trasmissioni e distribuzione di energia elettrica, telegrafia, telefonia."
+            },
+            {
+              "id": "9",
+              "g": 0.6,
+              "label": "IB.09 - Centrali idroelettriche ordinarie - Stazioni di trasformazioni e di conversione impianti di trazione elettrica"
+            },
+            {
+              "id": "10",
+              "g": 0.75,
+              "label": "IB.10 - Impianti termoelettrici-Impianti dell'elettrochimica - Impianti della elettrometallurgia - Laboratori con ridotte problematiche tecniche"
+            }
+          ]
+        },
+        {
+          "id": "17",
+          "name": "Impianti per la produzione di energia - Laboratori complessi",
+          "levels": [
+            {
+              "id": "11",
+              "g": 0.9,
+              "label": "IB.11 - Campi fotovoltaici - Parchi eolici"
+            },
+            {
+              "id": "12",
+              "g": 1,
+              "label": "IB.12 - Micro Centrali idroelettriche-Impianti termoelettrici-Impianti della elettrometallurgia di tipo complesso"
+            }
+          ]
+        }
+      ],
+      "q": {
+        "QaI.01": "0.045",
+        "QaI.02": "0.090",
+        "QaI.03": "0.020",
+        "QaII.01": "0.040",
+        "QaII.02": "0.080",
+        "QaII.03": "0.160",
+        "QbI.01": "0.090",
+        "QbI.02": "0.010",
+        "QbI.03": "0.020",
+        "QbI.04": "0.030",
+        "QbI.05": "0.070",
+        "QbI.06": "0.030",
+        "QbI.07": "0.015",
+        "QbI.08": "0.015",
+        "QbI.09": "0.015",
+        "QbI.10": "0.015",
+        "QbI.11": "[250000,0.039,500000,0.010,1000000,0.013,2500000,0.018,10000000,0.022,i,0.021]",
+        "QbI.12": "0.020",
+        "QbI.13": "0.010",
+        "QbI.14": "0.030",
+        "QbI.15": "0.005",
+        "QbI.16": "0.010",
+        "QbI.17": "[5000000,0.030,20000000,0.015,i,0.005]",
+        "QbI.18": "[5000000,0.018,20000000,0.008,i,0.004]",
+        "QbI.19": "0.010",
+        "QbI.20": "0.060",
+        "QbI.21": "0.010",
+        "QbII.01": "0.20",
+        "QbII.02": "0.04",
+        "QbII.03": "0.010",
+        "QbII.04": "0.04",
+        "QbII.06": "0.010",
+        "QbII.07": "0.020",
+        "QbII.08": "0.080",
+        "QbII.09": "0.060",
+        "QbII.10": "0.030",
+        "QbII.11": "0.030",
+        "QbII.12": "0.030",
+        "QbII.13": "[250000,0.064,500000,0.019,1000000,0.021,2500000,0.029,10000000,0.038,i,0.028]",
+        "QbII.17": "0.050",
+        "QbII.18": "0.060",
+        "QbII.19": "0.020",
+        "QbII.20": "0.020",
+        "QbII.21": "0.030",
+        "QbII.22": "0.020",
+        "QbII.23": "0.010",
+        "QbII.24": "[5000000,0.090,20000000,0.045,i,0.015]",
+        "QbII.25": "[5000000,0.018,20000000,0.008,i,0.004]",
+        "QbII.26": "0.010",
+        "QbII.27": "0.130",
+        "QbIII.03a": "0.025",
+        "QbIII.04a": "0.010",
+        "QbIII.05a": "0.015",
+        "QbIII.07a": "0.050",
+        "QbII.05": "0.070",
+        "QbIII.01": "0.04",
+        "QbIII.02": "0.050",
+        "QbIII.03b": "0.025",
+        "QbIII.03": "0.050",
+        "QbIII.04b": "0.010",
+        "QbIII.04": "0.020",
+        "QbIII.05b": "0.015",
+        "QbIII.05": "0.030",
+        "QbIII.06": "0.030",
+        "QbIII.07b": "0.050",
+        "QbIII.07": "0.100",
+        "QbIII.08": "0.010",
+        "QbIII.09": "0.130",
+        "QbIII.10": "0.040",
+        "QbIII.11": "0.010",
+        "QcI.01": "0.45",
+        "QcI.02": "0.030",
+        "QcI.03": "0.020",
+        "QcI.04": "0.020",
+        "QcI.05": "0.100",
+        "QcI.05.01": "[250000,0.039,500000,0.010,1000000,0.013,2500000,0.018,10000000,0.022,i,0.021]",
+        "QcI.06": "0.060",
+        "QcI.07": "0.150",
+        "QcI.08": "0.320",
+        "QcI.09a": "[500000,0.045,i,0.090]",
+        "QcI.10a": "[500000,0.035,i,0.070]",
+        "QcI.11": "0.040",
+        "QcI.12": "0.250",
+        "QcI.13": "0.040",
+        "QdI.01": "0.080",
+        "QdI.02": "0.020",
+        "QdI.04": "0.180",
+        "QdI.05": "0.030"
+      }
+    },
+    {
+      "id": "4",
+      "name": "Infrastrutture per la mobilità",
+      "destinations": [
+        {
+          "id": "18",
+          "name": "Manutenzione",
+          "levels": [
+            {
+              "id": "1",
+              "g": 0.4,
+              "label": "V.01 - Interventi di manutenzione su viabilità ordinaria"
+            }
+          ]
+        },
+        {
+          "id": "19",
+          "name": "Viabilità ordinaria",
+          "levels": [
+            {
+              "id": "2",
+              "g": 0.45,
+              "label": "V.02 - Strade, linee tramviarie, ferrovie, strade ferrate, di tipo ordinario, escluse le opere d'arte da compensarsi a parte - Piste ciclabili"
+            }
+          ]
+        },
+        {
+          "id": "20",
+          "name": "Viabilità speciale",
+          "levels": [
+            {
+              "id": "3",
+              "g": 0.75,
+              "label": "V.03 - Strade, linee tramviarie, ferrovie, strade ferrate, con particolari difficoltà di studio, escluse le opere d'arte e le stazioni, da compensarsi a parte. - Impianti teleferici e funicolari - Piste aeroportuali e simili."
+            }
+          ]
+        }
+      ],
+      "q": {
+        "QaI.01": "0.040",
+        "QaI.02": "0.080",
+        "QaI.03": "0.020",
+        "QaII.01": "0.040",
+        "QaII.02": "0.080",
+        "QaII.03": "0.160",
+        "QbI.01": "0.080",
+        "QbI.02": "0.010",
+        "QbI.03": "0.020",
+        "QbI.04": "0.030",
+        "QbI.05": "0.070",
+        "QbI.06": "0.030",
+        "QbI.07": "0.015",
+        "QbI.08": "0.015",
+        "QbI.09": "0.015",
+        "QbI.10": "0.015",
+        "QbI.11": "[250000,0.068,500000,0.058,1000000,0.047,2500000,0.034,10000000,0.019,i,0.018]",
+        "QbI.12": "0.020",
+        "QbI.13": "0.030",
+        "QbI.16": "0.010",
+        "QbI.17": "[5000000,0.035,20000000,0.020,i,0.008]",
+        "QbI.18": "[5000000,0.020,20000000,0.010,i,0.005]",
+        "QbI.19": "0.010",
+        "QbI.20": "0.060",
+        "QbI.21": "0.010",
+        "QbII.01": "0.220",
+        "QbII.03": "0.010",
+        "QbII.04": "0.04",
+        "QbII.06": "0.030",
+        "QbII.07": "0.020",
+        "QbII.08": "0.070",
+        "QbII.09": "0.060",
+        "QbII.10": "0.030",
+        "QbII.11": "0.030",
+        "QbII.12": "0.030",
+        "QbII.13": "[250000,0.145,500000,0.114,1000000,0.070,2500000,0.035,10000000,0.020,i,0.018]",
+        "QbII.17": "0.050",
+        "QbII.19": "0.020",
+        "QbII.20": "0.020",
+        "QbII.23": "0.010",
+        "QbII.24": "[5000000,0.100,20000000,0.060,i,0.025]",
+        "QbII.25": "[5000000,0.020,20000000,0.010,i,0.005]",
+        "QbII.26": "0.010",
+        "QbII.27": "0.130",
+        "QbIII.03a": "0.015",
+        "QbIII.04a": "0.010",
+        "QbIII.05a": "0.015",
+        "QbIII.07a": "0.050",
+        "QbII.05": "0.060",
+        "QbIII.01": "0.040",
+        "QbIII.02": "0.080",
+        "QbIII.03b": "0.015",
+        "QbIII.03": "0.030",
+        "QbIII.04b": "0.010",
+        "QbIII.04": "0.020",
+        "QbIII.05b": "0.015",
+        "QbIII.05": "0.030",
+        "QbIII.06": "0.030",
+        "QbIII.07b": "0.050",
+        "QbIII.07": "0.100",
+        "QbIII.08": "0.010",
+        "QbIII.09": "0.130",
+        "QbIII.10": "0.040",
+        "QbIII.11": "0.010",
+        "QcI.01": "0.420",
+        "QcI.02": "0.030",
+        "QcI.03": "0.020",
+        "QcI.04": "0.020",
+        "QcI.05": "0.100",
+        "QcI.05.01": "[250000,0.127,500000,0.110,1000000,0.077,2500000,0.029,10000000,0.019,i,0.018]",
+        "QcI.06": "0.060",
+        "QcI.07": "0.120",
+        "QcI.08": "0.420",
+        "QcI.09a": "[500000,0.045,i,0.090]",
+        "QcI.10a": "[500000,0.035,i,0.070]",
+        "QcI.11": "0.040",
+        "QcI.12": "0.250",
+        "QcI.13": "0.040",
+        "QdI.01": "0.080",
+        "QdI.02": "0.020"
+      }
+    },
+    {
+      "id": "5",
+      "name": "Idraulica",
+      "destinations": [
+        {
+          "id": "21",
+          "name": "Navigazione",
+          "levels": [
+            {
+              "id": "1",
+              "g": 0.65,
+              "label": "D.01 - Opere di navigazione interna e portuali"
+            }
+          ]
+        },
+        {
+          "id": "22",
+          "name": "Opere di bonifica e derivazioni",
+          "levels": [
+            {
+              "id": "2",
+              "g": 0.45,
+              "label": "D.02 - Bonifiche ed irrigazioni a deflusso naturale, sistemazione di corsi d'acqua e di bacini montani"
+            },
+            {
+              "id": "3",
+              "g": 0.55,
+              "label": "D.03 - Bonifiche ed irrigazioni con sollevamento meccanico di acqua (esclusi i macchinari) - Derivazioni d'acqua per forza motrice e produzione di energia elettrica."
+            }
+          ]
+        },
+        {
+          "id": "23",
+          "name": "Acquedotti e fognature",
+          "levels": [
+            {
+              "id": "4",
+              "g": 0.65,
+              "label": "D.04 - Impianti per provvista, condotta, distribuzione d'acqua, improntate a grande semplicità - Fognature urbane improntate a grande semplicità - Condotte subacquee in genere, metanodotti e gasdotti, di tipo ordinario"
+            },
+            {
+              "id": "5",
+              "g": 0.8,
+              "label": "D.05 - Impianti per provvista, condotta, distribuzione d'acqua - Fognature urbane - Condotte subacquee in genere, metanodotti e gasdotti, con problemi tecnici di tipo speciale."
+            }
+          ]
+        }
+      ],
+      "q": {
+        "QaI.01": "0.035",
+        "QaI.02": "0.070",
+        "QaI.03": "0.020",
+        "QaII.01": "0.040",
+        "QaII.02": "0.080",
+        "QaII.03": "0.160",
+        "QbI.01": "0.070",
+        "QbI.02": "0.010",
+        "QbI.03": "0.020",
+        "QbI.04": "0.030",
+        "QbI.05": "0.070",
+        "QbI.06": "0.030",
+        "QbI.07": "0.015",
+        "QbI.08": "0.015",
+        "QbI.09": "0.015",
+        "QbI.10": "0.015",
+        "QbI.11": "[250000,0.053,500000,0.048,1000000,0.044,2500000,0.042,10000000,0.027,i,0.025]",
+        "QbI.12": "0.020",
+        "QbI.13": "0.010",
+        "QbI.16": "0.010",
+        "QbI.17": "[5000000,0.035,20000000,0.020,i,0.008]",
+        "QbI.18": "[5000000,0.020,20000000,0.010,i,0.005]",
+        "QbI.19": "0.010",
+        "QbI.20": "0.060",
+        "QbI.21": "0.010",
+        "QbII.01": "0.180",
+        "QbII.03": "0.010",
+        "QbII.04": "0.04",
+        "QbII.06": "0.010",
+        "QbII.07": "0.020",
+        "QbII.08": "0.070",
+        "QbII.09": "0.060",
+        "QbII.10": "0.030",
+        "QbII.11": "0.030",
+        "QbII.12": "0.030",
+        "QbII.13": "[250000,0.133,500000,0.107,1000000,0.096,2500000,0.079,10000000,0.054,i,0.035]",
+        "QbII.17": "0.050",
+        "QbII.19": "0.020",
+        "QbII.23": "0.010",
+        "QbII.24": "[5000000,0.100,20000000,0.060,i,0.025]",
+        "QbII.25": "[5000000,0.020,20000000,0.010,i,0.005]",
+        "QbII.26": "0.010",
+        "QbII.27": "0.130",
+        "QbIII.03a": "0.020",
+        "QbIII.04a": "0.010",
+        "QbIII.05a": "0.010",
+        "QbIII.07a": "0.050",
+        "QbII.05": "0.050",
+        "QbIII.01": "0.110",
+        "QbIII.02": "0.050",
+        "QbIII.03b": "0.020",
+        "QbIII.03": "0.040",
+        "QbIII.04b": "0.010",
+        "QbIII.04": "0.020",
+        "QbIII.05b": "0.010",
+        "QbIII.05": "0.020",
+        "QbIII.06": "0.030",
+        "QbIII.07b": "0.050",
+        "QbIII.07": "0.100",
+        "QbIII.08": "0.010",
+        "QbIII.09": "0.130",
+        "QbIII.10": "0.040",
+        "QbIII.11": "0.010",
+        "QcI.01": "0.420",
+        "QcI.02": "0.040",
+        "QcI.03": "0.020",
+        "QcI.04": "0.020",
+        "QcI.05": "0.100",
+        "QcI.05.01": "[250000,0.095,500000,0.081,1000000,0.071,2500000,0.052,10000000,0.042,i,0.030]",
+        "QcI.06": "0.060",
+        "QcI.07": "0.120",
+        "QcI.08": "0.340",
+        "QcI.09a": "[500000,0.045,i,0.090]",
+        "QcI.10a": "[500000,0.035,i,0.070]",
+        "QcI.11": "0.040",
+        "QcI.12": "0.250",
+        "QcI.13": "0.040",
+        "QdI.01": "0.080",
+        "QdI.02": "0.020",
+        "QdI.04": "0.180"
+      }
+    },
+    {
+      "id": "6",
+      "name": "TIC",
+      "destinations": [
+        {
+          "id": "24",
+          "name": "Sistemi informativi",
+          "levels": [
+            {
+              "id": "1",
+              "g": 0.95,
+              "label": "T.01 - Sistemi informativi, gestione elettronica del flusso documentale, dematerializzazione e gestione archivi, ingegnerizzazione dei processi, sistemi di gestione delle attività produttive, Data center, server farm."
+            }
+          ]
+        },
+        {
+          "id": "25",
+          "name": "Sistemi e reti di telecomunicazione",
+          "levels": [
+            {
+              "id": "2",
+              "g": 0.7,
+              "label": "T.02 - Reti locali e geografiche, cablaggi strutturati, impianti in fibra ottica, Impianti di videosorveglianza, controllo accessi, identificazione targhe di veicoli ecc Sistemi wireless, reti wifi, ponti radio."
+            }
+          ]
+        },
+        {
+          "id": "26",
+          "name": "Sistemi elettronici ed automazione",
+          "levels": [
+            {
+              "id": "3",
+              "g": 1.2,
+              "label": "T.03 - Elettronica Industriale Sistemi a controllo numerico, Sistemi di automazione, Robotica."
+            }
+          ]
+        }
+      ],
+      "q": {
+        "QaI.01": "0.050",
+        "QaI.02": "0.100",
+        "QaI.03": "0.020",
+        "QaII.01": "0.040",
+        "QaII.02": "0.080",
+        "QaII.03": "0.160",
+        "QbI.01": "0.100",
+        "QbI.02": "0.010",
+        "QbI.04": "0.030",
+        "QbI.05": "0.070",
+        "QbI.12": "0.020",
+        "QbI.16": "0.010",
+        "QbI.17": "[5000000,0.030,20000000,0.015,i,0.005]",
+        "QbI.18": "[5000000,0.018,20000000,0.008,i,0.004]",
+        "QbI.19": "0.010",
+        "QbI.20": "0.060",
+        "QbI.21": "0.010",
+        "QbII.01": "0.250",
+        "QbII.03": "0.010",
+        "QbII.07": "0.020",
+        "QbII.08": "0.070",
+        "QbII.17": "0.050",
+        "QbII.19": "0.020",
+        "QbII.23": "0.010",
+        "QbII.24": "[5000000,0.090,20000000,0.045,i,0.015]",
+        "QbII.25": "[5000000,0.018,20000000,0.008,i,0.004]",
+        "QbII.26": "0.010",
+        "QbII.27": "0.130",
+        "QbIII.03a": "0.015",
+        "QbIII.04a": "0.010",
+        "QbIII.05a": "0.010",
+        "QbIII.07a": "0.050",
+        "QbII.05": "0.050",
+        "QbIII.01": "0.050",
+        "QbIII.02": "0.100",
+        "QbIII.03b": "0.015",
+        "QbIII.03": "0.030",
+        "QbIII.04b": "0.010",
+        "QbIII.04": "0.020",
+        "QbIII.05b": "0.010",
+        "QbIII.05": "0.020",
+        "QbIII.06": "0.030",
+        "QbIII.07b": "0.050",
+        "QbIII.07": "0.100",
+        "QbIII.08": "0.010",
+        "QbIII.09": "0.130",
+        "QbIII.10": "0.040",
+        "QbIII.11": "0.010",
+        "QcI.01": "0.350",
+        "QcI.02": "0.030",
+        "QcI.03": "0.020",
+        "QcI.04": "0.020",
+        "QcI.05": "0.100",
+        "QcI.06": "0.060",
+        "QcI.07": "0.110",
+        "QcI.08": "0.400",
+        "QcI.09a": "[500000,0.045,i,0.090]",
+        "QcI.10a": "[500000,0.035,i,0.070]",
+        "QcI.11": "0.040",
+        "QcI.12": "0.250",
+        "QcI.13": "0.040",
+        "QdI.01": "0.080",
+        "QdI.02": "0.020"
+      }
+    },
+    {
+      "id": "7",
+      "name": "Paesaggio, ambiente, agricoltura e foreste",
+      "destinations": [
+        {
+          "id": "27",
+          "name": "Interventi di sistemazione naturalistica o paesaggistica",
+          "levels": [
+            {
+              "id": "1",
+              "g": 0.85,
+              "label": "P.01 - Opere relative alla sistemazione di ecosistemi naturali o naturalizzati, alle aree naturali protette ed alle aree a rilevanza faunistica. Opere relative al restauro paesaggistico di territori compromessi ed agli interventi su elementi strutturali del paesaggio. Opere di configurazione di assetto paesaggistico."
+            }
+          ]
+        },
+        {
+          "id": "28",
+          "name": "Interventi del verde e opere per attività ricreativa o sportiva",
+          "levels": [
+            {
+              "id": "2",
+              "g": 0.85,
+              "label": "P.02 - Opere a verde sia su piccola scala o grande scala dove la rilevanza dell’opera è prevalente rispetto alle opere di tipo costruttivo."
+            }
+          ]
+        },
+        {
+          "id": "29",
+          "name": "Interventi recupero, riqualificazione ambientale",
+          "levels": [
+            {
+              "id": "3",
+              "g": 0.85,
+              "label": "P.03 - Opere di riqualificazione e risanamento di ambiti naturali, rurali e forestali o urbani finalizzati al ripristino delle condizioni originarie, al riassetto delle componenti biotiche ed abiotiche."
+            }
+          ]
+        },
+        {
+          "id": "30",
+          "name": "Interventi di sfruttamento di cave e torbiere",
+          "levels": [
+            {
+              "id": "4",
+              "g": 0.85,
+              "label": "P.04 - Opere di utilizzazione di bacini estrattivi a parete o a fossa"
+            }
+          ]
+        },
+        {
+          "id": "31",
+          "name": "Interventi di miglioramento e qualificazione della filiera forestale",
+          "levels": [
+            {
+              "id": "5",
+              "g": 0.85,
+              "label": "P.05 - Opere di assetto ed utilizzazione forestale nonché dell’impiego ai fini industriali, energetici ed ambientali. Piste forestali, strade forestali– percorsi naturalistici, aree di sosta e di stazionamento dei mezzi forestali. Meccanizzazione forestale"
+            }
+          ]
+        },
+        {
+          "id": "32",
+          "name": "Interventi di miglioramento fondiario agrario e rurale; interventi di pianificazione alimentare",
+          "levels": [
+            {
+              "id": "6",
+              "g": 0.85,
+              "label": "P.06 - Opere di intervento per la realizzazione di infrastrutture e di miglioramento dell’assetto rurale."
+            }
+          ]
+        }
+      ],
+      "q": {
+        "Qa.0.02": "[15000,0.001,50000,0.0005,i,0.0001]",
+        "Qa.0.03": "0.005",
+        "Qa.0.04": "0.030",
+        "Qa.0.05": "0.003",
+        "Qa.0.06": "[7500000,0.026,15000000,0.016,i,0.010]",
+        "Qa.0.07": "[4000000,0.018,10000000,0.012,i,0.008]",
+        "QaI.01": "0.040",
+        "QaI.02": "0.080",
+        "QaI.03": "0.020",
+        "QaII.01": "0.040",
+        "QaII.02": "0.090",
+        "QaII.03": "0.160",
+        "QaIII.01": "0.020",
+        "QaIII.02": "0.015",
+        "QaIII.03": "0.025",
+        "QaIV.01": "0.005",
+        "QbI.01": "0.080",
+        "QbI.02": "0.010",
+        "QbI.03": "0.020",
+        "QbI.04": "0.030",
+        "QbI.05": "0.070",
+        "QbI.06": "0.030",
+        "QbI.07": "0.015",
+        "QbI.08": "0.015",
+        "QbI.09": "0.015",
+        "QbI.10": "0.015",
+        "QbI.11": "[250000,0.053,500000,0.048,1000000,0.044,2500000,0.042,10000000,0.027,i,0.025]",
+        "QbI.12": "0.020",
+        "QbI.13": "0.030",
+        "QbI.16": "0.010",
+        "QbI.17": "[5000000,0.035,20000000,0.020,i,0.008]",
+        "QbI.18": "[5000000,0.020,20000000,0.010,i,0.005]",
+        "QbI.19": "0.010",
+        "QbI.20": "0.060",
+        "QbI.21": "0.010",
+        "QbII.01": "0.180",
+        "QbII.03": "0.010",
+        "QbII.04": "0.04",
+        "QbII.06": "0.030",
+        "QbII.07": "0.020",
+        "QbII.08": "0.070",
+        "QbII.09": "0.060",
+        "QbII.10": "0.030",
+        "QbII.11": "0.030",
+        "QbII.12": "0.030",
+        "QbII.13": "[250000,0.133,500000,0.107,1000000,0.096,2500000,0.079,10000000,0.054,i,0.035]",
+        "QbII.17": "0.050",
+        "QbII.19": "0.020",
+        "QbII.23": "0.010",
+        "QbII.24": "[5000000,0.100,20000000,0.060,i,0.025]",
+        "QbII.25": "[5000000,0.020,20000000,0.010,i,0.005]",
+        "QbII.26": "0.010",
+        "QbII.27": "0.130",
+        "QbIII.03a": "0.015",
+        "QbIII.04a": "0.010",
+        "QbIII.05a": "0.015",
+        "QbIII.07a": "0.050",
+        "QbII.05": "0.050",
+        "QbIII.01": "0.040",
+        "QbIII.02": "0.080",
+        "QbIII.03b": "0.015",
+        "QbIII.03": "0.030",
+        "QbIII.04b": "0.010",
+        "QbIII.04": "0.020",
+        "QbIII.05b": "0.015",
+        "QbIII.05": "0.030",
+        "QbIII.06": "0.030",
+        "QbIII.07b": "0.050",
+        "QbIII.07": "0.100",
+        "QbIII.08": "0.010",
+        "QbIII.09": "0.130",
+        "QbIII.10": "0.040",
+        "QbIII.11": "0.010",
+        "QcI.01": "0.110",
+        "QcI.02": "0.030",
+        "QcI.03": "0.020",
+        "QcI.04": "0.020",
+        "QcI.05": "0.100",
+        "QcI.05.01": "[250000,0.095,500000,0.081,1000000,0.071,2500000,0.052,10000000,0.042,i,0.030]",
+        "QcI.06": "0.060",
+        "QcI.07": "0.120",
+        "QcI.08": "0.420",
+        "QcI.09a": "[500000,0.045,i,0.090]",
+        "QcI.10a": "[500000,0.035,i,0.070]",
+        "QcI.11": "0.040",
+        "QcI.12": "0.250",
+        "QcI.13": "0.040",
+        "QdI.01": "0.080",
+        "QdI.02": "0.020",
+        "QeI.01": "0.002",
+        "QeI.02": "0.022"
+      }
+    },
+    {
+      "id": "8",
+      "name": "Territorio e urbanistica",
+      "destinations": [
+        {
+          "id": "33",
+          "name": "Interventi per la valorizzazione delle filiere produttive agroalimentari e zootecniche; interventi di controllo - vigilanza alimentare",
+          "levels": [
+            {
+              "id": "1",
+              "g": 0.9,
+              "label": "U.01 - Opere ed infrastrutture complesse, anche a carattere immateriale, volte a migliorare l’assetto del territorio rurale per favorire lo sviluppo dei processi agricoli e zootecnici. Opere e strutture per la valorizzazione delle filiere (produzione, trasformazione e commercializzazione delle produzioni agricole e agroalimentari)"
+            }
+          ]
+        },
+        {
+          "id": "34",
+          "name": "Interventi per la valorizzazione della filiera naturalistica e faunistica",
+          "levels": [
+            {
+              "id": "2",
+              "g": 0.95,
+              "label": "U.02 - Interventi di valorizzazione degli ambiti naturali sia di tipo vegetazionale che faunistico"
+            }
+          ]
+        },
+        {
+          "id": "35",
+          "name": "Pianificazione",
+          "levels": [
+            {
+              "id": "3",
+              "g": 1,
+              "label": "U.03 - Strumenti di pianificazione generale ed attuativa e di pianificazione di settore"
+            }
+          ]
+        }
+      ],
+      "q": {
+        "Qa.0.01": "[15000,0.005,50000,0.003,i,0.001]",
+        "Qa.0.02": "[15000,0.0010,50000,0.0005,i,0.0001]",
+        "Qa.0.03": "0.005",
+        "Qa.0.05": "0.003",
+        "Qa.0.06": "[7500000,0.036,15000000,0.028,i,0.020]",
+        "Qa.0.07": "[4000000,0.018,10000000,0.012,i,0.008]",
+        "QaIII.01": "0.0003",
+        "QaIII.02": "0.00025",
+        "QaIII.03": "0.030",
+        "QaIV.01": "0.0015",
+        "QbI.21": "0.010",
+        "QeI.01": "0.0015"
+      }
+    }
+  ]
+}

@@ -1,5 +1,39 @@
 [
   {
+    "id": "a0",
+    "name": "Pianificazione e programmazione",
+    "services": [
+      {
+        "code": "Qa.0.01",
+        "label": "Pianificazione urbanistica generale."
+      },
+      {
+        "code": "Qa.0.02",
+        "label": "Rilievi e controlli del terreno, analisi geoambientali di risorse e rischi, studi di geologia applicati ai piani urbanistici generali, ambientali e di difesa del suolo."
+      },
+      {
+        "code": "Qa.0.03",
+        "label": "Pianificazione forestale, paesaggistica, naturalistica ed ambientale"
+      },
+      {
+        "code": "Qa.0.04",
+        "label": "Piani aziendali agronomici, di concimazione, fertilizzazione,  reflui e fitoiatrici"
+      },
+      {
+        "code": "Qa.0.05",
+        "label": "Programmazione  economica, territoriale, locale e rurale"
+      },
+      {
+        "code": "Qa.0.06",
+        "label": "Piani urbanistici esecutivi, di sviluppo aziendale, di utilizzazione forestale."
+      },
+      {
+        "code": "Qa.0.07",
+        "label": "Rilievi e controlli del terreno, analisi geoambientali di risorse e rischi, studi di geologia applicati ai piani urbanistici esecutivi, ambientali e di difesa del suolo."
+      }
+    ]
+  },
+  {
     "id": "a1",
     "name": "Studi di fattibilità",
     "services": [
@@ -27,11 +61,39 @@
       },
       {
         "code": "QaII.02",
-        "label": "Particolareggiate, complete di criteri di valutazione, relazione motivata, descrizioni, computi e tipi (d.P.R. 327/2001)"
+        "label": "Particolareggiate,  complete di criteri di valutazione, relazione motivata, descrizioni, computi e tipi (d.P.R. 327/2001)"
       },
       {
         "code": "QaII.03",
         "label": "Analitiche, integrate con specifiche e distinte, sullo stato e valore dei singoli componenti (d.P.R. 327/2001)"
+      }
+    ]
+  },
+  {
+    "id": "a3",
+    "name": "Rilievi, studi e analisi",
+    "services": [
+      {
+        "code": "QaIII.01",
+        "label": "Rilievi, studi e classificazioni agronomiche, colturali, delle biomasse e delle attività produttive (d.Lgs 152/2006 – All.VI-VII)"
+      },
+      {
+        "code": "QaIII.02",
+        "label": "Rilievo botanico e analisi vegetazionali dei popolamenti erbacei ed arborei ed animali (d.Lgs 152/2006 – All.VI-VII)"
+      },
+      {
+        "code": "QaIII.03",
+        "label": "Elaborazioni, analisi e valutazioni con modelli numerici, software dedicati, (incendi boschivi, diffusione inquinanti, idrologia ed idrogeologia, regimazione delle acque, idraulica, colate di fango e di detriti, esondazioni, aree di pericolo, stabilità dei pendii, filtrazioni, reti ecologiche e dinamiche ecologiche) (d.Lgs 152/2006 – All.VI-VII)"
+      }
+    ]
+  },
+  {
+    "id": "a4",
+    "name": "Piani economici",
+    "services": [
+      {
+        "code": "QaIV.01",
+        "label": "Piani economici, aziendali, business plan e di investimento"
       }
     ]
   },
@@ -41,7 +103,7 @@
     "services": [
       {
         "code": "QbI.01",
-        "label": "Relazioni, planimetrie, elaborati grafici"
+        "label": "Relazioni, planimetrie,  elaborati grafici"
       },
       {
         "code": "QbI.02",
@@ -81,7 +143,7 @@
       },
       {
         "code": "QbI.11",
-        "label": "Relazione geologica"
+        "label": "Relazione  geologica"
       },
       {
         "code": "QbI.12",
@@ -172,12 +234,24 @@
         "label": "Relazione geologica"
       },
       {
+        "code": "QbII.14",
+        "label": "Analisi storico critica e relazione sulle strutture esistenti"
+      },
+      {
+        "code": "QbII.15",
+        "label": "Relazione sulle indagini dei materiali e delle strutture per edifici esistenti"
+      },
+      {
+        "code": "QbII.16",
+        "label": "Verifica sismica delle strutture esistenti e individuazione delle carenze strutturali"
+      },
+      {
         "code": "QbII.17",
         "label": "Progettazione integrale e coordinata - Integrazione delle prestazioni specialistiche"
       },
       {
         "code": "QbII.18",
-        "label": "Elaborati di progettazione antincendio (d.m. 16/02/1982)"
+        "label": "Elaborati di  progettazione antincendio (d.m. 16/02/1982)"
       },
       {
         "code": "QbII.19",
@@ -185,7 +259,7 @@
       },
       {
         "code": "QbII.20",
-        "label": "Elaborati e relazioni per requisiti acustici (Legge 447/95-d.p.c.m. 512/97)"
+        "label": "Elaborati e relazioni per requisiti acustici (Legge 447/95-d.p.c.m.  512/97)"
       },
       {
         "code": "QbII.21",
@@ -197,7 +271,7 @@
       },
       {
         "code": "QbII.23",
-        "label": "Aggiornamento delle prime indicazioni e prescrizioni per la redazione del PSC"
+        "label": "Aggiornamento  delle prime indicazioni e prescrizioni per la redazione del PSC"
       },
       {
         "code": "QbII.24",
@@ -217,7 +291,7 @@
       },
       {
         "code": "QbIII.03a",
-        "label": "Computo metrico estimativo, Quadro economico, Elenco prezzi e eventuale analisi, Quadro dell'incidenza percentuale della quantità di manodopera"
+        "label": "Computo   metrico   estimativo,   Quadro   economico,   Elenco   prezzi   e   eventuale   analisi,   Quadro dell'incidenza percentuale della quantità di manodopera"
       },
       {
         "code": "QbIII.04a",
@@ -243,34 +317,34 @@
       },
       {
         "code": "QbIII.01",
-        "label": "Relazione generale e specialistiche, Elaborati grafici, Calcoli esecutivi"
+        "label": "Relazione generale e specialistiche,  Elaborati grafici, Calcoli esecutivi"
       },
       {
         "code": "QbIII.02",
         "label": "Particolari costruttivi e decorativi"
       },
       {
-        "code": "QbIII.03b",
-        "label": "Computo metrico estimativo, Quadro economico, Elenco prezzi e eventuale analisi, Quadro dell'incidenza percentuale della quantità di manodopera"
-      },
-      {
         "code": "QbIII.03",
-        "label": "Computo metrico estimativo, Quadro economico, Elenco prezzi e eventuale analisi, Quadro dell'incidenza percentuale della quantità di manodopera"
+        "label": "Computo   metrico   estimativo,   Quadro   economico,   Elenco   prezzi   e   eventuale   analisi,   Quadro dell'incidenza percentuale della quantità di manodopera"
       },
       {
-        "code": "QbIII.04b",
-        "label": "Schema di contratto, capitolato speciale d'appalto, cronoprogramma"
+        "code": "QbIII.03b",
+        "label": "Computo   metrico   estimativo,   Quadro   economico,   Elenco   prezzi   e   eventuale   analisi,   Quadro dell'incidenza percentuale della quantità di manodopera"
       },
       {
         "code": "QbIII.04",
         "label": "Schema di contratto, capitolato speciale d'appalto, cronoprogramma"
       },
       {
-        "code": "QbIII.05b",
-        "label": "Piano di manutenzione dell'opera"
+        "code": "QbIII.04b",
+        "label": "Schema di contratto, capitolato speciale d'appalto, cronoprogramma"
       },
       {
         "code": "QbIII.05",
+        "label": "Piano di manutenzione dell'opera"
+      },
+      {
+        "code": "QbIII.05b",
         "label": "Piano di manutenzione dell'opera"
       },
       {
@@ -278,11 +352,11 @@
         "label": "Progettazione integrale e coordinata - Integrazione delle prestazioni specialistiche"
       },
       {
-        "code": "QbIII.07b",
+        "code": "QbIII.07",
         "label": "Piano di Sicurezza e Coordinamento"
       },
       {
-        "code": "QbIII.07",
+        "code": "QbIII.07b",
         "label": "Piano di Sicurezza e Coordinamento"
       },
       {
@@ -295,7 +369,7 @@
       },
       {
         "code": "QbIII.10",
-        "label": "Supporto al RUP: per la programmazione e progettazione appalto"
+        "label": "Supporto al RUP: per la  programmazione  e progettazione appalto"
       },
       {
         "code": "QbIII.11",
@@ -309,19 +383,19 @@
     "services": [
       {
         "code": "QcI.01",
-        "label": "Direzione lavori, assistenza al collaudo, prove di accettazione"
+        "label": "Direzione   lavori,  assistenza   al  collaudo,   prove  di  accettazione"
       },
       {
         "code": "QcI.02",
-        "label": "Liquidazione - Rendicontazioni e liquidazione tecnico contabile"
+        "label": "Liquidazione - Rendicontazioni e liquidazione  tecnico contabile"
       },
       {
         "code": "QcI.03",
-        "label": "Controllo aggiornamento elaborati di progetto, aggiornamento dei manuali d'uso e manutenzione"
+        "label": "Controllo aggiornamento  elaborati di progetto, aggiornamento  dei manuali d'uso e manutenzione"
       },
       {
         "code": "QcI.04",
-        "label": "Coordinamento e supervisione dell'ufficio di direzione lavori"
+        "label": "Coordinamento e supervisione  dell'ufficio di direzione lavori"
       },
       {
         "code": "QcI.05",
@@ -341,7 +415,7 @@
       },
       {
         "code": "QcI.08",
-        "label": "Variante del progetto in corso d'opera"
+        "label": "Variante del progetto  in corso d'opera"
       },
       {
         "code": "QcI.09a",
@@ -361,7 +435,7 @@
       },
       {
         "code": "QcI.13",
-        "label": "Supporto al RUP: per la supervisione e coordinamento della D.L. e della C.S.E."
+        "label": "Supporto al RUP: per la supervisione  e coordinamento  della D.L. e della C.S.E."
       }
     ]
   },
@@ -378,8 +452,30 @@
         "label": "Revisione tecnico contabile"
       },
       {
+        "code": "QdI.03",
+        "label": "Collaudo statico (Capitolo 9, d.m. 14/01/2008)"
+      },
+      {
+        "code": "QdI.04",
+        "label": "Collaudo tecnico funzionale degli impianti (d.m. 22/01/2008 n°37)"
+      },
+      {
         "code": "QdI.05",
         "label": "Attestato di certificazione energetica (art.6 d.lgs. 311/2006) esclusa diagnosi energetica15"
+      }
+    ]
+  },
+  {
+    "id": "e1",
+    "name": "Monitoraggi",
+    "services": [
+      {
+        "code": "QeI.01",
+        "label": "Monitoraggi ambientali, naturalistici, fitoiatrici, faunistici, agronomici, zootecnici (artt. 18,28 Parte III All.1-All. 7 d.Lgs.152/2006)"
+      },
+      {
+        "code": "QeI.02",
+        "label": "Ricerche agricole e/o agro-industriali, nelle bioenergie, all'innovazione e sviluppo dei settori di competenza, la statistica, le ricerche di mercato, le attività relative agli assetti societari, alla cooperazione ed all'aggregazione di reti di impresa nel settore agricolo, agroalimentare, ambientale, energetico e forestale"
       }
     ]
   }

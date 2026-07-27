@@ -84,6 +84,15 @@
             bindClick('btn-save-new-password', saveNewPassword);
             document.getElementById('project-select')?.addEventListener('change', updateTaskDropdown);
             document.getElementById('new-proj-template')?.addEventListener('change', applyTemplateToNewProject);
+            document.getElementById('normative-work-value')?.addEventListener('input', event => handleNormativeWorkValue(event.target.value));
+            document.getElementById('normative-work-value')?.addEventListener('blur', event => {
+                const value = parseMoneyInput(event.target.value);
+                if (!isNaN(value) && value > 0) event.target.value = value.toLocaleString('it-IT', { maximumFractionDigits: 2 });
+            });
+            document.getElementById('normative-inhabitants')?.addEventListener('input', event => handleNormativeInhabitants(event.target.value));
+            document.getElementById('normative-category')?.addEventListener('change', event => handleNormativeCategory(event.target.value));
+            document.getElementById('normative-destination')?.addEventListener('change', event => handleNormativeDestination(event.target.value));
+            document.getElementById('normative-complexity')?.addEventListener('change', event => handleNormativeComplexity(event.target.value));
             document.getElementById('week-picker')?.addEventListener('change', event => jumpToDate(event.target.value));
             document.getElementById('week-picker-trigger')?.addEventListener('click', () => document.getElementById('week-picker')?.showPicker());
             document.getElementById('account-logo-input')?.addEventListener('change', uploadLogo);
