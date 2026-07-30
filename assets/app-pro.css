@@ -535,7 +535,7 @@ html.theme-pro .normative-money-input input {
 
 html.theme-pro .normative-calculation-summary {
     display: grid;
-    grid-template-columns: 0.7fr 0.7fr 1.35fr;
+    grid-template-columns: 0.62fr 0.62fr 0.9fr 1fr 1.15fr;
     margin-top: 0.65rem;
     border: 1px solid #e2e8f0;
     border-radius: 7px;
@@ -563,6 +563,10 @@ html.theme-pro .normative-calculation-summary small {
     font-weight: 900;
     text-transform: uppercase;
     color: #94a3b8;
+}
+
+html.theme-pro .normative-calculation-summary small b {
+    color: #64748b;
 }
 
 html.theme-pro .normative-calculation-summary strong {
@@ -816,7 +820,7 @@ html.theme-pro .normative-task-services em {
 
 html.theme-pro .normative-scope-summary {
     display: grid;
-    grid-template-columns: 0.75fr 1.25fr 0.65fr 0.8fr;
+    grid-template-columns: 0.7fr 1.2fr 0.58fr 0.72fr 0.82fr 0.9fr;
     margin-bottom: 0.7rem;
     border: 1px solid #e2e8f0;
     border-radius: 7px;
@@ -833,6 +837,51 @@ html.theme-pro .normative-scope-summary > span {
 html.theme-pro .normative-scope-summary > span:last-child {
     border-right: 0;
     background: #eef2ff;
+}
+
+html.theme-pro .normative-scope-summary > span.is-total strong {
+    color: #4338ca;
+}
+
+html.theme-pro .normative-rhythm-strip {
+    display: grid;
+    grid-template-columns: auto auto minmax(0, 1fr);
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.55rem;
+    padding: 0.45rem 0.6rem;
+    border-block: 1px solid #e2e8f0;
+    background: #f8fafc;
+}
+
+html.theme-pro .normative-rhythm-strip span {
+    display: flex;
+    align-items: baseline;
+    gap: 0.3rem;
+    white-space: nowrap;
+}
+
+html.theme-pro .normative-rhythm-strip small {
+    font-size: 0.5rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #94a3b8;
+}
+
+html.theme-pro .normative-rhythm-strip strong {
+    font-size: 0.72rem;
+    color: #334155;
+}
+
+html.theme-pro .normative-rhythm-strip p {
+    min-width: 0;
+    overflow: hidden;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.58rem;
+    font-weight: 700;
+    color: #64748b;
 }
 
 html.theme-pro .normative-scope-summary small,
@@ -868,7 +917,7 @@ html.theme-pro .normative-scope-row {
 
 html.theme-pro .normative-scope-heading {
     display: grid;
-    grid-template-columns: 1.35rem minmax(0, 1fr);
+    grid-template-columns: 1.35rem minmax(0, 1fr) auto;
     gap: 0.45rem;
     align-items: center;
 }
@@ -886,10 +935,29 @@ html.theme-pro .normative-scope-heading > span {
     font-weight: 900;
 }
 
+html.theme-pro .normative-scope-main {
+    min-width: 0;
+}
+
 html.theme-pro .normative-scope-heading strong {
+    display: block;
     font-size: 0.72rem;
     line-height: 1.25;
     color: #475569;
+}
+
+html.theme-pro .normative-scope-cost {
+    display: flex;
+    gap: 0.35rem;
+    align-items: baseline;
+    margin-top: 0.18rem;
+}
+
+html.theme-pro .normative-inline-status {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.3rem;
+    width: 15.5rem;
 }
 
 html.theme-pro .normative-scope-row .normative-task-services {
@@ -2926,5 +2994,29 @@ html.theme-pro #custom-dialog-msg {
 
     html.theme-pro .normative-scope-summary > span:nth-child(n+3) {
         border-top: 1px solid #e2e8f0;
+    }
+
+    html.theme-pro .normative-scope-summary > span:nth-child(4) {
+        border-right: 0;
+    }
+
+    html.theme-pro .normative-rhythm-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    html.theme-pro .normative-rhythm-strip p {
+        grid-column: 1 / -1;
+        text-align: left;
+        white-space: normal;
+    }
+
+    html.theme-pro .normative-scope-heading {
+        grid-template-columns: 1.35rem minmax(0, 1fr);
+    }
+
+    html.theme-pro .normative-inline-status {
+        grid-column: 1 / -1;
+        width: 100%;
+        margin-top: 0.2rem;
     }
 }
