@@ -2769,15 +2769,15 @@ html.theme-pro #modal-edit-project .grid.grid-cols-1.lg\:grid-cols-\[0\.9fr_1\.1
     gap: 0.9rem !important;
 }
 
-html.theme-pro #modal-edit-project > div {
+html.theme-pro #modal-edit-project.is-normative-project > div {
     max-width: 72rem;
 }
 
-html.theme-pro #modal-edit-project .project-modal-layout {
+html.theme-pro #modal-edit-project.is-normative-project .project-modal-layout {
     grid-template-columns: minmax(0, 1fr) !important;
 }
 
-html.theme-pro #modal-edit-project #project-modal-workflow {
+html.theme-pro #modal-edit-project.is-normative-project #project-modal-workflow {
     padding: 1rem;
 }
 
@@ -2878,7 +2878,7 @@ html.theme-pro #modal-edit-project #project-inline-task-select:focus {
 }
 
 @media (min-width: 768px) {
-    html.theme-pro #modal-edit-project #project-modal-identity {
+    html.theme-pro #modal-edit-project.is-normative-project #project-modal-identity {
         display: grid;
         grid-template-columns: repeat(6, minmax(0, 1fr));
         align-items: start;
@@ -2886,13 +2886,13 @@ html.theme-pro #modal-edit-project #project-inline-task-select:focus {
         padding: 0.85rem 1rem;
     }
 
-    html.theme-pro #modal-edit-project #project-modal-identity > :first-child {
+    html.theme-pro #modal-edit-project.is-normative-project #project-modal-identity > :first-child {
         grid-column: 1 / -1;
     }
 
-    html.theme-pro #modal-edit-project #project-modal-identity > :nth-child(2),
-    html.theme-pro #modal-edit-project #project-modal-identity > :nth-child(3),
-    html.theme-pro #modal-edit-project #project-modal-identity > :nth-child(4) {
+    html.theme-pro #modal-edit-project.is-normative-project #project-modal-identity > :nth-child(2),
+    html.theme-pro #modal-edit-project.is-normative-project #project-modal-identity > :nth-child(3),
+    html.theme-pro #modal-edit-project.is-normative-project #project-modal-identity > :nth-child(4) {
         grid-column: span 2;
     }
 
@@ -2901,7 +2901,7 @@ html.theme-pro #modal-edit-project #project-inline-task-select:focus {
         grid-column: span 3;
     }
 
-    html.theme-pro #modal-edit-project #project-modal-identity > :not([hidden]) ~ :not([hidden]) {
+    html.theme-pro #modal-edit-project.is-normative-project #project-modal-identity > :not([hidden]) ~ :not([hidden]) {
         margin-top: 0 !important;
     }
 }
