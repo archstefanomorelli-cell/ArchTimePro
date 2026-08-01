@@ -379,4 +379,7 @@
         bindStaticEvents();
         lucide.createIcons();
         if (isPasswordRecoveryUrl()) showPasswordRecoveryView();
-        else checkUser();
+        else {
+            if (typeof getNormativeQuoteHandoff === 'function' && getNormativeQuoteHandoff()) switchAuthTab('login');
+            checkUser();
+        }

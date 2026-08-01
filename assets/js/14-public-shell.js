@@ -10,6 +10,7 @@
                     </a>
                     <div class="flex items-center gap-5 lg:gap-8">
                         <nav class="hidden items-center gap-7 lg:flex" aria-label="Navigazione principale">
+                            <a href="calcolo-compenso-professionale-dlgs-36-2023.html" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Preventivo</a>
                             <a href="index.html#perche" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Perché</a>
                             <a href="metodo.html" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Metodo</a>
                             <a href="index.html#prezzi" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Prezzi</a>
@@ -32,6 +33,7 @@
                         <p class="mt-1 text-xs leading-relaxed text-slate-500">P. IVA IT02603120425 · C.F. MRLSFN81T03A271G</p>
                     </div>
                     <nav class="flex flex-wrap justify-center gap-x-6 gap-y-3 text-xs font-bold text-slate-400" aria-label="Link nel piè di pagina">
+                        <a href="calcolo-compenso-professionale-dlgs-36-2023.html" class="hover:text-white">Preventivo normativo</a>
                         <a href="calcolo-margine-commessa.html" class="hover:text-white">Calcolatore</a>
                         <a href="metodo.html" class="hover:text-white">Metodo</a>
                         <a href="sicurezza.html" class="hover:text-white">Sicurezza</a>

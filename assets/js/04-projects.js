@@ -1,6 +1,28 @@
 ﻿// Arch Time Pro - 04-projects.js
 // ================= GESTIONE PROGETTI =================
 
+        const NORMATIVE_QUOTE_HANDOFF_KEY = 'archtime_normative_quote_handoff_v1';
+
+        function getNormativeQuoteHandoff() {
+            try {
+                const payload = JSON.parse(localStorage.getItem(NORMATIVE_QUOTE_HANDOFF_KEY) || 'null');
+                if (!payload || payload.version !== 1 || Number(payload.expiresAt || 0) < Date.now()) {
+                    localStorage.removeItem(NORMATIVE_QUOTE_HANDOFF_KEY);
+                    return null;
+                }
+                const quote = payload.quote || {};
+                if (Number(quote.workValue || 0) <= 0 || !Array.isArray(quote.selectedCodes) || quote.selectedCodes.length === 0) return null;
+                return payload;
+            } catch (error) {
+                localStorage.removeItem(NORMATIVE_QUOTE_HANDOFF_KEY);
+                return null;
+            }
+        }
+
+        function clearNormativeQuoteHandoff() {
+            localStorage.removeItem(NORMATIVE_QUOTE_HANDOFF_KEY);
+        }
+
         function isAdminUser() {
             return document.body.classList.contains('is-admin');
         }
@@ -570,47 +592,15 @@
         }
 
         function normativeParameterP(value) {
-            const effectiveValue = Math.max(Number(value || 0), 25000);
-            return Number(value || 0) > 0 ? 0.03 + (10 / Math.pow(effectiveValue, 0.4)) : 0;
+            return ArchTimeNormativeEngine.parameterP(value);
         }
 
         function parseNormativeQ(value) {
-            const raw = String(value ?? '').trim();
-            if (!raw.startsWith('[')) return Number(raw) || 0;
-            return raw.slice(1, -1).split(',').map(item => item.trim() === 'i' ? Infinity : Number(item.trim()));
+            return ArchTimeNormativeEngine.parseQ(value);
         }
 
         function calculateNormativeServiceFee(workValue, complexity, qValue, options = {}) {
-            const value = Number(workValue || 0);
-            const g = Number(complexity || 0);
-            const inhabitants = Number(options.inhabitants || 0);
-            const q = parseNormativeQ(qValue);
-            if (value <= 0 || g <= 0) return 0;
-            if (!Array.isArray(q)) return value * g * normativeParameterP(value) * q;
-
-            const segments = [0, q[1], ...q];
-            let total = 0;
-            for (let index = 0; index < segments.length - 2; index += 2) {
-                const lowerBound = segments[index];
-                const lowerQ = segments[index + 1];
-                const upperBound = segments[index + 2];
-                const upperQ = segments[index + 3];
-                if (options.usePopulation && inhabitants > 0) {
-                    const populationInSegment = Math.max(inhabitants - lowerBound, 0) - Math.max(inhabitants - upperBound, 0);
-                    if (populationInSegment <= 0) continue;
-                    const segmentValue = Math.max(populationInSegment * (value / inhabitants), 25000);
-                    total += segmentValue * g * normativeParameterP(segmentValue) * upperQ;
-                    continue;
-                }
-                const segmentValue = Math.max(value - lowerBound, 0) - Math.max(value - upperBound, 0);
-                if (segmentValue <= 0) continue;
-                const reachedValue = segmentValue + lowerBound;
-                const interpolatedQ = upperBound === Infinity
-                    ? upperQ
-                    : ((upperQ - lowerQ) * (reachedValue - lowerBound) / (upperBound - lowerBound)) + lowerQ;
-                total += segmentValue * g * normativeParameterP(segmentValue) * interpolatedQ;
-            }
-            return total;
+            return ArchTimeNormativeEngine.calculateServiceFee(workValue, complexity, qValue, options);
         }
 
         function getSupportedNormativeServices(phase) {
@@ -619,11 +609,7 @@
         }
 
         function normativeAccessoryRate(workValue) {
-            const value = Number(workValue || 0);
-            if (value <= 0) return 0;
-            if (value <= 1000000) return 0.25;
-            if (value >= 25000000) return 0.10;
-            return 0.25 - (0.15 * (value - 1000000) / 24000000);
+            return ArchTimeNormativeEngine.accessoryRate(workValue);
         }
 
         function getNormativeCalculation() {
@@ -1278,6 +1264,62 @@
             lucide.createIcons();
         }
 
+        async function openNormativeQuoteHandoff() {
+            const payload = getNormativeQuoteHandoff();
+            if (!payload || !isAdminUser()) return false;
+            try {
+                await loadNormativeLibrary();
+            } catch (error) {
+                await appAlert('Preventivo non disponibile', 'Non è stato possibile caricare i parametri normativi. Riprova tra poco.', 'danger');
+                return false;
+            }
+
+            const quote = payload.quote;
+            const category = normativeCalculationLibrary.categories.find(item => item.id === String(quote.categoryId))
+                || normativeCalculationLibrary.categories[0];
+            const destination = category?.destinations?.find(item => item.id === String(quote.destinationId))
+                || category?.destinations?.[0];
+            const complexity = destination?.levels?.find(item => item.id === String(quote.complexityId))
+                || destination?.levels?.[0];
+            if (!category || !destination || !complexity) return false;
+
+            openCreateProjectModal('normative');
+            normativeCalculationState = {
+                workValue: Number(quote.workValue || 0),
+                inhabitants: Number(quote.inhabitants || 0),
+                categoryId: category.id,
+                destinationId: destination.id,
+                complexityId: complexity.id
+            };
+            const supportedCodes = new Set(
+                normativeLibrary.flatMap(phase => phase.services
+                    .filter(service => Object.prototype.hasOwnProperty.call(category.q || {}, service.code))
+                    .map(service => service.code))
+            );
+            normativeSelectedServices = new Set(quote.selectedCodes.map(String).filter(code => supportedCodes.has(code)));
+            if (normativeSelectedServices.size === 0) {
+                clearNormativeQuoteHandoff();
+                closeEditProjectModal();
+                await appAlert('Preventivo non valido', 'Le prestazioni salvate non sono più disponibili nella libreria corrente.', 'danger');
+                return false;
+            }
+            normativeOpenPhaseIds = new Set(
+                normativeLibrary
+                    .filter(phase => phase.services.some(service => normativeSelectedServices.has(service.code)))
+                    .map(phase => phase.id)
+            );
+            document.getElementById('edit-modal-name').value = String(payload.project?.name || 'Preventivo parametrico').slice(0, 100);
+            document.getElementById('edit-modal-client').value = String(payload.project?.client || '').slice(0, 100);
+            syncNormativeTasksFromSelection();
+            renderNewProjectUI();
+            resetProjectModalScroll();
+            window.archTimeAnalytics?.track('normative_quote_import_opened', {
+                selected_service_count: normativeSelectedServices.size
+            });
+            lucide.createIcons();
+            return true;
+        }
+
         function applyTemplateToNewProject() {
             if(activePlan==='starter' || isNormativeProjectMode()) return;
             const val = document.getElementById('new-proj-template').value;
@@ -1426,6 +1468,7 @@
                 });
                 closeEditProjectModal();
                 renderProjects();
+                clearNormativeQuoteHandoff();
                 await appAlert("Fatto", "Lavoro creato nella dimostrazione", "success");
                 return;
             }
@@ -1442,6 +1485,7 @@
                 );
             }
             if (typeof clearMarginCalculatorHandoff === 'function') clearMarginCalculatorHandoff();
+            if (isNormativeProjectMode()) clearNormativeQuoteHandoff();
             window.archTimeAnalytics?.track('project_created', {
                 has_budget: budget > 0,
                 task_count: newProjectTasks.length,

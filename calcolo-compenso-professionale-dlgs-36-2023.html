@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#172033">
+    <meta name="robots" content="index, follow">
+    <meta name="description" content="Calcola gratuitamente compenso professionale, spese e oneri secondo D.M. 17 giugno 2016 e D.Lgs. 36/2023. Trasforma il preventivo in una commessa Arch Time Pro.">
+    <link rel="canonical" href="https://www.archtimepro.it/calcolo-compenso-professionale-dlgs-36-2023.html">
+    <meta property="og:title" content="Calcolo compenso professionale D.Lgs. 36/2023 | Arch Time Pro">
+    <meta property="og:description" content="Scegli opera e prestazioni, calcola il compenso parametrico e portalo direttamente nel controllo di commessa.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.archtimepro.it/calcolo-compenso-professionale-dlgs-36-2023.html">
+    <title>Calcolo compenso professionale D.Lgs. 36/2023</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        body { font-family: 'Inter', sans-serif; color: #0f172a; -webkit-font-smoothing: antialiased; }
+        .bg-grid { background-image: radial-gradient(rgba(148, 163, 184, 0.42) 1px, transparent 1px); background-size: 28px 28px; }
+    </style>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Calcolo compenso professionale D.Lgs. 36/2023",
+      "url": "https://www.archtimepro.it/calcolo-compenso-professionale-dlgs-36-2023.html",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+      "provider": { "@type": "Organization", "name": "Arch Time Pro", "url": "https://www.archtimepro.it/" }
+    }
+    </script>
+    <link rel="stylesheet" href="assets/public-site.css?v=2026-07-16-4">
+    <link rel="stylesheet" href="assets/normative-quote.css?v=2026-08-01-01">
+    <script src="assets/js/12-analytics.js?v=google-ads-conversion-2026-07-18-02" defer></script>
+    <script src="assets/js/14-public-shell.js?v=normative-calculator-2026-08-01-01" defer></script>
+    <script src="assets/js/normative-engine.js?v=2026-08-01-01" defer></script>
+    <script src="assets/js/normative-quote.js?v=2026-08-01-01" defer></script>
+</head>
+<body class="bg-white selection:bg-indigo-100 selection:text-indigo-900">
+    <header></header>
+
+    <main>
+        <section id="quote-hero" class="bg-grid border-b border-slate-100 pb-14 pt-28 lg:pt-32">
+            <div class="mx-auto max-w-7xl px-5 sm:px-6">
+                <div class="quote-no-print mx-auto mb-8 max-w-4xl text-center">
+                    <p class="mb-3 text-xs font-extrabold uppercase text-indigo-600">Preventivatore gratuito · nessuna registrazione</p>
+                    <h1 class="text-4xl font-black leading-tight text-slate-950 sm:text-5xl lg:text-6xl">
+                        Calcola il compenso professionale <span class="text-indigo-600">secondo normativa</span>
+                    </h1>
+                    <p class="mx-auto mt-4 max-w-3xl text-base font-medium leading-relaxed text-slate-600 sm:text-lg">
+                        Imposta valore e tipologia dell’opera, scegli le prestazioni e ottieni il preventivo parametrico con spese e oneri accessori.
+                    </p>
+                    <p class="mt-3 text-xs font-semibold text-slate-500">D.M. 17 giugno 2016, come modificato dal D.Lgs. 36/2023, Allegato I.13</p>
+                </div>
+
+                <div id="quote-layout" class="mx-auto grid max-w-7xl items-start gap-6 lg:grid-cols-[minmax(0,1.45fr)_minmax(340px,0.75fr)]">
+                    <div id="quote-input-column" class="space-y-6">
+                        <section class="rounded-lg border border-slate-200 bg-white p-5 shadow-lg shadow-slate-200/50 sm:p-7" aria-labelledby="quote-project-heading">
+                            <div class="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
+                                <div>
+                                    <p class="text-xs font-black uppercase text-indigo-600">01 · Opera</p>
+                                    <h2 id="quote-project-heading" class="mt-1 text-2xl font-black text-slate-950">Dati del preventivo</h2>
+                                </div>
+                                <button id="quote-example" type="button" class="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-xs font-bold text-slate-600 transition-colors hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700">
+                                    <i data-lucide="wand-sparkles" class="h-4 w-4"></i> Usa un esempio
+                                </button>
+                            </div>
+
+                            <div class="grid gap-5 sm:grid-cols-2">
+                                <label class="block">
+                                    <span class="mb-2 block text-sm font-bold text-slate-800">Titolo del preventivo</span>
+                                    <span class="quote-field flex rounded-lg border border-slate-300 bg-white transition-all">
+                                        <input id="quote-project-name" type="text" maxlength="100" placeholder="Riqualificazione edificio" class="min-w-0 flex-1 rounded-lg border-0 bg-transparent px-4 py-3 text-sm font-bold outline-none">
+                                    </span>
+                                </label>
+                                <label class="block">
+                                    <span class="mb-2 block text-sm font-bold text-slate-800">Cliente <span class="font-medium text-slate-400">(facoltativo)</span></span>
+                                    <span class="quote-field flex rounded-lg border border-slate-300 bg-white transition-all">
+                                        <input id="quote-client" type="text" maxlength="100" placeholder="Nome cliente" class="min-w-0 flex-1 rounded-lg border-0 bg-transparent px-4 py-3 text-sm font-bold outline-none">
+                                    </span>
+                                </label>
+                                <label class="block sm:col-span-2">
+                                    <span class="mb-2 block text-sm font-bold text-slate-800">Valore dell’opera</span>
+                                    <span class="quote-field flex items-center rounded-lg border border-slate-300 bg-white transition-all">
+                                        <span class="pl-4 text-sm font-black text-indigo-600">€</span>
+                                        <input id="quote-work-value" type="text" inputmode="decimal" autocomplete="off" placeholder="350.000" class="min-w-0 flex-1 rounded-lg border-0 bg-transparent px-3 py-3.5 text-base font-black text-slate-950 outline-none">
+                                    </span>
+                                    <span class="mt-1.5 block text-xs leading-relaxed text-slate-500">Costo economico delle singole categorie componenti l’opera.</span>
+                                </label>
+                                <label class="block">
+                                    <span class="mb-2 block text-sm font-bold text-slate-800">Categoria dell’opera</span>
+                                    <select id="quote-category" class="quote-select w-full rounded-lg border border-indigo-200 bg-indigo-50/40 px-4 py-3 pr-10 text-sm font-bold text-slate-900 outline-none"></select>
+                                </label>
+                                <label class="block">
+                                    <span class="mb-2 block text-sm font-bold text-slate-800">Destinazione funzionale</span>
+                                    <select id="quote-destination" class="quote-select w-full rounded-lg border border-indigo-200 bg-indigo-50/40 px-4 py-3 pr-10 text-sm font-bold text-slate-900 outline-none"></select>
+                                    <span id="quote-destination-description" class="mt-2 block text-xs font-semibold leading-relaxed text-slate-500"></span>
+                                </label>
+                                <label class="block sm:col-span-2">
+                                    <span class="mb-2 block text-sm font-bold text-slate-800">Grado di complessità</span>
+                                    <select id="quote-complexity" class="quote-select w-full rounded-lg border border-indigo-200 bg-indigo-50/40 px-4 py-3 pr-10 text-sm font-bold text-slate-900 outline-none"></select>
+                                    <span id="quote-complexity-description" class="mt-2 block text-xs font-semibold leading-relaxed text-slate-500"></span>
+                                </label>
+                                <label id="quote-inhabitants-field" class="hidden sm:col-span-2">
+                                    <span class="mb-2 block text-sm font-bold text-slate-800">Numero di abitanti interessati</span>
+                                    <span class="quote-field flex rounded-lg border border-slate-300 bg-white transition-all">
+                                        <input id="quote-inhabitants" type="text" inputmode="numeric" autocomplete="off" placeholder="25.000" class="min-w-0 flex-1 rounded-lg border-0 bg-transparent px-4 py-3 text-sm font-bold outline-none">
+                                    </span>
+                                    <span class="mt-1.5 block text-xs text-amber-700">Richiesto per le prestazioni urbanistiche Qa.0.01 e Qa.0.02.</span>
+                                </label>
+                            </div>
+                        </section>
+
+                        <section class="rounded-lg border border-slate-200 bg-white p-5 shadow-lg shadow-slate-200/50 sm:p-7" aria-labelledby="quote-services-heading">
+                            <div class="mb-6">
+                                <p class="text-xs font-black uppercase text-indigo-600">02 · Prestazioni</p>
+                                <div class="mt-1 flex flex-col justify-between gap-2 sm:flex-row sm:items-end">
+                                    <div>
+                                        <h2 id="quote-services-heading" class="text-2xl font-black text-slate-950">Scegli le attività professionali</h2>
+                                        <p class="mt-1 text-sm leading-relaxed text-slate-500">Apri una fase e seleziona solo le prestazioni comprese nell’incarico.</p>
+                                    </div>
+                                    <span id="quote-selected-count" class="shrink-0 text-xs font-black uppercase text-indigo-600">0 selezionate</span>
+                                </div>
+                            </div>
+                            <div id="quote-services-loading" class="rounded-lg border border-dashed border-slate-300 p-8 text-center text-sm font-semibold text-slate-500">Caricamento della libreria normativa…</div>
+                            <div id="quote-services" class="hidden space-y-3"></div>
+                        </section>
+                    </div>
+
+                    <aside id="quote-summary-column" class="quote-summary-stick lg:sticky">
+                        <section id="quote-result-card" class="overflow-hidden rounded-lg border border-slate-800 bg-slate-950 text-white shadow-xl" aria-labelledby="quote-result-heading">
+                            <div class="border-b border-slate-800 p-5">
+                                <div id="quote-print-heading" class="mb-6 hidden">
+                                    <p class="text-sm font-black uppercase">Arch Time Pro</p>
+                                    <p class="mt-1 text-xs">Calcolo del compenso professionale</p>
+                                </div>
+                                <p class="text-xs font-black uppercase text-indigo-300">03 · Preventivo</p>
+                                <h2 id="quote-result-heading" class="mt-1 text-2xl font-black">Riepilogo del compenso</h2>
+                                <p id="quote-result-project" class="mt-2 text-sm font-semibold text-slate-400">Inserisci i dati dell’opera</p>
+                            </div>
+
+                            <div class="p-5">
+                                <div class="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-slate-800 bg-slate-800">
+                                    <div class="bg-slate-900 p-4">
+                                        <p class="text-[11px] font-bold text-slate-400">Compenso CP</p>
+                                        <p id="quote-compensation" class="mt-1 text-lg font-black">€ 0,00</p>
+                                    </div>
+                                    <div class="bg-slate-900 p-4">
+                                        <p class="text-[11px] font-bold text-slate-400">Spese e oneri</p>
+                                        <p id="quote-accessories" class="mt-1 text-lg font-black">€ 0,00</p>
+                                        <p id="quote-accessory-rate" class="mt-1 text-[10px] font-bold text-slate-500">0%</p>
+                                    </div>
+                                </div>
+
+                                <div class="mt-4 rounded-lg border border-indigo-400/30 bg-indigo-500/10 p-4">
+                                    <p class="text-xs font-black uppercase text-indigo-200">Totale preventivo</p>
+                                    <p id="quote-total" class="mt-2 text-4xl font-black tracking-normal">€ 0,00</p>
+                                </div>
+
+                                <p id="quote-validation" class="mt-4 hidden rounded-lg border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-xs font-bold leading-relaxed text-amber-200" role="alert"></p>
+
+                                <div class="quote-no-print mt-4 space-y-3">
+                                    <button id="quote-import" type="button" disabled class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-500 px-5 py-3.5 text-sm font-black text-white shadow-lg transition-colors hover:bg-indigo-400 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400">
+                                        Porta il preventivo in Arch Time Pro
+                                        <i data-lucide="arrow-right" class="h-4 w-4"></i>
+                                    </button>
+                                    <button id="quote-print" type="button" disabled class="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-slate-700 px-5 py-3 text-sm font-bold text-slate-200 transition-colors hover:border-slate-500 hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-40">
+                                        <i data-lucide="printer" class="h-4 w-4"></i>
+                                        Stampa o salva in PDF
+                                    </button>
+                                    <p class="text-center text-[11px] leading-relaxed text-slate-500">Il preventivo resta nel browser. Potrai verificarlo prima di creare la commessa.</p>
+                                </div>
+
+                                <dl class="mt-5 space-y-3 text-xs">
+                                    <div class="flex items-start justify-between gap-4 border-b border-slate-800 pb-3">
+                                        <dt class="font-semibold text-slate-400">Valore dell’opera</dt>
+                                        <dd id="quote-summary-work-value" class="text-right font-black">€ 0,00</dd>
+                                    </div>
+                                    <div class="flex items-start justify-between gap-4 border-b border-slate-800 pb-3">
+                                        <dt class="font-semibold text-slate-400">Categoria</dt>
+                                        <dd id="quote-summary-category" class="max-w-[62%] text-right font-black">—</dd>
+                                    </div>
+                                    <div class="flex items-start justify-between gap-4 border-b border-slate-800 pb-3">
+                                        <dt class="font-semibold text-slate-400">Complessità G</dt>
+                                        <dd id="quote-summary-complexity" class="text-right font-black">—</dd>
+                                    </div>
+                                    <div class="flex items-start justify-between gap-4">
+                                        <dt class="font-semibold text-slate-400">Parametro P</dt>
+                                        <dd id="quote-summary-p" class="text-right font-black">—</dd>
+                                    </div>
+                                </dl>
+
+                                <div class="mt-6 border-t border-slate-800 pt-5">
+                                    <div class="flex items-center justify-between gap-3">
+                                        <p class="text-xs font-black uppercase text-slate-400">Prestazioni incluse</p>
+                                        <span id="quote-summary-count" class="text-xs font-black text-indigo-300">0</span>
+                                    </div>
+                                    <div id="quote-selected-summary" class="mt-3 max-h-72 space-y-3 overflow-y-auto pr-1 text-xs text-slate-300">
+                                        <p class="leading-relaxed text-slate-500">Le prestazioni selezionate compariranno qui.</p>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </section>
+                    </aside>
+                </div>
+            </div>
+        </section>
+
+        <section id="quote-disclaimer-section" class="border-b border-slate-100 bg-white py-12">
+            <div class="mx-auto grid max-w-6xl gap-8 px-5 sm:px-6 lg:grid-cols-[0.8fr_1.2fr]">
+                <div>
+                    <p class="text-xs font-black uppercase text-indigo-600">Dal preventivo al controllo</p>
+                    <h2 class="mt-2 text-3xl font-black leading-tight text-slate-950">Il calcolo iniziale diventa il budget vivo della commessa</h2>
+                </div>
+                <div class="grid gap-5 text-sm leading-relaxed text-slate-600 sm:grid-cols-2">
+                    <p>Arch Time Pro trasforma le macrofasi selezionate in attività di progetto e distribuisce il compenso parametrico come riferimento economico.</p>
+                    <p>Durante il lavoro, ore e spese aggiornano il margine reale. Le singole prestazioni restano visibili nella scheda del progetto.</p>
+                    <p class="sm:col-span-2 rounded-lg border border-slate-200 bg-slate-50 p-4 text-xs">Il risultato è uno strumento di supporto basato sui parametri caricati. Prima dell’uso professionale verifica dati, prestazioni, applicabilità della normativa e condizioni dell’incarico. Non sostituisce il disciplinare, il preventivo professionale completo o una verifica normativa aggiornata.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer></footer>
+</body>
+</html>

@@ -1,0 +1,77 @@
+.quote-field:focus-within,
+.quote-select:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+.quote-select {
+    appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, #4f46e5 50%), linear-gradient(135deg, #4f46e5 50%, transparent 50%);
+    background-position: calc(100% - 18px) calc(50% - 2px), calc(100% - 13px) calc(50% - 2px);
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+}
+
+.quote-phase[open] .quote-phase-chevron {
+    transform: rotate(180deg);
+}
+
+.quote-phase-summary::-webkit-details-marker {
+    display: none;
+}
+
+.quote-phase-summary {
+    list-style: none;
+}
+
+.quote-service-row:has(input:checked) {
+    border-color: #c7d2fe;
+    background: #eef2ff;
+}
+
+.quote-service-row:has(input:checked) .quote-service-code {
+    color: #4f46e5;
+}
+
+.quote-summary-stick {
+    top: 92px;
+}
+
+@media print {
+    body {
+        background: white !important;
+    }
+
+    #public-site-header,
+    #public-site-footer,
+    .quote-no-print,
+    #quote-input-column,
+    #quote-disclaimer-section {
+        display: none !important;
+    }
+
+    main,
+    #quote-hero,
+    #quote-layout,
+    #quote-summary-column,
+    #quote-result-card {
+        display: block !important;
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        background: white !important;
+        color: #0f172a !important;
+    }
+
+    #quote-result-card * {
+        color: #0f172a !important;
+        border-color: #cbd5e1 !important;
+    }
+
+    #quote-print-heading {
+        display: block !important;
+    }
+}

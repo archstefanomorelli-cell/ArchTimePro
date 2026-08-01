@@ -70,9 +70,14 @@ function switchAuthTab(mode) {
 
             const contextCopy = document.getElementById('auth-context-copy');
             if (contextCopy) {
-                contextCopy.innerHTML = isSignupMode
-                    ? '<strong class="font-black">Nuovo spazio di lavoro.</strong> Scegli Manager per creare uno studio/impresa, oppure Collaboratore se hai ricevuto un codice invito.'
-                    : '<strong class="font-black">Bentornato.</strong> Accedi per registrare ore, controllare lavori e consultare i dati del tuo spazio.';
+                const normativeQuotePending = typeof getNormativeQuoteHandoff === 'function' && getNormativeQuoteHandoff();
+                contextCopy.innerHTML = normativeQuotePending
+                    ? (isSignupMode
+                        ? '<strong class="font-black">Il preventivo è pronto.</strong> Crea il tuo spazio come Manager: lo ritroverai già compilato al primo accesso.'
+                        : '<strong class="font-black">Il preventivo è pronto.</strong> Accedi e lo ritroverai già compilato, pronto per diventare una commessa.')
+                    : (isSignupMode
+                        ? '<strong class="font-black">Nuovo spazio di lavoro.</strong> Scegli Manager per creare uno studio/impresa, oppure Collaboratore se hai ricevuto un codice invito.'
+                        : '<strong class="font-black">Bentornato.</strong> Accedi per registrare ore, controllare lavori e consultare i dati del tuo spazio.');
             }
             
             let forgotLink = document.getElementById('forgot-link-container');
@@ -642,7 +647,11 @@ function switchAuthTab(mode) {
                 renderCatalogAndTemplatesUI(); 
                 await checkAndGenerateDemoData(); 
                 applyPlanLimitsUI(); 
-                if (getMarginCalculatorHandoff() || shouldShowOwnerOnboarding()) setTimeout(openOwnerOnboarding, 500);
+                if (typeof getNormativeQuoteHandoff === 'function' && getNormativeQuoteHandoff()) {
+                    setTimeout(openNormativeQuoteHandoff, 500);
+                } else if (getMarginCalculatorHandoff() || shouldShowOwnerOnboarding()) {
+                    setTimeout(openOwnerOnboarding, 500);
+                }
             }
             await restoreCloudTimer();
         }
