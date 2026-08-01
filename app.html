@@ -65,7 +65,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="assets/app.css?v=phase3-budget-libero-2026-05-09">
-    <link rel="stylesheet" href="assets/app-pro.css?v=parametric-expenses-2026-07-30-01">
+    <link rel="stylesheet" href="assets/app-pro.css?v=parametric-wide-layout-2026-08-01-01">
     <script src="assets/js/12-analytics.js?v=google-ads-conversion-2026-07-18-02" defer></script>
 </head>
 <body class="text-slate-800 pb-20 lg:pb-0">
@@ -816,8 +816,8 @@
             <h2 id="project-modal-title" class="text-lg font-black text-slate-800 tracking-tight mb-1 flex items-center gap-2 pr-10"><i data-lucide="folder-plus" class="text-primary-500 w-5 h-5"></i> Nuovo progetto</h2>
             <p id="project-modal-desc" class="text-xs text-slate-500 font-medium mb-6 pr-10">Imposta anagrafica, budget e flusso di lavoro in un unico passaggio.</p>
             <input type="hidden" id="edit-modal-proj-id">
-            <div class="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-5">
-                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-4">
+            <div class="project-modal-layout grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-5">
+                <div id="project-modal-identity" class="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-4">
                     <div class="flex items-center gap-2 text-[11px] font-black text-slate-600 uppercase tracking-wider"><span class="w-5 h-5 rounded-md bg-primary-600 text-white flex items-center justify-center text-[10px]">1</span>Anagrafica</div>
                     <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Nome</label><input type="text" id="edit-modal-name" placeholder="Nome lavoro" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all"></div>
                     <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Cliente</label><input type="text" id="edit-modal-client" placeholder="Nome cliente" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all"></div>
@@ -833,7 +833,7 @@
                         <p id="project-budget-mode-note" class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-2 leading-relaxed">Inserisci una cifra unica oppure usa la somma delle attività.</p>
                     </div>
                 </div>
-                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4">
+                <div id="project-modal-workflow" class="bg-slate-50 border border-slate-200 rounded-2xl p-4">
                     <div class="flex items-center gap-2 text-[11px] font-black text-slate-600 uppercase tracking-wider mb-3"><span class="w-5 h-5 rounded-md bg-primary-600 text-white flex items-center justify-center text-[10px]">2</span><span id="project-task-section-title">Template e attività</span></div>
                     <div id="project-studio-task-controls" class="flex gap-2 mb-3">
                         <select id="new-proj-template" class="flex-1 border border-slate-200 rounded-xl p-3 text-sm bg-white shadow-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all appearance-none cursor-pointer text-slate-700"><option value="" selected disabled>Scegli un template</option></select>
@@ -990,7 +990,7 @@
     <script src="assets/js/01-core.js?v=parametric-fees-2026-07-27-01"></script>
     <script src="assets/js/02-auth-account.js?v=google-ads-conversion-2026-07-18-02"></script>
     <script src="assets/js/03-team.js?v=phase3-team-modals-2026-05-12"></script>
-    <script src="assets/js/04-projects.js?v=parametric-expenses-2026-07-30-01"></script>
+    <script src="assets/js/04-projects.js?v=parametric-wide-layout-2026-08-01-01"></script>
     <script src="assets/js/05-time-entries.js?v=activation-funnel-2026-07-18-01"></script>
     <script src="assets/js/06-reports.js?v=phase3-final-ui-2026-05-02"></script>
     <script src="assets/js/07-password-bootstrap.js?v=parametric-fees-2026-07-27-01"></script>

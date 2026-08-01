@@ -1242,8 +1242,10 @@
             const sectionTitle = document.getElementById('project-task-section-title');
             const timerLabel = document.getElementById('project-timer-activities-label');
             const orderHint = document.getElementById('project-task-order-hint');
+            const projectModal = document.getElementById('modal-edit-project');
             const isNormative = isNormativeProjectMode();
 
+            projectModal?.classList.toggle('is-normative-project', isNormative);
             studioControls?.classList.toggle('force-hide', isNormative);
             customControls?.classList.toggle('force-hide', isNormative);
             normativeBuilder?.classList.toggle('force-hide', !isNormative);
