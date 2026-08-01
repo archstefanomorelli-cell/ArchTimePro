@@ -2769,25 +2769,46 @@ html.theme-pro #modal-edit-project .grid.grid-cols-1.lg\:grid-cols-\[0\.9fr_1\.1
     gap: 0.9rem !important;
 }
 
-html.theme-pro #modal-edit-project.is-normative-project > div {
+html.theme-pro #modal-edit-project > div {
     max-width: 72rem;
 }
 
-html.theme-pro #modal-edit-project.is-normative-project .project-modal-layout {
+html.theme-pro #modal-edit-project .project-modal-layout {
     grid-template-columns: minmax(0, 1fr) !important;
 }
 
-html.theme-pro #modal-edit-project.is-normative-project #project-modal-workflow {
+html.theme-pro #modal-edit-project #project-modal-workflow {
     padding: 1rem;
 }
 
 html.theme-pro #modal-edit-project.is-normative-project .normative-calculation-grid {
-    grid-template-columns: 0.8fr 1fr 1.2fr 1.6fr;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
     gap: 0.7rem;
 }
 
 html.theme-pro #modal-edit-project.is-normative-project .normative-field-wide {
     grid-column: auto;
+}
+
+html.theme-pro #modal-edit-project.is-normative-project .normative-calculation-grid > .normative-field:nth-child(1) {
+    grid-column: span 4;
+}
+
+html.theme-pro #modal-edit-project.is-normative-project .normative-calculation-grid > .normative-field:nth-child(2) {
+    grid-column: span 4;
+}
+
+html.theme-pro #modal-edit-project.is-normative-project .normative-calculation-grid > .normative-field:nth-child(3) {
+    grid-column: span 8;
+}
+
+html.theme-pro #modal-edit-project.is-normative-project .normative-calculation-grid:has(#normative-inhabitants-field:not(.force-hide)) > .normative-field:nth-child(3) {
+    grid-column: span 4;
+}
+
+html.theme-pro #modal-edit-project.is-normative-project .normative-calculation-grid > .normative-field:nth-child(4),
+html.theme-pro #modal-edit-project.is-normative-project .normative-calculation-grid > .normative-field:nth-child(5) {
+    grid-column: 1 / -1;
 }
 
 html.theme-pro #modal-edit-project.is-normative-project .normative-field > span {
@@ -2816,16 +2837,71 @@ html.theme-pro #modal-edit-project.is-normative-project .normative-field select:
     box-shadow: inset 3px 0 0 #4f46e5, 0 0 0 3px rgb(99 102 241 / 14%) !important;
 }
 
+html.theme-pro #modal-edit-project.is-normative-project .normative-field:has(.normative-selection-description) select {
+    border-radius: 8px 8px 4px 4px !important;
+}
+
+html.theme-pro #modal-edit-project.is-normative-project .normative-selection-description {
+    display: block;
+    margin-top: -1px;
+    padding: 0.42rem 0.68rem 0.48rem;
+    border: 1px solid #c7d2fe;
+    border-top-color: #e0e7ff;
+    border-radius: 0 0 7px 7px;
+    background: #f8faff;
+    color: #64748b;
+    font-size: 0.6rem;
+    font-weight: 650;
+    line-height: 1.45;
+    text-transform: none;
+}
+
+html.theme-pro #modal-edit-project #new-proj-template,
+html.theme-pro #modal-edit-project #project-inline-task-select {
+    border-color: #818cf8 !important;
+    background-color: #ffffff;
+    box-shadow: inset 3px 0 0 #6366f1, 0 1px 2px rgb(15 23 42 / 5%) !important;
+    color: #27324a;
+    cursor: pointer;
+}
+
+html.theme-pro #modal-edit-project #new-proj-template:hover,
+html.theme-pro #modal-edit-project #project-inline-task-select:hover {
+    border-color: #4f46e5 !important;
+    box-shadow: inset 3px 0 0 #4f46e5, 0 2px 5px rgb(79 70 229 / 10%) !important;
+}
+
+html.theme-pro #modal-edit-project #new-proj-template:focus,
+html.theme-pro #modal-edit-project #project-inline-task-select:focus {
+    border-color: #4f46e5 !important;
+    box-shadow: inset 3px 0 0 #4f46e5, 0 0 0 3px rgb(99 102 241 / 14%) !important;
+}
+
 @media (min-width: 768px) {
-    html.theme-pro #modal-edit-project.is-normative-project #project-modal-identity {
+    html.theme-pro #modal-edit-project #project-modal-identity {
         display: grid;
-        grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr);
-        align-items: end;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        align-items: start;
         gap: 0.8rem;
         padding: 0.85rem 1rem;
     }
 
-    html.theme-pro #modal-edit-project.is-normative-project #project-modal-identity > :not([hidden]) ~ :not([hidden]) {
+    html.theme-pro #modal-edit-project #project-modal-identity > :first-child {
+        grid-column: 1 / -1;
+    }
+
+    html.theme-pro #modal-edit-project #project-modal-identity > :nth-child(2),
+    html.theme-pro #modal-edit-project #project-modal-identity > :nth-child(3),
+    html.theme-pro #modal-edit-project #project-modal-identity > :nth-child(4) {
+        grid-column: span 2;
+    }
+
+    html.theme-pro #modal-edit-project.is-normative-project #project-modal-identity > :nth-child(2),
+    html.theme-pro #modal-edit-project.is-normative-project #project-modal-identity > :nth-child(3) {
+        grid-column: span 3;
+    }
+
+    html.theme-pro #modal-edit-project #project-modal-identity > :not([hidden]) ~ :not([hidden]) {
         margin-top: 0 !important;
     }
 }
@@ -3020,6 +3096,10 @@ html.theme-pro #custom-dialog-msg {
 
     html.theme-pro .normative-calculation-grid {
         grid-template-columns: 1fr;
+    }
+
+    html.theme-pro #modal-edit-project.is-normative-project .normative-calculation-grid > .normative-field {
+        grid-column: 1 / -1;
     }
 
     html.theme-pro .normative-field-wide {

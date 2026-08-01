@@ -735,6 +735,8 @@
             const categorySelect = document.getElementById('normative-category');
             const destinationSelect = document.getElementById('normative-destination');
             const complexitySelect = document.getElementById('normative-complexity');
+            const destinationDescription = document.getElementById('normative-destination-description');
+            const complexityDescription = document.getElementById('normative-complexity-description');
             if (workValueInput) workValueInput.value = normativeCalculationState.workValue > 0 ? String(normativeCalculationState.workValue).replace('.', ',') : '';
             if (inhabitantsInput) inhabitantsInput.value = normativeCalculationState.inhabitants > 0 ? String(normativeCalculationState.inhabitants) : '';
             const supportsPopulationServices = ['Qa.0.01', 'Qa.0.02'].some(code => Object.prototype.hasOwnProperty.call(category?.q || {}, code));
@@ -750,6 +752,15 @@
             if (complexitySelect) {
                 complexitySelect.innerHTML = (destination?.levels || []).map(item => optionHtml(item.id, `${item.label} · G ${Number(item.g).toFixed(2).replace('.', ',')}`, item.id === complexity?.id)).join('');
                 complexitySelect.value = complexity?.id || '';
+            }
+            if (destinationDescription) {
+                destinationDescription.textContent = destination?.name || '';
+                destinationDescription.classList.toggle('force-hide', !destination?.name);
+            }
+            if (complexityDescription) {
+                const complexityText = complexity ? `${complexity.label} · G ${Number(complexity.g).toFixed(2).replace('.', ',')}` : '';
+                complexityDescription.textContent = complexityText;
+                complexityDescription.classList.toggle('force-hide', !complexityText);
             }
             refreshNormativeCalculationSummary();
         }
