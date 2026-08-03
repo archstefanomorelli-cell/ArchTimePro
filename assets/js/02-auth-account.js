@@ -341,6 +341,138 @@ function switchAuthTab(mode) {
             await appAlert("Fatto", "Nome aggiornato!", "success"); 
         }
 
+        function quotePresetValues(preset) {
+            if (preset === 'ordinario') {
+                return {
+                    pension_enabled: true,
+                    pension_label: 'Contributo integrativo',
+                    pension_rate: 4,
+                    vat_enabled: true,
+                    vat_rate: 22,
+                    withholding_enabled: true,
+                    withholding_rate: 20,
+                    stamp_enabled: false,
+                    stamp_threshold: 77.47,
+                    stamp_amount: 2,
+                    fiscal_note: ''
+                };
+            }
+            if (preset === 'forfettario') {
+                return {
+                    pension_enabled: true,
+                    pension_label: 'Contributo integrativo',
+                    pension_rate: 4,
+                    vat_enabled: false,
+                    vat_rate: 22,
+                    withholding_enabled: false,
+                    withholding_rate: 20,
+                    stamp_enabled: true,
+                    stamp_threshold: 77.47,
+                    stamp_amount: 2,
+                    fiscal_note: 'Operazione senza applicazione dell’IVA e senza ritenuta d’acconto.'
+                };
+            }
+            return {};
+        }
+
+        function setQuoteSettingsFields(settings) {
+            const values = { ...DEFAULT_QUOTE_SETTINGS, ...settings };
+            document.getElementById('quote-fiscal-preset').value = values.preset || 'custom';
+            document.getElementById('quote-issuer-name').value = values.issuer_name || studioData?.name || '';
+            document.getElementById('quote-issuer-address').value = values.issuer_address || '';
+            document.getElementById('quote-vat-number').value = values.vat_number || '';
+            document.getElementById('quote-tax-code').value = values.tax_code || '';
+            document.getElementById('quote-issuer-email').value = values.issuer_email || userProfile?.email || '';
+            document.getElementById('quote-pension-enabled').checked = Boolean(values.pension_enabled);
+            document.getElementById('quote-pension-label').value = values.pension_label || 'Contributo integrativo';
+            document.getElementById('quote-pension-rate').value = Number(values.pension_rate || 0);
+            document.getElementById('quote-vat-enabled').checked = Boolean(values.vat_enabled);
+            document.getElementById('quote-vat-rate').value = Number(values.vat_rate || 0);
+            document.getElementById('quote-withholding-enabled').checked = Boolean(values.withholding_enabled);
+            document.getElementById('quote-withholding-rate').value = Number(values.withholding_rate || 0);
+            document.getElementById('quote-stamp-enabled').checked = Boolean(values.stamp_enabled);
+            document.getElementById('quote-stamp-threshold').value = Number(values.stamp_threshold || 0);
+            document.getElementById('quote-stamp-amount').value = Number(values.stamp_amount || 0);
+            document.getElementById('quote-fiscal-note').value = values.fiscal_note || '';
+        }
+
+        function renderQuoteSettingsPreview() {
+            const preview = document.getElementById('quote-settings-preview');
+            if (!preview) return;
+            const settings = getQuoteSettings();
+            if (!settings.configured) {
+                preview.textContent = 'Completa intestazione e fiscalità';
+                preview.className = 'text-[9px] text-amber-600 font-bold mt-0.5';
+                return;
+            }
+            const labels = [];
+            if (settings.pension_enabled) labels.push(`${settings.pension_label || 'Previdenza'} ${Number(settings.pension_rate || 0).toLocaleString('it-IT')}%`);
+            labels.push(settings.vat_enabled ? `IVA ${Number(settings.vat_rate || 0).toLocaleString('it-IT')}%` : 'senza IVA');
+            preview.textContent = `${settings.issuer_name || studioData?.name || 'Studio'} · ${labels.join(' · ')}`;
+            preview.className = 'text-[9px] text-slate-500 mt-0.5';
+        }
+
+        function openQuoteSettingsModal() {
+            if (!(userProfile?.is_owner || userProfile?.role === 'admin')) return;
+            setQuoteSettingsFields(getQuoteSettings());
+            document.getElementById('modal-quote-settings')?.classList.remove('force-hide');
+            lucide.createIcons();
+        }
+
+        function closeQuoteSettingsModal() {
+            document.getElementById('modal-quote-settings')?.classList.add('force-hide');
+        }
+
+        function applyQuoteFiscalPreset(preset) {
+            if (preset === 'custom') return;
+            setQuoteSettingsFields({
+                ...getQuoteSettings(),
+                ...quotePresetValues(preset),
+                preset
+            });
+        }
+
+        function quoteNumberValue(id) {
+            const value = Number(String(document.getElementById(id)?.value || '0').replace(',', '.'));
+            return Number.isFinite(value) ? Math.max(0, value) : 0;
+        }
+
+        async function saveQuoteSettings() {
+            const issuerName = document.getElementById('quote-issuer-name').value.trim();
+            if (!issuerName) return appAlert('Dato mancante', 'Inserisci il nome del professionista o la ragione sociale.', 'danger');
+
+            const settings = {
+                version: 1,
+                configured: true,
+                preset: document.getElementById('quote-fiscal-preset').value,
+                issuer_name: issuerName,
+                issuer_address: document.getElementById('quote-issuer-address').value.trim(),
+                vat_number: document.getElementById('quote-vat-number').value.trim(),
+                tax_code: document.getElementById('quote-tax-code').value.trim(),
+                issuer_email: document.getElementById('quote-issuer-email').value.trim(),
+                pension_enabled: document.getElementById('quote-pension-enabled').checked,
+                pension_label: document.getElementById('quote-pension-label').value.trim() || 'Contributo integrativo',
+                pension_rate: quoteNumberValue('quote-pension-rate'),
+                vat_enabled: document.getElementById('quote-vat-enabled').checked,
+                vat_rate: quoteNumberValue('quote-vat-rate'),
+                withholding_enabled: document.getElementById('quote-withholding-enabled').checked,
+                withholding_rate: quoteNumberValue('quote-withholding-rate'),
+                stamp_enabled: document.getElementById('quote-stamp-enabled').checked,
+                stamp_threshold: quoteNumberValue('quote-stamp-threshold'),
+                stamp_amount: quoteNumberValue('quote-stamp-amount'),
+                fiscal_note: document.getElementById('quote-fiscal-note').value.trim()
+            };
+            const { error } = await supabaseClient.from('studios').update({ quote_settings: settings }).eq('id', userProfile.studio_id);
+            if (error) {
+                const missingColumn = /quote_settings/i.test(error.message || '');
+                return appAlert('Impostazioni non salvate', missingColumn ? 'Esegui prima lo script SQL per abilitare le impostazioni preventivo.' : error.message, 'danger');
+            }
+            studioData.quote_settings = settings;
+            renderQuoteSettingsPreview();
+            closeQuoteSettingsModal();
+            await appAlert('Fatto', 'Intestazione e fiscalità dei preventivi sono state salvate.', 'success');
+        }
+
         async function uploadLogo(event) { 
             const file = event.target.files[0]; 
             if(!file) return; 
@@ -528,6 +660,7 @@ function switchAuthTab(mode) {
                         projectTemplates = studioData?.project_templates ? studioData.project_templates : [...THEMES[currentBusinessType].defaultTemplates];
                         if(studioData) {
                             document.getElementById('account-studio-name').value = studioData.name || '';
+                            renderQuoteSettingsPreview();
                             if(studioData.logo_url) { 
                                 const accountLogoPreview = document.getElementById('account-logo-preview');
                                 if (accountLogoPreview) {

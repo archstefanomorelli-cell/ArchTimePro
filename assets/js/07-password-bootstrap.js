@@ -55,6 +55,10 @@
             bindClick('btn-prepare-first-project', prepareFirstProjectFromOnboarding);
             bindClick('btn-clear-calculator-handoff', clearMarginCalculatorHandoff);
             bindClick('btn-open-catalog-account', openCatalogModal);
+            bindClick('btn-open-quote-settings', openQuoteSettingsModal);
+            bindClick('btn-close-quote-settings', closeQuoteSettingsModal);
+            bindClick('btn-cancel-quote-settings', closeQuoteSettingsModal);
+            bindClick('btn-save-quote-settings', saveQuoteSettings);
             bindClick('btn-export-user-data', exportUserData);
             bindClick('btn-delete-account', deleteAccount);
             bindClick('btn-close-task-builder', closeTaskBuilder);
@@ -96,6 +100,7 @@
             document.getElementById('week-picker')?.addEventListener('change', event => jumpToDate(event.target.value));
             document.getElementById('week-picker-trigger')?.addEventListener('click', () => document.getElementById('week-picker')?.showPicker());
             document.getElementById('account-logo-input')?.addEventListener('change', uploadLogo);
+            document.getElementById('quote-fiscal-preset')?.addEventListener('change', event => applyQuoteFiscalPreset(event.target.value));
             document.getElementById('manual-project')?.addEventListener('change', updateManualTaskDropdown);
             document.getElementById('manual-start')?.addEventListener('change', calculateManualHours);
             document.getElementById('manual-end')?.addEventListener('change', calculateManualHours);

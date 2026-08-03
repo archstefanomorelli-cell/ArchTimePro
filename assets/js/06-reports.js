@@ -150,6 +150,12 @@
             if (activePlan === 'starter') return openUpgradeModal('Preventivo PDF');
             const project = projects.find(item => item.id === id);
             if (!project) return;
+            const quoteSettings = getQuoteSettings();
+            if (!quoteSettings.configured) {
+                await appAlert('Completa il preventivo', 'Prima del primo PDF configura intestazione e fiscalità dello studio.', 'info');
+                openQuoteSettingsModal();
+                return;
+            }
 
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
@@ -159,6 +165,8 @@
             const projectBudget = Number(project.budget || 0);
             const taskBudgets = project.task_budgets || {};
             const generatedOn = new Date().toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' });
+            const professionalBase = isNormative ? Number(normativeData.quote_total || projectBudget) : projectBudget;
+            const fiscalSummary = calculateQuoteFiscalSummary(professionalBase, quoteSettings);
 
             let logoData = null;
             if (studioData?.logo_url) {
@@ -172,13 +180,35 @@
                 const imageHeight = 12;
                 const imageWidth = Math.min((logoData.width / logoData.height) * imageHeight, 55);
                 doc.addImage(logoData.url, 'PNG', 14, 13, imageWidth, imageHeight);
-                titleY = 34;
+                titleY = 31;
             } else {
                 doc.setFontSize(12);
                 doc.setFont(undefined, 'bold');
                 doc.setTextColor(15, 23, 42);
-                doc.text(studioData?.name || 'Studio professionale', 14, 20);
-                titleY = 31;
+                doc.text(quoteSettings.issuer_name || studioData?.name || 'Studio professionale', 14, 20);
+                titleY = 25;
+            }
+
+            if (logoData) {
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'bold');
+                doc.setTextColor(15, 23, 42);
+                doc.text(quoteSettings.issuer_name || studioData?.name || 'Studio professionale', 14, titleY);
+                titleY += 5;
+            }
+            const issuerDetails = [
+                quoteSettings.issuer_address,
+                [quoteSettings.vat_number ? `P. IVA ${quoteSettings.vat_number}` : '', quoteSettings.tax_code ? `C.F. ${quoteSettings.tax_code}` : ''].filter(Boolean).join(' · '),
+                quoteSettings.issuer_email
+            ].filter(Boolean);
+            if (issuerDetails.length > 0) {
+                doc.setFont(undefined, 'normal');
+                doc.setFontSize(7.5);
+                doc.setTextColor(100, 116, 139);
+                issuerDetails.forEach((line, index) => doc.text(String(line), 14, titleY + (index * 3.6)));
+                titleY += issuerDetails.length * 3.6 + 5;
+            } else {
+                titleY += 5;
             }
 
             doc.setFont(undefined, 'normal');
@@ -218,7 +248,7 @@
                 doc.setFontSize(8);
                 doc.setFont(undefined, 'bold');
                 doc.setTextColor(...pdfColor);
-                doc.text('TOTALE PREVENTIVO', 19, summaryY + 31);
+                doc.text('COMPENSO + SPESE ACCESSORIE', 19, summaryY + 31);
                 doc.setFontSize(16);
                 doc.setTextColor(15, 23, 42);
                 doc.text(pdfMoney(quoteTotal), 177, summaryY + 36, { align: 'right' });
@@ -284,12 +314,60 @@
                 })
             });
 
-            let noteY = (doc.lastAutoTable?.finalY || summaryY + 10) + 10;
+            let fiscalY = (doc.lastAutoTable?.finalY || summaryY + 10) + 12;
+            if (fiscalY > 235) {
+                doc.addPage();
+                fiscalY = 20;
+            }
+            doc.setFont(undefined, 'bold');
+            doc.setFontSize(12);
+            doc.setTextColor(...pdfColor);
+            doc.text('Riepilogo economico e fiscale', 14, fiscalY);
+
+            const fiscalRows = [['Compenso professionale e spese accessorie', pdfMoney(fiscalSummary.base)]];
+            if (quoteSettings.pension_enabled) {
+                fiscalRows.push([`${quoteSettings.pension_label || 'Contributo previdenziale'} ${Number(quoteSettings.pension_rate || 0).toLocaleString('it-IT')}%`, pdfMoney(fiscalSummary.pension)]);
+            }
+            if (quoteSettings.vat_enabled) fiscalRows.push([`IVA ${Number(quoteSettings.vat_rate || 0).toLocaleString('it-IT')}%`, pdfMoney(fiscalSummary.vat)]);
+            if (fiscalSummary.stamp > 0) fiscalRows.push(['Bollo previsto', pdfMoney(fiscalSummary.stamp)]);
+            fiscalRows.push(['Totale documento', pdfMoney(fiscalSummary.documentTotal)]);
+            if (quoteSettings.withholding_enabled) {
+                fiscalRows.push([`Ritenuta d'acconto ${Number(quoteSettings.withholding_rate || 0).toLocaleString('it-IT')}%`, `- ${pdfMoney(fiscalSummary.withholding)}`]);
+                fiscalRows.push(['NETTO DA CORRISPONDERE', pdfMoney(fiscalSummary.amountDue)]);
+            } else {
+                fiscalRows.push(['TOTALE DA CORRISPONDERE', pdfMoney(fiscalSummary.amountDue)]);
+            }
+            doc.autoTable({
+                startY: fiscalY + 5,
+                body: fiscalRows,
+                theme: 'plain',
+                margin: { left: 14, right: 28 },
+                styles: { fontSize: 8.5, cellPadding: 2.2, textColor: [71, 85, 105] },
+                columnStyles: {
+                    0: { cellWidth: 'auto' },
+                    1: { cellWidth: 42, halign: 'right', fontStyle: 'bold', textColor: [15, 23, 42] }
+                },
+                didParseCell(data) {
+                    if (data.row.index === fiscalRows.length - 1) {
+                        data.cell.styles.fillColor = [238, 242, 255];
+                        data.cell.styles.textColor = data.column.index === 0 ? pdfColor : [15, 23, 42];
+                        data.cell.styles.fontStyle = 'bold';
+                        data.cell.styles.fontSize = 10;
+                    }
+                }
+            });
+
+            let noteY = (doc.lastAutoTable?.finalY || fiscalY + 10) + 10;
             const note = isNormative
                 ? 'Il calcolo applica i parametri e le prestazioni selezionate nel progetto. Verificare applicabilità, dati e condizioni dell’incarico prima dell’invio al cliente.'
                 : 'Gli importi derivano dal budget e dal piano attività definiti dallo studio. Le attività prive di un importo specifico sono considerate incluse nel compenso complessivo.';
-            const taxNote = 'Contributi previdenziali, imposte, anticipazioni, scadenze e condizioni contrattuali non vengono aggiunti automaticamente.';
-            const noteLines = [...doc.splitTextToSize(note, 168), ...doc.splitTextToSize(taxNote, 168)];
+            const fiscalNote = quoteSettings.fiscal_note || '';
+            const taxNote = 'Il riepilogo applica le impostazioni fiscali definite dallo studio. Anticipazioni, scadenze e condizioni contrattuali vanno indicate separatamente.';
+            const noteLines = [
+                ...doc.splitTextToSize(note, 168),
+                ...(fiscalNote ? doc.splitTextToSize(fiscalNote, 168) : []),
+                ...doc.splitTextToSize(taxNote, 168)
+            ];
             if (noteY + (noteLines.length * 4) > 272) {
                 doc.addPage();
                 noteY = 20;

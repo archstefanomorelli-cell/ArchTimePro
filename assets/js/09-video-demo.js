@@ -31,6 +31,27 @@
                 plan_type: 'premium',
                 subscription_status: 'trialing',
                 created_at: new Date().toISOString(),
+                quote_settings: {
+                    version: 1,
+                    configured: true,
+                    preset: 'forfettario',
+                    issuer_name: 'Studio Demo Morelli',
+                    issuer_address: 'Via del Progetto 12, 60100 Ancona (AN)',
+                    vat_number: 'IT01234567890',
+                    tax_code: 'MRLSFN81T03A271G',
+                    issuer_email: 'demo@archtimepro.it',
+                    pension_enabled: true,
+                    pension_label: 'Contributo integrativo',
+                    pension_rate: 4,
+                    vat_enabled: false,
+                    vat_rate: 22,
+                    withholding_enabled: false,
+                    withholding_rate: 20,
+                    stamp_enabled: true,
+                    stamp_threshold: 77.47,
+                    stamp_amount: 2,
+                    fiscal_note: 'Operazione senza applicazione dell’IVA e senza ritenuta d’acconto.'
+                },
                 activity_catalog: ['Sopralluogo', 'Riunioni', 'Progetto preliminare', 'Progetto definitivo', 'Direzione lavori', 'Computo metrico'],
                 project_templates: [
                     { name: 'Ristrutturazione leggera', tasks: ['Sopralluogo', 'Riunioni', 'Progetto definitivo', 'Direzione lavori'] },
@@ -106,6 +127,7 @@
             document.getElementById('header-user-role').innerText = 'Admin';
             document.getElementById('account-studio-name').value = studioData.name;
             applyTheme('studio');
+            renderQuoteSettingsPreview();
             renderCatalogAndTemplatesUI();
             renderProfiles();
             renderProjects();

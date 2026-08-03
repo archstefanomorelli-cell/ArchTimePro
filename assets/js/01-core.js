@@ -67,6 +67,44 @@ const ARCH_TIME_CONFIG = window.ARCH_TIME_CONFIG || {};
         let showInactiveMembers = false; 
 
         let currentBusinessType = 'studio';
+        const DEFAULT_QUOTE_SETTINGS = {
+            version: 1,
+            configured: false,
+            preset: 'forfettario',
+            issuer_name: '',
+            issuer_address: '',
+            vat_number: '',
+            tax_code: '',
+            issuer_email: '',
+            pension_enabled: true,
+            pension_label: 'Contributo integrativo',
+            pension_rate: 4,
+            vat_enabled: false,
+            vat_rate: 22,
+            withholding_enabled: false,
+            withholding_rate: 20,
+            stamp_enabled: true,
+            stamp_threshold: 77.47,
+            stamp_amount: 2,
+            fiscal_note: 'Operazione senza applicazione dell’IVA e senza ritenuta d’acconto.'
+        };
+
+        function getQuoteSettings() {
+            return { ...DEFAULT_QUOTE_SETTINGS, ...(studioData?.quote_settings || {}) };
+        }
+
+        function calculateQuoteFiscalSummary(baseAmount, settings = getQuoteSettings()) {
+            const base = Math.max(0, Number(baseAmount || 0));
+            const pension = settings.pension_enabled ? base * (Number(settings.pension_rate || 0) / 100) : 0;
+            const vatBase = base + pension;
+            const vat = settings.vat_enabled ? vatBase * (Number(settings.vat_rate || 0) / 100) : 0;
+            const withholding = settings.withholding_enabled ? base * (Number(settings.withholding_rate || 0) / 100) : 0;
+            const stamp = settings.stamp_enabled && !settings.vat_enabled && vatBase > Number(settings.stamp_threshold || 0)
+                ? Number(settings.stamp_amount || 0)
+                : 0;
+            const documentTotal = vatBase + vat + stamp;
+            return { base, pension, vatBase, vat, withholding, stamp, documentTotal, amountDue: documentTotal - withholding };
+        }
         const THEMES = {
             studio: {
                 appNameHtmlLanding: 'Arch <span class="text-primary-500">Time</span> Pro',
