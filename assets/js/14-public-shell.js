@@ -10,10 +10,10 @@
                     </a>
                     <div class="flex items-center gap-5 lg:gap-8">
                         <nav class="hidden items-center gap-7 lg:flex" aria-label="Navigazione principale">
-                            <a href="calcolo-compenso-professionale-dlgs-36-2023.html" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Preventivo</a>
                             <a href="index.html#perche" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Perché</a>
-                            <a href="metodo.html" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Metodo</a>
                             <a href="index.html#prezzi" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Prezzi</a>
+                            <a href="metodo.html" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Metodo</a>
+                            <a href="calcolo-compenso-professionale-dlgs-36-2023.html" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Preventivo</a>
                         </nav>
                         <a href="app.html" class="hidden text-sm font-bold text-slate-600 transition-colors hover:text-slate-900 sm:block">Accedi</a>
                         <a href="app.html" class="public-primary-cta rounded-lg bg-slate-900 px-4 py-2.5 text-xs font-black uppercase text-white shadow-lg transition-colors hover:bg-indigo-600 sm:px-5">Prova gratis</a>
