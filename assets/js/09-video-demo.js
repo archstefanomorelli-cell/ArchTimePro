@@ -50,7 +50,7 @@
                     stamp_enabled: true,
                     stamp_threshold: 77.47,
                     stamp_amount: 2,
-                    fiscal_note: 'Operazione senza applicazione dell’IVA e senza ritenuta d’acconto.'
+                    fiscal_note: ''
                 },
                 activity_catalog: ['Sopralluogo', 'Riunioni', 'Progetto preliminare', 'Progetto definitivo', 'Direzione lavori', 'Computo metrico'],
                 project_templates: [

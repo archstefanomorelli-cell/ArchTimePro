@@ -206,6 +206,10 @@
                         return openUpgradeModal('Preventivo PDF');
                     case 'export-project-quote':
                         return exportProjectQuotePDF(projectId);
+                    case 'upgrade-project-quote-excel':
+                        return openUpgradeModal('Preventivo Excel');
+                    case 'export-project-quote-excel':
+                        return exportProjectQuoteExcel(projectId);
                     case 'export-project-pdf':
                         return exportProjectPDF(projectId);
                     case 'edit-project':

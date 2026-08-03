@@ -357,27 +357,25 @@
                 }
             });
 
-            let noteY = (doc.lastAutoTable?.finalY || fiscalY + 10) + 10;
-            const note = isNormative
-                ? 'Il calcolo applica i parametri e le prestazioni selezionate nel progetto. Verificare applicabilità, dati e condizioni dell’incarico prima dell’invio al cliente.'
-                : 'Gli importi derivano dal budget e dal piano attività definiti dallo studio. Le attività prive di un importo specifico sono considerate incluse nel compenso complessivo.';
-            const fiscalNote = quoteSettings.fiscal_note || '';
-            const taxNote = 'Il riepilogo applica le impostazioni fiscali definite dallo studio. Anticipazioni, scadenze e condizioni contrattuali vanno indicate separatamente.';
-            const noteLines = [
-                ...doc.splitTextToSize(note, 168),
-                ...(fiscalNote ? doc.splitTextToSize(fiscalNote, 168) : []),
-                ...doc.splitTextToSize(taxNote, 168)
-            ];
-            if (noteY + (noteLines.length * 4) > 272) {
-                doc.addPage();
-                noteY = 20;
+            const customNote = String(quoteSettings.fiscal_note || '').trim();
+            if (customNote) {
+                let noteY = (doc.lastAutoTable?.finalY || fiscalY + 10) + 10;
+                const noteLines = doc.splitTextToSize(customNote, 168);
+                if (noteY + (noteLines.length * 4) > 272) {
+                    doc.addPage();
+                    noteY = 20;
+                }
+                doc.setDrawColor(226, 232, 240);
+                doc.line(14, noteY - 4, 182, noteY - 4);
+                doc.setFont(undefined, 'bold');
+                doc.setFontSize(9);
+                doc.setTextColor(...pdfColor);
+                doc.text('NOTE E CONDIZIONI', 14, noteY);
+                doc.setFont(undefined, 'normal');
+                doc.setFontSize(8);
+                doc.setTextColor(100, 116, 139);
+                doc.text(noteLines, 14, noteY + 5);
             }
-            doc.setDrawColor(226, 232, 240);
-            doc.line(14, noteY - 4, 182, noteY - 4);
-            doc.setFont(undefined, 'normal');
-            doc.setFontSize(8);
-            doc.setTextColor(100, 116, 139);
-            doc.text(noteLines, 14, noteY);
 
             addPdfFooter(doc);
             window.archTimeAnalytics?.track('project_quote_pdf_exported', {
@@ -385,6 +383,223 @@
                 task_count: (project.tasks || []).length
             });
             doc.save(`Preventivo_${safeFileName(project.name, 'progetto')}.pdf`);
+        }
+
+        function setExcelCell(sheet, row, column, value, options = {}) {
+            const cell = sheet.getCell(row, column);
+            if (options.formula) {
+                cell.value = { formula: options.formula, result: Number(options.cachedValue || 0) };
+            } else {
+                cell.value = value === '' || value == null ? null : value;
+            }
+            if (options.style) cell.style = JSON.parse(JSON.stringify(options.style));
+            if (options.numberFormat) cell.numFmt = options.numberFormat;
+        }
+
+        function quoteExcelStyles() {
+            return {
+                title: { font: { bold: true, size: 20, color: { argb: 'FF0F172A' } }, alignment: { vertical: 'middle' } },
+                eyebrow: { font: { bold: true, size: 10, color: { argb: 'FF4F46E5' } } },
+                section: { font: { bold: true, size: 11, color: { argb: 'FFFFFFFF' } }, fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4F46E5' } }, alignment: { vertical: 'middle' } },
+                header: { font: { bold: true, color: { argb: 'FF334155' } }, fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFEEF2FF' } }, alignment: { vertical: 'middle', wrapText: true }, border: { bottom: { style: 'thin', color: { argb: 'FFCBD5E1' } } } },
+                label: { font: { color: { argb: 'FF64748B' } } },
+                input: { font: { color: { argb: 'FF1D4ED8' } }, fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFEFF6FF' } }, border: { bottom: { style: 'thin', color: { argb: 'FFBFDBFE' } } } },
+                body: { font: { color: { argb: 'FF334155' } }, border: { bottom: { style: 'thin', color: { argb: 'FFE2E8F0' } } }, alignment: { vertical: 'top', wrapText: true } },
+                total: { font: { bold: true, size: 12, color: { argb: 'FF0F172A' } }, fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE0E7FF' } }, border: { top: { style: 'medium', color: { argb: 'FF4F46E5' } } } },
+                note: { font: { color: { argb: 'FF475569' }, italic: true }, fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF8FAFC' } }, alignment: { vertical: 'top', wrapText: true } }
+            };
+        }
+
+        async function exportProjectQuoteExcel(id) {
+            if (activePlan === 'starter') return openUpgradeModal('Preventivo Excel');
+            const project = projects.find(item => item.id === id);
+            if (!project) return;
+            if (!window.ExcelJS) return appAlert('Esportazione non disponibile', 'La libreria Excel non è stata caricata. Ricarica la pagina e riprova.', 'danger');
+
+            const quoteSettings = getQuoteSettings();
+            if (!quoteSettings.configured) {
+                await appAlert('Completa il preventivo', 'Prima del primo Excel configura intestazione e fiscalità dello studio.', 'info');
+                openQuoteSettingsModal();
+                return;
+            }
+
+            const isNormative = project.project_setup_type === 'normative';
+            const normativeData = project.normative_data || {};
+            const taskBudgets = project.task_budgets || {};
+            const baseAmount = isNormative ? Number(normativeData.quote_total || project.budget || 0) : Number(project.budget || 0);
+            const fiscalSummary = calculateQuoteFiscalSummary(baseAmount, quoteSettings);
+            const styles = quoteExcelStyles();
+            const currencyFormat = '#,##0.00 [$€-it-IT]';
+            const percentageFormat = '0.00%';
+            const workbook = new window.ExcelJS.Workbook();
+            const sheet = workbook.addWorksheet('Preventivo', { properties: { defaultRowHeight: 20 }, views: [{ showGridLines: false }] });
+            const merges = [];
+
+            setExcelCell(sheet, 1, 1, isNormative ? 'PREVENTIVO PARAMETRICO' : 'PREVENTIVO PROFESSIONALE', { style: styles.eyebrow });
+            merges.push({ s: { r: 0, c: 0 }, e: { r: 0, c: 3 } });
+            setExcelCell(sheet, 2, 1, project.name || 'Progetto', { style: styles.title });
+            merges.push({ s: { r: 1, c: 0 }, e: { r: 1, c: 3 } });
+            setExcelCell(sheet, 4, 1, 'Studio', { style: styles.label });
+            setExcelCell(sheet, 4, 2, quoteSettings.issuer_name || studioData?.name || '', { style: styles.input });
+            merges.push({ s: { r: 3, c: 1 }, e: { r: 3, c: 3 } });
+            setExcelCell(sheet, 5, 1, 'Indirizzo', { style: styles.label });
+            setExcelCell(sheet, 5, 2, quoteSettings.issuer_address || '', { style: styles.input });
+            merges.push({ s: { r: 4, c: 1 }, e: { r: 4, c: 3 } });
+            setExcelCell(sheet, 6, 1, 'P. IVA / C.F.', { style: styles.label });
+            setExcelCell(sheet, 6, 2, [quoteSettings.vat_number, quoteSettings.tax_code].filter(Boolean).join(' / '), { style: styles.input });
+            merges.push({ s: { r: 5, c: 1 }, e: { r: 5, c: 3 } });
+            setExcelCell(sheet, 7, 1, 'Email', { style: styles.label });
+            setExcelCell(sheet, 7, 2, quoteSettings.issuer_email || '', { style: styles.input });
+            merges.push({ s: { r: 6, c: 1 }, e: { r: 6, c: 3 } });
+            setExcelCell(sheet, 8, 1, 'Cliente', { style: styles.label });
+            setExcelCell(sheet, 8, 2, project.client || '', { style: styles.input });
+            merges.push({ s: { r: 7, c: 1 }, e: { r: 7, c: 3 } });
+
+            let row = 10;
+            if (isNormative) {
+                setExcelCell(sheet, row, 1, 'DATI PARAMETRICI', { style: styles.section });
+                merges.push({ s: { r: row - 1, c: 0 }, e: { r: row - 1, c: 3 } });
+                row += 1;
+                const parametricRows = [
+                    ['Valore dell’opera', Number(normativeData.work_value || 0)],
+                    ['Categoria', normativeData.category_name || ''],
+                    ['Destinazione funzionale', normativeData.destination_name || ''],
+                    ['Grado di complessità', normativeData.complexity_label || ''],
+                    ['Riferimento', normativeData.reference || NORMATIVE_PROJECT_REFERENCE]
+                ];
+                parametricRows.forEach(([label, value]) => {
+                    setExcelCell(sheet, row, 1, label, { style: styles.label });
+                    setExcelCell(sheet, row, 2, value, { style: styles.input, numberFormat: typeof value === 'number' ? currencyFormat : undefined });
+                    merges.push({ s: { r: row - 1, c: 1 }, e: { r: row - 1, c: 3 } });
+                    row += 1;
+                });
+                row += 1;
+            }
+
+            setExcelCell(sheet, row, 1, isNormative ? 'PRESTAZIONI PROFESSIONALI' : 'ATTIVITÀ PREVISTE', { style: styles.section });
+            merges.push({ s: { r: row - 1, c: 0 }, e: { r: row - 1, c: 3 } });
+            row += 1;
+            const detailHeaderRow = row;
+            const headers = isNormative ? ['Fase', 'Codice', 'Prestazione', 'Importo'] : ['N.', 'Attività', 'Note', 'Importo'];
+            headers.forEach((header, index) => setExcelCell(sheet, row, index + 1, header, { style: styles.header }));
+            row += 1;
+            const detailStartRow = row;
+
+            if (isNormative && Array.isArray(normativeData.selected_services)) {
+                normativeData.selected_services.forEach(service => {
+                    setExcelCell(sheet, row, 1, service.phase_name || '', { style: styles.body });
+                    setExcelCell(sheet, row, 2, service.code || '', { style: styles.body });
+                    setExcelCell(sheet, row, 3, service.label || '', { style: styles.body });
+                    setExcelCell(sheet, row, 4, Number(service.fee || 0), { style: styles.input, numberFormat: currencyFormat });
+                    row += 1;
+                });
+                setExcelCell(sheet, row, 3, `Spese e oneri accessori ${Number(normativeData.accessory_rate || 0) * 100}%`, { style: styles.body });
+                setExcelCell(sheet, row, 4, Number(normativeData.accessory_expenses || 0), { style: styles.input, numberFormat: currencyFormat });
+                row += 1;
+            } else {
+                (project.tasks || []).forEach((task, index) => {
+                    setExcelCell(sheet, row, 1, index + 1, { style: styles.body });
+                    setExcelCell(sheet, row, 2, task, { style: styles.body });
+                    setExcelCell(sheet, row, 3, '', { style: styles.input });
+                    setExcelCell(sheet, row, 4, Number(taskBudgets[task] || 0), { style: styles.input, numberFormat: currencyFormat });
+                    row += 1;
+                });
+                const allocated = (project.tasks || []).reduce((sum, task) => sum + Number(taskBudgets[task] || 0), 0);
+                const unallocated = Math.max(0, Number(project.budget || 0) - allocated);
+                if (unallocated > 0) {
+                    setExcelCell(sheet, row, 2, 'Compenso non ripartito', { style: styles.body });
+                    setExcelCell(sheet, row, 3, 'Modificabile dallo studio', { style: styles.body });
+                    setExcelCell(sheet, row, 4, unallocated, { style: styles.input, numberFormat: currencyFormat });
+                    row += 1;
+                }
+            }
+            const detailEndRow = Math.max(detailStartRow, row - 1);
+            row += 1;
+
+            setExcelCell(sheet, row, 1, 'RIEPILOGO ECONOMICO E FISCALE', { style: styles.section });
+            merges.push({ s: { r: row - 1, c: 0 }, e: { r: row - 1, c: 3 } });
+            row += 1;
+            setExcelCell(sheet, row, 1, 'Voce', { style: styles.header });
+            setExcelCell(sheet, row, 2, 'Aliquota', { style: styles.header });
+            setExcelCell(sheet, row, 3, 'Modificabile', { style: styles.header });
+            setExcelCell(sheet, row, 4, 'Importo', { style: styles.header });
+            row += 1;
+
+            const baseRow = row;
+            setExcelCell(sheet, row, 1, 'Compenso professionale e spese accessorie', { style: styles.body });
+            setExcelCell(sheet, row, 4, 0, { formula: `SUM(D${detailStartRow}:D${detailEndRow})`, cachedValue: baseAmount, style: styles.body, numberFormat: currencyFormat });
+            row += 1;
+            const pensionRow = row;
+            setExcelCell(sheet, row, 1, quoteSettings.pension_label || 'Contributo previdenziale', { style: styles.body });
+            setExcelCell(sheet, row, 2, quoteSettings.pension_enabled ? Number(quoteSettings.pension_rate || 0) / 100 : 0, { style: styles.input, numberFormat: percentageFormat });
+            setExcelCell(sheet, row, 3, 'Sì', { style: styles.label });
+            setExcelCell(sheet, row, 4, 0, { formula: `D${baseRow}*B${pensionRow}`, cachedValue: fiscalSummary.pension, style: styles.body, numberFormat: currencyFormat });
+            row += 1;
+            const vatRow = row;
+            setExcelCell(sheet, row, 1, 'IVA', { style: styles.body });
+            setExcelCell(sheet, row, 2, quoteSettings.vat_enabled ? Number(quoteSettings.vat_rate || 0) / 100 : 0, { style: styles.input, numberFormat: percentageFormat });
+            setExcelCell(sheet, row, 3, 'Sì', { style: styles.label });
+            setExcelCell(sheet, row, 4, 0, { formula: `(D${baseRow}+D${pensionRow})*B${vatRow}`, cachedValue: fiscalSummary.vat, style: styles.body, numberFormat: currencyFormat });
+            row += 1;
+            const stampRow = row;
+            setExcelCell(sheet, row, 1, 'Bollo previsto', { style: styles.body });
+            setExcelCell(sheet, row, 2, 0, { style: styles.label });
+            setExcelCell(sheet, row, 3, 'Sì', { style: styles.label });
+            const stampValue = fiscalSummary.stamp;
+            setExcelCell(sheet, row, 4, stampValue, { style: styles.input, numberFormat: currencyFormat });
+            row += 1;
+            const documentTotalRow = row;
+            setExcelCell(sheet, row, 1, 'Totale documento', { style: styles.body });
+            setExcelCell(sheet, row, 4, 0, { formula: `SUM(D${baseRow}:D${stampRow})`, cachedValue: fiscalSummary.documentTotal, style: styles.body, numberFormat: currencyFormat });
+            row += 1;
+            const withholdingRow = row;
+            setExcelCell(sheet, row, 1, "Ritenuta d'acconto", { style: styles.body });
+            setExcelCell(sheet, row, 2, quoteSettings.withholding_enabled ? Number(quoteSettings.withholding_rate || 0) / 100 : 0, { style: styles.input, numberFormat: percentageFormat });
+            setExcelCell(sheet, row, 3, 'Sì', { style: styles.label });
+            setExcelCell(sheet, row, 4, 0, { formula: `-D${baseRow}*B${withholdingRow}`, cachedValue: -fiscalSummary.withholding, style: styles.body, numberFormat: currencyFormat });
+            row += 1;
+            setExcelCell(sheet, row, 1, 'TOTALE DA CORRISPONDERE', { style: styles.total });
+            setExcelCell(sheet, row, 4, 0, { formula: `D${documentTotalRow}+D${withholdingRow}`, cachedValue: fiscalSummary.amountDue, style: styles.total, numberFormat: currencyFormat });
+            [2, 3].forEach(column => setExcelCell(sheet, row, column, '', { style: styles.total }));
+            row += 2;
+
+            setExcelCell(sheet, row, 1, 'NOTE E CONDIZIONI', { style: styles.eyebrow });
+            merges.push({ s: { r: row - 1, c: 0 }, e: { r: row - 1, c: 3 } });
+            row += 1;
+            setExcelCell(sheet, row, 1, quoteSettings.fiscal_note || '', { style: styles.note });
+            merges.push({ s: { r: row - 1, c: 0 }, e: { r: row + 1, c: 3 } });
+
+            merges.forEach(merge => sheet.mergeCells(merge.s.r + 1, merge.s.c + 1, merge.e.r + 1, merge.e.c + 1));
+            sheet.columns = [{ width: 25 }, { width: 24 }, { width: 58 }, { width: 18 }];
+            for (let index = 1; index <= row + 2; index += 1) {
+                sheet.getRow(index).height = [1, 2, 10, detailHeaderRow].includes(index) ? 24 : (index >= detailStartRow && index <= detailEndRow ? 34 : 20);
+            }
+            sheet.views = [{ state: 'frozen', ySplit: detailHeaderRow, showGridLines: false }];
+            sheet.autoFilter = { from: { row: detailHeaderRow, column: 1 }, to: { row: detailEndRow, column: 4 } };
+            sheet.pageSetup = { orientation: 'portrait', fitToPage: true, fitToWidth: 1, fitToHeight: 0, paperSize: 9, margins: { left: 0.4, right: 0.4, top: 0.5, bottom: 0.5, header: 0.2, footer: 0.2 } };
+            sheet.headerFooter.oddFooter = '&LArch Time Pro&CPreventivo modificabile&RPage &P of &N';
+
+            workbook.title = `Preventivo ${project.name || 'progetto'}`;
+            workbook.subject = 'Preventivo professionale modificabile';
+            workbook.creator = quoteSettings.issuer_name || studioData?.name || 'Arch Time Pro';
+            workbook.created = new Date();
+            workbook.calcProperties.fullCalcOnLoad = true;
+            workbook.calcProperties.forceFullCalc = true;
+
+            const buffer = await workbook.xlsx.writeBuffer();
+            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            const downloadUrl = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = `Preventivo_${safeFileName(project.name, 'progetto')}.xlsx`;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
+            window.archTimeAnalytics?.track('project_quote_excel_exported', {
+                setup_type: isNormative ? 'normative' : 'studio',
+                task_count: (project.tasks || []).length
+            });
         }
 
         async function exportProjectPDF(id) {

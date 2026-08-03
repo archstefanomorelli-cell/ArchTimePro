@@ -369,7 +369,7 @@ function switchAuthTab(mode) {
                     stamp_enabled: true,
                     stamp_threshold: 77.47,
                     stamp_amount: 2,
-                    fiscal_note: 'Operazione senza applicazione dell’IVA e senza ritenuta d’acconto.'
+                    fiscal_note: ''
                 };
             }
             return {};
@@ -393,7 +393,8 @@ function switchAuthTab(mode) {
             document.getElementById('quote-stamp-enabled').checked = Boolean(values.stamp_enabled);
             document.getElementById('quote-stamp-threshold').value = Number(values.stamp_threshold || 0);
             document.getElementById('quote-stamp-amount').value = Number(values.stamp_amount || 0);
-            document.getElementById('quote-fiscal-note').value = values.fiscal_note || '';
+            const legacyAutomaticNote = 'Operazione senza applicazione dell’IVA e senza ritenuta d’acconto.';
+            document.getElementById('quote-fiscal-note').value = values.fiscal_note === legacyAutomaticNote ? '' : (values.fiscal_note || '');
         }
 
         function renderQuoteSettingsPreview() {

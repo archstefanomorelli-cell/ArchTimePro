@@ -64,6 +64,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
     <link rel="stylesheet" href="assets/app.css?v=phase3-budget-libero-2026-05-09">
     <link rel="stylesheet" href="assets/app-pro.css?v=studio-modal-restored-2026-08-01-01">
     <script src="assets/js/12-analytics.js?v=google-ads-conversion-2026-07-18-02" defer></script>
@@ -594,8 +595,9 @@
                 </section>
 
                 <section>
-                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5">Nota fiscale nel preventivo</label>
-                    <textarea id="quote-fiscal-note" rows="3" class="w-full border border-slate-200 rounded-xl p-3 text-xs leading-relaxed outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10" placeholder="Annotazione facoltativa"></textarea>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5">Note e condizioni del preventivo</label>
+                    <textarea id="quote-fiscal-note" rows="3" class="w-full border border-slate-200 rounded-xl p-3 text-xs leading-relaxed outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10" placeholder="Ad esempio: validità dell'offerta, modalità di pagamento, esclusioni o altre condizioni"></textarea>
+                    <p class="text-[10px] text-slate-400 leading-relaxed mt-1.5">Facoltative. Saranno riportate in fondo al PDF esattamente come le hai scritte.</p>
                 </section>
             </div>
 
@@ -1053,13 +1055,13 @@
 
     <script src="assets/js/00-runtime-config.js?v=stripe-founder-2026-06-29"></script>
     <script src="assets/js/normative-engine.js?v=2026-08-01-01"></script>
-    <script src="assets/js/01-core.js?v=quote-fiscal-2026-08-03-01"></script>
-    <script src="assets/js/02-auth-account.js?v=quote-fiscal-2026-08-03-01"></script>
+    <script src="assets/js/01-core.js?v=quote-notes-2026-08-03-01"></script>
+    <script src="assets/js/02-auth-account.js?v=quote-notes-2026-08-03-01"></script>
     <script src="assets/js/03-team.js?v=phase3-team-modals-2026-05-12"></script>
-    <script src="assets/js/04-projects.js?v=project-quote-pdf-2026-08-03-01"></script>
+    <script src="assets/js/04-projects.js?v=quote-excel-2026-08-03-01"></script>
     <script src="assets/js/05-time-entries.js?v=activation-funnel-2026-07-18-01"></script>
-    <script src="assets/js/06-reports.js?v=quote-fiscal-2026-08-03-01"></script>
-    <script src="assets/js/07-password-bootstrap.js?v=quote-fiscal-2026-08-03-01"></script>
+    <script src="assets/js/06-reports.js?v=quote-excel-2026-08-03-01"></script>
+    <script src="assets/js/07-password-bootstrap.js?v=quote-excel-2026-08-03-01"></script>
     <script src="assets/js/09-video-demo.js?v=quote-fiscal-2026-08-03-01"></script>
 </body>
 </html>

@@ -86,11 +86,15 @@ const ARCH_TIME_CONFIG = window.ARCH_TIME_CONFIG || {};
             stamp_enabled: true,
             stamp_threshold: 77.47,
             stamp_amount: 2,
-            fiscal_note: 'Operazione senza applicazione dell’IVA e senza ritenuta d’acconto.'
+            fiscal_note: ''
         };
 
         function getQuoteSettings() {
-            return { ...DEFAULT_QUOTE_SETTINGS, ...(studioData?.quote_settings || {}) };
+            const settings = { ...DEFAULT_QUOTE_SETTINGS, ...(studioData?.quote_settings || {}) };
+            if (settings.fiscal_note === 'Operazione senza applicazione dell’IVA e senza ritenuta d’acconto.') {
+                settings.fiscal_note = '';
+            }
+            return settings;
         }
 
         function calculateQuoteFiscalSummary(baseAmount, settings = getQuoteSettings()) {
