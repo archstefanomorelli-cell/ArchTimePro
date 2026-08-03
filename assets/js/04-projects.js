@@ -1547,14 +1547,18 @@
 
         function renderProjectDetailActions(project) {
             const projectId = escapeAttr(project.id);
-            const pdfButton = activePlan === 'starter'
-                ? `<button data-ui-action="upgrade-project-pdf" class="w-full sm:w-auto text-xs font-bold bg-white text-slate-400 border border-slate-200 px-3.5 py-2.5 rounded-xl flex items-center justify-center gap-2 transition opacity-60 shadow-sm"><i data-lucide="lock" class="w-4 h-4"></i> Report PDF</button>`
-                : `<button data-ui-action="export-project-pdf" data-project-id="${projectId}" class="w-full sm:w-auto text-xs font-bold bg-white text-primary-600 border border-slate-200 px-3.5 py-2.5 rounded-xl hover:border-primary-200 hover:bg-primary-50 flex items-center justify-center gap-2 shadow-sm transition-all"><i data-lucide="file-text" class="w-4 h-4"></i> Esporta in PDF</button>`;
+            const quoteButton = activePlan === 'starter'
+                ? `<button data-ui-action="upgrade-project-quote" class="w-full sm:w-auto text-xs font-bold bg-white text-slate-400 border border-slate-200 px-3.5 py-2.5 rounded-xl flex items-center justify-center gap-2 transition opacity-60 shadow-sm"><i data-lucide="lock" class="w-4 h-4"></i> Preventivo PDF</button>`
+                : `<button data-ui-action="export-project-quote" data-project-id="${projectId}" class="w-full sm:w-auto text-xs font-bold bg-white text-primary-600 border border-primary-200 px-3.5 py-2.5 rounded-xl hover:bg-primary-50 flex items-center justify-center gap-2 shadow-sm transition-all"><i data-lucide="receipt-text" class="w-4 h-4"></i> Preventivo PDF</button>`;
+            const reportButton = activePlan === 'starter'
+                ? `<button data-ui-action="upgrade-project-pdf" class="w-full sm:w-auto text-xs font-bold bg-white text-slate-400 border border-slate-200 px-3.5 py-2.5 rounded-xl flex items-center justify-center gap-2 transition opacity-60 shadow-sm"><i data-lucide="lock" class="w-4 h-4"></i> Consuntivo PDF</button>`
+                : `<button data-ui-action="export-project-pdf" data-project-id="${projectId}" class="w-full sm:w-auto text-xs font-bold bg-white text-slate-600 border border-slate-200 px-3.5 py-2.5 rounded-xl hover:bg-slate-50 flex items-center justify-center gap-2 shadow-sm transition-all"><i data-lucide="file-text" class="w-4 h-4"></i> Consuntivo PDF</button>`;
 
             return `
-                <div class="admin-only w-full max-w-xs mx-auto lg:mx-0 lg:max-w-none lg:w-auto flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2">
+                <div class="admin-only w-full max-w-sm mx-auto lg:mx-0 lg:max-w-none lg:w-auto flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2">
                     <button data-ui-action="edit-project" data-project-id="${projectId}" class="w-full sm:w-auto text-xs font-bold bg-white text-slate-600 border border-slate-200 px-3.5 py-2.5 rounded-xl hover:bg-slate-50 flex items-center justify-center gap-2 shadow-sm transition-all"><i data-lucide="edit" class="w-4 h-4"></i> Modifica</button>
-                    ${pdfButton}
+                    ${quoteButton}
+                    ${reportButton}
                 </div>`;
         }
 

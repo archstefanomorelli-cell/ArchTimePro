@@ -197,6 +197,10 @@
                         return removeTemplate(templateIndex);
                     case 'upgrade-project-pdf':
                         return openUpgradeModal('Report PDF Singolo');
+                    case 'upgrade-project-quote':
+                        return openUpgradeModal('Preventivo PDF');
+                    case 'export-project-quote':
+                        return exportProjectQuotePDF(projectId);
                     case 'export-project-pdf':
                         return exportProjectPDF(projectId);
                     case 'edit-project':

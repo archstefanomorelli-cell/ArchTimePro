@@ -146,6 +146,169 @@
             userSelect.innerHTML = optionHtml('all', 'Tutto il team') + activeProfiles.map(pr => optionHtml(pr.full_name, pr.full_name)).join('');
         }
 
+        async function exportProjectQuotePDF(id) {
+            if (activePlan === 'starter') return openUpgradeModal('Preventivo PDF');
+            const project = projects.find(item => item.id === id);
+            if (!project) return;
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const pdfColor = THEMES[currentBusinessType].pdfColor;
+            const isNormative = project.project_setup_type === 'normative';
+            const normativeData = project.normative_data || {};
+            const projectBudget = Number(project.budget || 0);
+            const taskBudgets = project.task_budgets || {};
+            const generatedOn = new Date().toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' });
+
+            let logoData = null;
+            if (studioData?.logo_url) {
+                try { logoData = await getBase64FromUrl(studioData.logo_url); } catch (error) {}
+            }
+
+            doc.setFillColor(...pdfColor);
+            doc.rect(0, 0, 210, 7, 'F');
+            let titleY = 22;
+            if (logoData) {
+                const imageHeight = 12;
+                const imageWidth = Math.min((logoData.width / logoData.height) * imageHeight, 55);
+                doc.addImage(logoData.url, 'PNG', 14, 13, imageWidth, imageHeight);
+                titleY = 34;
+            } else {
+                doc.setFontSize(12);
+                doc.setFont(undefined, 'bold');
+                doc.setTextColor(15, 23, 42);
+                doc.text(studioData?.name || 'Studio professionale', 14, 20);
+                titleY = 31;
+            }
+
+            doc.setFont(undefined, 'normal');
+            doc.setFontSize(8);
+            doc.setTextColor(100, 116, 139);
+            doc.text(`Generato il ${generatedOn}`, 196, 18, { align: 'right' });
+            if (userProfile?.email) doc.text(userProfile.email, 196, 23, { align: 'right' });
+
+            doc.setFontSize(9);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(...pdfColor);
+            doc.text(isNormative ? 'PREVENTIVO PARAMETRICO' : 'PREVENTIVO PROFESSIONALE', 14, titleY);
+            doc.setFontSize(21);
+            doc.setTextColor(15, 23, 42);
+            const projectTitleLines = doc.splitTextToSize(project.name || 'Progetto', 150);
+            doc.text(projectTitleLines, 14, titleY + 10);
+            const projectTitleHeight = projectTitleLines.length * 7;
+            doc.setFont(undefined, 'normal');
+            doc.setFontSize(11);
+            doc.setTextColor(100, 116, 139);
+            doc.text(`Cliente: ${project.client || 'Da definire'}`, 14, titleY + 12 + projectTitleHeight);
+
+            let summaryY = titleY + 20 + projectTitleHeight;
+            if (isNormative) {
+                const workValue = Number(normativeData.work_value || 0);
+                const compensation = Number(normativeData.compensation || projectBudget);
+                const accessoryExpenses = Number(normativeData.accessory_expenses || 0);
+                const accessoryRate = Number(normativeData.accessory_rate || 0);
+                const quoteTotal = Number(normativeData.quote_total || projectBudget);
+                drawPdfSummaryBox(doc, 14, summaryY, 'Valore opera', pdfMoney(workValue), [15, 23, 42]);
+                drawPdfSummaryBox(doc, 72, summaryY, 'Compenso CP', pdfMoney(compensation), pdfColor);
+                drawPdfSummaryBox(doc, 130, summaryY, `Spese e oneri ${(accessoryRate * 100).toLocaleString('it-IT', { maximumFractionDigits: 2 })}%`, pdfMoney(accessoryExpenses), [217, 119, 6]);
+
+                doc.setDrawColor(...pdfColor);
+                doc.setFillColor(238, 242, 255);
+                doc.roundedRect(14, summaryY + 24, 168, 20, 2, 2, 'FD');
+                doc.setFontSize(8);
+                doc.setFont(undefined, 'bold');
+                doc.setTextColor(...pdfColor);
+                doc.text('TOTALE PREVENTIVO', 19, summaryY + 31);
+                doc.setFontSize(16);
+                doc.setTextColor(15, 23, 42);
+                doc.text(pdfMoney(quoteTotal), 177, summaryY + 36, { align: 'right' });
+
+                const reference = normativeData.reference || NORMATIVE_PROJECT_REFERENCE;
+                doc.setFont(undefined, 'normal');
+                doc.setFontSize(8);
+                doc.setTextColor(100, 116, 139);
+                doc.text(doc.splitTextToSize(`Riferimento: ${reference}`, 168), 14, summaryY + 51);
+                summaryY += 59;
+            } else {
+                const configuredTasks = (project.tasks || []).filter(task => Number(taskBudgets[task] || 0) > 0).length;
+                drawPdfSummaryBox(doc, 14, summaryY, 'Compenso previsto', pdfMoney(projectBudget), pdfColor);
+                drawPdfSummaryBox(doc, 72, summaryY, 'Attività incluse', String((project.tasks || []).length), [15, 23, 42]);
+                drawPdfSummaryBox(doc, 130, summaryY, 'Budget per attività', `${configuredTasks} definite`, [16, 185, 129]);
+                summaryY += 30;
+            }
+
+            doc.setFont(undefined, 'bold');
+            doc.setFontSize(12);
+            doc.setTextColor(...pdfColor);
+            doc.text(isNormative ? 'Prestazioni professionali incluse' : 'Attività incluse nel preventivo', 14, summaryY);
+
+            let tableBody;
+            let tableHead;
+            let columnStyles;
+            if (isNormative && Array.isArray(normativeData.selected_services) && normativeData.selected_services.length > 0) {
+                tableHead = [['Fase', 'Codice', 'Prestazione', 'Compenso']];
+                tableBody = normativeData.selected_services.map(service => [
+                    service.phase_name || '',
+                    service.code || '',
+                    service.label || '',
+                    pdfMoney(service.fee || 0)
+                ]);
+                columnStyles = {
+                    0: { cellWidth: 38 },
+                    1: { cellWidth: 20, fontStyle: 'bold', textColor: pdfColor },
+                    2: { cellWidth: 'auto' },
+                    3: { cellWidth: 28, halign: 'right', fontStyle: 'bold' }
+                };
+            } else {
+                tableHead = [['N.', 'Attività', 'Importo previsto']];
+                tableBody = (project.tasks || []).map((task, index) => [
+                    String(index + 1),
+                    task,
+                    Number(taskBudgets[task] || 0) > 0 ? pdfMoney(taskBudgets[task]) : 'Inclusa nel compenso'
+                ]);
+                columnStyles = {
+                    0: { cellWidth: 14, halign: 'center' },
+                    1: { cellWidth: 'auto' },
+                    2: { cellWidth: 42, halign: 'right', fontStyle: 'bold' }
+                };
+            }
+
+            if (tableBody.length === 0) tableBody = [['', 'Nessuna attività configurata', '']];
+            doc.autoTable({
+                startY: summaryY + 5,
+                head: tableHead,
+                body: tableBody,
+                ...pdfTableOptions(pdfColor, {
+                    styles: { fontSize: 8, cellPadding: 2.5, overflow: 'linebreak', valign: 'top' },
+                    columnStyles
+                })
+            });
+
+            let noteY = (doc.lastAutoTable?.finalY || summaryY + 10) + 10;
+            const note = isNormative
+                ? 'Il calcolo applica i parametri e le prestazioni selezionate nel progetto. Verificare applicabilità, dati e condizioni dell’incarico prima dell’invio al cliente.'
+                : 'Gli importi derivano dal budget e dal piano attività definiti dallo studio. Le attività prive di un importo specifico sono considerate incluse nel compenso complessivo.';
+            const taxNote = 'Contributi previdenziali, imposte, anticipazioni, scadenze e condizioni contrattuali non vengono aggiunti automaticamente.';
+            const noteLines = [...doc.splitTextToSize(note, 168), ...doc.splitTextToSize(taxNote, 168)];
+            if (noteY + (noteLines.length * 4) > 272) {
+                doc.addPage();
+                noteY = 20;
+            }
+            doc.setDrawColor(226, 232, 240);
+            doc.line(14, noteY - 4, 182, noteY - 4);
+            doc.setFont(undefined, 'normal');
+            doc.setFontSize(8);
+            doc.setTextColor(100, 116, 139);
+            doc.text(noteLines, 14, noteY);
+
+            addPdfFooter(doc);
+            window.archTimeAnalytics?.track('project_quote_pdf_exported', {
+                setup_type: isNormative ? 'normative' : 'studio',
+                task_count: (project.tasks || []).length
+            });
+            doc.save(`Preventivo_${safeFileName(project.name, 'progetto')}.pdf`);
+        }
+
         async function exportProjectPDF(id) {
             if (activePlan === 'starter') return openUpgradeModal('Esportazione Report PDF');
             const p = projects.find(x => x.id === id); if(!p) return;
