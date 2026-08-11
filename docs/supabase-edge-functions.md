@@ -69,11 +69,14 @@ La funzione riceve il payload del Database Webhook Supabase quando viene creato 
 La notifica contiene solo dati minimi:
 
 - nome studio/impresa;
+- nome ed email del referente registrato;
 - tipologia;
 - id studio;
-- data registrazione.
+- data registrazione;
+- pagina di ingresso, pagina di registrazione e provenienza;
+- eventuali parametri UTM della campagna.
 
-Non vengono inviati dati economici, progetti, attività o informazioni riservate.
+Non vengono inviati dati economici, progetti, attività o informazioni riservate. Se il browser non rende disponibile la provenienza, l'email indica `Accesso diretto o non disponibile`.
 
 ## Secrets richiesti per notifica nuova registrazione
 

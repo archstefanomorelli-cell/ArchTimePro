@@ -129,6 +129,12 @@ function switchAuthTab(mode) {
                 const isStaff = finalRole === 'staff';
                 const businessType = 'studio';
                 const code = document.getElementById('invite-code-input').value.trim();
+                const signupAttribution = window.archTimeAttribution?.getSignupAttribution?.() || {
+                    landing_page: window.location.pathname || '/app.html',
+                    signup_page: window.location.pathname || '/app.html',
+                    previous_page: document.referrer || '',
+                    source: document.referrer ? 'referral' : 'direct'
+                };
                 
                 if(isStaff && !code) return await appAlert("Attenzione", "Inserisci il codice invito!", "danger");
                 if(!fullName) return await appAlert("Attenzione", "Inserisci il tuo nome e cognome.", "danger");
@@ -139,7 +145,14 @@ function switchAuthTab(mode) {
                         email, password,
                         options: {
                             emailRedirectTo: getAppRedirectUrl(),
-                            data: { full_name: fullName, role: finalRole, is_owner: isOwnerChoice, business_type: businessType, studio_id: isStaff ? code : null }
+                            data: {
+                                full_name: fullName,
+                                role: finalRole,
+                                is_owner: isOwnerChoice,
+                                business_type: businessType,
+                                studio_id: isStaff ? code : null,
+                                signup_attribution: signupAttribution
+                            }
                         }
                     });
                 } catch (error) {
@@ -173,7 +186,9 @@ function switchAuthTab(mode) {
                     window.archTimeAnalytics?.track('sign_up', {
                         method: 'email',
                         account_type: isStaff ? 'staff' : 'owner',
-                        business_type: businessType
+                        business_type: businessType,
+                        landing_page: signupAttribution.landing_page || 'unknown',
+                        traffic_source: signupAttribution.source || 'unknown'
                     });
                     if (!isStaff) {
                         window.archTimeAnalytics?.trackAdsConversion('AW-18190596284/RCALCNbqsdIcELzx-eFD');

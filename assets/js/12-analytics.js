@@ -4,8 +4,92 @@
     const MEASUREMENT_ID = 'G-96GHF6505E';
     const GOOGLE_ADS_ID = 'AW-18190596284';
     const CONSENT_KEY = 'archtime_analytics_consent_v1';
+    const ATTRIBUTION_KEY = 'archtime_signup_attribution_v1';
     let googleTagLoaded = false;
     let googleTagConfigured = false;
+
+    function cleanText(value, maxLength) {
+        return String(value || '').trim().slice(0, maxLength || 160);
+    }
+
+    function safePath(urlValue) {
+        try {
+            const url = new URL(urlValue, window.location.href);
+            return cleanText(url.pathname || '/', 180);
+        } catch (error) {
+            return '';
+        }
+    }
+
+    function describeReferrer(referrerValue) {
+        if (!referrerValue) return '';
+        try {
+            const referrer = new URL(referrerValue);
+            if (referrer.origin === window.location.origin) return safePath(referrer.href);
+            return cleanText(referrer.hostname.replace(/^www\./, ''), 120);
+        } catch (error) {
+            return '';
+        }
+    }
+
+    function detectTrafficSource(params, referrerValue) {
+        const utmSource = cleanText(params.get('utm_source'), 80);
+        if (utmSource) return utmSource.toLowerCase();
+        if (!referrerValue) return 'direct';
+
+        try {
+            const referrer = new URL(referrerValue);
+            const host = referrer.hostname.toLowerCase();
+            if (referrer.origin === window.location.origin) return 'internal';
+            if (host.includes('google.')) return 'google';
+            if (host.includes('bing.com')) return 'bing';
+            if (host.includes('linkedin.com')) return 'linkedin';
+            if (host.includes('instagram.com')) return 'instagram';
+            if (host.includes('facebook.com')) return 'facebook';
+            return host.replace(/^www\./, '') || 'referral';
+        } catch (error) {
+            return 'unknown';
+        }
+    }
+
+    function captureSignupAttribution() {
+        let stored = null;
+        try {
+            stored = JSON.parse(sessionStorage.getItem(ATTRIBUTION_KEY) || 'null');
+        } catch (error) {
+            stored = null;
+        }
+
+        if (!stored || typeof stored !== 'object') {
+            const params = new URLSearchParams(window.location.search);
+            stored = {
+                landing_page: safePath(window.location.href) || '/',
+                first_referrer: describeReferrer(document.referrer),
+                source: detectTrafficSource(params, document.referrer),
+                utm_source: cleanText(params.get('utm_source'), 80),
+                utm_medium: cleanText(params.get('utm_medium'), 80),
+                utm_campaign: cleanText(params.get('utm_campaign'), 120),
+                utm_content: cleanText(params.get('utm_content'), 120),
+                captured_at: new Date().toISOString()
+            };
+            try { sessionStorage.setItem(ATTRIBUTION_KEY, JSON.stringify(stored)); }
+            catch (error) { /* Attribution remains available for this page. */ }
+        }
+
+        return stored;
+    }
+
+    function getSignupAttribution() {
+        const firstTouch = captureSignupAttribution();
+        return {
+            ...firstTouch,
+            signup_page: safePath(window.location.href) || '/app.html',
+            previous_page: describeReferrer(document.referrer)
+        };
+    }
+
+    window.archTimeAttribution = { getSignupAttribution: getSignupAttribution };
+    captureSignupAttribution();
 
     window.dataLayer = window.dataLayer || [];
     window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
