@@ -304,25 +304,60 @@ function switchAuthTab(mode) {
             const missingHourlyCosts = activeProfiles.filter(profile => Number(profile.hourly_cost || 0) <= 0).length;
             const name = studioData?.name || 'Spazio di lavoro';
             const logoUrl = studioData?.logo_url || '';
+            const normalizedName = name.trim().toLocaleLowerCase('it-IT');
+            const missingStudioName = !normalizedName || ['spazio di lavoro', 'mio spazio di lavoro'].includes(normalizedName);
+            const missingQuoteSettings = !getQuoteSettings().configured;
+            const missingActivities = activityCatalog.length === 0;
+            const identityIssues = Number(missingStudioName) + Number(missingQuoteSettings);
+            const activityIssues = Number(missingActivities);
+            const totalIssues = identityIssues + activityIssues + missingHourlyCosts;
+            const configuredHourlyCosts = activeProfiles.map(profile => Number(profile.hourly_cost || 0)).filter(cost => cost > 0);
+            const averageHourlyCost = configuredHourlyCosts.length > 0
+                ? configuredHourlyCosts.reduce((sum, cost) => sum + cost, 0) / configuredHourlyCosts.length
+                : 0;
 
             const nameElement = document.getElementById('studio-summary-name');
             const teamCount = document.getElementById('studio-summary-team-count');
-            const activityCount = document.getElementById('studio-summary-activity-count');
+            const averageCost = document.getElementById('studio-summary-average-cost');
             const status = document.getElementById('studio-summary-status');
             const logo = document.getElementById('studio-summary-logo');
             const logoPlaceholder = document.getElementById('studio-summary-logo-placeholder');
 
             if (nameElement) nameElement.textContent = name;
             if (teamCount) teamCount.textContent = String(activeProfiles.length);
-            if (activityCount) activityCount.textContent = String(activityCatalog.length);
+            if (averageCost) {
+                const costsAreComplete = activeProfiles.length > 0 && missingHourlyCosts === 0;
+                averageCost.textContent = costsAreComplete ? `${formatMoney(averageHourlyCost, 0)}/h` : 'Da completare';
+                averageCost.className = costsAreComplete
+                    ? 'text-lg font-black text-slate-800 mt-0.5'
+                    : 'text-sm font-black text-amber-600 mt-1';
+            }
             if (status) {
-                status.textContent = missingHourlyCosts > 0
-                    ? `${missingHourlyCosts} ${missingHourlyCosts === 1 ? 'costo orario da completare' : 'costi orari da completare'}`
-                    : `${getStudioCurrency().code} · configurazione completa`;
-                status.className = missingHourlyCosts > 0
+                let statusMessage = 'configurazione completa';
+                if (totalIssues === 1) {
+                    if (missingStudioName) statusMessage = 'nome studio da personalizzare';
+                    else if (missingQuoteSettings) statusMessage = 'dati preventivo da completare';
+                    else if (missingActivities) statusMessage = 'nessuna attività configurata';
+                    else statusMessage = 'costo orario da completare';
+                } else if (totalIssues > 1) {
+                    statusMessage = `${totalIssues} elementi da completare`;
+                }
+                status.textContent = `${getStudioCurrency().code} · ${statusMessage}`;
+                status.className = totalIssues > 0
                     ? 'text-[10px] font-bold text-amber-600 mt-0.5'
                     : 'text-[10px] font-medium text-emerald-600 mt-0.5';
             }
+            [
+                ['management-identity-issues', identityIssues],
+                ['management-activities-issues', activityIssues],
+                ['management-team-issues', missingHourlyCosts]
+            ].forEach(([id, issueCount]) => {
+                const badge = document.getElementById(id);
+                if (!badge) return;
+                badge.textContent = String(issueCount);
+                badge.classList.toggle('force-hide', issueCount === 0);
+                badge.setAttribute('aria-label', `${issueCount} ${issueCount === 1 ? 'elemento da completare' : 'elementi da completare'}`);
+            });
             if (logo) {
                 logo.src = logoUrl;
                 logo.classList.toggle('force-hide', !logoUrl);
@@ -586,6 +621,7 @@ function switchAuthTab(mode) {
             }
             studioData.quote_settings = settings;
             renderQuoteSettingsPreview();
+            renderStudioManagementSummary();
             closeQuoteSettingsModal();
             await appAlert('Fatto', 'Intestazione e fiscalità dei preventivi sono state salvate.', 'success');
         }

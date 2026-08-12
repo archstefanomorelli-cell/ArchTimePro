@@ -402,6 +402,23 @@ html.theme-pro .studio-management-tab:focus-visible {
     box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.16);
 }
 
+html.theme-pro .management-issue-badge {
+    min-width: 1.1rem;
+    height: 1.1rem;
+    padding: 0 0.3rem;
+    border: 1px solid #fcd34d;
+    border-radius: 999px;
+    color: #92400e;
+    background: #fef3c7;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    font-size: 0.58rem;
+    font-weight: 900;
+    line-height: 1;
+}
+
 html.theme-pro .studio-management-modal #team-list > div > div:first-child {
     min-width: 0;
 }

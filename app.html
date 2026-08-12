@@ -66,7 +66,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
     <link rel="stylesheet" href="assets/app.css?v=phase3-budget-libero-2026-05-09">
-    <link rel="stylesheet" href="assets/app-pro.css?v=studio-management-page-2026-08-12-01">
+    <link rel="stylesheet" href="assets/app-pro.css?v=studio-configuration-status-2026-08-12-01">
     <script src="assets/js/12-analytics.js?v=signup-attribution-2026-08-11-01" defer></script>
 </head>
 <body class="text-slate-800 pb-20 lg:pb-0">
@@ -304,8 +304,8 @@
                             <p id="studio-summary-team-count" class="text-lg font-black text-slate-800 mt-0.5">0</p>
                         </div>
                         <div class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5">
-                            <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400">Attività studio</p>
-                            <p id="studio-summary-activity-count" class="text-lg font-black text-slate-800 mt-0.5">0</p>
+                            <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400">Costo medio team</p>
+                            <p id="studio-summary-average-cost" class="text-lg font-black text-slate-800 mt-0.5">-</p>
                         </div>
                     </div>
                     <button id="btn-open-studio-management" class="secondary-action w-full justify-center mt-4"><i data-lucide="settings-2" class="w-4 h-4"></i> Gestisci studio e team</button>
@@ -532,9 +532,9 @@
                     <p class="text-xs text-slate-500 mt-1">Identità, attività e persone in un unico spazio.</p>
                 </div>
                 <div class="studio-management-tabs grid grid-cols-3 gap-1 mt-5 bg-slate-100 border border-slate-200 rounded-xl p-1" role="tablist" aria-label="Gestione studio">
-                    <button type="button" data-ui-action="switch-studio-management-tab" data-management-tab="identity" class="studio-management-tab" role="tab" aria-selected="true"><i data-lucide="building-2"></i><span>Identità studio</span></button>
-                    <button type="button" data-ui-action="switch-studio-management-tab" data-management-tab="activities" class="studio-management-tab" role="tab" aria-selected="false"><i data-lucide="list-checks"></i><span>Attività studio</span></button>
-                    <button type="button" data-ui-action="switch-studio-management-tab" data-management-tab="team" class="studio-management-tab" role="tab" aria-selected="false"><i data-lucide="users"></i><span>Team</span></button>
+                    <button type="button" data-ui-action="switch-studio-management-tab" data-management-tab="identity" class="studio-management-tab" role="tab" aria-selected="true"><i data-lucide="building-2"></i><span>Identità studio</span><span id="management-identity-issues" class="management-issue-badge force-hide">0</span></button>
+                    <button type="button" data-ui-action="switch-studio-management-tab" data-management-tab="activities" class="studio-management-tab" role="tab" aria-selected="false"><i data-lucide="list-checks"></i><span>Attività studio</span><span id="management-activities-issues" class="management-issue-badge force-hide">0</span></button>
+                    <button type="button" data-ui-action="switch-studio-management-tab" data-management-tab="team" class="studio-management-tab" role="tab" aria-selected="false"><i data-lucide="users"></i><span>Team</span><span id="management-team-issues" class="management-issue-badge force-hide">0</span></button>
                 </div>
             </div>
 
@@ -1151,7 +1151,7 @@
     <script src="assets/js/00-runtime-config.js?v=stripe-founder-2026-06-29"></script>
     <script src="assets/js/normative-engine.js?v=2026-08-01-01"></script>
     <script src="assets/js/01-core.js?v=studio-currency-2026-08-12-01"></script>
-    <script src="assets/js/02-auth-account.js?v=studio-management-mobile-2026-08-12-01"></script>
+    <script src="assets/js/02-auth-account.js?v=studio-configuration-status-2026-08-12-01"></script>
     <script src="assets/js/03-team.js?v=studio-management-2026-08-12-01"></script>
     <script src="assets/js/04-projects.js?v=studio-management-2026-08-12-01"></script>
     <script src="assets/js/05-time-entries.js?v=activation-funnel-2026-07-18-01"></script>
