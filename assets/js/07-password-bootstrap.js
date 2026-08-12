@@ -50,7 +50,7 @@
             bindClick('btn-close-account', closeAccountModal);
             bindClick('btn-save-studio-name', saveStudioName);
             bindClick('btn-save-studio-currency', saveStudioCurrency);
-            bindClick('btn-upload-studio-logo', () => document.getElementById('account-logo-input')?.click());
+            bindClick('btn-edit-studio-logo', () => document.getElementById('account-logo-input')?.click());
             bindClick('btn-skip-onboarding', () => closeOwnerOnboarding(true));
             bindClick('btn-save-onboarding-identity', saveOnboardingIdentity);
             bindClick('btn-prepare-first-project', prepareFirstProjectFromOnboarding);

@@ -537,6 +537,7 @@ function switchAuthTab(mode) {
                 accountLogoPreview.src = publicUrl; 
                 accountLogoPreview.classList.remove('force-hide'); 
             }
+            document.getElementById('account-logo-placeholder')?.classList.add('force-hide');
             document.getElementById('header-logo').src = publicUrl; 
             document.getElementById('header-logo').classList.remove('force-hide'); 
             await appAlert("Fatto", "Logo caricato!", "success");
@@ -718,6 +719,7 @@ function switchAuthTab(mode) {
                                     accountLogoPreview.src = studioData.logo_url; 
                                     accountLogoPreview.classList.remove('force-hide'); 
                                 }
+                                document.getElementById('account-logo-placeholder')?.classList.add('force-hide');
                                 document.getElementById('header-logo').src = studioData.logo_url; 
                                 document.getElementById('header-logo').classList.remove('force-hide'); 
                             }
