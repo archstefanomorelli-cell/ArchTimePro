@@ -250,12 +250,12 @@
                     </div>
                     <div class="grid grid-cols-3 gap-2 mb-4">
                         <div>
-                            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Costi rilevati</p>
-                            <p class="text-xs font-black text-slate-800 mt-0.5">${formatMoney(summary.totalCost, 0)}</p>
-                        </div>
-                        <div>
                             <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">${economicValueLabel}</p>
                             <p class="text-xs font-black text-slate-800 mt-0.5">${formatMoney(summary.budget, 0)}</p>
+                        </div>
+                        <div>
+                            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Costi rilevati</p>
+                            <p class="text-xs font-black text-slate-800 mt-0.5">${formatMoney(summary.totalCost, 0)}</p>
                         </div>
                         <div>
                             <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Margine</p>
@@ -300,8 +300,8 @@
                             <p>${escapeHtml(project.client || 'Interno')}</p>
                         </div>
                     </div>
-                    <div class="project-list-metric"><small>Costi</small><strong>${formatMoney(summary.totalCost, 0)}</strong></div>
                     <div class="project-list-metric"><small>${economicValueLabel}</small><strong>${formatMoney(summary.budget, 0)}</strong></div>
+                    <div class="project-list-metric"><small>Costi</small><strong>${formatMoney(summary.totalCost, 0)}</strong></div>
                     <div class="project-list-metric"><small>Margine</small><strong class="${summary.marginClass}">${formatMoney(summary.margin, 0)}</strong></div>
                     <div class="project-list-progress">
                         <div>
