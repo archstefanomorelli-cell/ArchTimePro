@@ -82,6 +82,7 @@
             bindClick('btn-close-edit-project', closeEditProjectModal);
             bindClick('btn-save-project-edit', saveModalProjectEdit);
             bindClick('btn-close-report', closeReportModal);
+            bindClick('btn-close-project-quote-format', closeProjectQuoteFormatModal);
             bindClick('btn-close-team-report', closeTeamReportModal);
             bindClick('btn-generate-team-report', generateTeamPDFReport);
             bindClick('btn-close-forgot-password', closeForgotPassword);
@@ -204,7 +205,11 @@
                     case 'upgrade-project-pdf':
                         return openUpgradeModal('Report PDF Singolo');
                     case 'upgrade-project-quote':
-                        return openUpgradeModal('Preventivo PDF');
+                        return openUpgradeModal('Preventivo');
+                    case 'open-project-quote-format':
+                        return openProjectQuoteFormatModal(projectId);
+                    case 'export-selected-project-quote':
+                        return exportSelectedProjectQuote(trigger.dataset.quoteFormat);
                     case 'export-project-quote':
                         return exportProjectQuotePDF(projectId);
                     case 'upgrade-project-quote-excel':

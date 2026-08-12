@@ -1000,6 +1000,26 @@
         </div>
     </div>
 
+    <div id="modal-project-quote-format" class="force-hide fixed inset-0 z-[110] modal flex items-center justify-center p-4">
+        <div class="w-full max-w-md p-6 lg:p-7 shadow-xl border border-slate-200 rounded-2xl relative bg-white">
+            <button id="btn-close-project-quote-format" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors" aria-label="Chiudi"><i data-lucide="x" class="w-4 h-4"></i></button>
+            <div class="w-10 h-10 rounded-xl bg-primary-50 text-primary-600 flex items-center justify-center mb-4"><i data-lucide="receipt-text" class="w-5 h-5"></i></div>
+            <h2 class="text-lg font-black text-slate-800 tracking-tight mb-1">Esporta preventivo</h2>
+            <p id="project-quote-format-name" class="text-sm font-bold text-slate-600 pr-10 truncate">Progetto</p>
+            <p class="text-xs text-slate-500 font-medium mt-1 mb-5">Scegli il formato più adatto.</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button type="button" data-ui-action="export-selected-project-quote" data-quote-format="pdf" class="group min-h-[92px] border border-slate-200 rounded-xl p-4 text-left bg-white hover:border-primary-300 hover:bg-primary-50 transition-all shadow-sm">
+                    <span class="flex items-center gap-2 text-sm font-black text-slate-800"><i data-lucide="file-text" class="w-4 h-4 text-primary-600"></i> PDF</span>
+                    <span class="block text-xs text-slate-500 font-medium mt-2 leading-relaxed">Pronto da inviare o stampare.</span>
+                </button>
+                <button type="button" data-ui-action="export-selected-project-quote" data-quote-format="excel" class="group min-h-[92px] border border-slate-200 rounded-xl p-4 text-left bg-white hover:border-emerald-300 hover:bg-emerald-50 transition-all shadow-sm">
+                    <span class="flex items-center gap-2 text-sm font-black text-slate-800"><i data-lucide="file-spreadsheet" class="w-4 h-4 text-emerald-600"></i> Excel</span>
+                    <span class="block text-xs text-slate-500 font-medium mt-2 leading-relaxed">Modificabile prima della consegna.</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div id="modal-report" class="force-hide fixed inset-0 z-[100] modal flex items-center justify-center p-4">
         <div class="w-full max-w-sm p-6 lg:p-8 shadow-xl border border-slate-200 rounded-2xl relative bg-white">
             <button id="btn-close-report" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
@@ -1074,10 +1094,10 @@
     <script src="assets/js/01-core.js?v=studio-currency-2026-08-12-01"></script>
     <script src="assets/js/02-auth-account.js?v=studio-logo-2026-08-12-01"></script>
     <script src="assets/js/03-team.js?v=phase3-team-modals-2026-05-12"></script>
-    <script src="assets/js/04-projects.js?v=studio-currency-2026-08-12-01"></script>
+    <script src="assets/js/04-projects.js?v=quote-format-modal-2026-08-12-01"></script>
     <script src="assets/js/05-time-entries.js?v=activation-funnel-2026-07-18-01"></script>
-    <script src="assets/js/06-reports.js?v=studio-currency-2026-08-12-01"></script>
-    <script src="assets/js/07-password-bootstrap.js?v=studio-logo-2026-08-12-01"></script>
+    <script src="assets/js/06-reports.js?v=quote-format-modal-2026-08-12-01"></script>
+    <script src="assets/js/07-password-bootstrap.js?v=quote-format-modal-2026-08-12-01"></script>
     <script src="assets/js/09-video-demo.js?v=quote-fiscal-2026-08-03-01"></script>
 </body>
 </html>

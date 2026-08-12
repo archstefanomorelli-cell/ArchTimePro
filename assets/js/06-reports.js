@@ -146,6 +146,33 @@
             userSelect.innerHTML = optionHtml('all', 'Tutto il team') + activeProfiles.map(pr => optionHtml(pr.full_name, pr.full_name)).join('');
         }
 
+        function openProjectQuoteFormatModal(id) {
+            const project = projects.find(item => item.id === id);
+            const modal = document.getElementById('modal-project-quote-format');
+            if (!project || !modal) return;
+
+            modal.dataset.projectId = project.id;
+            const projectName = document.getElementById('project-quote-format-name');
+            if (projectName) projectName.textContent = project.name || 'Progetto senza nome';
+            modal.classList.remove('force-hide');
+            lucide.createIcons();
+        }
+
+        function closeProjectQuoteFormatModal() {
+            const modal = document.getElementById('modal-project-quote-format');
+            if (!modal) return;
+            modal.classList.add('force-hide');
+            delete modal.dataset.projectId;
+        }
+
+        function exportSelectedProjectQuote(format) {
+            const projectId = document.getElementById('modal-project-quote-format')?.dataset.projectId;
+            if (!projectId) return;
+            closeProjectQuoteFormatModal();
+            if (format === 'excel') return exportProjectQuoteExcel(projectId);
+            return exportProjectQuotePDF(projectId);
+        }
+
         async function exportProjectQuotePDF(id) {
             if (activePlan === 'starter') return openUpgradeModal('Preventivo PDF');
             const project = projects.find(item => item.id === id);
