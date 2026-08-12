@@ -1682,6 +1682,14 @@ html.theme-pro .analytics-section-heading p {
     font-weight: 600;
 }
 
+html.theme-pro .projects-section-heading p {
+    margin-top: 0.22rem;
+    color: #64748b;
+    font-size: 0.68rem;
+    line-height: 1.4;
+    font-weight: 600;
+}
+
 html.theme-pro .analytics-primary-grid {
     margin-bottom: 0.625rem;
     display: grid;
