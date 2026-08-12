@@ -1046,6 +1046,7 @@
             if(btnSaveTpl) btnSaveTpl.innerText = isEditTpl ? "Aggiorna" : "Salva Nuovo";
             if(btnCancelTpl) isEditTpl ? btnCancelTpl.classList.remove('hidden') : btnCancelTpl.classList.add('hidden');
             
+            renderStudioManagementSummary();
             lucide.createIcons(); 
             renderNewProjectUI();
         }

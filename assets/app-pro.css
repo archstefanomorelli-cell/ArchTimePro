@@ -362,6 +362,72 @@ html.theme-pro .modal:not(.force-hide) > div {
     box-shadow: 0 24px 80px rgba(15, 23, 42, 0.18) !important;
 }
 
+html.theme-pro .studio-management-modal {
+    height: min(760px, calc(100vh - 2rem));
+    max-height: calc(100vh - 2rem);
+}
+
+html.theme-pro .studio-management-tab {
+    min-width: 0;
+    min-height: 2.55rem;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    color: #64748b;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+    outline: none;
+    transition: color 160ms ease, background 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+html.theme-pro .studio-management-tab svg {
+    width: 0.95rem;
+    height: 0.95rem;
+    flex: 0 0 auto;
+}
+
+html.theme-pro .studio-management-tab[aria-selected="true"] {
+    color: #4338ca;
+    background: #ffffff;
+    border-color: #e2e8f0;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
+html.theme-pro .studio-management-tab:focus-visible {
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.16);
+}
+
+html.theme-pro .studio-management-modal #team-list > div > div:first-child {
+    min-width: 0;
+}
+
+html.theme-pro .studio-management-modal #team-list p {
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 640px) {
+    html.theme-pro .studio-management-modal {
+        height: calc(100dvh - 1rem);
+        max-height: calc(100dvh - 1rem) !important;
+    }
+
+    html.theme-pro .studio-management-tab {
+        padding: 0.55rem 0.25rem;
+        gap: 0.25rem;
+        font-size: 0.62rem;
+    }
+
+    html.theme-pro .studio-management-tab svg {
+        width: 0.8rem;
+        height: 0.8rem;
+    }
+}
+
 html.theme-pro .project-type-options {
     display: grid;
     gap: 0.65rem;

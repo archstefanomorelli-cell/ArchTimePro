@@ -299,6 +299,61 @@ function switchAuthTab(mode) {
         
         function closeAccountModal() { document.getElementById('modal-account').classList.add('force-hide'); }
 
+        function renderStudioManagementSummary() {
+            const activeProfiles = profiles.filter(profile => profile.role !== 'inactive');
+            const missingHourlyCosts = activeProfiles.filter(profile => Number(profile.hourly_cost || 0) <= 0).length;
+            const name = studioData?.name || 'Spazio di lavoro';
+            const logoUrl = studioData?.logo_url || '';
+
+            const nameElement = document.getElementById('studio-summary-name');
+            const teamCount = document.getElementById('studio-summary-team-count');
+            const activityCount = document.getElementById('studio-summary-activity-count');
+            const status = document.getElementById('studio-summary-status');
+            const logo = document.getElementById('studio-summary-logo');
+            const logoPlaceholder = document.getElementById('studio-summary-logo-placeholder');
+
+            if (nameElement) nameElement.textContent = name;
+            if (teamCount) teamCount.textContent = String(activeProfiles.length);
+            if (activityCount) activityCount.textContent = String(activityCatalog.length);
+            if (status) {
+                status.textContent = missingHourlyCosts > 0
+                    ? `${missingHourlyCosts} ${missingHourlyCosts === 1 ? 'costo orario da completare' : 'costi orari da completare'}`
+                    : `${getStudioCurrency().code} · configurazione completa`;
+                status.className = missingHourlyCosts > 0
+                    ? 'text-[10px] font-bold text-amber-600 mt-0.5'
+                    : 'text-[10px] font-medium text-emerald-600 mt-0.5';
+            }
+            if (logo) {
+                logo.src = logoUrl;
+                logo.classList.toggle('force-hide', !logoUrl);
+            }
+            logoPlaceholder?.classList.toggle('force-hide', Boolean(logoUrl));
+        }
+
+        function switchStudioManagementTab(tabName) {
+            const allowedTabs = ['identity', 'activities', 'team'];
+            const selectedTab = allowedTabs.includes(tabName) ? tabName : 'identity';
+            document.querySelectorAll('[data-management-tab]').forEach(button => {
+                button.setAttribute('aria-selected', button.dataset.managementTab === selectedTab ? 'true' : 'false');
+            });
+            document.querySelectorAll('[data-management-panel]').forEach(panel => {
+                panel.classList.toggle('force-hide', panel.dataset.managementPanel !== selectedTab);
+            });
+            document.querySelector('.studio-management-body')?.scrollTo({ top: 0, behavior: 'auto' });
+            lucide.createIcons();
+        }
+
+        function openStudioManagementModal() {
+            renderStudioManagementSummary();
+            switchStudioManagementTab('identity');
+            document.getElementById('modal-studio-management')?.classList.remove('force-hide');
+            lucide.createIcons();
+        }
+
+        function closeStudioManagementModal() {
+            document.getElementById('modal-studio-management')?.classList.add('force-hide');
+        }
+
         async function deleteAccount() {
             if (userProfile.is_owner) {
                 if (studioData?.subscription_status === 'active') {
@@ -353,6 +408,7 @@ function switchAuthTab(mode) {
             if(studioData) studioData.name = name; 
             const headerStudioName = document.getElementById('header-studio-name');
             if (headerStudioName) headerStudioName.innerText = name || 'Spazio di lavoro';
+            renderStudioManagementSummary();
             await appAlert("Fatto", "Nome aggiornato!", "success"); 
         }
 
@@ -386,6 +442,7 @@ function switchAuthTab(mode) {
             renderProjects();
             renderEntries();
             if (isAdminUser()) renderStrategicCharts();
+            renderStudioManagementSummary();
             await appAlert('Fatto', `Valuta dello studio impostata su ${currency}.`, 'success');
         }
 
@@ -540,6 +597,7 @@ function switchAuthTab(mode) {
             document.getElementById('account-logo-placeholder')?.classList.add('force-hide');
             document.getElementById('header-logo').src = publicUrl; 
             document.getElementById('header-logo').classList.remove('force-hide'); 
+            renderStudioManagementSummary();
             await appAlert("Fatto", "Logo caricato!", "success");
         }
 

@@ -71,6 +71,7 @@
             list.innerHTML = visibleProfiles.length > 0
                 ? visibleProfiles.map(teamMemberCardHtml).join('')
                 : richEmptyStateHtml('users', 'Nessun membro visibile', 'Gli utenti inattivi sono nascosti. Mostrali o invita un nuovo collaboratore.');
+            renderStudioManagementSummary();
             lucide.createIcons();
         }
 

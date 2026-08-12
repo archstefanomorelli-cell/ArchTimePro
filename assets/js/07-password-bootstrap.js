@@ -29,10 +29,14 @@
             bindClick('btn-limbo-create', limboCreateStudio);
             bindClick('btn-close-upgrade', closeUpgradeModal);
             bindClick('btn-header-pdf', openReportModal);
+            bindClick('btn-header-invite', generateInviteLink);
             bindClick('btn-open-account', openAccountModal);
+            bindClick('btn-open-studio-management', openStudioManagementModal);
+            bindClick('btn-close-studio-management', closeStudioManagementModal);
             bindClick('btn-open-manual-entry', openManualEntry);
             bindClick('btn-toggle-timer', toggleTimer);
             bindClick('btn-manage-templates', openTemplatesModal);
+            bindClick('btn-open-templates-studio', openTemplatesModal);
             bindClick('btn-open-project-modal', openProjectTypeModal);
             bindClick('btn-close-project-type', closeProjectTypeModal);
             bindClick('btn-open-team-report', openTeamReportModal);
@@ -162,6 +166,8 @@
                         return setProjectViewMode(trigger.dataset.projectView);
                     case 'select-project-type':
                         return selectProjectSetupType(trigger.dataset.projectType);
+                    case 'switch-studio-management-tab':
+                        return switchStudioManagementTab(trigger.dataset.managementTab);
                     case 'toggle-normative-service':
                         return toggleNormativeService(trigger);
                     case 'toggle-normative-phase':
