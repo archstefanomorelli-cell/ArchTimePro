@@ -290,72 +290,180 @@
             button.classList.toggle('hover:bg-slate-800', !isRunning);
         }
 
-        async function restoreCloudTimer() {
-            const prof = await fetchMyProfileForApp();
-            if (prof && prof.active_timer_start) {
-                timerRunning = true; 
-                startTime = parseInt(prof.active_timer_start);
-                const pIdx = prof.active_timer_project; 
-                const tVal = prof.active_timer_task; 
-                const notes = prof.active_timer_notes || "";
-                
-                if (pIdx !== null && pIdx !== "") { document.getElementById('project-select').value = pIdx; updateTaskDropdown(); }
-                if (tVal) document.getElementById('task-select').value = tVal; 
-                if (notes) document.getElementById('timer-notes').value = notes;
-                
-                document.getElementById('btn-text').innerText = "FERMA E SALVA"; 
-                document.getElementById('btn-icon').setAttribute("data-lucide", "square"); 
-                setTimerButtonRunning(true);
-                
-                timerInterval = setInterval(() => { 
-                    const d = new Date(Date.now() - startTime); 
-                    document.getElementById('timer-display').innerText = `${String(d.getUTCHours()).padStart(2,'0')}:${String(d.getUTCMinutes()).padStart(2,'0')}:${String(d.getUTCSeconds()).padStart(2,'0')}`; 
-                }, 1000); 
-                lucide.createIcons();
+        let cloudTimerProjectIndex = null;
+        let cloudTimerTask = 'Generico';
+        let cloudTimerNotes = '';
+        let cloudTimerSyncHandle = null;
+        let cloudTimerSyncBusy = false;
+        let cloudTimerMutationBusy = false;
+        let cloudTimerFocusSyncBound = false;
+
+        function resolveCloudTimerProjectIndex(projectReference) {
+            if (projectReference === null || projectReference === undefined || projectReference === '') return null;
+
+            const projectIdIndex = projects.findIndex(project => String(project.id) === String(projectReference));
+            if (projectIdIndex >= 0) return projectIdIndex;
+
+            const numericIndex = Number(projectReference);
+            return Number.isInteger(numericIndex) && projects[numericIndex] ? numericIndex : null;
+        }
+
+        function updateRunningTimerDisplay() {
+            if (!timerRunning || !startTime) return;
+            const elapsed = new Date(Date.now() - startTime);
+            document.getElementById('timer-display').innerText = `${String(elapsed.getUTCHours()).padStart(2,'0')}:${String(elapsed.getUTCMinutes()).padStart(2,'0')}:${String(elapsed.getUTCSeconds()).padStart(2,'0')}`;
+        }
+
+        function renderRunningCloudTimer() {
+            clearInterval(timerInterval);
+            updateRunningTimerDisplay();
+            timerInterval = setInterval(updateRunningTimerDisplay, 1000);
+            document.getElementById('btn-text').innerText = "FERMA E SALVA";
+            document.getElementById('btn-icon').setAttribute("data-lucide", "square");
+            setTimerButtonRunning(true);
+            lucide.createIcons();
+        }
+
+        function resetCloudTimerUi() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            document.getElementById('timer-display').innerText = "00:00:00";
+            document.getElementById('timer-notes').value = "";
+            document.getElementById('btn-text').innerText = "Avvia ora";
+            document.getElementById('btn-icon').setAttribute("data-lucide", "play-circle");
+            setTimerButtonRunning(false);
+            lucide.createIcons();
+        }
+
+        function applyCloudTimerState(prof) {
+            const remoteStart = prof?.active_timer_start ? Number(prof.active_timer_start) : null;
+
+            if (!remoteStart) {
+                if (!timerRunning) return;
+                timerRunning = false;
+                startTime = null;
+                cloudTimerProjectIndex = null;
+                cloudTimerTask = 'Generico';
+                cloudTimerNotes = '';
+                resetCloudTimerUi();
+                return;
+            }
+
+            const remoteProjectIndex = resolveCloudTimerProjectIndex(prof.active_timer_project);
+            const remoteTask = prof.active_timer_task || 'Generico';
+            const remoteNotes = prof.active_timer_notes || '';
+            const timerChanged = !timerRunning || startTime !== remoteStart;
+
+            timerRunning = true;
+            startTime = remoteStart;
+            cloudTimerProjectIndex = remoteProjectIndex;
+            cloudTimerTask = remoteTask;
+            cloudTimerNotes = remoteNotes;
+
+            if (remoteProjectIndex !== null) {
+                document.getElementById('project-select').value = String(remoteProjectIndex);
+                updateTaskDropdown();
+                document.getElementById('task-select').value = remoteTask;
+            }
+            document.getElementById('timer-notes').value = remoteNotes;
+
+            if (timerChanged || !timerInterval) renderRunningCloudTimer();
+        }
+
+        async function syncCloudTimerState() {
+            if (!userProfile?.id || cloudTimerSyncBusy || cloudTimerMutationBusy) return;
+            cloudTimerSyncBusy = true;
+            try {
+                const prof = await fetchMyProfileForApp();
+                if (prof) applyCloudTimerState(prof);
+            } catch (error) {
+                console.warn('Sincronizzazione timer non riuscita:', error.message || error);
+            } finally {
+                cloudTimerSyncBusy = false;
             }
         }
 
+        function startCloudTimerSync() {
+            if (cloudTimerSyncHandle) clearInterval(cloudTimerSyncHandle);
+            cloudTimerSyncHandle = setInterval(syncCloudTimerState, 4000);
+
+            if (!cloudTimerFocusSyncBound) {
+                window.addEventListener('focus', syncCloudTimerState);
+                document.addEventListener('visibilitychange', () => {
+                    if (document.visibilityState === 'visible') syncCloudTimerState();
+                });
+                cloudTimerFocusSyncBound = true;
+            }
+        }
+
+        async function restoreCloudTimer() {
+            const prof = await fetchMyProfileForApp();
+            if (prof) applyCloudTimerState(prof);
+            startCloudTimerSync();
+        }
+
         async function toggleTimer() {
-            const pIdx = document.getElementById('project-select').value; 
-            const tVal = document.getElementById('task-select').value; 
+            if (cloudTimerMutationBusy) return;
+
+            const selectedProjectIndex = document.getElementById('project-select').value;
+            const selectedTask = document.getElementById('task-select').value;
             const notes = document.getElementById('timer-notes').value.trim();
-            if(pIdx === "") return await appAlert("Attenzione", "Scegli un lavoro prima di avviare il timer!", "danger");
-            
+
             if (!timerRunning) {
-                timerRunning = true; 
-                startTime = Date.now();
-                await setMyTimerStateForApp({ start: startTime.toString(), project: pIdx, task: tVal, notes });
-                document.getElementById('btn-text').innerText = "FERMA E SALVA"; 
-                document.getElementById('btn-icon').setAttribute("data-lucide", "square"); 
-                setTimerButtonRunning(true);
-                
-                timerInterval = setInterval(() => { 
-                    const d = new Date(Date.now() - startTime); 
-                    document.getElementById('timer-display').innerText = `${String(d.getUTCHours()).padStart(2,'0')}:${String(d.getUTCMinutes()).padStart(2,'0')}:${String(d.getUTCSeconds()).padStart(2,'0')}`; 
-                }, 1000);
-            } else {
-                timerRunning = false; 
-                clearInterval(timerInterval);
-                await setMyTimerStateForApp();
-                
+                if (selectedProjectIndex === "") return await appAlert("Attenzione", "Scegli un lavoro prima di avviare il timer!", "danger");
+
+                cloudTimerMutationBusy = true;
+                try {
+                    const nextStartTime = Date.now();
+                    await setMyTimerStateForApp({ start: nextStartTime.toString(), project: selectedProjectIndex, task: selectedTask, notes });
+                    timerRunning = true;
+                    startTime = nextStartTime;
+                    cloudTimerProjectIndex = Number(selectedProjectIndex);
+                    cloudTimerTask = selectedTask || 'Generico';
+                    cloudTimerNotes = notes;
+                    renderRunningCloudTimer();
+                } finally {
+                    cloudTimerMutationBusy = false;
+                }
+                return;
+            }
+
+            const activeProjectIndex = cloudTimerProjectIndex ?? resolveCloudTimerProjectIndex(selectedProjectIndex);
+            const activeProject = activeProjectIndex !== null ? projects[activeProjectIndex] : null;
+            if (!activeProject) {
+                await syncCloudTimerState();
+                const refreshedProject = cloudTimerProjectIndex !== null ? projects[cloudTimerProjectIndex] : null;
+                if (!refreshedProject) return await appAlert("Timer non sincronizzato", "Aggiorna la pagina e riprova: il timer è ancora attivo e nessuna ora è stata persa.", "danger");
+            }
+
+            const projectIndexToSave = cloudTimerProjectIndex ?? activeProjectIndex;
+            const projectToSave = projects[projectIndexToSave];
+            const taskToSave = cloudTimerTask || selectedTask || 'Generico';
+            const notesToSave = cloudTimerNotes || notes;
+
+            cloudTimerMutationBusy = true;
+            try {
                 const eDate = new Date();
                 const sDate = new Date(startTime);
                 const sTimeStr = sDate.toLocaleTimeString('it-IT', {hour: '2-digit', minute:'2-digit'});
                 const eTimeStr = eDate.toLocaleTimeString('it-IT', {hour: '2-digit', minute:'2-digit'});
                 const timeString = `[${sTimeStr} - ${eTimeStr}]`;
 
-                let n = document.getElementById('timer-notes').value.trim();
+                let n = notesToSave;
                 n = n ? `${timeString} ${n}` : timeString;
 
-                saveEntry(projects[pIdx], tVal, (Date.now() - startTime) / 3600000, null, n, 'timer');
-                
-                document.getElementById('timer-display').innerText = "00:00:00"; 
-                document.getElementById('timer-notes').value = ""; 
-                document.getElementById('btn-text').innerText = "Avvia ora"; 
-                document.getElementById('btn-icon').setAttribute("data-lucide", "play-circle"); 
-                setTimerButtonRunning(false);
+                await setMyTimerStateForApp();
+                await saveEntry(projectToSave, taskToSave, (Date.now() - startTime) / 3600000, null, n, 'timer');
+
+                timerRunning = false;
+                startTime = null;
+                cloudTimerProjectIndex = null;
+                cloudTimerTask = 'Generico';
+                cloudTimerNotes = '';
+                resetCloudTimerUi();
+            } finally {
+                cloudTimerMutationBusy = false;
             }
-            lucide.createIcons();
         }
 
         async function createEntryViaRpc(proj, task, hours, customDate = null, notes = "") {
