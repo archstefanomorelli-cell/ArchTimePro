@@ -202,14 +202,95 @@ function switchAuthTab(mode) {
             }
         }
 
+        async function fetchAllExportRows(table, columns, orderColumn, filters = []) {
+            const pageSize = 1000;
+            const rows = [];
+
+            for (let from = 0; ; from += pageSize) {
+                let query = supabaseClient
+                    .from(table)
+                    .select(columns)
+                    .eq('studio_id', userProfile.studio_id);
+
+                filters.forEach(([column, value]) => {
+                    query = query.eq(column, value);
+                });
+                query = query.order(orderColumn, { ascending: orderColumn === 'name' })
+                    .range(from, from + pageSize - 1);
+
+                const { data, error } = await query;
+                if (error) throw new Error(`Impossibile esportare ${table}: ${error.message}`);
+                rows.push(...(data || []));
+                if (!data || data.length < pageSize) break;
+            }
+
+            return rows;
+        }
+
+        async function buildUserDataExport() {
+            const isAdmin = ['admin', 'owner'].includes(userProfile.role) || userProfile.is_owner;
+            const useLoadedDemoData = typeof isVideoDemoMode === 'function' && isVideoDemoMode();
+            let exportProjects = projects;
+            let exportEntries = entries;
+            let exportExpenses = isAdmin ? expenses : [];
+
+            if (!useLoadedDemoData) {
+                const entryFilters = isAdmin ? [] : [['user_email', userProfile.email]];
+                [exportProjects, exportEntries] = await Promise.all([
+                    fetchAllExportRows('projects', projectSelectColumns(), 'name'),
+                    fetchAllExportRows('entries', entrySelectColumns(), 'created_at', entryFilters)
+                ]);
+                if (isAdmin) exportExpenses = await fetchAllExportRows('expenses', '*', 'created_at');
+            }
+
+            const generatedAt = new Date().toISOString();
+            return {
+                export_version: 2,
+                generated_at: generatedAt,
+                scope: isAdmin ? 'studio' : 'personale',
+                profile: userProfile,
+                studio: isAdmin ? studioData : null,
+                team: isAdmin ? profiles : [userProfile],
+                projects: exportProjects,
+                entries: exportEntries,
+                expenses: exportExpenses,
+                summary: {
+                    team_members: isAdmin ? profiles.length : 1,
+                    projects: exportProjects.length,
+                    entries: exportEntries.length,
+                    expenses: exportExpenses.length
+                }
+            };
+        }
+
         async function exportUserData() {
             if(!userProfile) return await appAlert("Errore", "Utente non trovato.", "danger");
+            const exportButton = document.getElementById('btn-export-user-data');
+            if (exportButton?.disabled) return;
+            if (exportButton) exportButton.disabled = true;
+
             try {
-                const exportData = { profile: userProfile, studio: ['admin', 'owner'].includes(userProfile.role) || userProfile.is_owner ? studioData : "Dati Studio non accessibili.", projects: projects, entries: entries, expenses: expenses, exportDate: new Date().toISOString() };
-                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
-                const downloadAnchorNode = document.createElement('a'); downloadAnchorNode.setAttribute("href", dataStr); downloadAnchorNode.setAttribute("download", "Export_" + safeFileName(userProfile.full_name, 'utente') + ".json");
-                document.body.appendChild(downloadAnchorNode); downloadAnchorNode.click(); downloadAnchorNode.remove();
-            } catch (err) { await appAlert("Errore", "Errore: " + err.message, "danger"); }
+                const exportData = await buildUserDataExport();
+                const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json;charset=utf-8' });
+                const downloadUrl = URL.createObjectURL(blob);
+                const downloadAnchor = document.createElement('a');
+                const exportDate = exportData.generated_at.slice(0, 10);
+                downloadAnchor.href = downloadUrl;
+                downloadAnchor.download = `ArchTimePro_${safeFileName(studioData?.name || userProfile.full_name, 'export')}_${exportDate}.json`;
+                document.body.appendChild(downloadAnchor);
+                downloadAnchor.click();
+                downloadAnchor.remove();
+                setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
+                window.archTimeAnalytics?.track('user_data_exported', {
+                    scope: exportData.scope,
+                    project_count: exportData.summary.projects,
+                    entry_count: exportData.summary.entries
+                });
+            } catch (err) {
+                await appAlert("Esportazione non riuscita", err.message || "Non è stato possibile preparare il file JSON.", "danger");
+            } finally {
+                if (exportButton) exportButton.disabled = false;
+            }
         }
 
         function redirectToStripe(plan) { 
