@@ -1663,9 +1663,15 @@ html.theme-pro .analytics-section-heading {
 
 html.theme-pro .analytics-section-heading h2 {
     color: #172033;
-    font-size: 1.05rem;
+    font-size: 1.125rem;
     line-height: 1.2;
     font-weight: 900;
+}
+
+@media (min-width: 1024px) {
+    html.theme-pro .analytics-section-heading h2 {
+        font-size: 1.25rem;
+    }
 }
 
 html.theme-pro .analytics-section-heading p {
@@ -2310,10 +2316,6 @@ html.theme-pro .analytics-priority-value.is-danger {
 @media (max-width: 639px) {
     html.theme-pro .analytics-section-heading {
         margin-bottom: 0.6rem;
-    }
-
-    html.theme-pro .analytics-section-heading h2 {
-        font-size: 0.95rem;
     }
 
     html.theme-pro .analytics-primary-grid {
