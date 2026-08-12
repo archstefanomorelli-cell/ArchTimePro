@@ -346,12 +346,23 @@ function switchAuthTab(mode) {
         function openStudioManagementModal() {
             renderStudioManagementSummary();
             switchStudioManagementTab('identity');
-            document.getElementById('modal-studio-management')?.classList.remove('force-hide');
+            const modal = document.getElementById('modal-studio-management');
+            if (window.matchMedia('(max-width: 1023px)').matches && modal) {
+                const headerBottom = document.querySelector('#app-container > header')?.getBoundingClientRect().bottom || 0;
+                const navigationTop = document.querySelector('#app-container > nav')?.getBoundingClientRect().top || window.innerHeight;
+                modal.style.setProperty('--mobile-management-top', `${Math.max(0, headerBottom)}px`);
+                modal.style.setProperty('--mobile-management-bottom', `${Math.max(0, window.innerHeight - navigationTop)}px`);
+            }
+            modal?.classList.remove('force-hide');
             lucide.createIcons();
         }
 
         function closeStudioManagementModal() {
             document.getElementById('modal-studio-management')?.classList.add('force-hide');
+            if (window.matchMedia('(max-width: 1023px)').matches) {
+                const visibleTab = document.querySelector('.mobile-tab.active')?.dataset.tab || 'operate';
+                setAppNavigationState(visibleTab);
+            }
         }
 
         async function deleteAccount() {
@@ -803,22 +814,36 @@ function switchAuthTab(mode) {
             location.reload(); 
         }
 
+        function setAppNavigationState(tabName) {
+            document.querySelectorAll('.nav-btn[data-tab]').forEach(btn => {
+                const isActive = btn.dataset.tab === tabName;
+                btn.classList.toggle('is-active', isActive);
+                btn.classList.toggle('text-primary-600', isActive);
+                btn.classList.toggle('text-slate-400', !isActive);
+                btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+            });
+        }
+
         function switchAppTab(tabName) { 
             const requestedTab = ['operate', 'analyze', 'manage'].includes(tabName) ? tabName : 'operate';
             const isAdmin = document.body.classList.contains('is-admin');
             const nextTab = !isAdmin && requestedTab !== 'operate' ? 'operate' : requestedTab;
+            const isMobile = window.matchMedia('(max-width: 1023px)').matches;
+
+            if (nextTab === 'manage' && isAdmin && isMobile) {
+                openStudioManagementModal();
+                setAppNavigationState('manage');
+                if (document.activeElement?.classList?.contains('nav-btn')) document.activeElement.blur();
+                return;
+            }
+
+            if (isMobile) document.getElementById('modal-studio-management')?.classList.add('force-hide');
 
             document.querySelectorAll('.mobile-tab').forEach(el => {
                 el.classList.toggle('active', el.dataset.tab === nextTab);
             }); 
 
-            document.querySelectorAll('.nav-btn[data-tab]').forEach(btn => { 
-                const isActive = btn.dataset.tab === nextTab;
-                btn.classList.toggle('is-active', isActive);
-                btn.classList.toggle('text-primary-600', isActive); 
-                btn.classList.toggle('text-slate-400', !isActive);
-                btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
-            }); 
+            setAppNavigationState(nextTab);
 
             if (document.activeElement?.classList?.contains('nav-btn')) {
                 document.activeElement.blur();

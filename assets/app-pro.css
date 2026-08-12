@@ -428,6 +428,30 @@ html.theme-pro .studio-management-modal #team-list p {
     }
 }
 
+@media (max-width: 1023px) {
+    html.theme-pro #modal-studio-management {
+        z-index: 35;
+        top: var(--mobile-management-top, 61px);
+        bottom: var(--mobile-management-bottom, 73px);
+        height: auto;
+        padding: 0;
+        align-items: stretch;
+        background: #f8fafc;
+        backdrop-filter: none;
+        overflow: hidden;
+    }
+
+    html.theme-pro #modal-studio-management > .studio-management-modal {
+        width: 100%;
+        max-width: none;
+        height: 100% !important;
+        max-height: 100% !important;
+        border: 0;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+    }
+}
+
 html.theme-pro .project-type-options {
     display: grid;
     gap: 0.65rem;
