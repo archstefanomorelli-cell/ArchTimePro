@@ -65,6 +65,7 @@
             bindClick('btn-cancel-quote-settings', closeQuoteSettingsModal);
             bindClick('btn-save-quote-settings', saveQuoteSettings);
             bindClick('btn-export-user-data', exportUserData);
+            bindClick('btn-paywall-export-data', exportUserData);
             bindClick('btn-delete-account', deleteAccount);
             bindClick('btn-close-task-builder', closeTaskBuilder);
             bindClick('btn-open-catalog-builder', openCatalogModal);

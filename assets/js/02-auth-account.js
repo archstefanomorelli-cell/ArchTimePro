@@ -237,12 +237,13 @@ function switchAuthTab(mode) {
             let exportProjects = projects;
             let exportEntries = entries;
             let exportExpenses = isAdmin ? expenses : [];
+            let exportProfiles = isAdmin ? profiles : [userProfile];
             let exportAuditLog = [];
             let exportCostHistory = [];
 
             if (!useLoadedDemoData) {
                 const [projectsResult, entriesResult] = await Promise.all([
-                    supabaseClient.rpc('get_projects_for_app'),
+                    supabaseClient.rpc('get_projects_for_export'),
                     supabaseClient.rpc('get_entries_for_export')
                 ]);
                 if (projectsResult.error) throw new Error(`Impossibile esportare i progetti: ${projectsResult.error.message}`);
@@ -250,13 +251,16 @@ function switchAuthTab(mode) {
                 exportProjects = projectsResult.data || [];
                 exportEntries = entriesResult.data || [];
                 if (isAdmin) {
-                    const [expensesResult, auditRows, costRows] = await Promise.all([
-                        supabaseClient.rpc('get_expenses_for_app'),
+                    const [expensesResult, teamResult, auditRows, costRows] = await Promise.all([
+                        supabaseClient.rpc('get_expenses_for_export'),
+                        supabaseClient.rpc('get_team_profiles_for_export'),
                         fetchAllExportRows('audit_log', '*', 'created_at'),
                         fetchAllExportRows('profile_hourly_cost_history', '*', 'effective_from')
                     ]);
                     if (expensesResult.error) throw new Error(`Impossibile esportare le spese: ${expensesResult.error.message}`);
+                    if (teamResult.error) throw new Error(`Impossibile esportare il team: ${teamResult.error.message}`);
                     exportExpenses = expensesResult.data || [];
+                    exportProfiles = teamResult.data || [];
                     exportAuditLog = auditRows;
                     exportCostHistory = costRows;
                 }
@@ -269,14 +273,14 @@ function switchAuthTab(mode) {
                 scope: isAdmin ? 'studio' : 'personale',
                 profile: userProfile,
                 studio: isAdmin ? studioData : null,
-                team: isAdmin ? profiles : [userProfile],
+                team: exportProfiles,
                 projects: exportProjects,
                 entries: exportEntries,
                 expenses: exportExpenses,
                 audit_log: exportAuditLog,
                 hourly_cost_history: exportCostHistory,
                 summary: {
-                    team_members: isAdmin ? profiles.length : 1,
+                    team_members: exportProfiles.length,
                     projects: exportProjects.length,
                     entries: exportEntries.length,
                     expenses: exportExpenses.length
@@ -286,9 +290,12 @@ function switchAuthTab(mode) {
 
         async function exportUserData() {
             if(!userProfile) return await appAlert("Errore", "Utente non trovato.", "danger");
-            const exportButton = document.getElementById('btn-export-user-data');
-            if (exportButton?.disabled) return;
-            if (exportButton) exportButton.disabled = true;
+            const exportButtons = [
+                document.getElementById('btn-export-user-data'),
+                document.getElementById('btn-paywall-export-data')
+            ].filter(Boolean);
+            if (exportButtons.some(button => button.disabled)) return;
+            exportButtons.forEach(button => { button.disabled = true; });
 
             try {
                 const exportScope = (userProfile.is_owner || userProfile.role === 'admin')
@@ -314,7 +321,7 @@ function switchAuthTab(mode) {
             } catch (err) {
                 await appAlert("Esportazione non riuscita", err.message || "Non è stato possibile preparare il file JSON.", "danger");
             } finally {
-                if (exportButton) exportButton.disabled = false;
+                exportButtons.forEach(button => { button.disabled = false; });
             }
         }
 
@@ -387,7 +394,10 @@ function switchAuthTab(mode) {
             if(userProfile.is_owner) {
                 document.getElementById('billing-section').classList.remove('force-hide');
                 const status = studioData?.subscription_status || 'trialing';
-                const hasStripeSubscription = Boolean(studioData?.stripe_customer_id && studioData?.stripe_subscription_id);
+                const hasStripeSubscription = Boolean(
+                    studioData?.has_stripe_subscription
+                    || studioData?.stripe_subscription_id
+                );
                 const hasActiveAccess = ['active', 'free'].includes(status);
                 const planLabel = status === 'trialing'
                     ? 'PROVA GRATUITA'
@@ -509,7 +519,11 @@ function switchAuthTab(mode) {
 
         async function deleteAccount() {
             if (userProfile.is_owner) {
-                if (studioData?.subscription_status === 'active') {
+                const hasStripeSubscription = Boolean(
+                    studioData?.has_stripe_subscription
+                    || studioData?.stripe_subscription_id
+                );
+                if (studioData?.subscription_status === 'active' && hasStripeSubscription) {
                     return await appAlert("Abbonamento attivo", "Prima di poter eliminare definitivamente l'account e distruggere lo Spazio di Lavoro, devi annullare l'abbonamento attivo dal portale pagamenti.", "danger");
                 }
                 const warning = currentBusinessType === 'impresa' ? "Se sei il Titolare, eliminerai anche l'intera Impresa, tutti i cantieri e i dati storici." : "Se sei il Manager, eliminerai anche l'intero Studio, tutti i progetti e i dati storici.";
@@ -880,8 +894,10 @@ function switchAuthTab(mode) {
                         return;
                     }
 
-                    const { data: studio, error: studioError } = await supabaseClient.from('studios').select('*').eq('id', userProfile.studio_id).single();
-                    if (studioError || !studio) {
+                    let studio = null;
+                    try {
+                        studio = await fetchMyStudioForApp(userProfile.studio_id);
+                    } catch (studioError) {
                         console.error('Caricamento studio non riuscito:', studioError);
                         await appAlert(
                             'Dati studio non disponibili',
@@ -890,6 +906,7 @@ function switchAuthTab(mode) {
                         );
                         return;
                     }
+                    if (!studio) return;
                     studioData = studio;
                     updateCurrencyUI();
 
@@ -908,7 +925,7 @@ function switchAuthTab(mode) {
                     }
                     applyTheme(bType);
                     
-                    if (['canceled', 'past_due', 'inactive'].includes(status)) { showPaywall(); return; }
+                    if (['canceled', 'past_due', 'unpaid', 'inactive'].includes(status)) { showPaywall(); return; }
 
                     const trialBadge = document.getElementById('trial-badge');
                     const planBadge = document.getElementById('plan-badge');
@@ -961,18 +978,8 @@ function switchAuthTab(mode) {
                     if (headerUserRole) headerUserRole.innerText = profile.is_owner ? 'Owner' : (profile.role === 'admin' ? 'Admin' : 'Collaboratore');
                     document.getElementById('auth-container').classList.add('force-hide'); 
                     document.getElementById('app-container').classList.remove('force-hide');
-                    try {
-                        await initApp();
-                    } catch (loadError) {
-                        console.error('Caricamento dati applicazione non riuscito:', loadError);
-                        await appAlert(
-                            'Caricamento incompleto',
-                            'Non tutti i dati sono disponibili. Nessun dato è stato cancellato: ricarica la pagina e riprova.',
-                            'danger'
-                        );
-                        return;
-                    }
-                    ensureCurrentLegalAcceptance();
+                    const accepted = await ensureCurrentLegalAcceptance();
+                    if (accepted) await initializeOperationalApp();
                 } else if (error) {
                     await appAlert("Errore", "Errore accesso database.", "danger");
                 }
@@ -981,6 +988,31 @@ function switchAuthTab(mode) {
 
         const CURRENT_TERMS_VERSION = '2026-08-12';
         const CURRENT_PRIVACY_VERSION = '2026-08-12';
+        let operationalAppInitialized = false;
+        let operationalAppInitialization = null;
+
+        async function initializeOperationalApp() {
+            if (operationalAppInitialized) return;
+            if (operationalAppInitialization) return operationalAppInitialization;
+
+            operationalAppInitialization = (async () => {
+                try {
+                    await initApp();
+                    operationalAppInitialized = true;
+                } catch (loadError) {
+                    console.error('Caricamento dati applicazione non riuscito:', loadError);
+                    await appAlert(
+                        'Caricamento incompleto',
+                        'Non tutti i dati sono disponibili. Nessun dato è stato cancellato: ricarica la pagina e riprova.',
+                        'danger'
+                    );
+                    return false;
+                } finally {
+                    operationalAppInitialization = null;
+                }
+            })();
+            return operationalAppInitialization;
+        }
 
         async function ensureCurrentLegalAcceptance() {
             try {
@@ -992,9 +1024,19 @@ function switchAuthTab(mode) {
                 if (!data) {
                     document.getElementById('modal-legal-update')?.classList.remove('force-hide');
                     lucide.createIcons();
+                    return false;
                 }
+                return true;
             } catch (error) {
                 console.error('Verifica accettazione documenti non riuscita:', error);
+                const errorBox = document.getElementById('legal-update-error');
+                if (errorBox) {
+                    errorBox.textContent = 'Non è stato possibile verificare la conferma. Riprova con il pulsante qui sotto.';
+                    errorBox.classList.remove('force-hide');
+                }
+                document.getElementById('modal-legal-update')?.classList.remove('force-hide');
+                lucide.createIcons();
+                return false;
             }
         }
 
@@ -1011,6 +1053,7 @@ function switchAuthTab(mode) {
                 });
                 if (error) throw error;
                 document.getElementById('modal-legal-update')?.classList.add('force-hide');
+                await initializeOperationalApp();
             } catch (error) {
                 if (errorBox) {
                     errorBox.textContent = 'Non è stato possibile registrare la conferma. Riprova tra poco.';

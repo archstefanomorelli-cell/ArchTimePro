@@ -8,6 +8,8 @@ const stripe = new Stripe(Deno.env.get("STRIPE_API_KEY") as string, {
 });
 
 const cryptoProvider = Stripe.createSubtleCryptoProvider();
+const FOUNDER_AMOUNT_CENTS = 1990;
+const FOUNDER_CURRENCY = "eur";
 
 function jsonResponse(body: Record<string, unknown>, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -36,8 +38,70 @@ function firstPriceId(subscription: Stripe.Subscription) {
   return subscription.items.data[0]?.price?.id ?? null;
 }
 
+function assertFounderSubscription(subscription: Stripe.Subscription) {
+  const price = subscription.items.data[0]?.price;
+  const expectedPriceId = Deno.env.get("STRIPE_FOUNDER_PRICE_ID")?.trim();
+  const isExpectedPrice = !expectedPriceId || price?.id === expectedPriceId;
+  const isExpectedAmount = price?.unit_amount === FOUNDER_AMOUNT_CENTS;
+  const isExpectedCurrency = price?.currency === FOUNDER_CURRENCY;
+  const isMonthly = price?.recurring?.interval === "month" && (price.recurring.interval_count ?? 1) === 1;
+
+  if (!price || !isExpectedPrice || !isExpectedAmount || !isExpectedCurrency || !isMonthly) {
+    throw new Error("Unexpected Stripe subscription price");
+  }
+}
+
 function unixToIso(timestamp?: number | null) {
   return timestamp ? new Date(timestamp * 1000).toISOString() : null;
+}
+
+async function syncCurrentSubscription(
+  supabase: ReturnType<typeof getSupabaseAdmin>,
+  subscription: Stripe.Subscription,
+  eventId: string,
+) {
+  assertFounderSubscription(subscription);
+  const customerId = typeof subscription.customer === "string"
+    ? subscription.customer
+    : subscription.customer.id;
+
+  let { data: studio, error: lookupError } = await supabase
+    .from("studios")
+    .select("id")
+    .eq("stripe_subscription_id", subscription.id)
+    .maybeSingle();
+  if (lookupError) throw lookupError;
+
+  if (!studio) {
+    const customerLookup = await supabase
+      .from("studios")
+      .select("id")
+      .eq("stripe_customer_id", customerId)
+      .maybeSingle();
+    if (customerLookup.error) throw customerLookup.error;
+    studio = customerLookup.data;
+  }
+
+  if (!studio) return false;
+
+  const { data: updated, error: updateError } = await supabase
+    .from("studios")
+    .update({
+      subscription_status: mapStripeSubscriptionStatus(subscription.status),
+      plan_type: "founder",
+      stripe_customer_id: customerId,
+      stripe_subscription_id: subscription.id,
+      stripe_price_id: firstPriceId(subscription),
+      stripe_current_period_end: unixToIso(subscription.current_period_end),
+      stripe_last_event_id: eventId,
+    })
+    .eq("id", studio.id)
+    .select("id")
+    .maybeSingle();
+
+  if (updateError) throw updateError;
+  if (!updated) throw new Error("Stripe subscription update matched no studio");
+  return true;
 }
 
 serve(async (request) => {
@@ -70,19 +134,27 @@ serve(async (request) => {
         return jsonResponse({ ok: true, ignored: "checkout session without studio/subscription/customer" });
       }
 
-      const { error } = await supabase
+      const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+      assertFounderSubscription(subscription);
+
+      const { data: updated, error } = await supabase
         .from("studios")
         .update({
-          subscription_status: "active",
+          subscription_status: mapStripeSubscriptionStatus(subscription.status),
           plan_type: "founder",
           stripe_customer_id: customerId,
           stripe_subscription_id: subscriptionId,
           stripe_checkout_session_id: session.id,
+          stripe_price_id: firstPriceId(subscription),
+          stripe_current_period_end: unixToIso(subscription.current_period_end),
           stripe_last_event_id: event.id,
         })
-        .eq("id", studioId);
+        .eq("id", studioId)
+        .select("id")
+        .maybeSingle();
 
       if (error) throw error;
+      if (!updated) throw new Error("Checkout matched no studio");
       return jsonResponse({ ok: true });
     }
 
@@ -91,29 +163,10 @@ serve(async (request) => {
       event.type === "customer.subscription.updated" ||
       event.type === "customer.subscription.deleted"
     ) {
-      const subscription = event.data.object as Stripe.Subscription;
-      const customerId = typeof subscription.customer === "string"
-        ? subscription.customer
-        : subscription.customer.id;
-      const appStatus = event.type === "customer.subscription.deleted"
-        ? "canceled"
-        : mapStripeSubscriptionStatus(subscription.status);
-
-      const { error } = await supabase
-        .from("studios")
-        .update({
-          subscription_status: appStatus,
-          plan_type: "founder",
-          stripe_customer_id: customerId,
-          stripe_subscription_id: subscription.id,
-          stripe_price_id: firstPriceId(subscription),
-          stripe_current_period_end: unixToIso(subscription.current_period_end),
-          stripe_last_event_id: event.id,
-        })
-        .eq("stripe_subscription_id", subscription.id);
-
-      if (error) throw error;
-      return jsonResponse({ ok: true });
+      const eventSubscription = event.data.object as Stripe.Subscription;
+      const subscription = await stripe.subscriptions.retrieve(eventSubscription.id);
+      const synced = await syncCurrentSubscription(supabase, subscription, event.id);
+      return jsonResponse({ ok: true, synced });
     }
 
     if (event.type === "invoice.payment_succeeded" || event.type === "invoice.payment_failed") {
@@ -121,30 +174,13 @@ serve(async (request) => {
       const subscriptionId = typeof invoice.subscription === "string"
         ? invoice.subscription
         : invoice.subscription?.id;
-      const customerId = typeof invoice.customer === "string" ? invoice.customer : invoice.customer?.id;
-      const appStatus = event.type === "invoice.payment_succeeded" ? "active" : "past_due";
-
-      if (!subscriptionId && !customerId) {
-        return jsonResponse({ ok: true, ignored: "invoice without subscription/customer" });
+      if (!subscriptionId) {
+        return jsonResponse({ ok: true, ignored: "invoice without subscription" });
       }
 
-      let query = supabase
-        .from("studios")
-        .update({
-          subscription_status: appStatus,
-          plan_type: "founder",
-          stripe_customer_id: customerId ?? null,
-          stripe_subscription_id: subscriptionId ?? null,
-          stripe_last_event_id: event.id,
-        });
-
-      query = subscriptionId
-        ? query.eq("stripe_subscription_id", subscriptionId)
-        : query.eq("stripe_customer_id", customerId);
-
-      const { error } = await query;
-      if (error) throw error;
-      return jsonResponse({ ok: true });
+      const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+      const synced = await syncCurrentSubscription(supabase, subscription, event.id);
+      return jsonResponse({ ok: true, synced });
     }
 
     return jsonResponse({ ok: true, ignored: event.type });

@@ -167,6 +167,17 @@
         return escapeHtml(value).replace(/`/g, '&#096;');
     }
 
+    function friendlyAccessError(error) {
+        const message = String(error?.message || error || 'Accesso non riuscito.');
+        if (message.includes('SUBSCRIPTION_REQUIRED')) {
+            return 'La prova o l’abbonamento non sono attivi. Apri archtimepro.it per gestire il piano o esportare i dati.';
+        }
+        if (message.includes('LEGAL_ACCEPTANCE_REQUIRED')) {
+            return 'Apri una volta Arch Time Pro sul web per leggere e accettare i documenti aggiornati.';
+        }
+        return message;
+    }
+
     async function loadProjects() {
         const { data, error } = await client.rpc('get_projects_for_app');
         if (error) throw error;
@@ -441,7 +452,7 @@
             setStatus('app-status', '');
         } catch (error) {
             console.error(error);
-            setStatus('login-status', error.message || 'Accesso non riuscito.', 'error');
+            setStatus('login-status', friendlyAccessError(error), 'error');
         }
     }
 
@@ -458,9 +469,9 @@
         $('btn-window-minimize')?.addEventListener('click', minimizeDesktopWindow);
         $('btn-window-close')?.addEventListener('click', () => window.archTimeDesktop?.closeWindow?.());
         $('btn-expand-compact')?.addEventListener('click', () => setDesktopCompactMode(false));
-        $('btn-toggle-timer').addEventListener('click', () => toggleTimer().catch(error => setStatus('app-status', error.message, 'error')));
-        $('btn-save-manual').addEventListener('click', () => saveManual().catch(error => setStatus('app-status', error.message, 'error')));
-        $('btn-refresh').addEventListener('click', () => loadProjects().then(() => setStatus('app-status', 'Progetti aggiornati.', 'success')).catch(error => setStatus('app-status', error.message, 'error')));
+        $('btn-toggle-timer').addEventListener('click', () => toggleTimer().catch(error => setStatus('app-status', friendlyAccessError(error), 'error')));
+        $('btn-save-manual').addEventListener('click', () => saveManual().catch(error => setStatus('app-status', friendlyAccessError(error), 'error')));
+        $('btn-refresh').addEventListener('click', () => loadProjects().then(() => setStatus('app-status', 'Progetti aggiornati.', 'success')).catch(error => setStatus('app-status', friendlyAccessError(error), 'error')));
         $('project-select').addEventListener('change', () => {
             renderTasks();
             rememberLastSelection();

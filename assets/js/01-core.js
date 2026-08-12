@@ -59,6 +59,19 @@ const ARCH_TIME_CONFIG = window.ARCH_TIME_CONFIG || {};
             return Array.isArray(data) ? (data[0] || null) : data;
         }
 
+        async function fetchMyStudioForApp(studioId) {
+            const { data, error } = await supabaseClient.rpc('get_my_studio_for_app');
+            if (!error) return Array.isArray(data) ? (data[0] || null) : data;
+
+            // Compatibility fallback used only while the database migration is rolling out.
+            if (!/get_my_studio_for_app|schema cache|could not find/i.test(String(error.message || ''))) {
+                throw error;
+            }
+            const fallback = await supabaseClient.from('studios').select('*').eq('id', studioId).single();
+            if (fallback.error) throw fallback.error;
+            return fallback.data;
+        }
+
         async function setMyTimerStateForApp(timerState = {}) {
             const { error } = await supabaseClient.rpc('set_my_timer_state', {
                 timer_start: timerState.start ?? null,
