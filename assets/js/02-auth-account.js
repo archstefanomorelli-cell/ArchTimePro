@@ -388,12 +388,13 @@ function switchAuthTab(mode) {
                 document.getElementById('billing-section').classList.remove('force-hide');
                 const status = studioData?.subscription_status || 'trialing';
                 const hasStripeSubscription = Boolean(studioData?.stripe_customer_id && studioData?.stripe_subscription_id);
+                const hasActiveAccess = ['active', 'free'].includes(status);
                 const planLabel = status === 'trialing'
                     ? 'PROVA GRATUITA'
                     : (activePlan === 'starter' || activePlan === 'premium' ? 'FONDATORI' : activePlan.toUpperCase());
 
                 document.getElementById('account-plan-name').innerText = planLabel;
-                document.getElementById('account-upgrade-btn-container').classList.toggle('force-hide', hasStripeSubscription || status === 'free');
+                document.getElementById('account-upgrade-btn-container').classList.toggle('force-hide', hasActiveAccess);
                 document.getElementById('account-downgrade-btn-container').classList.add('force-hide');
                 document.getElementById('account-stripe-portal-btn')?.classList.toggle('force-hide', !hasStripeSubscription || status === 'free');
             } else {
