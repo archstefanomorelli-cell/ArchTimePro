@@ -49,7 +49,8 @@
             if (rpcData) {
                 projects = rpcData.sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
             } else {
-                const { data } = await supabaseClient.from('projects').select(projectSelectColumns()).order('name'); 
+                const { data, error } = await supabaseClient.from('projects').select(projectSelectColumns()).order('name');
+                if (error) throw error;
                 projects = data || [];
             }
             renderProjects(); 
@@ -61,7 +62,8 @@
             if (rpcData) {
                 entries = rpcData.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 2000);
             } else {
-                const { data } = await supabaseClient.from('entries').select(entrySelectColumns()).order('created_at', { ascending: false }).limit(2000); 
+                const { data, error } = await supabaseClient.from('entries').select(entrySelectColumns()).order('created_at', { ascending: false }).limit(2000);
+                if (error) throw error;
                 entries = data || [];
             }
             renderEntries(); 
@@ -78,7 +80,8 @@
             if (rpcData) {
                 expenses = rpcData.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
             } else {
-                const { data } = await supabaseClient.from('expenses').select('*').order('created_at', { ascending: false }); 
+                const { data, error } = await supabaseClient.from('expenses').select('*').order('created_at', { ascending: false });
+                if (error) throw error;
                 expenses = data || [];
             }
             renderProjects(); 

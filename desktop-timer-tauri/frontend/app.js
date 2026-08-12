@@ -168,13 +168,9 @@
     }
 
     async function loadProjects() {
-        const { data, error } = await client
-            .from('projects')
-            .select('id,name,tasks,is_archived')
-            .eq('studio_id', profile.studio_id)
-            .order('name');
+        const { data, error } = await client.rpc('get_projects_for_app');
         if (error) throw error;
-        projects = data || [];
+        projects = (data || []).sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
         renderProjects();
         restoreLastSelection();
     }

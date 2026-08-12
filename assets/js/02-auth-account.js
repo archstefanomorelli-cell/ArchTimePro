@@ -879,8 +879,17 @@ function switchAuthTab(mode) {
                         return;
                     }
 
-                    const { data: studio } = await supabaseClient.from('studios').select('*').eq('id', userProfile.studio_id).single();
-                    if(studio) studioData = studio;
+                    const { data: studio, error: studioError } = await supabaseClient.from('studios').select('*').eq('id', userProfile.studio_id).single();
+                    if (studioError || !studio) {
+                        console.error('Caricamento studio non riuscito:', studioError);
+                        await appAlert(
+                            'Dati studio non disponibili',
+                            'I dati non sono stati modificati. Ricarica la pagina; se il problema continua, contatta l\'assistenza.',
+                            'danger'
+                        );
+                        return;
+                    }
+                    studioData = studio;
                     updateCurrencyUI();
 
                     const status = studioData?.subscription_status || 'trialing';
@@ -951,7 +960,17 @@ function switchAuthTab(mode) {
                     if (headerUserRole) headerUserRole.innerText = profile.is_owner ? 'Owner' : (profile.role === 'admin' ? 'Admin' : 'Collaboratore');
                     document.getElementById('auth-container').classList.add('force-hide'); 
                     document.getElementById('app-container').classList.remove('force-hide');
-                    initApp();
+                    try {
+                        await initApp();
+                    } catch (loadError) {
+                        console.error('Caricamento dati applicazione non riuscito:', loadError);
+                        await appAlert(
+                            'Caricamento incompleto',
+                            'Non tutti i dati sono disponibili. Nessun dato è stato cancellato: ricarica la pagina e riprova.',
+                            'danger'
+                        );
+                        return;
+                    }
                     ensureCurrentLegalAcceptance();
                 } else if (error) {
                     await appAlert("Errore", "Errore accesso database.", "danger");

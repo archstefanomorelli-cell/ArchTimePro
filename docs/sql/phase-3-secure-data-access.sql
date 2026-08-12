@@ -71,10 +71,10 @@ begin
     raise exception 'Utente senza studio';
   end if;
 
-  select email
+  select profile.email
   into caller_email
-  from public.profiles
-  where id = auth.uid();
+  from public.profiles as profile
+  where profile.id = auth.uid();
 
   return query
   select
