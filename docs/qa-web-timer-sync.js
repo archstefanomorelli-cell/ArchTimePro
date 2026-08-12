@@ -18,10 +18,11 @@ const executablePath = browserCandidates.find(candidate => fs.existsSync(candida
     await page.waitForTimeout(500);
 
     const result = await page.evaluate(async () => {
-        window.__timerQa = { alerts: [], stateCalls: [], saved: [] };
+        window.__timerQa = { alerts: [], stateCalls: [], saved: [], entryRefreshes: 0 };
         window.appAlert = async (...args) => window.__timerQa.alerts.push(args);
         window.setMyTimerStateForApp = async state => window.__timerQa.stateCalls.push(state || {});
         window.saveEntry = async (...args) => window.__timerQa.saved.push(args);
+        window.fetchEntries = async () => { window.__timerQa.entryRefreshes += 1; };
 
         const startedAt = Date.now() - 15 * 60 * 1000;
         applyCloudTimerState({
@@ -62,7 +63,8 @@ const executablePath = browserCandidates.find(candidate => fs.existsSync(candida
             remoteStop: {
                 button: document.getElementById('btn-text').textContent.trim(),
                 display: document.getElementById('timer-display').textContent.trim(),
-                runningClass: document.getElementById('btn-toggle-timer').classList.contains('is-running')
+                runningClass: document.getElementById('btn-toggle-timer').classList.contains('is-running'),
+                entryRefreshes: window.__timerQa.entryRefreshes
             }
         };
     });
@@ -72,6 +74,7 @@ const executablePath = browserCandidates.find(candidate => fs.existsSync(candida
     if (result.stoppedLocally.savedProject !== 'Villa Rossi') throw new Error(`Progetto timer perso: ${JSON.stringify(result)}`);
     if (result.stoppedLocally.button !== 'Avvia ora' || result.stoppedLocally.display !== '00:00:00') throw new Error(`UI stop mobile errata: ${JSON.stringify(result)}`);
     if (result.remoteStop.button !== 'Avvia ora' || result.remoteStop.display !== '00:00:00' || result.remoteStop.runningClass) throw new Error(`Stop remoto non sincronizzato: ${JSON.stringify(result)}`);
+    if (result.remoteStop.entryRefreshes < 1) throw new Error(`Registro non aggiornato dopo lo stop remoto: ${JSON.stringify(result)}`);
 
     console.log(JSON.stringify(result, null, 2));
     await browser.close();

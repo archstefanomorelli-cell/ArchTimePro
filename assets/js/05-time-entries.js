@@ -297,6 +297,7 @@
         let cloudTimerSyncBusy = false;
         let cloudTimerMutationBusy = false;
         let cloudTimerFocusSyncBound = false;
+        let cloudTimerEntryRefreshHandle = null;
 
         function resolveCloudTimerProjectIndex(projectReference) {
             if (projectReference === null || projectReference === undefined || projectReference === '') return null;
@@ -374,8 +375,19 @@
             if (!userProfile?.id || cloudTimerSyncBusy || cloudTimerMutationBusy) return;
             cloudTimerSyncBusy = true;
             try {
+                const wasRunning = timerRunning;
+                const previousStartTime = startTime;
                 const prof = await fetchMyProfileForApp();
                 if (prof) applyCloudTimerState(prof);
+
+                const stoppedRemotely = wasRunning && previousStartTime && !prof?.active_timer_start;
+                if (stoppedRemotely) {
+                    await fetchEntries();
+                    if (cloudTimerEntryRefreshHandle) clearTimeout(cloudTimerEntryRefreshHandle);
+                    cloudTimerEntryRefreshHandle = setTimeout(() => {
+                        if (!timerRunning) fetchEntries().catch(error => console.warn('Aggiornamento registro non riuscito:', error.message || error));
+                    }, 1500);
+                }
             } catch (error) {
                 console.warn('Sincronizzazione timer non riuscita:', error.message || error);
             } finally {
