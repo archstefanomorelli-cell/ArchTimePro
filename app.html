@@ -296,6 +296,20 @@
                                 <button id="btn-save-studio-name" class="secondary-action icon-only compact" title="Salva nome"><i data-lucide="save" class="w-3.5 h-3.5"></i></button>
                             </div>
                             <input type="text" id="account-studio-name" placeholder="Nome studio" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all">
+                            <div class="mt-3 pt-3 border-t border-slate-200">
+                                <div class="flex items-center justify-between gap-3 mb-2">
+                                    <div>
+                                        <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Valuta dello studio</p>
+                                        <p class="text-[9px] text-slate-400 mt-0.5">Si applica a progetti, costi e report</p>
+                                    </div>
+                                    <button id="btn-save-studio-currency" class="secondary-action icon-only compact" title="Salva valuta"><i data-lucide="save" class="w-3.5 h-3.5"></i></button>
+                                </div>
+                                <select id="account-studio-currency" class="w-full border-2 border-primary-200 rounded-xl p-3 text-sm font-bold bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10">
+                                    <option value="EUR">EUR (€)</option>
+                                    <option value="CHF">CHF (franco svizzero)</option>
+                                </select>
+                                <p class="text-[9px] text-amber-700 mt-2 leading-relaxed">Il cambio di valuta non converte gli importi già inseriti.</p>
+                            </div>
                             <div class="mt-3">
                                 <input type="file" id="account-logo-input" accept="image/*" class="hidden">
                                 <button type="button" id="btn-upload-studio-logo" class="secondary-action compact w-full justify-center"><i data-lucide="upload-cloud" class="w-3.5 h-3.5"></i> Carica logo</button>
@@ -354,18 +368,18 @@
                     <div class="analytics-primary-grid">
                         <div class="analytics-kpi analytics-kpi-primary border border-slate-200 bg-white">
                             <h3>Margine lavori attivi</h3>
-                            <div id="kpi-margin" class="analytics-kpi-value text-primary-600">€ 0,00</div>
+                            <div id="kpi-margin" class="analytics-kpi-value text-primary-600">0,00 <span data-studio-currency-code>EUR</span></div>
                             <p id="kpi-margin-note">Sui lavori attivi</p>
                         </div>
                         <div id="card-profit" class="analytics-kpi analytics-kpi-profit border border-slate-200 bg-white">
                             <h3 id="label-profit">Utile lavori chiusi</h3>
-                            <div id="kpi-profit" class="analytics-kpi-value text-emerald-700">€ 0,00</div>
+                            <div id="kpi-profit" class="analytics-kpi-value text-emerald-700">0,00 <span data-studio-currency-code>EUR</span></div>
                             <p>Consuntivo archiviati</p>
                         </div>
                         <div class="analytics-kpi analytics-kpi-utilization border border-slate-200 bg-white">
                             <h3>Budget assorbito</h3>
                             <div id="kpi-utilization" class="analytics-kpi-value text-slate-800">0%</div>
-                            <p id="kpi-utilization-note">€ 0,00 su € 0,00</p>
+                            <p id="kpi-utilization-note">0,00 EUR su 0,00 EUR</p>
                         </div>
                     </div>
 
@@ -374,7 +388,7 @@
                             <span><small>Allineati</small><strong id="analytics-inline-aligned">0</strong></span>
                             <span><small>Da monitorare</small><strong id="analytics-inline-alerts">0</strong></span>
                             <span><small>Fuori budget</small><strong id="analytics-inline-over-budget">0</strong></span>
-                            <span><small>Costi settimana</small><strong id="analytics-inline-week-cost">€ 0,00</strong></span>
+                            <span><small>Costi settimana</small><strong id="analytics-inline-week-cost">0,00 EUR</strong></span>
                             <span><small>Attività più assorbente</small><strong id="analytics-inline-top-task">-</strong></span>
                         </span>
                         <span class="analytics-summary-action">
@@ -509,7 +523,7 @@
                         <select id="edit-team-role" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all appearance-none text-slate-700"></select>
                     </div>
                     <div>
-                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Costo orario (€)</label>
+                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Costo orario (<span data-studio-currency-symbol>€</span>)</label>
                         <input type="number" step="0.01" id="edit-team-cost" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all font-bold">
                     </div>
                 </div>
@@ -590,7 +604,7 @@
                         <label class="border border-slate-200 rounded-xl p-3 bg-white flex items-start gap-3"><input id="quote-pension-enabled" type="checkbox" class="mt-1 accent-indigo-600"><span class="flex-1"><strong class="text-xs text-slate-800 block">Contributo previdenziale</strong><span class="flex items-center gap-2 mt-2"><input id="quote-pension-label" type="text" value="Contributo integrativo" class="min-w-0 flex-1 border border-slate-200 rounded-lg p-2 text-xs"><input id="quote-pension-rate" type="number" min="0" max="100" step="0.01" class="w-20 border border-slate-200 rounded-lg p-2 text-xs text-right" aria-label="Aliquota contributo previdenziale"><small class="text-slate-400">%</small></span></span></label>
                         <label class="border border-slate-200 rounded-xl p-3 bg-white flex items-start gap-3"><input id="quote-vat-enabled" type="checkbox" class="mt-1 accent-indigo-600"><span class="flex-1"><strong class="text-xs text-slate-800 block">IVA</strong><span class="flex items-center gap-2 mt-2"><input id="quote-vat-rate" type="number" min="0" max="100" step="0.01" class="w-24 border border-slate-200 rounded-lg p-2 text-xs text-right" aria-label="Aliquota IVA"><small class="text-slate-400">%</small></span></span></label>
                         <label class="border border-slate-200 rounded-xl p-3 bg-white flex items-start gap-3"><input id="quote-withholding-enabled" type="checkbox" class="mt-1 accent-indigo-600"><span class="flex-1"><strong class="text-xs text-slate-800 block">Ritenuta d'acconto</strong><span class="flex items-center gap-2 mt-2"><input id="quote-withholding-rate" type="number" min="0" max="100" step="0.01" class="w-24 border border-slate-200 rounded-lg p-2 text-xs text-right" aria-label="Aliquota ritenuta"><small class="text-slate-400">%</small></span></span></label>
-                        <label class="border border-slate-200 rounded-xl p-3 bg-white flex items-start gap-3"><input id="quote-stamp-enabled" type="checkbox" class="mt-1 accent-indigo-600"><span class="flex-1"><strong class="text-xs text-slate-800 block">Bollo previsto</strong><span class="flex items-center gap-2 mt-2"><small class="text-slate-400">oltre €</small><input id="quote-stamp-threshold" type="number" min="0" step="0.01" class="w-24 border border-slate-200 rounded-lg p-2 text-xs text-right"><small class="text-slate-400">importo €</small><input id="quote-stamp-amount" type="number" min="0" step="0.01" class="w-20 border border-slate-200 rounded-lg p-2 text-xs text-right"></span></span></label>
+                        <label class="border border-slate-200 rounded-xl p-3 bg-white flex items-start gap-3"><input id="quote-stamp-enabled" type="checkbox" class="mt-1 accent-indigo-600"><span class="flex-1"><strong class="text-xs text-slate-800 block">Bollo previsto</strong><span class="flex items-center gap-2 mt-2"><small class="text-slate-400">oltre <span data-studio-currency-symbol>€</span></small><input id="quote-stamp-threshold" type="number" min="0" step="0.01" class="w-24 border border-slate-200 rounded-lg p-2 text-xs text-right"><small class="text-slate-400">importo <span data-studio-currency-symbol>€</span></small><input id="quote-stamp-amount" type="number" min="0" step="0.01" class="w-20 border border-slate-200 rounded-lg p-2 text-xs text-right"></span></span></label>
                     </div>
                 </section>
 
@@ -827,7 +841,7 @@
                 <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Note</label><input type="text" id="edit-entry-notes" placeholder="Note" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all"></div>
                 <div class="grid grid-cols-2 gap-4">
                     <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Ore</label><input type="text" id="edit-entry-hours" placeholder="00:00" inputmode="decimal" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all font-mono"></div>
-                    <div class="admin-only"><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Costo (€)</label><input type="number" step="0.01" id="edit-entry-cost" readonly class="w-full border border-slate-200 bg-slate-50 text-slate-500 font-bold rounded-xl p-3 text-sm outline-none"></div>
+                    <div class="admin-only"><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Costo (<span data-studio-currency-symbol>€</span>)</label><input type="number" step="0.01" id="edit-entry-cost" readonly class="w-full border border-slate-200 bg-slate-50 text-slate-500 font-bold rounded-xl p-3 text-sm outline-none"></div>
                 </div>
                 <button id="btn-save-entry-edit" class="w-full bg-slate-900 text-white py-3.5 mt-4 rounded-xl font-bold shadow-sm hover:bg-slate-800 transition-all active:scale-[0.98]">Salva modifiche</button>
             </div>
@@ -843,7 +857,7 @@
             <input type="hidden" id="edit-expense-project-id">
             <div class="space-y-4">
                 <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Descrizione</label><input type="text" id="edit-expense-desc" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 transition-all"></div>
-                <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Importo</label><div class="flex gap-2 bg-white p-3 rounded-xl border border-slate-200 focus-within:border-amber-500 focus-within:ring-4 focus-within:ring-amber-500/10 transition-all"><span class="text-slate-400 font-bold text-sm">€</span><input type="number" step="0.01" id="edit-expense-amount" class="bg-transparent w-full outline-none text-sm font-bold text-slate-800"></div></div>
+                <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Importo</label><div class="flex gap-2 bg-white p-3 rounded-xl border border-slate-200 focus-within:border-amber-500 focus-within:ring-4 focus-within:ring-amber-500/10 transition-all"><span data-studio-currency-symbol class="text-slate-400 font-bold text-sm">€</span><input type="number" step="0.01" id="edit-expense-amount" class="bg-transparent w-full outline-none text-sm font-bold text-slate-800"></div></div>
                 <button id="btn-save-expense-edit" class="w-full bg-slate-900 text-white py-3.5 mt-4 rounded-xl font-bold shadow-sm hover:bg-slate-800 transition-all active:scale-[0.98]">Salva modifica</button>
             </div>
         </div>
@@ -894,7 +908,7 @@
                                 <button type="button" id="budget-mode-auto" data-ui-action="set-project-budget-mode" data-budget-mode="auto" class="px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-wider transition-all">Somma attività</button>
                             </div>
                         </div>
-                        <div class="flex gap-2 bg-white p-3 rounded-xl border border-slate-200 focus-within:border-primary-500 focus-within:ring-4 focus-within:ring-primary-500/10 transition-all"><span class="text-slate-400 font-bold text-sm">€</span><input type="number" id="edit-modal-budget" placeholder="0.00" class="bg-transparent w-full outline-none text-sm font-bold text-slate-800"></div>
+                        <div class="flex gap-2 bg-white p-3 rounded-xl border border-slate-200 focus-within:border-primary-500 focus-within:ring-4 focus-within:ring-primary-500/10 transition-all"><span data-studio-currency-symbol class="text-slate-400 font-bold text-sm">€</span><input type="number" id="edit-modal-budget" placeholder="0.00" class="bg-transparent w-full outline-none text-sm font-bold text-slate-800"></div>
                         <p id="project-budget-mode-note" class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-2 leading-relaxed">Inserisci una cifra unica oppure usa la somma delle attività.</p>
                     </div>
                 </div>
@@ -917,7 +931,7 @@
                                 <label class="normative-field normative-field-wide">
                                     <span>Valore dell'opera (V)</span>
                                     <div class="normative-money-input">
-                                        <b>€</b>
+                                        <b data-studio-currency-symbol>€</b>
                                         <input type="text" id="normative-work-value" inputmode="decimal" placeholder="0">
                                     </div>
                                 </label>
@@ -946,9 +960,9 @@
                             <div class="normative-calculation-summary">
                                 <span><small>Parametro P</small><strong id="normative-parameter-p">0,0000%</strong></span>
                                 <span><small>Complessità G</small><strong id="normative-complexity-g">-</strong></span>
-                                <span><small>Compenso CP</small><strong id="normative-fee-total">€ 0</strong></span>
-                                <span><small>Spese e oneri <b id="normative-expenses-rate">0%</b></small><strong id="normative-expenses-amount">€ 0</strong></span>
-                                <span class="is-total"><small>Totale preventivo</small><strong id="normative-quote-total">€ 0</strong></span>
+                                <span><small>Compenso CP</small><strong id="normative-fee-total">0 EUR</strong></span>
+                                <span><small>Spese e oneri <b id="normative-expenses-rate">0%</b></small><strong id="normative-expenses-amount">0 EUR</strong></span>
+                                <span class="is-total"><small>Totale preventivo</small><strong id="normative-quote-total">0 EUR</strong></span>
                             </div>
                             <p class="normative-calculation-disclaimer">Spese e oneri accessori applicati automaticamente nella misura massima prevista. Eventuale maggiorazione BIM non inclusa.</p>
                         </div>
@@ -1055,13 +1069,13 @@
 
     <script src="assets/js/00-runtime-config.js?v=stripe-founder-2026-06-29"></script>
     <script src="assets/js/normative-engine.js?v=2026-08-01-01"></script>
-    <script src="assets/js/01-core.js?v=quote-notes-2026-08-03-01"></script>
-    <script src="assets/js/02-auth-account.js?v=signup-attribution-2026-08-11-01"></script>
+    <script src="assets/js/01-core.js?v=studio-currency-2026-08-12-01"></script>
+    <script src="assets/js/02-auth-account.js?v=studio-currency-2026-08-12-01"></script>
     <script src="assets/js/03-team.js?v=phase3-team-modals-2026-05-12"></script>
-    <script src="assets/js/04-projects.js?v=quote-excel-2026-08-03-01"></script>
+    <script src="assets/js/04-projects.js?v=studio-currency-2026-08-12-01"></script>
     <script src="assets/js/05-time-entries.js?v=activation-funnel-2026-07-18-01"></script>
-    <script src="assets/js/06-reports.js?v=quote-excel-2026-08-03-01"></script>
-    <script src="assets/js/07-password-bootstrap.js?v=quote-excel-2026-08-03-01"></script>
+    <script src="assets/js/06-reports.js?v=studio-currency-2026-08-12-01"></script>
+    <script src="assets/js/07-password-bootstrap.js?v=studio-currency-2026-08-12-01"></script>
     <script src="assets/js/09-video-demo.js?v=quote-fiscal-2026-08-03-01"></script>
 </body>
 </html>

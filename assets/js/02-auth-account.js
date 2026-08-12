@@ -356,6 +356,39 @@ function switchAuthTab(mode) {
             await appAlert("Fatto", "Nome aggiornato!", "success"); 
         }
 
+        async function saveStudioCurrency() {
+            const selector = document.getElementById('account-studio-currency');
+            const currency = selector?.value;
+            if (!STUDIO_CURRENCIES[currency]) return;
+
+            const previousCurrency = getStudioCurrency().code;
+            if (currency === previousCurrency) return;
+
+            const confirmed = await appConfirm(
+                'Cambia valuta dello studio',
+                `Passare da ${previousCurrency} a ${currency}? Gli importi esistenti non saranno convertiti: cambierà solo la valuta visualizzata e usata nelle esportazioni.`,
+                'warning'
+            );
+            if (!confirmed) {
+                selector.value = previousCurrency;
+                return;
+            }
+
+            const { error } = await supabaseClient.from('studios').update({ currency }).eq('id', userProfile.studio_id);
+            if (error) {
+                selector.value = previousCurrency;
+                const missingColumn = /currency/i.test(error.message || '');
+                return appAlert('Valuta non salvata', missingColumn ? 'Esegui prima lo script SQL per abilitare la valuta dello studio.' : error.message, 'danger');
+            }
+
+            studioData.currency = currency;
+            updateCurrencyUI();
+            renderProjects();
+            renderEntries();
+            if (isAdminUser()) renderStrategicCharts();
+            await appAlert('Fatto', `Valuta dello studio impostata su ${currency}.`, 'success');
+        }
+
         function quotePresetValues(preset) {
             if (preset === 'ordinario') {
                 return {
@@ -629,6 +662,7 @@ function switchAuthTab(mode) {
 
                     const { data: studio } = await supabaseClient.from('studios').select('*').eq('id', userProfile.studio_id).single();
                     if(studio) studioData = studio;
+                    updateCurrencyUI();
 
                     const status = studioData?.subscription_status || 'trialing';
                     activePlan = studioData?.plan_type || 'founder'; 
@@ -676,6 +710,7 @@ function switchAuthTab(mode) {
                         projectTemplates = studioData?.project_templates ? studioData.project_templates : [...THEMES[currentBusinessType].defaultTemplates];
                         if(studioData) {
                             document.getElementById('account-studio-name').value = studioData.name || '';
+                            document.getElementById('account-studio-currency').value = getStudioCurrency().code;
                             renderQuoteSettingsPreview();
                             if(studioData.logo_url) { 
                                 const accountLogoPreview = document.getElementById('account-logo-preview');

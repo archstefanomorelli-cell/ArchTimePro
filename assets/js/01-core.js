@@ -176,7 +176,7 @@ const ARCH_TIME_CONFIG = window.ARCH_TIME_CONFIG || {};
         function parseMoneyInput(value) {
             const rawValue = String(value || '')
                 .replace(/\s/g, '')
-                .replace(/[€]/g, '')
+                .replace(/(?:EUR|CHF|€)/gi, '')
                 .replace(/\./g, '')
                 .replace(',', '.');
 
@@ -196,11 +196,35 @@ const ARCH_TIME_CONFIG = window.ARCH_TIME_CONFIG || {};
             return escapeHtml(value).replace(/`/g, '&#96;');
         }
 
+        const STUDIO_CURRENCIES = {
+            EUR: { code: 'EUR', symbol: '€', locale: 'it-IT', excelFormat: '#,##0.00 [$€-it-IT]' },
+            CHF: { code: 'CHF', symbol: 'CHF', locale: 'it-CH', excelFormat: '#,##0.00 [$CHF-100C]' }
+        };
+
+        function getStudioCurrency() {
+            return STUDIO_CURRENCIES[studioData?.currency] || STUDIO_CURRENCIES.EUR;
+        }
+
+        function updateCurrencyUI() {
+            const currency = getStudioCurrency();
+            document.querySelectorAll('[data-studio-currency-symbol]').forEach(element => {
+                element.textContent = currency.symbol;
+            });
+            document.querySelectorAll('[data-studio-currency-code]').forEach(element => {
+                element.textContent = currency.code;
+            });
+            const selector = document.getElementById('account-studio-currency');
+            if (selector) selector.value = currency.code;
+            const onboardingCost = document.getElementById('onboarding-hourly-cost');
+            if (onboardingCost) onboardingCost.placeholder = `Costo orario interno (${currency.symbol})`;
+        }
+
         function formatMoney(value, digits = 2) {
             const amount = Number(value || 0);
-            return new Intl.NumberFormat('it-IT', {
+            const currency = getStudioCurrency();
+            return new Intl.NumberFormat(currency.locale, {
                 style: 'currency',
-                currency: 'EUR',
+                currency: currency.code,
                 minimumFractionDigits: digits,
                 maximumFractionDigits: digits
             }).format(amount);

@@ -523,7 +523,7 @@
                             <div class="grid grid-cols-[minmax(0,1fr)_110px] gap-2 items-center">
                                 <span class="text-[10px] font-bold text-slate-500 truncate"><span class="text-primary-600 font-black">${index + 1}.</span> ${escapeHtml(task)}</span>
                                 <div class="flex items-center gap-1 border border-slate-200 rounded-lg px-2 py-1.5 bg-white focus-within:border-primary-400 focus-within:ring-2 focus-within:ring-primary-500/10">
-                                    <span class="text-[10px] font-black text-slate-400">€</span>
+                                    <span class="text-[10px] font-black text-slate-400">${getStudioCurrency().symbol}</span>
                                     <input type="text" data-budget-mode="${mode}" data-task="${escapeAttr(task)}" value="${escapeAttr(getTaskBudgetInputValue(budgets, task))}" placeholder="0" inputmode="decimal" class="task-budget-input w-full bg-transparent outline-none text-[11px] font-mono font-bold text-slate-700">
                                 </div>
                             </div>`).join('')}
@@ -968,7 +968,7 @@
                         <span class="text-[10px] font-black text-primary-700">${formatMoney(budgetValue, 0)}</span>
                     </div>` : isAutoBudget ? `
                     <div class="flex items-center gap-1 border border-slate-200 rounded-lg px-2 py-1.5 bg-slate-50 focus-within:bg-white focus-within:border-primary-400 focus-within:ring-2 focus-within:ring-primary-500/10" title="${budgetValue > 0 ? 'Importo usato come peso nel ritmo progetto' : 'Lascia vuoto se questa attività non deve pesare sul ritmo'}">
-                        <span class="text-[10px] font-black text-slate-400">€</span>
+                        <span class="text-[10px] font-black text-slate-400">${getStudioCurrency().symbol}</span>
                         <input type="text" data-budget-mode="${mode}" data-task="${escapeAttr(task)}" value="${escapeAttr(getTaskBudgetInputValue(budgets, task))}" placeholder="Fuori piano" inputmode="decimal" class="task-budget-input w-full bg-transparent outline-none text-[11px] font-mono font-bold text-slate-700 placeholder:text-[8px] placeholder:font-sans placeholder:uppercase placeholder:tracking-wider">
                     </div>` : ''}
                     ${isLocked
@@ -1818,8 +1818,8 @@
                     <div class="flex gap-2 mb-3">
                         <input type="text" id="exp-desc" placeholder="Es. Oneri o Materiali" class="flex-1 border border-slate-200 rounded-xl p-3 text-xs outline-none focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 transition-all bg-white">
                         <div class="w-24 relative flex items-center">
-                            <span class="absolute left-3 text-slate-400 font-bold text-xs">€</span>
-                            <input type="number" step="0.01" id="exp-amount" placeholder="0.00" class="w-full border border-slate-200 rounded-xl p-3 pl-6 text-xs outline-none focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 transition-all font-bold bg-white">
+                            <span class="absolute left-3 text-slate-400 font-bold text-xs">${getStudioCurrency().symbol}</span>
+                            <input type="number" step="0.01" id="exp-amount" placeholder="0.00" class="w-full border border-slate-200 rounded-xl p-3 pl-10 text-xs outline-none focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 transition-all font-bold bg-white">
                         </div>
                         <button data-ui-action="add-expense" data-project-id="${projectId}" class="bg-amber-500 text-white px-3.5 rounded-xl hover:bg-amber-600 transition-all shadow-sm active:scale-95"><i data-lucide="plus" class="w-4 h-4"></i></button>
                     </div>

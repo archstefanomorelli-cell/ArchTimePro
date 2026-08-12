@@ -429,7 +429,7 @@
             const baseAmount = isNormative ? Number(normativeData.quote_total || project.budget || 0) : Number(project.budget || 0);
             const fiscalSummary = calculateQuoteFiscalSummary(baseAmount, quoteSettings);
             const styles = quoteExcelStyles();
-            const currencyFormat = '#,##0.00 [$€-it-IT]';
+            const currencyFormat = getStudioCurrency().excelFormat;
             const percentageFormat = '0.00%';
             const workbook = new window.ExcelJS.Workbook();
             const sheet = workbook.addWorksheet('Preventivo', { properties: { defaultRowHeight: 20 }, views: [{ showGridLines: false }] });
