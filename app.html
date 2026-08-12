@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https://*.supabase.co https://www.google.com https://www.google.it; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://www.google-analytics.com https://region1.google-analytics.com https://www.google.com https://www.google.it https://stats.g.doubleclick.net; frame-src https://js.stripe.com https://hooks.stripe.com; form-action 'self' https://buy.stripe.com; object-src 'none'; base-uri 'self'">
     <meta name="theme-color" content="#172033">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,38 +37,18 @@
         html.video-demo-boot body { visibility: hidden; }
     </style>
     
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/tailwind-built.css?v=2026-08-12-01">
+    <link rel="stylesheet" href="assets/fonts.css?v=2026-08-12-01">
     
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: {
-                            50: 'rgb(var(--color-primary-50) / <alpha-value>)',
-                            100: 'rgb(var(--color-primary-100) / <alpha-value>)',
-                            200: 'rgb(var(--color-primary-200) / <alpha-value>)',
-                            300: 'rgb(var(--color-primary-300) / <alpha-value>)',
-                            400: 'rgb(var(--color-primary-400) / <alpha-value>)',
-                            500: 'rgb(var(--color-primary-500) / <alpha-value>)',
-                            600: 'rgb(var(--color-primary-600) / <alpha-value>)',
-                            700: 'rgb(var(--color-primary-700) / <alpha-value>)',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+    <script src="assets/vendor/supabase-2.39.3.js"></script>
+    <script src="assets/vendor/lucide-0.468.0.js"></script>
+    <script src="assets/vendor/chart-4.4.7.js"></script>
+    <script src="assets/vendor/jspdf-2.5.1.js"></script>
+    <script src="assets/vendor/jspdf-autotable-3.5.31.js"></script>
+    <script src="assets/vendor/exceljs-4.4.0.js"></script>
     <link rel="stylesheet" href="assets/app.css?v=phase3-budget-libero-2026-05-09">
     <link rel="stylesheet" href="assets/app-pro.css?v=studio-configuration-status-2026-08-12-01">
-    <script src="assets/js/12-analytics.js?v=signup-attribution-2026-08-11-01" defer></script>
+    <script src="assets/js/12-analytics.js?v=privacy-2026-08-12-01" defer></script>
 </head>
 <body class="text-slate-800 pb-20 lg:pb-0">
 
@@ -141,7 +122,7 @@
                         <label class="flex items-start gap-2.5 cursor-pointer group">
                             <input type="checkbox" id="accept-terms" class="mt-0.5 w-4 h-4 text-primary-600 border-slate-300 rounded focus:ring-primary-500 transition-all cursor-pointer">
                             <span class="text-[10px] text-slate-500 leading-tight">
-                                Ho letto e accetto integralmente i <a href="termini.html" target="_blank" class="font-bold text-slate-700 group-hover:text-primary-600 hover:underline transition-colors">Termini di Servizio</a> e la <a href="privacy.html" target="_blank" class="font-bold text-slate-700 group-hover:text-primary-600 hover:underline transition-colors">Privacy Policy</a>.*
+                                Ho letto la <a href="privacy.html" target="_blank" class="font-bold text-slate-700 group-hover:text-primary-600 hover:underline transition-colors">Privacy Policy</a> e accetto i <a href="termini.html" target="_blank" class="font-bold text-slate-700 group-hover:text-primary-600 hover:underline transition-colors">Termini di Servizio</a>.*
                             </span>
                         </label>
                         <div class="mt-2 pl-6 text-[10px] text-slate-400 leading-tight">
@@ -484,7 +465,7 @@
                 </div>
                 <div class="team-modal-note">
                     <i data-lucide="calculator" class="w-4 h-4"></i>
-                    <span>Il costo orario aggiorna margini e report. Se lo cambi, potrai scegliere se ricalcolare anche lo storico.</span>
+                    <span>Il nuovo costo orario si applica alle attività successive. Le registrazioni già salvate mantengono il costo storico.</span>
                 </div>
                 <div class="flex gap-2 pt-4 mt-2 border-t border-slate-100">
                     <button id="btn-delete-team" class="bg-white text-red-500 border border-red-100 hover:bg-red-50 hover:text-red-600 hover:border-red-200 px-4 py-3.5 rounded-xl transition-colors shadow-sm flex items-center justify-center shrink-0" title="Sgancia dallo studio"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
@@ -515,7 +496,7 @@
             </div>
 
             <div class="border-t border-slate-100 mt-5 pt-4 flex flex-col gap-2">
-                <button id="btn-export-user-data" class="w-full bg-primary-50 border border-primary-100 text-primary-700 hover:bg-primary-100 py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1.5 text-[10px] font-bold uppercase tracking-wider"><i data-lucide="download" class="w-3.5 h-3.5"></i> Esporta i miei dati (JSON)</button>
+                <button id="btn-export-user-data" class="w-full bg-primary-50 border border-primary-100 text-primary-700 hover:bg-primary-100 py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1.5 text-[10px] font-bold uppercase tracking-wider"><i data-lucide="download" class="w-3.5 h-3.5"></i> Esporta dati (JSON)</button>
                 <button data-action="logout" class="w-full bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-800 py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase tracking-wider"><i data-lucide="log-out" class="w-3.5 h-3.5"></i> Esci dall'account</button>
                 <button id="btn-delete-account" class="w-full text-[10px] font-bold uppercase tracking-wider text-red-500 bg-red-50 border border-red-100 hover:bg-red-100 hover:text-red-600 py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1.5 mt-1"><i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> Elimina definitivamente account</button>
             </div>
@@ -774,6 +755,20 @@
                     <button id="btn-prepare-first-project" class="w-full bg-slate-900 text-white py-3.5 mt-4 rounded-xl font-bold hover:bg-slate-800 transition-all active:scale-[0.98] shadow-sm flex items-center justify-center gap-2"><i data-lucide="folder-plus" class="w-4 h-4"></i> Prepara il primo lavoro</button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div id="modal-legal-update" class="force-hide fixed inset-0 z-[600] modal flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="legal-update-title">
+        <div class="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-xl sm:p-8">
+            <div class="mb-5 flex h-11 w-11 items-center justify-center rounded-xl border border-primary-100 bg-primary-50 text-primary-600">
+                <i data-lucide="shield-check" class="h-5 w-5"></i>
+            </div>
+            <h2 id="legal-update-title" class="text-xl font-black text-slate-900">Documenti aggiornati</h2>
+            <p class="mt-2 text-sm leading-relaxed text-slate-600">Abbiamo reso più chiari trattamento dei dati, sicurezza e condizioni del servizio. Leggi la <a href="privacy.html" target="_blank" rel="noopener" class="font-bold text-primary-600 underline underline-offset-2">Privacy Policy</a> e accetta i <a href="termini.html" target="_blank" rel="noopener" class="font-bold text-primary-600 underline underline-offset-2">Termini di servizio</a> per continuare.</p>
+            <p id="legal-update-error" class="force-hide mt-3 rounded-lg border border-red-100 bg-red-50 p-3 text-xs font-semibold text-red-700"></p>
+            <button id="btn-accept-legal-update" type="button" class="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-primary-600 px-4 py-3 text-sm font-bold text-white shadow-sm transition-all hover:bg-primary-700 disabled:cursor-wait disabled:opacity-60">
+                <i data-lucide="check" class="h-4 w-4"></i> Accetta e continua
+            </button>
         </div>
     </div>
 

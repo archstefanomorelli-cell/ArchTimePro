@@ -52,6 +52,22 @@ const ARCH_TIME_CONFIG = window.ARCH_TIME_CONFIG || {};
         const SUPABASE_URL = ARCH_TIME_CONFIG.supabaseUrl;
         const SUPABASE_KEY = ARCH_TIME_CONFIG.supabaseKey;
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        async function fetchMyProfileForApp() {
+            const { data, error } = await supabaseClient.rpc('get_my_profile_for_app');
+            if (error) throw error;
+            return Array.isArray(data) ? (data[0] || null) : data;
+        }
+
+        async function setMyTimerStateForApp(timerState = {}) {
+            const { error } = await supabaseClient.rpc('set_my_timer_state', {
+                timer_start: timerState.start ?? null,
+                timer_project: timerState.project ?? null,
+                timer_task: timerState.task ?? null,
+                timer_notes: timerState.notes ?? null
+            });
+            if (error) throw error;
+        }
         
         const STRIPE_LINK_FOUNDER = ARCH_TIME_CONFIG.stripeLinks?.founder || ARCH_TIME_CONFIG.stripeLinks?.premium || ARCH_TIME_CONFIG.stripeLinks?.starter || "";
         const STRIPE_LINK_STARTER = ARCH_TIME_CONFIG.stripeLinks?.starter || ""; 

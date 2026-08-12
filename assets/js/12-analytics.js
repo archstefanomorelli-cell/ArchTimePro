@@ -110,8 +110,6 @@
         document.head.appendChild(script);
     }
 
-    installGoogleTag();
-
     function getConsent() {
         try { return localStorage.getItem(CONSENT_KEY); }
         catch (error) { return null; }

@@ -2,7 +2,8 @@
 // ================= DATI TEAM =================
 
         async function fetchProfiles() { 
-            const { data } = await supabaseClient.from('profiles').select('*').eq('studio_id', userProfile.studio_id).order('full_name'); 
+            const { data, error } = await supabaseClient.rpc('get_team_profiles_for_app');
+            if (error) throw error;
             profiles = data || []; 
             renderProfiles(); 
         }
@@ -134,22 +135,18 @@
             
             const oldProf = profiles.find(p => p.id === id);
             let finalRole = oldProf.role;
-            let finalIsOwner = oldProf.is_owner;
+            let transferOwnership = false;
 
             if (roleSelection === 'transfer_owner' && id !== userProfile.id) {
                 if(!await appConfirm("Trasferimento Proprietà", "ATTENZIONE: Stai cedendo la proprietà dello Spazio di Lavoro a questo utente.\nDiventerai un normale Admin, e perderai l'accesso alla gestione dell'abbonamento Stripe.\nVuoi davvero procedere?", "danger")) {
                     return;
                 }
-                await supabaseClient.from('profiles').update({ is_owner: false }).eq('id', userProfile.id);
-                userProfile.is_owner = false;
                 finalRole = 'admin';
-                finalIsOwner = true;
+                transferOwnership = true;
             } else if (roleSelection === 'owner') {
                 finalRole = 'admin';
-                finalIsOwner = true;
             } else {
                 finalRole = roleSelection;
-                finalIsOwner = false;
             }
             
             if (id === userProfile.id && finalRole === 'inactive') {
@@ -161,18 +158,16 @@
                 }
             }
 
-            await supabaseClient.from('profiles').update({ full_name: newName, hourly_cost: newCost, role: finalRole, is_owner: finalIsOwner }).eq('id', id);
-            
-            if (oldProf && oldProf.hourly_cost !== newCost) {
-                if(await appConfirm("Ricalcolo Storico", `Hai modificato la tariffa oraria di ${newName}.\nVuoi ricalcolare automaticamente il costo di TUTTE le ore che ha già registrato in passato con questa nuova tariffa?`, "info")) {
-                    const { data: userEntries } = await supabaseClient.from('entries').select('id, duration').eq('user_name', oldProf.full_name);
-                    if(userEntries && userEntries.length > 0) {
-                        for(let e of userEntries) {
-                            await supabaseClient.from('entries').update({ rate: (e.duration * newCost) }).eq('id', e.id);
-                        }
-                    }
-                }
-            }
+            const { error } = await supabaseClient.rpc('update_team_member_for_app', {
+                target_profile_id: id,
+                target_full_name: newName,
+                target_hourly_cost: newCost,
+                target_role: finalRole,
+                transfer_ownership: transferOwnership
+            });
+            if (error) return appAlert('Errore', error.message, 'danger');
+
+            if (transferOwnership) userProfile.is_owner = false;
             
             if (id === userProfile.id && finalRole === 'inactive') {
                 await supabaseClient.auth.signOut();

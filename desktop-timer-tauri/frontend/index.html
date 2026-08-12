@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://www.archtimepro.it https://unpkg.com https://*.supabase.co; script-src 'self' 'unsafe-inline' https://www.archtimepro.it https://unpkg.com; style-src 'self' 'unsafe-inline'; connect-src 'self' https://www.archtimepro.it https://*.supabase.co wss://*.supabase.co; img-src 'self' data:;">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.archtimepro.it; style-src 'self' 'unsafe-inline'; connect-src 'self' https://www.archtimepro.it https://*.supabase.co wss://*.supabase.co; img-src 'self' data:;">
   <title>Arch Time Mini Timer</title>
   <link rel="stylesheet" href="styles.css">
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="vendor/supabase-2.39.3.js"></script>
+  <script src="vendor/lucide-0.468.0.js"></script>
   <script src="https://www.archtimepro.it/assets/js/00-runtime-config.js?v=tauri-2026-07-16"></script>
 </head>
 <body>

@@ -291,7 +291,7 @@
         }
 
         async function restoreCloudTimer() {
-            const { data: prof } = await supabaseClient.from('profiles').select('*').eq('id', userProfile.id).single();
+            const prof = await fetchMyProfileForApp();
             if (prof && prof.active_timer_start) {
                 timerRunning = true; 
                 startTime = parseInt(prof.active_timer_start);
@@ -324,13 +324,7 @@
             if (!timerRunning) {
                 timerRunning = true; 
                 startTime = Date.now();
-                await supabaseClient.from('profiles').update({
-                    active_timer_start: startTime.toString(),
-                    active_timer_project: pIdx,
-                    active_timer_task: tVal,
-                    active_timer_notes: notes,
-                    active_timer_reminder_sent_at: null
-                }).eq('id', userProfile.id);
+                await setMyTimerStateForApp({ start: startTime.toString(), project: pIdx, task: tVal, notes });
                 document.getElementById('btn-text').innerText = "FERMA E SALVA"; 
                 document.getElementById('btn-icon').setAttribute("data-lucide", "square"); 
                 setTimerButtonRunning(true);
@@ -342,13 +336,7 @@
             } else {
                 timerRunning = false; 
                 clearInterval(timerInterval);
-                await supabaseClient.from('profiles').update({
-                    active_timer_start: null,
-                    active_timer_project: null,
-                    active_timer_task: null,
-                    active_timer_notes: null,
-                    active_timer_reminder_sent_at: null
-                }).eq('id', userProfile.id);
+                await setMyTimerStateForApp();
                 
                 const eDate = new Date();
                 const sDate = new Date(startTime);
@@ -379,27 +367,18 @@
                 entry_created_at: entryDateToIso(customDate)
             };
             const { error } = await supabaseClient.rpc('create_entry_for_app', payload);
-            if (error) {
-                console.warn('RPC create_entry_for_app non disponibile, uso fallback client.', error.message);
-                return false;
-            }
+            if (error) throw error;
             return true;
         }
 
         async function saveEntry(proj, task, hours, customDate = null, notes = "", source = "manual") {
-            const createdViaRpc = await createEntryViaRpc(proj, task, hours, customDate, notes);
-            if (createdViaRpc) {
+            try {
+                await createEntryViaRpc(proj, task, hours, customDate, notes);
                 window.archTimeAnalytics?.track('time_entry_created', { source, is_demo_project: Boolean(proj.is_demo) });
-                fetchEntries();
-                return;
+                await fetchEntries();
+            } catch (error) {
+                await appAlert('Registrazione non riuscita', error.message || 'Non è stato possibile salvare l’attività.', 'danger');
             }
-
-            const { data: prof } = await supabaseClient.from('profiles').select('*').eq('id', userProfile.id).single();
-            const payload = { project_id: proj.id, project_name: proj.name, task, duration: hours, user_email: userProfile.email, user_name: prof.full_name, rate: (prof ? prof.hourly_cost : 0) * hours, studio_id: userProfile.studio_id, notes: notes };
-            if(customDate) payload.created_at = entryDateToIso(customDate);
-            const { error } = await supabaseClient.from('entries').insert([payload]);
-            if (!error) window.archTimeAnalytics?.track('time_entry_created', { source, is_demo_project: Boolean(proj.is_demo) });
-            fetchEntries();
         }
 
         function openManualEntry() { 

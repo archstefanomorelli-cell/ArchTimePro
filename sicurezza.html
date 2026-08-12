@@ -8,14 +8,14 @@
     <meta name="description" content="Le misure di sicurezza attive oggi in Arch Time Pro: autenticazione, isolamento tra studi, ruoli, funzioni server, pagamenti e limiti dichiarati.">
     <link rel="canonical" href="https://www.archtimepro.it/sicurezza.html">
     <title>Sicurezza dei dati | Arch Time Pro</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="assets/tailwind-built.css?v=2026-08-12-01">
+    <link rel="stylesheet" href="assets/fonts.css?v=2026-08-12-01">
+    <script src="assets/vendor/lucide-0.468.0.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         body { font-family: 'Inter', sans-serif; color: #0f172a; -webkit-font-smoothing: antialiased; }
         .bg-grid { background-image: radial-gradient(#e2e8f0 1px, transparent 1px); background-size: 30px 30px; }
     </style>
-    <script src="assets/js/12-analytics.js?v=signup-attribution-2026-08-11-01" defer></script>
+    <script src="assets/js/12-analytics.js?v=privacy-2026-08-12-01" defer></script>
     <link rel="stylesheet" href="assets/public-site.css?v=2026-07-16-4">
     <script src="assets/js/14-public-shell.js?v=desktop-hidden-2026-07-18-01" defer></script>
 </head>
@@ -27,7 +27,7 @@
                 <p class="mb-3 text-xs font-extrabold uppercase text-indigo-600">Sicurezza attiva oggi</p>
                 <h1 class="text-4xl font-black text-slate-950 sm:text-5xl lg:text-6xl">Come proteggiamo i dati di Arch Time Pro.</h1>
                 <p class="mt-5 max-w-3xl text-base font-medium leading-relaxed text-slate-600 sm:text-lg">Questa pagina descrive le misure effettivamente utilizzate dal servizio e i relativi limiti, senza presentare funzionalità future come protezioni già disponibili.</p>
-                <p class="mt-5 text-sm font-bold text-slate-500">Ultimo aggiornamento: 11 luglio 2026</p>
+                <p class="mt-5 text-sm font-bold text-slate-500">Ultimo aggiornamento: 12 agosto 2026</p>
             </div>
         </section>
 
@@ -63,6 +63,8 @@
                     <div class="grid gap-3 border-b border-slate-100 p-5 md:grid-cols-[220px_1fr]"><h3 class="font-black text-slate-900">Autorizzazione database</h3><p class="text-sm leading-relaxed text-slate-600">Le tabelle esposte all’app usano policy RLS e controlli legati all’identità autenticata e allo studio di appartenenza.</p></div>
                     <div class="grid gap-3 border-b border-slate-100 p-5 md:grid-cols-[220px_1fr]"><h3 class="font-black text-slate-900">Operazioni sensibili</h3><p class="text-sm leading-relaxed text-slate-600">Diverse operazioni su commesse, costi e collaboratori passano attraverso funzioni RPC o Edge Functions con verifiche di identità, ruolo e appartenenza allo studio.</p></div>
                     <div class="grid gap-3 border-b border-slate-100 p-5 md:grid-cols-[220px_1fr]"><h3 class="font-black text-slate-900">Segreti tecnici</h3><p class="text-sm leading-relaxed text-slate-600">Chiavi Stripe, credenziali email e chiavi amministrative sono conservate nei secrets dell’ambiente server e non inserite nei file pubblici del sito.</p></div>
+                    <div class="grid gap-3 border-b border-slate-100 p-5 md:grid-cols-[220px_1fr]"><h3 class="font-black text-slate-900">Dipendenze controllate</h3><p class="text-sm leading-relaxed text-slate-600">Le librerie eseguite nell’app sono salvate localmente e bloccate a versioni verificate, senza dipendenze dinamiche “latest”.</p></div>
+                    <div class="grid gap-3 border-b border-slate-100 p-5 md:grid-cols-[220px_1fr]"><h3 class="font-black text-slate-900">Storico economico</h3><p class="text-sm leading-relaxed text-slate-600">Le variazioni dei costi orari valgono per le attività successive; modifiche e cancellazioni operative rilevanti vengono registrate per rendere verificabile lo storico.</p></div>
                     <div class="grid gap-3 border-b border-slate-100 p-5 md:grid-cols-[220px_1fr]"><h3 class="font-black text-slate-900">Trasmissione e storage</h3><p class="text-sm leading-relaxed text-slate-600">Il sito e le API usano HTTPS. Supabase applica cifratura in transito e cifratura a riposo alla propria infrastruttura gestita.</p></div>
                     <div class="grid gap-3 p-5 md:grid-cols-[220px_1fr]"><h3 class="font-black text-slate-900">Pagamenti</h3><p class="text-sm leading-relaxed text-slate-600">Checkout, carta e portale abbonamenti sono gestiti da Stripe. Arch Time Pro conserva soltanto gli identificativi e lo stato necessari a riconoscere l’abbonamento.</p></div>
                 </div>

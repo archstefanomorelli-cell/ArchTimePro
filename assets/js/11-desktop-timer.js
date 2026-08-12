@@ -134,13 +134,9 @@
         user = userData.user;
         if (!user) return null;
 
-        const { data, error } = await client
-            .from('profiles')
-            .select('*')
-            .eq('id', user.id)
-            .single();
+        const { data, error } = await client.rpc('get_my_profile_for_app');
         if (error) throw error;
-        profile = data;
+        profile = Array.isArray(data) ? (data[0] || null) : data;
         return profile;
     }
 
@@ -152,29 +148,13 @@
             entry_notes: notes || '',
             entry_created_at: entryDateToIso(customDate)
         });
-        return !error;
+        if (error) throw error;
     }
 
     async function saveEntry(project, task, hours, customDate = null, notes = '') {
         if (!project || !hours || hours <= 0) throw new Error('Seleziona progetto e ore valide.');
 
-        const createdViaRpc = await createEntryViaRpc(project, task, hours, customDate, notes);
-        if (createdViaRpc) return;
-
-        const payload = {
-            project_id: project.id,
-            project_name: project.name,
-            task,
-            duration: hours,
-            user_email: profile.email,
-            user_name: profile.full_name,
-            rate: Number(profile.hourly_cost || 0) * hours,
-            studio_id: profile.studio_id,
-            notes
-        };
-        if (customDate) payload.created_at = entryDateToIso(customDate);
-        const { error } = await client.from('entries').insert([payload]);
-        if (error) throw error;
+        await createEntryViaRpc(project, task, hours, customDate, notes);
     }
 
     async function restoreTimer() {
@@ -241,13 +221,9 @@
 
     async function checkRemoteTimer() {
         if (!client || !profile?.id || timerMutationInProgress) return;
-        const { data, error } = await client
-            .from('profiles')
-            .select('active_timer_start,active_timer_project,active_timer_task,active_timer_notes')
-            .eq('id', profile.id)
-            .single();
+        const { data, error } = await client.rpc('get_my_profile_for_app');
         if (error) return console.warn('Sincronizzazione timer non riuscita', error.message);
-        applyRemoteTimerState(data);
+        applyRemoteTimerState(Array.isArray(data) ? data[0] : data);
     }
 
     function stopTimerSync() {
@@ -260,12 +236,6 @@
     function startTimerSync() {
         stopTimerSync();
         if (!client || !profile?.id) return;
-        timerChannel = client
-            .channel(`mini-timer-${profile.id}`)
-            .on('postgres_changes', {
-                event: 'UPDATE', schema: 'public', table: 'profiles', filter: `id=eq.${profile.id}`
-            }, payload => applyRemoteTimerState(payload.new))
-            .subscribe();
         timerSyncHandle = setInterval(checkRemoteTimer, 5000);
     }
 
@@ -280,13 +250,12 @@
             timerMutationInProgress = true;
             timerRunning = true;
             timerStart = Date.now();
-            const { error } = await client.from('profiles').update({
-                active_timer_start: String(timerStart),
-                active_timer_project: String(projectIndex),
-                active_timer_task: task,
-                active_timer_notes: notes,
-                active_timer_reminder_sent_at: null
-            }).eq('id', profile.id);
+            const { error } = await client.rpc('set_my_timer_state', {
+                timer_start: String(timerStart),
+                timer_project: String(projectIndex),
+                timer_task: task,
+                timer_notes: notes
+            });
             timerMutationInProgress = false;
             if (error) throw error;
             startTimerUi();
@@ -303,13 +272,12 @@
         const endLabel = endedAt.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
         const timedNotes = notes ? `[${startLabel} - ${endLabel}] ${notes}` : `[${startLabel} - ${endLabel}]`;
 
-        const { error } = await client.from('profiles').update({
-            active_timer_start: null,
-            active_timer_project: null,
-            active_timer_task: null,
-            active_timer_notes: null,
-            active_timer_reminder_sent_at: null
-        }).eq('id', profile.id);
+        const { error } = await client.rpc('set_my_timer_state', {
+            timer_start: null,
+            timer_project: null,
+            timer_task: null,
+            timer_notes: null
+        });
         if (error) {
             timerMutationInProgress = false;
             throw error;

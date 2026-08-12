@@ -39,6 +39,8 @@
                         <a href="sicurezza.html" class="hover:text-white">Sicurezza</a>
                         <a href="privacy.html" class="hover:text-white">Privacy</a>
                         <a href="termini.html" class="hover:text-white">Termini</a>
+                        <a href="dpa.html" class="hover:text-white">DPA</a>
+                        <a href="subresponsabili.html" class="hover:text-white">Fornitori</a>
                         <button type="button" data-public-cookie-settings class="font-bold hover:text-white">Cookie</button>
                     </nav>
                 </div>

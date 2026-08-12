@@ -135,6 +135,7 @@ function switchAuthTab(mode) {
                     previous_page: document.referrer || '',
                     source: document.referrer ? 'referral' : 'direct'
                 };
+                const legalAcceptedAt = new Date().toISOString();
                 
                 if(isStaff && !code) return await appAlert("Attenzione", "Inserisci il codice invito!", "danger");
                 if(!fullName) return await appAlert("Attenzione", "Inserisci il tuo nome e cognome.", "danger");
@@ -151,7 +152,10 @@ function switchAuthTab(mode) {
                                 is_owner: isOwnerChoice,
                                 business_type: businessType,
                                 studio_id: isStaff ? code : null,
-                                signup_attribution: signupAttribution
+                                signup_attribution: signupAttribution,
+                                terms_version: CURRENT_TERMS_VERSION,
+                                privacy_version: CURRENT_PRIVACY_VERSION,
+                                legal_accepted_at: legalAcceptedAt
                             }
                         }
                     });
@@ -233,14 +237,29 @@ function switchAuthTab(mode) {
             let exportProjects = projects;
             let exportEntries = entries;
             let exportExpenses = isAdmin ? expenses : [];
+            let exportAuditLog = [];
+            let exportCostHistory = [];
 
             if (!useLoadedDemoData) {
-                const entryFilters = isAdmin ? [] : [['user_email', userProfile.email]];
-                [exportProjects, exportEntries] = await Promise.all([
-                    fetchAllExportRows('projects', projectSelectColumns(), 'name'),
-                    fetchAllExportRows('entries', entrySelectColumns(), 'created_at', entryFilters)
+                const [projectsResult, entriesResult] = await Promise.all([
+                    supabaseClient.rpc('get_projects_for_app'),
+                    supabaseClient.rpc('get_entries_for_export')
                 ]);
-                if (isAdmin) exportExpenses = await fetchAllExportRows('expenses', '*', 'created_at');
+                if (projectsResult.error) throw new Error(`Impossibile esportare i progetti: ${projectsResult.error.message}`);
+                if (entriesResult.error) throw new Error(`Impossibile esportare le attività: ${entriesResult.error.message}`);
+                exportProjects = projectsResult.data || [];
+                exportEntries = entriesResult.data || [];
+                if (isAdmin) {
+                    const [expensesResult, auditRows, costRows] = await Promise.all([
+                        supabaseClient.rpc('get_expenses_for_app'),
+                        fetchAllExportRows('audit_log', '*', 'created_at'),
+                        fetchAllExportRows('profile_hourly_cost_history', '*', 'effective_from')
+                    ]);
+                    if (expensesResult.error) throw new Error(`Impossibile esportare le spese: ${expensesResult.error.message}`);
+                    exportExpenses = expensesResult.data || [];
+                    exportAuditLog = auditRows;
+                    exportCostHistory = costRows;
+                }
             }
 
             const generatedAt = new Date().toISOString();
@@ -254,6 +273,8 @@ function switchAuthTab(mode) {
                 projects: exportProjects,
                 entries: exportEntries,
                 expenses: exportExpenses,
+                audit_log: exportAuditLog,
+                hourly_cost_history: exportCostHistory,
                 summary: {
                     team_members: isAdmin ? profiles.length : 1,
                     projects: exportProjects.length,
@@ -270,6 +291,10 @@ function switchAuthTab(mode) {
             if (exportButton) exportButton.disabled = true;
 
             try {
+                const exportScope = (userProfile.is_owner || userProfile.role === 'admin')
+                    ? 'L’esportazione conterrà tutti i dati dello studio, inclusi team, costi, attività e registro delle modifiche. Conservala in un luogo protetto.'
+                    : 'L’esportazione conterrà il tuo profilo e le attività che hai registrato. Conservala in un luogo protetto.';
+                if (!await appConfirm('Esporta dati', exportScope, 'info')) return;
                 const exportData = await buildUserDataExport();
                 const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json;charset=utf-8' });
                 const downloadUrl = URL.createObjectURL(blob);
@@ -326,7 +351,7 @@ function switchAuthTab(mode) {
             const code = document.getElementById('limbo-invite-code').value.trim();
             if(!code) return await appAlert("Attenzione", "Inserisci un Codice Invito valido.", "danger");
             
-            const { error } = await supabaseClient.from('profiles').update({ studio_id: code, role: 'staff' }).eq('id', userProfile.id);
+            const { error } = await supabaseClient.rpc('join_studio_with_code', { invite_studio_id: code });
             if(error) return await appAlert("Errore", "Impossibile unirsi allo studio. Controlla il codice.", "danger");
             
             await appAlert("Benvenuto", "Ti sei unito al nuovo team con successo!", "success");
@@ -504,8 +529,8 @@ function switchAuthTab(mode) {
                 }
             } else {
                 if(await appConfirm("Abbandona Studio", "Vuoi davvero eliminare il tuo account e uscire dallo Studio? Perderai l'accesso per sempre.", "danger")) {
-                    await supabaseClient.from('profiles').delete().eq('id', userProfile.id);
-                    await supabaseClient.rpc('delete_user_account'); 
+                    const { error } = await supabaseClient.rpc('delete_user_account');
+                    if (error) return appAlert('Errore', error.message, 'danger');
                     await supabaseClient.auth.signOut();
                     location.reload();
                 }
@@ -805,7 +830,8 @@ function switchAuthTab(mode) {
             const costInput = document.getElementById('onboarding-hourly-cost');
             const cost = parseFloat(costInput?.value);
             if (isNaN(cost) || cost < 0) return;
-            await supabaseClient.from('profiles').update({ hourly_cost: cost }).eq('id', userProfile.id);
+            const { error } = await supabaseClient.rpc('set_my_hourly_cost', { new_hourly_cost: cost });
+            if (error) throw error;
             if (userProfile) userProfile.hourly_cost = cost;
             const profile = profiles.find(item => item.id === userProfile.id);
             if (profile) profile.hourly_cost = cost;
@@ -838,7 +864,13 @@ function switchAuthTab(mode) {
 
             const { data: { user } } = await supabaseClient.auth.getUser();
             if(user) {
-                const { data: profile, error } = await supabaseClient.from('profiles').select('*').eq('id', user.id).single();
+                let profile = null;
+                let error = null;
+                try {
+                    profile = await fetchMyProfileForApp();
+                } catch (profileError) {
+                    error = profileError;
+                }
                 if(profile) {
                     userProfile = profile;
                     
@@ -920,11 +952,56 @@ function switchAuthTab(mode) {
                     document.getElementById('auth-container').classList.add('force-hide'); 
                     document.getElementById('app-container').classList.remove('force-hide');
                     initApp();
+                    ensureCurrentLegalAcceptance();
                 } else if (error) {
                     await appAlert("Errore", "Errore accesso database.", "danger");
                 }
             }
         }
+
+        const CURRENT_TERMS_VERSION = '2026-08-12';
+        const CURRENT_PRIVACY_VERSION = '2026-08-12';
+
+        async function ensureCurrentLegalAcceptance() {
+            try {
+                const { data, error } = await supabaseClient.rpc('has_accepted_legal_documents', {
+                    requested_terms_version: CURRENT_TERMS_VERSION,
+                    requested_privacy_version: CURRENT_PRIVACY_VERSION
+                });
+                if (error) throw error;
+                if (!data) {
+                    document.getElementById('modal-legal-update')?.classList.remove('force-hide');
+                    lucide.createIcons();
+                }
+            } catch (error) {
+                console.error('Verifica accettazione documenti non riuscita:', error);
+            }
+        }
+
+        async function acceptCurrentLegalDocuments() {
+            const button = document.getElementById('btn-accept-legal-update');
+            const errorBox = document.getElementById('legal-update-error');
+            if (button) button.disabled = true;
+            errorBox?.classList.add('force-hide');
+
+            try {
+                const { error } = await supabaseClient.rpc('accept_legal_documents', {
+                    accepted_terms_version: CURRENT_TERMS_VERSION,
+                    accepted_privacy_version: CURRENT_PRIVACY_VERSION
+                });
+                if (error) throw error;
+                document.getElementById('modal-legal-update')?.classList.add('force-hide');
+            } catch (error) {
+                if (errorBox) {
+                    errorBox.textContent = 'Non è stato possibile registrare la conferma. Riprova tra poco.';
+                    errorBox.classList.remove('force-hide');
+                }
+            } finally {
+                if (button) button.disabled = false;
+            }
+        }
+
+        document.getElementById('btn-accept-legal-update')?.addEventListener('click', acceptCurrentLegalDocuments);
 
         async function handleLogout() { 
             await supabaseClient.auth.signOut(); 

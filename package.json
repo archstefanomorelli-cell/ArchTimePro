@@ -1,0 +1,11 @@
+{
+  "name": "arch-time-pro-static",
+  "private": true,
+  "scripts": {
+    "build:css": "tailwindcss -c tailwind.config.cjs -i assets/tailwind-input.css -o assets/tailwind-built.css --minify"
+  },
+  "devDependencies": {
+    "tailwindcss": "3.4.17",
+    "@fontsource/inter": "^5.2.8"
+  }
+}

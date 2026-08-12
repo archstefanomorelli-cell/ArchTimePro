@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https://*.supabase.co https://www.google.com https://www.google.it; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://www.google-analytics.com https://region1.google-analytics.com https://www.google.com https://www.google.it https://stats.g.doubleclick.net; frame-src https://js.stripe.com https://hooks.stripe.com; form-action 'self' https://buy.stripe.com; object-src 'none'; base-uri 'self'">
     <meta name="robots" content="noindex, nofollow">
     <meta name="theme-color" content="#f8fafc">
     <title>Beta Monitor | Arch Time Pro</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="assets/tailwind-built.css?v=2026-08-12-01">
+    <link rel="stylesheet" href="assets/fonts.css?v=2026-08-12-01">
+    <script src="assets/vendor/supabase-2.39.3.js"></script>
+    <script src="assets/vendor/lucide-0.468.0.js"></script>
     <script src="assets/js/00-runtime-config.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         body { font-family: 'Inter', sans-serif; background: #f8fafc; color: #0f172a; -webkit-font-smoothing: antialiased; }
         .admin-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 18px; box-shadow: 0 18px 50px rgba(15, 23, 42, 0.05); }
         .admin-input { width: 100%; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 14px; font-size: 14px; outline: none; background: #fff; }
