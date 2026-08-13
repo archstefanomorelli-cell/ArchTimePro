@@ -2974,7 +2974,7 @@ html.theme-pro #btn-skip-onboarding {
     width: 1.9rem;
     height: 1.9rem;
     padding: 0 !important;
-    display: inline-flex !important;
+    display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     flex: 0 0 1.9rem;
