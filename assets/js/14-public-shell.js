@@ -10,7 +10,6 @@
                     </a>
                     <div class="flex items-center gap-5 lg:gap-8">
                         <nav class="hidden items-center gap-7 lg:flex" aria-label="Navigazione principale">
-                            <a href="index.html#perche" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Perché</a>
                             <a href="index.html#prezzi" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Prezzi</a>
                             <a href="metodo.html" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Metodo</a>
                             <a href="calcolo-compenso-professionale-dlgs-36-2023.html" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Preventivo</a>
