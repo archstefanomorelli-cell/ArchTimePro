@@ -1869,7 +1869,7 @@ html.theme-pro .analytics-kpi-profit::before {
     background: var(--pro-accent);
 }
 
-html.theme-pro .analytics-kpi-utilization::before {
+html.theme-pro .analytics-kpi-costs::before {
     background: #d97706;
 }
 
@@ -2888,16 +2888,26 @@ html.theme-pro #btn-close-analytics-detail:hover {
 
 /* Modal refinement pass */
 html.theme-pro .modal {
-    background: rgba(15, 23, 42, 0.56);
+    background: rgba(15, 23, 42, 0.32);
+    -webkit-backdrop-filter: blur(12px) saturate(115%);
+    backdrop-filter: blur(12px) saturate(115%);
 }
 
 html.theme-pro .modal:not(.force-hide) > div,
 html.theme-pro #custom-dialog-card,
 html.theme-pro #paywall-container > div,
 html.theme-pro #update-password-container > div.relative {
-    border-color: #d8dee6 !important;
-    border-radius: 10px !important;
-    box-shadow: 0 22px 70px rgba(15, 23, 42, 0.2) !important;
+    border-color: rgba(255, 255, 255, 0.78) !important;
+    border-radius: 14px !important;
+    background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.94) 0%, rgba(248, 250, 253, 0.82) 56%, rgba(235, 240, 248, 0.74) 100%) !important;
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    backdrop-filter: blur(30px) saturate(180%);
+    box-shadow:
+        0 28px 80px rgba(15, 23, 42, 0.24),
+        0 8px 24px rgba(15, 23, 42, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.96),
+        inset 0 -1px 0 rgba(148, 163, 184, 0.12) !important;
 }
 
 html.theme-pro .modal > div {
@@ -2937,6 +2947,7 @@ html.theme-pro #custom-dialog-input,
 html.theme-pro #new-password {
     border-color: #d8dee6 !important;
     border-radius: 8px !important;
+    background-color: rgba(255, 255, 255, 0.76) !important;
     min-height: 2.45rem;
     padding-top: 0.62rem !important;
     padding-bottom: 0.62rem !important;
@@ -3011,7 +3022,7 @@ html.theme-pro #modal-account .bg-white {
 html.theme-pro #modal-edit-project .bg-slate-50,
 html.theme-pro #modal-owner-onboarding .bg-slate-50,
 html.theme-pro #modal-task-builder .bg-slate-50 {
-    background: #f8fafc !important;
+    background: rgba(248, 250, 252, 0.66) !important;
 }
 
 html.theme-pro #modal-account > div {

@@ -2373,14 +2373,13 @@
             document.getElementById('kpi-margin-note').innerText = activeProjects.length === 1
                 ? 'Su 1 lavoro attivo'
                 : `Su ${activeProjects.length} lavori attivi`;
-            document.getElementById('kpi-utilization').innerText = `${Math.round(utilization)}%`;
-            document.getElementById('kpi-utilization-note').innerText = `${formatMoney(totalSpent, 0)} su ${formatMoney(totalBudget, 0)}`;
+            document.getElementById('kpi-active-costs').innerText = formatMoney(totalSpent);
 
             const studioHealthStrip = document.getElementById('studio-health-strip');
             const studioHealthTrack = document.getElementById('studio-health-track');
             const studioHealthMarker = document.getElementById('studio-health-marker');
             const studioHealthValue = document.getElementById('studio-health-value');
-            const studioHealthCosts = document.getElementById('studio-health-costs');
+            const studioHealthBudget = document.getElementById('studio-health-budget');
             const studioHealthResidual = document.getElementById('studio-health-residual');
             const hasGlobalBudget = totalBudget > 0;
             const roundedUtilization = Math.round(utilization);
@@ -2392,7 +2391,9 @@
                 studioHealthValue.innerText = hasGlobalBudget ? `${roundedUtilization}%` : '-';
                 studioHealthValue.classList.toggle('is-over-budget', hasGlobalBudget && utilization > 100);
             }
-            if (studioHealthCosts) studioHealthCosts.innerText = `Costi ${formatMoney(totalSpent, 0)}`;
+            if (studioHealthBudget) studioHealthBudget.innerText = hasGlobalBudget
+                ? `Budget complessivo ${formatMoney(totalBudget, 0)}`
+                : 'Budget complessivo da impostare';
             if (studioHealthResidual) {
                 studioHealthResidual.innerText = !hasGlobalBudget
                     ? 'Budget da impostare'
@@ -2413,11 +2414,6 @@
             const topTaskSummary = document.getElementById('analytics-inline-top-task');
             topTaskSummary.innerText = topTasks[0]?.[0] || '-';
             topTaskSummary.title = topTasks[0]?.[0] || 'Nessuna attività registrata';
-
-            const utilizationEl = document.getElementById('kpi-utilization');
-            utilizationEl.classList.toggle('text-red-600', utilization > 100);
-            utilizationEl.classList.toggle('text-amber-700', utilization >= 75 && utilization <= 100);
-            utilizationEl.classList.toggle('text-slate-800', utilization < 75);
 
             const inlineAlerts = document.getElementById('analytics-inline-alerts');
             inlineAlerts.classList.toggle('is-danger', criticalAttentionProjects.length > 0);
