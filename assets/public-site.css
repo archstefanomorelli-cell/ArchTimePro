@@ -142,9 +142,37 @@ span.uppercase:not(.public-brand) {
 .page-grid,
 .public-page-dot-grid {
     background-color: #fff !important;
-    background-image: radial-gradient(circle, rgba(100, 116, 139, 0.2) 1px, transparent 1.1px) !important;
-    background-size: 24px 24px !important;
-    background-position: 0 0 !important;
+    background-image:
+        linear-gradient(135deg, rgba(79, 70, 229, 0.085) 0%, rgba(255, 255, 255, 0.96) 46%, rgba(13, 148, 136, 0.055) 100%),
+        radial-gradient(circle, rgba(100, 116, 139, 0.17) 1px, transparent 1.1px) !important;
+    background-size: 100% 100%, 24px 24px !important;
+    background-position: 0 0, 0 0 !important;
+}
+
+main > section:first-child:not(.bg-slate-950):not(.bg-slate-900),
+body > section:first-of-type:not(.bg-slate-950):not(.bg-slate-900) {
+    background-image:
+        linear-gradient(135deg, rgba(79, 70, 229, 0.085) 0%, rgba(255, 255, 255, 0.96) 46%, rgba(13, 148, 136, 0.055) 100%),
+        radial-gradient(circle, rgba(100, 116, 139, 0.17) 1px, transparent 1.1px) !important;
+    background-size: 100% 100%, 24px 24px !important;
+    background-position: 0 0, 0 0 !important;
+}
+
+main > section:nth-of-type(3n + 2):not(.bg-slate-950):not(.bg-slate-900),
+body > section:nth-of-type(3n + 2):not(.bg-slate-950):not(.bg-slate-900) {
+    background-image: linear-gradient(105deg, rgba(79, 70, 229, 0.038) 0%, rgba(255, 255, 255, 0) 58%, rgba(13, 148, 136, 0.025) 100%);
+}
+
+main > section:nth-of-type(3n):not(.bg-slate-950):not(.bg-slate-900),
+body > section:nth-of-type(3n):not(.bg-slate-950):not(.bg-slate-900) {
+    background-image: linear-gradient(255deg, rgba(79, 70, 229, 0.032) 0%, rgba(255, 255, 255, 0) 62%, rgba(14, 116, 144, 0.025) 100%);
+}
+
+main > section.bg-slate-950,
+main > section.bg-slate-900,
+body > section.bg-slate-950,
+body > section.bg-slate-900 {
+    background-image: linear-gradient(128deg, #020617 0%, #111827 58%, #242044 100%) !important;
 }
 
 @media (max-width: 420px) {
