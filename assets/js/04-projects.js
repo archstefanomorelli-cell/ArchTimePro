@@ -2404,7 +2404,7 @@
             }
 
             const theme = THEMES[currentBusinessType];
-            Chart.defaults.font.family = "'Inter', sans-serif";
+            Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
             Chart.defaults.color = '#64748b';
             const chartTooltip = {
                 backgroundColor: '#0f172a',

@@ -1,6 +1,10 @@
 // Arch Time Pro - 01-core.js
 const ARCH_TIME_CONFIG = window.ARCH_TIME_CONFIG || {};
 
+if (window.Chart?.defaults?.font) {
+    window.Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+}
+
         function isPlaceholderConfigValue(value) {
             return !value || String(value).includes('YOUR_');
         }

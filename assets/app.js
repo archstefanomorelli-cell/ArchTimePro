@@ -1296,7 +1296,7 @@
             document.getElementById('kpi-burner').innerText = topBurner;
             
             const theme = THEMES[currentBusinessType];
-            Chart.defaults.font.family = "'Inter', sans-serif";
+            Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
             
             if(charts.global) charts.global.destroy();
             charts.global = new Chart(document.getElementById('chart-global'), { 
