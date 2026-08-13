@@ -2375,6 +2375,37 @@
                 : `Su ${activeProjects.length} lavori attivi`;
             document.getElementById('kpi-utilization').innerText = `${Math.round(utilization)}%`;
             document.getElementById('kpi-utilization-note').innerText = `${formatMoney(totalSpent, 0)} su ${formatMoney(totalBudget, 0)}`;
+
+            const studioHealthStrip = document.getElementById('studio-health-strip');
+            const studioHealthTrack = document.getElementById('studio-health-track');
+            const studioHealthMarker = document.getElementById('studio-health-marker');
+            const studioHealthValue = document.getElementById('studio-health-value');
+            const studioHealthCosts = document.getElementById('studio-health-costs');
+            const studioHealthResidual = document.getElementById('studio-health-residual');
+            const hasGlobalBudget = totalBudget > 0;
+            const roundedUtilization = Math.round(utilization);
+            const markerPosition = hasGlobalBudget ? Math.max(1, Math.min(utilization, 99)) : 1;
+
+            studioHealthStrip?.classList.toggle('is-empty', !hasGlobalBudget);
+            if (studioHealthMarker) studioHealthMarker.style.left = `${markerPosition}%`;
+            if (studioHealthValue) {
+                studioHealthValue.innerText = hasGlobalBudget ? `${roundedUtilization}%` : '-';
+                studioHealthValue.classList.toggle('is-over-budget', hasGlobalBudget && utilization > 100);
+            }
+            if (studioHealthCosts) studioHealthCosts.innerText = `Costi ${formatMoney(totalSpent, 0)}`;
+            if (studioHealthResidual) {
+                studioHealthResidual.innerText = !hasGlobalBudget
+                    ? 'Budget da impostare'
+                    : (margin < 0 ? `Budget superato di ${formatMoney(Math.abs(margin), 0)}` : `Margine residuo ${formatMoney(margin, 0)}`);
+                studioHealthResidual.classList.toggle('is-negative', hasGlobalBudget && margin < 0);
+            }
+            if (studioHealthTrack) {
+                studioHealthTrack.setAttribute('aria-valuenow', String(hasGlobalBudget ? Math.min(roundedUtilization, 100) : 0));
+                studioHealthTrack.setAttribute('aria-valuetext', hasGlobalBudget
+                    ? `${roundedUtilization}% del budget complessivo assorbito`
+                    : 'Budget dei progetti attivi non disponibile');
+            }
+
             document.getElementById('analytics-inline-aligned').innerText = String(alignedProjects.length);
             document.getElementById('analytics-inline-alerts').innerText = String(alertCount);
             document.getElementById('analytics-inline-over-budget').innerText = String(overBudgetProjects.length);
