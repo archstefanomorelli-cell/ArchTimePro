@@ -47,7 +47,7 @@
     <script src="assets/vendor/jspdf-autotable-3.5.31.js?v=privacy-security-2026-08-12-02"></script>
     <script src="assets/vendor/exceljs-4.4.0.js?v=privacy-security-2026-08-12-02"></script>
     <link rel="stylesheet" href="assets/app.css?v=phase3-budget-libero-2026-05-09">
-    <link rel="stylesheet" href="assets/app-pro.css?v=projects-subtitle-2026-08-12-01">
+    <link rel="stylesheet" href="assets/app-pro.css?v=activity-register-heading-2026-08-13-01">
     <script src="assets/js/12-analytics.js?v=privacy-2026-08-12-01" defer></script>
 </head>
 <body class="text-slate-800 pb-20 lg:pb-0">
@@ -401,11 +401,14 @@
                     <div id="projects-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
                 </section>
 
-                <section class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden mobile-tab active" data-tab="operate">
-                    <div class="p-5 border-b border-slate-100 flex flex-col md:flex-row md:justify-between items-start md:items-center gap-4 bg-white sticky top-0 z-10">
-                        <h2 class="text-base font-black text-slate-800 tracking-tight flex items-center gap-2"><i data-lucide="align-left" class="text-primary-500 w-4 h-4"></i> Registro Attività</h2>
-                        
-                        <div class="flex items-center gap-1.5 bg-slate-50 rounded-lg p-1 border border-slate-200">
+                <section class="mobile-tab active" data-tab="operate">
+                    <div class="activity-register-heading-row">
+                        <div class="activity-section-heading">
+                            <h2>Registro Attività</h2>
+                            <p>Ore e note dello studio, organizzate per settimana.</p>
+                        </div>
+
+                        <div class="activity-week-control">
                             <button id="btn-prev-week" class="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-white rounded-md shadow-sm transition-colors border border-transparent hover:border-slate-200"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
                             <div id="week-picker-trigger" class="relative cursor-pointer group px-2 flex items-center justify-center">
                                 <input type="date" id="week-picker" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" style="pointer-events: none;">
@@ -414,7 +417,7 @@
                             <button id="btn-next-week" class="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-white rounded-md shadow-sm transition-colors border border-transparent hover:border-slate-200"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
                         </div>
                     </div>
-                    <div class="overflow-x-auto">
+                    <div class="activity-register-panel bg-white border border-slate-200 rounded-2xl shadow-sm overflow-x-auto">
                         <table class="w-full text-sm text-center hidden lg:table">
                             <thead class="hidden">
     <tr>

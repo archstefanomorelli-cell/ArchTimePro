@@ -1690,6 +1690,64 @@ html.theme-pro .projects-section-heading p {
     font-weight: 600;
 }
 
+html.theme-pro .activity-register-heading-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 0 0 0.7rem 0.15rem;
+}
+
+html.theme-pro .activity-section-heading h2 {
+    color: #172033;
+    font-size: 1.125rem;
+    line-height: 1.2;
+    font-weight: 900;
+}
+
+html.theme-pro .activity-section-heading p {
+    margin-top: 0.22rem;
+    color: #64748b;
+    font-size: 0.68rem;
+    line-height: 1.4;
+    font-weight: 600;
+}
+
+html.theme-pro .activity-week-control {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.25rem;
+    border: 1px solid #dfe4eb;
+    border-radius: 0.625rem;
+    background: #f8fafc;
+    flex: 0 0 auto;
+}
+
+html.theme-pro .activity-register-panel {
+    min-width: 0;
+}
+
+@media (min-width: 1024px) {
+    html.theme-pro .activity-section-heading h2 {
+        font-size: 1.25rem;
+    }
+}
+
+@media (max-width: 639px) {
+    html.theme-pro .activity-register-heading-row {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.65rem;
+        margin-bottom: 0.65rem;
+    }
+
+    html.theme-pro .activity-week-control {
+        align-self: stretch;
+        justify-content: space-between;
+    }
+}
+
 html.theme-pro .analytics-primary-grid {
     margin-bottom: 0.625rem;
     display: grid;
