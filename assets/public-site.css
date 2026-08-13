@@ -40,11 +40,24 @@ main h3 {
     font-weight: 700 !important;
 }
 
-@media (min-width: 1024px) {
-    main > section:first-child h1 {
-        font-size: 4.5rem !important;
-        line-height: 1.02 !important;
-    }
+main > section:first-child h1 .text-indigo-500,
+main > section:first-child h1 .text-indigo-600,
+main > section:first-child h1 .text-primary-500,
+main > section:first-child h1 .text-primary-600 {
+    color: #09090b !important;
+    background: none !important;
+    -webkit-text-fill-color: #09090b;
+}
+
+main > section:first-child a.bg-indigo-600,
+main > section:first-child a.bg-primary-600 {
+    background-color: #09090b !important;
+    border-color: #09090b !important;
+}
+
+main > section:first-child a.bg-indigo-600:hover,
+main > section:first-child a.bg-primary-600:hover {
+    background-color: #27272a !important;
 }
 
 main > section:first-child {
