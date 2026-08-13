@@ -3330,6 +3330,68 @@ html.theme-pro #custom-dialog-msg {
     line-height: 1.45;
 }
 
+@media (min-width: 1024px) {
+    html.theme-pro #modal-studio-management > .studio-management-modal {
+        background:
+            linear-gradient(145deg, rgba(255, 255, 255, 0.9) 0%, rgba(246, 249, 253, 0.76) 56%, rgba(232, 238, 247, 0.68) 100%) !important;
+    }
+
+    html.theme-pro #modal-studio-management .studio-management-modal > div:first-child {
+        background: rgba(255, 255, 255, 0.5) !important;
+        border-color: rgba(203, 213, 225, 0.62) !important;
+        -webkit-backdrop-filter: blur(18px) saturate(145%);
+        backdrop-filter: blur(18px) saturate(145%);
+    }
+
+    html.theme-pro #modal-studio-management .studio-management-body {
+        background: rgba(241, 245, 249, 0.38) !important;
+    }
+
+    html.theme-pro #modal-studio-management .studio-management-tabs {
+        background: rgba(226, 232, 240, 0.52) !important;
+        border-color: rgba(203, 213, 225, 0.68) !important;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+    }
+
+    html.theme-pro #modal-studio-management .studio-management-tab[aria-selected="true"] {
+        background: rgba(255, 255, 255, 0.78) !important;
+        border-color: rgba(255, 255, 255, 0.9) !important;
+        box-shadow:
+            0 3px 10px rgba(15, 23, 42, 0.08),
+            inset 0 1px 0 rgba(255, 255, 255, 0.92);
+    }
+
+    html.theme-pro #modal-studio-management [data-management-panel] > .bg-white,
+    html.theme-pro #modal-studio-management [data-management-panel] > .grid > .bg-white,
+    html.theme-pro #modal-studio-management #team-list > .bg-white {
+        background: rgba(255, 255, 255, 0.7) !important;
+        border-color: rgba(255, 255, 255, 0.86) !important;
+        box-shadow:
+            0 8px 22px rgba(15, 23, 42, 0.06),
+            inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+        -webkit-backdrop-filter: blur(14px) saturate(135%);
+        backdrop-filter: blur(14px) saturate(135%);
+    }
+}
+
+@media (max-width: 1023px) {
+    html.theme-pro #modal-studio-management > .studio-management-modal {
+        background: #ffffff !important;
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+    }
+
+    html.theme-pro #modal-studio-management .studio-management-modal > div:first-child {
+        background: #ffffff !important;
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+    }
+
+    html.theme-pro #modal-studio-management .studio-management-body {
+        background: #f8fafc !important;
+    }
+}
+
 @media (max-width: 767px) {
     html.theme-pro .app-panel,
     html.theme-pro section.bg-white.border {
