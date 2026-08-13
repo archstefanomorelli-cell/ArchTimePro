@@ -28,6 +28,7 @@ main h3,
 main h1 {
     font-weight: 800 !important;
     line-height: 1.02;
+    font-synthesis: none;
 }
 
 main h2 {
@@ -37,6 +38,13 @@ main h2 {
 
 main h3 {
     font-weight: 700 !important;
+}
+
+@media (min-width: 1024px) {
+    main > section:first-child h1 {
+        font-size: 4.5rem !important;
+        line-height: 1.02 !important;
+    }
 }
 
 main > section:first-child {
