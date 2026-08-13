@@ -2540,7 +2540,8 @@ html.theme-pro #entries-list-mobile > div {
 }
 
 html.theme-pro .timesheet-day-row {
-    background: #eef2f6 !important;
+    background: #e8edf4 !important;
+    border-color: #d8e0ea !important;
 }
 
 html.theme-pro .timesheet-day-row td {
@@ -2548,8 +2549,17 @@ html.theme-pro .timesheet-day-row td {
     padding-bottom: 0.45rem !important;
 }
 
+html.theme-pro .timesheet-day-row td > div {
+    color: #334155 !important;
+}
+
 html.theme-pro .timesheet-day-dot {
-    background: #172033 !important;
+    background: #4f46e5 !important;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+html.theme-pro .timesheet-mobile-card .text-slate-400.uppercase {
+    color: #6366f1 !important;
 }
 
 html.theme-pro .timesheet-head-row th {
