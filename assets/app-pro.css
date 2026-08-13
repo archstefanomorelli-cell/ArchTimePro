@@ -2973,13 +2973,27 @@ html.theme-pro .modal [id^="btn-close"],
 html.theme-pro #btn-skip-onboarding {
     width: 1.9rem;
     height: 1.9rem;
-    padding: 0.4rem !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 0 0 1.9rem;
+    line-height: 0;
+    box-sizing: border-box;
     top: 0.9rem !important;
     right: 0.9rem !important;
     background: #ffffff !important;
     border: 1px solid #e2e8f0 !important;
     color: #64748b !important;
     box-shadow: none !important;
+}
+
+html.theme-pro .modal [id^="btn-close"] svg,
+html.theme-pro #btn-skip-onboarding svg {
+    width: 0.95rem !important;
+    height: 0.95rem !important;
+    display: block;
+    flex: 0 0 auto;
 }
 
 html.theme-pro .modal [id^="btn-close"]:hover,
