@@ -82,6 +82,37 @@ samp,
     font-feature-settings: 'kern' 1, 'liga' 1;
 }
 
+/* Compact display treatment inspired by the public reference layout. */
+body h1,
+body h2,
+body h3 {
+    transform: scaleX(0.97);
+    transform-origin: left center;
+}
+
+body .text-center h1,
+body .text-center h2,
+body .text-center h3 {
+    transform-origin: center;
+}
+
+.public-brand {
+    display: inline-block;
+    transform: scaleX(0.98);
+    transform-origin: left center;
+}
+
+p.uppercase,
+span.uppercase:not(.public-brand) {
+    transform: scaleX(0.985);
+    transform-origin: left center;
+}
+
+.text-center p.uppercase,
+.text-center span.uppercase:not(.public-brand) {
+    transform-origin: center;
+}
+
 .tracking-tight,
 .tracking-tighter,
 [class*="tracking-["] { letter-spacing: 0 !important; }
