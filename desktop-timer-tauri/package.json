@@ -1,13 +1,17 @@
 {
   "name": "arch-time-mini-timer-light",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "private": true,
   "scripts": {
     "tauri": "tauri",
     "dev": "tauri dev",
-    "build": "tauri build"
+    "build": "tauri build",
+    "build:store": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-store-package.ps1",
+    "store:package": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/package-store.ps1",
+    "store:assets": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/generate-store-assets.ps1"
   },
   "devDependencies": {
+    "@microsoft/winappcli": "^0.6.0",
     "@tauri-apps/cli": "^2.8.5"
   }
 }

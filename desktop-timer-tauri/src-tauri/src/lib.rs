@@ -109,11 +109,6 @@ pub fn run() {
             let menu =
                 Menu::with_items(app, &[&open_item, &autostart_item, &separator, &quit_item])?;
 
-            if !autostart_enabled {
-                let _ = app.autolaunch().enable();
-                let _ = autostart_item.set_checked(true);
-            }
-
             TrayIconBuilder::with_id("main")
                 .icon(
                     app.default_window_icon()

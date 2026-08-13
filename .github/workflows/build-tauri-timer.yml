@@ -45,27 +45,34 @@ jobs:
         working-directory: desktop-timer-tauri
         run: npm run build
 
-      - name: Prepare release asset
+      - name: Build Microsoft Store package
+        working-directory: desktop-timer-tauri
+        run: npm run store:package
+
+      - name: Prepare release assets
         shell: pwsh
         run: |
           $source = Get-ChildItem "desktop-timer-tauri/src-tauri/target/release/bundle/nsis/*.exe" | Select-Object -First 1
           if (-not $source) { throw "Installer NSIS non trovato" }
           New-Item -ItemType Directory -Force release-assets | Out-Null
-          Copy-Item $source.FullName "release-assets/Arch-Time-Mini-Timer-Light-Setup-0.2.3.exe"
+          Copy-Item $source.FullName "release-assets/Arch-Time-Mini-Timer-Light-Setup-0.2.4.exe"
+          Copy-Item "desktop-timer-tauri/store-output/ArchTimeMiniTimer_0.2.4.0_x64.msix" "release-assets/ArchTimeMiniTimer_0.2.4.0_x64.msix"
 
       - name: Create or update GitHub release
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release view timer-v0.2.3 2>$null
+          gh release view timer-v0.2.4 2>$null
           if ($LASTEXITCODE -ne 0) {
-            gh release create timer-v0.2.3 --title "Arch Time Mini Timer 0.2.3" --notes "Timer desktop leggero con accesso ai profili protetto da funzioni server."
+            gh release create timer-v0.2.4 --title "Arch Time Mini Timer 0.2.4" --notes "Nuova interfaccia Plus Jakarta Sans e liquid glass. Include il pacchetto per Microsoft Store."
           }
-          gh release upload timer-v0.2.3 "release-assets/Arch-Time-Mini-Timer-Light-Setup-0.2.3.exe" --clobber
+          gh release upload timer-v0.2.4 "release-assets/Arch-Time-Mini-Timer-Light-Setup-0.2.4.exe" --clobber
 
       - name: Upload workflow artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Arch-Time-Mini-Timer-Light-0.2.3
-          path: release-assets/Arch-Time-Mini-Timer-Light-Setup-0.2.3.exe
+          name: Arch-Time-Mini-Timer-Light-0.2.4
+          path: |
+            release-assets/Arch-Time-Mini-Timer-Light-Setup-0.2.4.exe
+            release-assets/ArchTimeMiniTimer_0.2.4.0_x64.msix
