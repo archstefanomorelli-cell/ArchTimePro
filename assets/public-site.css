@@ -1,10 +1,10 @@
 @import url('./swiss-design-system.css?v=2026-08-13-01');
 
 :root {
-    --public-ink: #18181b;
+    --public-ink: #27272a;
     --public-muted: #52525b;
-    --public-primary: #1855f4;
-    --public-primary-hover: #0e44d6;
+    --public-primary: #09090b;
+    --public-primary-hover: #27272a;
     --public-border: #e4e4e7;
 }
 
@@ -23,6 +23,22 @@ main h3,
 .public-brand {
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
     letter-spacing: 0 !important;
+    color: #27272a !important;
+}
+
+main h1,
+main h2,
+main h3 {
+    transform: scaleX(0.96);
+    transform-origin: left center;
+    font-kerning: normal;
+    font-feature-settings: 'kern' 1, 'liga' 1;
+}
+
+main .text-center h1,
+main .text-center h2,
+main .text-center h3 {
+    transform-origin: center center;
 }
 
 main h1 {
@@ -44,9 +60,9 @@ main > section:first-child h1 .text-indigo-500,
 main > section:first-child h1 .text-indigo-600,
 main > section:first-child h1 .text-primary-500,
 main > section:first-child h1 .text-primary-600 {
-    color: #176b65 !important;
+    color: #09090b !important;
     background: none !important;
-    -webkit-text-fill-color: #176b65;
+    -webkit-text-fill-color: #09090b;
 }
 
 main > section:first-child a.bg-indigo-600,
@@ -62,7 +78,7 @@ main > section:first-child a.bg-primary-600:hover {
 
 main > section:first-child {
     background-image:
-        radial-gradient(circle at 50% 8%, rgba(24, 85, 244, 0.07) 0%, rgba(16, 185, 129, 0.035) 34%, transparent 64%),
+        radial-gradient(circle at 50% 8%, rgba(9, 9, 11, 0.055) 0%, rgba(82, 82, 91, 0.025) 34%, transparent 64%),
         radial-gradient(circle, rgba(161, 161, 170, 0.19) 1px, transparent 1px);
     background-size: 100% 100%, 28px 28px;
     background-position: 0 0, 0 0;
@@ -83,19 +99,26 @@ main > section:first-child {
 [class*="rounded-[2"],
 .rounded-3xl { border-radius: 0.5rem !important; }
 
-.text-indigo-400 { color: #4f7df7 !important; }
+.text-indigo-400,
 .text-indigo-500,
 .text-indigo-600,
+.text-indigo-700,
 .text-primary-600 { color: var(--public-primary) !important; }
+.bg-indigo-400,
+.bg-indigo-500,
 .bg-indigo-600,
+.bg-indigo-700,
 .bg-primary-600 { background-color: var(--public-primary) !important; }
 .border-indigo-100,
-.border-indigo-200 { border-color: #c7d9fe !important; }
-.bg-indigo-50 { background-color: #eef4ff !important; }
+.border-indigo-200 { border-color: #d4d4d8 !important; }
+.bg-indigo-50 { background-color: #f4f4f5 !important; }
+.shadow-indigo-500\/20 { --tw-shadow-color: rgba(9, 9, 11, 0.12) !important; }
 
 @media (hover: hover) {
     .hover\:bg-indigo-600:hover,
     .hover\:bg-indigo-700:hover,
+    .hover\:bg-indigo-400:hover,
+    .hover\:bg-indigo-500:hover,
     .hover\:bg-primary-700:hover { background-color: var(--public-primary-hover) !important; }
     .hover\:text-indigo-600:hover { color: var(--public-primary) !important; }
 }
@@ -113,7 +136,7 @@ main > section:first-child {
 }
 
 #public-site-header .public-brand {
-    color: #18181b;
+    color: #27272a;
     font-weight: 800;
 }
 
@@ -154,7 +177,7 @@ main > section:first-child {
 }
 
 #public-site-footer .public-footer-brand {
-    color: #18181b;
+    color: #27272a;
 }
 
 #public-site-footer a,
@@ -173,7 +196,7 @@ main > section:first-child {
 .public-page-dot-grid {
     background-color: #fafafa !important;
     background-image:
-        radial-gradient(circle at 50% 8%, rgba(24, 85, 244, 0.07) 0%, rgba(16, 185, 129, 0.035) 34%, transparent 64%),
+        radial-gradient(circle at 50% 8%, rgba(9, 9, 11, 0.055) 0%, rgba(82, 82, 91, 0.025) 34%, transparent 64%),
         radial-gradient(circle, rgba(161, 161, 170, 0.19) 1px, transparent 1px) !important;
     background-size: 100% 100%, 28px 28px !important;
     background-position: 0 0 !important;
