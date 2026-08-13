@@ -3,525 +3,239 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#FFFFFF">
+    <meta name="theme-color" content="#172033">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-title" content="Arch Time Pro">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Arch Time">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="robots" content="index, follow">
-    <meta name="description" content="Arch Time Pro aiuta studi di architettura e ingegneria a controllare ore, costi, spese e margini di ogni commessa con precisione ed eleganza.">
+    <meta name="description" content="Arch Time Pro aiuta studi tecnici a controllare ore, costi, spese e margini di ogni commessa, senza adottare un gestionale all-in-one.">
     <link rel="canonical" href="https://www.archtimepro.it/">
-    <meta property="og:title" content="Arch Time Pro | Il controllo margini per studi tecnici">
-    <meta property="og:description" content="Registra ore e spese, proteggi i dati economici e scopri in tempo reale quanto utile resta su ogni progetto.">
+    <meta property="og:title" content="Arch Time Pro | Controllo margini per studi tecnici">
+    <meta property="og:description" content="Registra ore e spese, proteggi i dati economici e scopri prima della fine se una commessa sta ancora lasciando margine.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://www.archtimepro.it/">
     <meta property="og:image" content="https://www.archtimepro.it/docs/video-guide/frames-real/01-dashboard.png">
     <link rel="manifest" href="/manifest.webmanifest?v=archtime-icon-meter-20260516">
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32-archtime-meter-20260516.png">
     <link rel="apple-touch-icon" href="/apple-touch-icon-archtime-meter-20260516.png">
-    <title>Arch Time Pro | Controllo margini per studi di architettura e ingegneria</title>
-
-    <!-- Design System & Stili -->
+    <title>Arch Time Pro | Controllo margini per studi tecnici</title>
     <link rel="stylesheet" href="assets/tailwind-built.css?v=2026-08-12-01">
-    <link rel="stylesheet" href="assets/public-site.css?v=swiss-public-2026-08-13-01">
-
-    <!-- Vendor Scripts -->
+    <link rel="stylesheet" href="assets/fonts.css?v=2026-08-12-01">
     <script src="assets/vendor/lucide-0.468.0.js?v=privacy-security-2026-08-12-02"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #fff; color: #0f172a; -webkit-font-smoothing: antialiased; }
+        .bg-grid { background-image: radial-gradient(#e2e8f0 1px, transparent 1px); background-size: 30px 30px; }
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+    </style>
     <script src="assets/js/12-analytics.js?v=privacy-2026-08-12-01" defer></script>
+    <link rel="stylesheet" href="assets/public-site.css?v=swiss-public-2026-08-13-01">
     <script src="assets/js/14-public-shell.js?v=swiss-public-2026-08-13-01" defer></script>
-    <script src="assets/js/swiss-interactive-preview.js?v=2026-08-13-01" defer></script>
-
-    <!-- Schema.org -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "Arch Time Pro",
-      "applicationCategory": "BusinessApplication",
-      "operatingSystem": "Web, iOS, Android, macOS, Windows",
-      "description": "Software di controllo commessa, tempi, costi e margini per studi di architettura e ingegneria.",
-      "offers": {
-        "@type": "Offer",
-        "price": "19.90",
-        "priceCurrency": "EUR",
-        "priceValidUntil": "2026-12-31"
-      },
-      "creator": {
-        "@type": "Person",
-        "name": "Stefano Morelli"
-      }
-    }
-    </script>
 </head>
-<body id="top" class="min-h-screen flex flex-col bg-[#FAFAFA] text-[#18181B] selection:bg-blue-600 selection:text-white">
-
-    <!-- ==========================================================================
-         NAVIGATION HEADER (SWISS MINIMALIST + COLOR ACCENT)
-         ========================================================================== -->
-    <header class="fixed top-0 z-50 w-full swiss-header">
-        <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-            <!-- Brand -->
-            <a href="#top" class="flex items-center gap-2.5 group" aria-label="Arch Time Pro">
-                <span class="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
-                <span class="text-lg font-bold tracking-tight text-neutral-950">
-                    Arch Time Pro
-                </span>
+<body id="top" class="selection:bg-indigo-100 selection:text-indigo-900">
+    <header class="fixed top-0 z-50 w-full border-b border-slate-100 bg-white/90 backdrop-blur-xl">
+        <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-6">
+            <a href="#top" class="flex items-center" aria-label="Arch Time Pro, homepage">
+                <span class="text-xl font-black uppercase text-slate-900">Arch <span class="text-indigo-600">Time</span> Pro</span>
             </a>
-
-            <!-- Navigation Links -->
-            <nav class="hidden items-center gap-8 md:flex" aria-label="Navigazione principale">
-                <a href="#prodotto" class="text-sm font-medium text-neutral-600 hover:text-neutral-950 transition-colors">Prodotto</a>
-                <a href="#metodo" class="text-sm font-medium text-neutral-600 hover:text-neutral-950 transition-colors">Metodo</a>
-                <a href="calcolo-compenso-professionale-dlgs-36-2023.html" class="text-sm font-medium text-neutral-600 hover:text-neutral-950 transition-colors flex items-center gap-1.5">
-                    Parcella D.Lgs 36/23 <span class="rounded bg-blue-50 text-blue-700 border border-blue-200 px-1.5 py-0.5 text-[10px] font-mono font-bold">Gratis</span>
-                </a>
-                <a href="#prezzi" class="text-sm font-medium text-neutral-600 hover:text-neutral-950 transition-colors">Prezzi</a>
-            </nav>
-
-            <!-- Actions -->
-            <div class="flex items-center gap-4">
-                <a href="app.html" class="hidden text-sm font-medium text-neutral-600 hover:text-neutral-950 sm:inline-block">Accedi</a>
-                <a href="app.html" class="swiss-btn swiss-btn-black !py-2 !px-4 text-xs font-semibold shadow-sm hover:shadow-md">
-                    Prova gratis 30 giorni
-                </a>
+            <div class="flex items-center gap-5 lg:gap-8">
+                <nav class="hidden items-center gap-7 md:flex" aria-label="Navigazione principale">
+                    <a href="metodo.html" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Metodo</a>
+                    <a href="#prezzi" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Prezzi</a>
+                </nav>
+                <a href="app.html" class="hidden text-sm font-bold text-slate-600 transition-colors hover:text-slate-900 sm:block">Accedi</a>
+                <a href="app.html" class="rounded-lg bg-slate-900 px-4 py-2.5 text-xs font-black uppercase text-white shadow-lg transition-colors hover:bg-indigo-600 sm:px-5">Prova gratis</a>
             </div>
         </div>
     </header>
 
-    <main class="flex-1">
-        <!-- ==========================================================================
-             HERO SECTION: MONUMENTAL TYPOGRAPHY WITH AMBIENT GRADIENT & INTERACTIVE SHOWCASE
-             ========================================================================== -->
-        <section class="hero-ambient-glow pt-32 pb-20 lg:pt-44 lg:pb-28 border-b border-neutral-200/80">
-            <div class="mx-auto max-w-5xl px-6">
-
-                <!-- Main Headline -->
-                <div class="text-center max-w-3xl mx-auto mb-14">
-                    <div class="inline-flex items-center gap-2 mb-6">
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 shadow-sm">
-                            <span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span> Controllo Commesse per Studi di Architettura
-                        </span>
-                    </div>
-
-                    <h1 class="swiss-display text-4xl sm:text-6xl lg:text-7xl text-neutral-950">
-                        Il controllo economico dello studio.<br>
-                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-indigo-600 to-emerald-600">Semplice. Chirurgico.</span>
+    <main>
+        <section class="bg-grid border-b border-slate-100 pb-14 pt-28 lg:pb-16 lg:pt-32">
+            <div class="mx-auto max-w-7xl px-5 sm:px-6">
+                <div class="mx-auto max-w-4xl text-center">
+                    <p class="mb-3 text-xs font-extrabold uppercase text-indigo-600">Per studi di architettura, ingegneria e imprese</p>
+                    <h1 class="text-4xl font-black leading-tight text-slate-950 sm:text-5xl lg:text-6xl">
+                        <span class="text-indigo-600">Arch Time Pro.</span><br>Il margine di ogni commessa, sotto controllo.
                     </h1>
-
-                    <p class="mx-auto mt-6 max-w-2xl text-base sm:text-lg text-neutral-600 font-normal leading-relaxed">
-                        Il team registra ore e attività. Tu visualizzi in tempo reale compensi, costi del lavoro, spese vive e margine utile di ogni progetto, senza introdurre un gestionale aziendale complesso.
+                    <p class="mx-auto mt-5 max-w-2xl text-base font-medium leading-relaxed text-slate-600 sm:text-lg">
+                        Il team registra ore e attività. Tu vedi costi, spese e margine aggiornato di ogni commessa, senza introdurre un gestionale aziendale complesso.
                     </p>
-
-                    <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3.5">
-                        <a href="app.html" class="swiss-btn swiss-btn-black w-full sm:w-auto text-sm !py-3.5 !px-7 shadow-lg shadow-neutral-950/10">
-                            Inizia la prova gratuita (30 giorni)
+                    <div class="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                        <a href="calcolo-margine-commessa.html" class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-6 py-3.5 text-sm font-black text-white shadow-lg shadow-indigo-500/20 transition-colors hover:bg-indigo-700 sm:w-auto">
+                            <i data-lucide="calculator" class="h-4 w-4"></i>
+                            Calcola una commessa
                         </a>
-                        <a href="calcolo-margine-commessa.html" class="swiss-btn swiss-btn-outline w-full sm:w-auto text-sm !py-3.5 !px-7 hover:border-neutral-400">
-                            Calcola una commessa online
+                        <a href="app.html" class="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-6 py-3.5 text-sm font-black text-slate-700 transition-colors hover:border-slate-400 hover:bg-slate-50 sm:w-auto">
+                            Prova 30 giorni gratis
+                            <i data-lucide="arrow-right" class="h-4 w-4"></i>
                         </a>
                     </div>
-
-                    <p class="mt-4 text-xs text-neutral-500 font-medium">
-                        Nessuna carta richiesta · Collaboratori illimitati · Dati economici riservati alla direzione
-                    </p>
-                </div>
-
-                <!-- ==============================================================
-                     THE INTERACTIVE PRODUCT SHOWCASE (Real Application Preview)
-                     ============================================================== -->
-                <div id="prodotto" class="mx-auto max-w-4xl swiss-card shadow-2xl overflow-hidden border border-neutral-300/80 bg-white">
-
-                    <!-- App Preview Header Bar -->
-                    <div class="bg-gradient-to-r from-neutral-100 via-neutral-50 to-neutral-100 border-b border-neutral-200 px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                        <div class="flex items-center gap-2">
-                            <span class="w-3 h-3 rounded-full bg-rose-400"></span>
-                            <span class="w-3 h-3 rounded-full bg-amber-400"></span>
-                            <span class="w-3 h-3 rounded-full bg-emerald-400"></span>
-                            <span class="ml-2 text-xs font-semibold text-neutral-700">Arch Time Pro Workspace</span>
-                        </div>
-
-                        <!-- Tab Switcher -->
-                        <div class="swiss-tab-nav bg-white shadow-sm">
-                            <button type="button" data-showcase-tab="commessa" class="swiss-tab-btn is-active">1. Scheda Commessa</button>
-                            <button type="button" data-showcase-tab="timer" class="swiss-tab-btn">2. Cronometro Live</button>
-                            <button type="button" data-showcase-tab="privacy" class="swiss-tab-btn">3. Privacy Team</button>
-                        </div>
-                    </div>
-
-                    <!-- TAB 1: COMMESSA (PROGETTO DIMOSTRATIVO INTERATTIVO) -->
-                    <div id="panel-commessa" class="p-6 sm:p-8 space-y-6">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-200 pb-5">
-                            <div>
-                                <div class="flex items-center gap-2">
-                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> In corso
-                                    </span>
-                                    <span class="text-xs font-mono text-neutral-400">#2026-08</span>
-                                </div>
-                                <h3 class="text-2xl font-bold text-neutral-950 mt-1.5">Ristrutturazione Villa sul Lago</h3>
-                                <p class="text-xs text-neutral-500 mt-0.5">Committente: Famiglia Rossi · Progettazione Esecutiva & D.L.</p>
-                            </div>
-                            <div class="text-left sm:text-right bg-neutral-50 sm:bg-transparent p-3 sm:p-0 rounded-lg border sm:border-0 border-neutral-200">
-                                <span class="text-xs text-neutral-500 block font-medium">Compenso Contrattuale</span>
-                                <span class="swiss-mono text-2xl font-extrabold text-neutral-950">24.000 €</span>
-                            </div>
-                        </div>
-
-                        <!-- Live Economic Metrics Grid -->
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                            <div class="bg-neutral-50 p-4 rounded-xl border border-neutral-200">
-                                <span class="text-xs text-neutral-500 font-medium block">Ore Registrate</span>
-                                <span id="showcase-hours" class="swiss-mono text-xl font-bold text-neutral-950 mt-1 block">118h</span>
-                                <span class="text-[11px] text-neutral-500">Costo lavoro: 4.720 €</span>
-                            </div>
-
-                            <div class="bg-neutral-50 p-4 rounded-xl border border-neutral-200">
-                                <span class="text-xs text-neutral-500 font-medium block">Spese Vive</span>
-                                <span id="showcase-expenses" class="swiss-mono text-xl font-bold text-amber-700 mt-1 block">1.480 €</span>
-                                <span class="text-[11px] text-neutral-500">Bolli, rilievi, perizie</span>
-                            </div>
-
-                            <div class="bg-neutral-50 p-4 rounded-xl border border-neutral-200">
-                                <span class="text-xs text-neutral-500 font-medium block">Costo Totale Assorbito</span>
-                                <span id="showcase-total-cost" class="swiss-mono text-xl font-bold text-neutral-950 mt-1 block">6.200 €</span>
-                                <span class="text-[11px] text-neutral-500">Ore + Spese vive</span>
-                            </div>
-
-                            <div class="bg-emerald-50/80 p-4 rounded-xl border border-emerald-200/80 shadow-sm">
-                                <span class="text-xs text-emerald-800 font-semibold block">Margine Utile Reale</span>
-                                <span id="showcase-margin" class="swiss-mono text-xl font-black text-emerald-700 mt-1 block">17.800 €</span>
-                                <span id="showcase-margin-pct" class="text-[11px] text-emerald-700 font-bold">74% del compenso</span>
-                            </div>
-                        </div>
-
-                        <!-- Progress to Break-even Meter -->
-                        <div class="space-y-2 pt-1">
-                            <div class="flex justify-between text-xs text-neutral-600 font-medium">
-                                <span>Avanzamento costi rispetto al compenso</span>
-                                <span id="showcase-remaining-hours" class="font-bold text-emerald-700">445h di margine prima del pareggio</span>
-                            </div>
-                            <div class="swiss-meter h-2.5 bg-neutral-200/80">
-                                <div id="showcase-meter-fill" class="meter-gradient-active h-full transition-all duration-300" style="width: 26%;"></div>
-                            </div>
-                        </div>
-
-                        <!-- Interactive Simulation Buttons -->
-                        <div class="bg-gradient-to-r from-blue-50/50 to-neutral-50 p-4 rounded-xl border border-blue-100 flex flex-wrap items-center justify-between gap-3">
-                            <span class="text-xs font-semibold text-neutral-800 flex items-center gap-1.5">
-                                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-blue-600"></i> Simula l'avanzamento dei lavori:
-                            </span>
-                            <div class="flex flex-wrap items-center gap-2">
-                                <button type="button" id="btn-showcase-add-hours" class="swiss-btn swiss-btn-outline !py-1.5 !px-3 text-xs bg-white hover:border-blue-300 hover:text-blue-700">
-                                    +15 ore di lavoro
-                                </button>
-                                <button type="button" id="btn-showcase-add-expense" class="swiss-btn swiss-btn-outline !py-1.5 !px-3 text-xs bg-white hover:border-amber-300 hover:text-amber-700">
-                                    +400 € spese vive
-                                </button>
-                                <button type="button" id="btn-showcase-reset" class="text-xs text-neutral-500 hover:text-neutral-950 px-2 underline">
-                                    Azzera
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- TAB 2: LIVE CRONOMETRO -->
-                    <div id="panel-timer" class="p-6 sm:p-8 space-y-6 hidden">
-                        <div class="text-center max-w-md mx-auto py-4">
-                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 mb-3">
-                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span> Timer Attivo in Background
-                            </span>
-                            <p class="text-xs text-neutral-500 font-medium mt-1">Commessa: Ristrutturazione Villa sul Lago</p>
-                            <h4 class="text-lg font-bold text-neutral-950 mt-0.5">Attività: Progetto Esecutivo & Dettagli Costruttivi</h4>
-
-                            <!-- Digital Digits with Ambient Dark Surface -->
-                            <div class="my-6 py-6 bg-gradient-to-b from-neutral-900 to-neutral-950 text-white rounded-2xl border border-neutral-800 shadow-xl">
-                                <span id="showcase-timer-digits" class="swiss-mono text-4xl sm:text-5xl font-bold tracking-wider text-blue-400">02:04:18</span>
-                            </div>
-
-                            <button type="button" id="btn-showcase-toggle-timer" class="swiss-btn swiss-btn-outline text-xs hover:border-neutral-900">
-                                Metti in pausa
-                            </button>
-                        </div>
-                        <p class="text-xs text-center text-neutral-500">
-                            I collaboratori possono avviare il cronometro da browser o inserire le ore a consuntivo a fine giornata.
-                        </p>
-                    </div>
-
-                    <!-- TAB 3: PRIVACY DEL TEAM -->
-                    <div id="panel-privacy" class="p-6 sm:p-8 space-y-6 hidden">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                            <!-- Owner View -->
-                            <div class="p-6 rounded-2xl border-2 border-neutral-950 bg-white shadow-sm">
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-bold bg-neutral-900 text-white mb-2">Vista Titolare</span>
-                                <h4 class="text-base font-bold text-neutral-950 mt-1">Controllo Finanziario Completo</h4>
-                                <ul class="mt-4 space-y-2.5 text-xs text-neutral-700 font-medium">
-                                    <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> Compenso totale e quote delle fasi</li>
-                                    <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> Costo orario interno di ciascun membro</li>
-                                    <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> Margine economico e punto di pareggio</li>
-                                    <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> Report di redditività e storico commesse</li>
-                                </ul>
-                            </div>
-
-                            <!-- Staff View -->
-                            <div class="p-6 rounded-2xl border border-neutral-200 bg-neutral-50">
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-bold bg-neutral-200 text-neutral-700 mb-2">Vista Collaboratore</span>
-                                <h4 class="text-base font-bold text-neutral-950 mt-1">Interfaccia Protetta & Semplice</h4>
-                                <ul class="mt-4 space-y-2.5 text-xs text-neutral-600 font-medium">
-                                    <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-neutral-500"></i> Registrazione ore e attività con timer</li>
-                                    <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-neutral-500"></i> Inserimento note e spese vive sostenute</li>
-                                    <li class="flex items-center gap-2 text-neutral-400"><i data-lucide="lock" class="w-4 h-4 text-neutral-400"></i> Nessun accesso ai compensi della commessa</li>
-                                    <li class="flex items-center gap-2 text-neutral-400"><i data-lucide="lock" class="w-4 h-4 text-neutral-400"></i> Tariffe orarie degli altri membri oscurate</li>
-                                </ul>
-                            </div>
-
-                        </div>
-                    </div>
-
+                    <p class="mt-4 text-xs font-semibold text-slate-500">Nessuna demo obbligatoria · collaboratori inclusi · dati economici riservati alla direzione</p>
                 </div>
 
             </div>
         </section>
 
-        <!-- ==========================================================================
-             SECTION 02: I TRE PILASTRI DEL METODO
-             ========================================================================== -->
-        <section id="metodo" class="py-20 lg:py-28 bg-white border-b border-neutral-200">
-            <div class="mx-auto max-w-5xl px-6">
-                <div class="max-w-2xl mb-16">
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 mb-3">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Efficienza di Studio
-                    </span>
-                    <h2 class="swiss-h2 text-3xl sm:text-4xl text-neutral-950 mt-2">
-                        Proteggere l'utile senza complicare la vita allo studio.
-                    </h2>
-                    <p class="mt-4 text-base text-neutral-600 font-normal leading-relaxed">
-                        Non abbiamo creato un software per fare tutto. Abbiamo creato lo strumento più diretto per evitare che le commesse vadano in perdita a causa di ore extra non conteggiate.
-                    </p>
+        <section id="perche" class="border-b border-slate-100 bg-white py-14 lg:py-18">
+            <div class="mx-auto max-w-6xl px-5 sm:px-6">
+                <div class="mx-auto mb-10 max-w-3xl text-center">
+                    <p class="mb-3 text-xs font-extrabold uppercase text-indigo-600">Una sola priorità</p>
+                    <h2 class="text-3xl font-black text-slate-950 sm:text-4xl">Capire in tempo se la commessa sta ancora lasciando margine.</h2>
+                    <p class="mt-4 text-base leading-relaxed text-slate-600">Arch Time Pro non prova a sostituire CRM, contabilità, planning o strumenti di progetto. Tiene insieme i pochi dati necessari per proteggere l’utile.</p>
                 </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <!-- Column 1: Blue accent -->
-                    <div class="p-6 rounded-2xl border border-neutral-200 bg-[#FAFAFA] border-t-4 border-t-blue-600 shadow-sm hover:shadow-md transition-shadow">
-                        <span class="text-xs font-mono font-bold text-blue-600">01 · OPERATIVITÀ</span>
-                        <h3 class="text-lg font-bold text-neutral-950 mt-2 mb-2">Raccolta ore senza attrito</h3>
-                        <p class="text-sm text-neutral-600 leading-relaxed font-normal">
-                            Timer da browser e inserimento rapido. I collaboratori aggiornano il timesheet in pochi secondi senza perdersi in menu burocratici.
-                        </p>
-                    </div>
-
-                    <!-- Column 2: Amber accent -->
-                    <div class="p-6 rounded-2xl border border-neutral-200 bg-[#FAFAFA] border-t-4 border-t-amber-500 shadow-sm hover:shadow-md transition-shadow">
-                        <span class="text-xs font-mono font-bold text-amber-600">02 · STRATIGRAFIA</span>
-                        <h3 class="text-lg font-bold text-neutral-950 mt-2 mb-2">Ore e spese nello stesso conto</h3>
-                        <p class="text-sm text-neutral-600 leading-relaxed font-normal">
-                            Il tempo si traduce in costo economico e si somma a bolli, plastici, stampe e perizie, fornendo il costo reale assorbito dal lavoro.
-                        </p>
-                    </div>
-
-                    <!-- Column 3: Emerald accent -->
-                    <div class="p-6 rounded-2xl border border-neutral-200 bg-[#FAFAFA] border-t-4 border-t-emerald-500 shadow-sm hover:shadow-md transition-shadow">
-                        <span class="text-xs font-mono font-bold text-emerald-600">03 · CONTROLLO</span>
-                        <h3 class="text-lg font-bold text-neutral-950 mt-2 mb-2">Sforamenti visibili prima della fine</h3>
-                        <p class="text-sm text-neutral-600 leading-relaxed font-normal">
-                            La barra del punto di pareggio mostra se il progetto sta consumando più risorse del previsto, permettendo di rinegoziare varianti in tempo.
-                        </p>
-                    </div>
+                <div class="grid gap-8 md:grid-cols-3">
+                    <article>
+                        <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600"><i data-lucide="timer" class="h-5 w-5"></i></div>
+                        <h3 class="text-lg font-black text-slate-900">Ore raccolte senza attrito</h3>
+                        <p class="mt-2 text-sm leading-relaxed text-slate-600">Timer e inserimento manuale. Il team registra il lavoro senza vedere budget, costi orari o margini.</p>
+                    </article>
+                    <article>
+                        <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-amber-50 text-amber-600"><i data-lucide="receipt-text" class="h-5 w-5"></i></div>
+                        <h3 class="text-lg font-black text-slate-900">Costi e spese nello stesso conto</h3>
+                        <p class="mt-2 text-sm leading-relaxed text-slate-600">Le ore diventano costo economico e si sommano alle spese vive, progetto per progetto e fase per fase.</p>
+                    </article>
+                    <article>
+                        <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600"><i data-lucide="gauge" class="h-5 w-5"></i></div>
+                        <h3 class="text-lg font-black text-slate-900">Sforamenti visibili prima della fine</h3>
+                        <p class="mt-2 text-sm leading-relaxed text-slate-600">Dashboard, ritmo progetto e budget per attività mostrano dove il lavoro sta consumando più risorse del previsto.</p>
+                    </article>
                 </div>
             </div>
         </section>
 
-        <!-- ==========================================================================
-             SECTION 03: CONFRONTO STRUMENTALE CON PATTERN
-             ========================================================================== -->
-        <section class="subtle-section-grid py-20 lg:py-28 bg-[#FAFAFA] border-b border-neutral-200">
-            <div class="mx-auto max-w-5xl px-6">
-                <div class="max-w-2xl mb-14">
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-neutral-200 text-neutral-800 mb-3">
-                        Confronto Strumenti
-                    </span>
-                    <h2 class="swiss-h2 text-3xl sm:text-4xl text-neutral-950 mt-2">
-                        Lo strumento giusto per lo studio tecnico.
-                    </h2>
+        <section class="border-b border-slate-200 bg-slate-50 py-14 lg:py-18">
+            <div class="mx-auto max-w-6xl px-5 sm:px-6">
+                <div class="mb-8 max-w-3xl">
+                    <p class="mb-3 text-xs font-extrabold uppercase text-indigo-600">Strumenti diversi, lavori diversi</p>
+                    <h2 class="text-3xl font-black text-slate-950 sm:text-4xl">Perché scegliere Arch Time Pro.</h2>
+                    <p class="mt-4 text-base leading-relaxed text-slate-600">Non è “meglio di tutto”. È più adatto quando serve controllo economico senza una trasformazione completa dello studio.</p>
                 </div>
+                <div class="grid gap-4 lg:grid-cols-3">
+                    <article class="rounded-lg border border-indigo-600 bg-slate-950 p-6 text-white shadow-xl shadow-slate-300/50 lg:-translate-y-2">
+                        <div class="flex items-start justify-between gap-4">
+                            <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-indigo-500 text-white"><i data-lucide="gauge" class="h-5 w-5"></i></div>
+                            <span class="rounded-full bg-indigo-500/20 px-3 py-1 text-xs font-black uppercase text-indigo-200">Focalizzato</span>
+                        </div>
+                        <h3 class="mt-6 text-2xl font-black">Arch Time Pro</h3>
+                        <p class="mt-2 text-sm leading-relaxed text-slate-300">Per vedere margini e sforamenti senza cambiare l’organizzazione dello studio.</p>
+                        <ul class="mt-6 space-y-4 text-sm font-semibold text-slate-100">
+                            <li class="flex gap-3"><i data-lucide="check" class="h-5 w-5 shrink-0 text-emerald-400"></i><span>Parte da una commessa dimostrativa</span></li>
+                            <li class="flex gap-3"><i data-lucide="check" class="h-5 w-5 shrink-0 text-emerald-400"></i><span>Il team aggiorna ore e spese</span></li>
+                            <li class="flex gap-3"><i data-lucide="check" class="h-5 w-5 shrink-0 text-emerald-400"></i><span>Costi e margini restano alla direzione</span></li>
+                        </ul>
+                        <p class="mt-6 border-t border-slate-700 pt-4 text-xs font-bold uppercase text-indigo-300">Ideale per un controllo continuo e leggero</p>
+                    </article>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <article class="rounded-lg border border-slate-200 bg-white p-6">
+                        <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700"><i data-lucide="sheet" class="h-5 w-5"></i></div>
+                        <h3 class="mt-6 text-2xl font-black text-slate-900">Excel</h3>
+                        <p class="mt-2 text-sm leading-relaxed text-slate-600">Per costruire un controllo su misura quando una sola persona mantiene i dati.</p>
+                        <ul class="mt-6 space-y-4 text-sm text-slate-600">
+                            <li class="flex gap-3"><i data-lucide="pencil-ruler" class="h-5 w-5 shrink-0 text-slate-400"></i><span>Modello e formule da costruire</span></li>
+                            <li class="flex gap-3"><i data-lucide="refresh-cw" class="h-5 w-5 shrink-0 text-slate-400"></i><span>Aggiornamenti prevalentemente manuali</span></li>
+                            <li class="flex gap-3"><i data-lucide="file-lock-2" class="h-5 w-5 shrink-0 text-slate-400"></i><span>Riservatezza affidata ai file condivisi</span></li>
+                        </ul>
+                        <p class="mt-6 border-t border-slate-100 pt-4 text-xs font-bold uppercase text-slate-500">Ideale per verifiche occasionali</p>
+                    </article>
 
-                    <!-- Arch Time Pro: Dark Ambient Card with Glow -->
-                    <div class="dark-ambient-gradient p-8 rounded-2xl border border-neutral-700 shadow-2xl flex flex-col justify-between relative text-white">
-                        <div class="absolute -top-3 right-6">
-                            <span class="bg-blue-600 text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow">Consigliato</span>
-                        </div>
-                        <div>
-                            <span class="text-xs font-mono text-blue-400 font-bold block mb-1">GESTIONALE COMMESSE</span>
-                            <h3 class="text-2xl font-extrabold text-white mb-2">Arch Time Pro</h3>
-                            <p class="text-xs text-neutral-300 leading-relaxed mb-6">
-                                Pronto all'uso in 2 minuti. Traccia ore, spese e margini con riservatezza totale.
-                            </p>
-                            <ul class="space-y-3 text-xs text-neutral-200 font-medium">
-                                <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Setup istantaneo con commessa demo</li>
-                                <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Preventivatore D.Lgs 36/23 incluso</li>
-                                <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Team illimitato senza costi per utente</li>
-                            </ul>
-                        </div>
-                        <div class="mt-8 pt-4 border-t border-neutral-800">
-                            <a href="app.html" class="swiss-btn w-full bg-blue-600 text-white hover:bg-blue-500 text-xs font-bold text-center">
-                                Inizia la prova gratuita &rarr;
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Excel -->
-                    <div class="swiss-card p-8 flex flex-col justify-between bg-white shadow-sm">
-                        <div>
-                            <span class="text-xs font-mono text-neutral-400 font-bold block mb-1">FOGLIO DI CALCOLO</span>
-                            <h3 class="text-xl font-bold text-neutral-950 mb-2">Excel / Fogli Google</h3>
-                            <p class="text-xs text-neutral-600 leading-relaxed mb-6">
-                                Flessibile ma richiede costante manutenzione manuale e non protegge la privacy economica.
-                            </p>
-                            <ul class="space-y-3 text-xs text-neutral-600">
-                                <li>· Formule da aggiornare a mano</li>
-                                <li>· Nessun timer live per i collaboratori</li>
-                                <li>· Rischio di cancellazioni accidentali</li>
-                            </ul>
-                        </div>
-                        <div class="mt-8 pt-4 border-t border-neutral-100 text-xs text-neutral-500 font-medium">
-                            Ideale per: Verifiche occasionali
-                        </div>
-                    </div>
-
-                    <!-- All in one -->
-                    <div class="swiss-card p-8 flex flex-col justify-between bg-white shadow-sm">
-                        <div>
-                            <span class="text-xs font-mono text-neutral-400 font-bold block mb-1">ERP CORPORATE</span>
-                            <h3 class="text-xl font-bold text-neutral-950 mb-2">Gestionale All-in-One</h3>
-                            <p class="text-xs text-neutral-600 leading-relaxed mb-6">
-                                Pensato per grandi aziende con contabilità complessa, magazzino e lunghi corsi di formazione.
-                            </p>
-                            <ul class="space-y-3 text-xs text-neutral-600">
-                                <li>· Costi elevati per ogni singola postazione</li>
-                                <li>· Settimane di configurazione e corsi</li>
-                                <li>· Troppe funzioni inutilizzate per lo studio</li>
-                            </ul>
-                        </div>
-                        <div class="mt-8 pt-4 border-t border-neutral-100 text-xs text-neutral-500 font-medium">
-                            Ideale per: Grandi società di ingegneria
-                        </div>
-                    </div>
-
+                    <article class="rounded-lg border border-slate-200 bg-white p-6">
+                        <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-amber-50 text-amber-700"><i data-lucide="blocks" class="h-5 w-5"></i></div>
+                        <h3 class="mt-6 text-2xl font-black text-slate-900">Gestionale all-in-one</h3>
+                        <p class="mt-2 text-sm leading-relaxed text-slate-600">Per centralizzare molti reparti e riprogettare processi, ruoli e pianificazione.</p>
+                        <ul class="mt-6 space-y-4 text-sm text-slate-600">
+                            <li class="flex gap-3"><i data-lucide="settings-2" class="h-5 w-5 shrink-0 text-slate-400"></i><span>Configurazione iniziale articolata</span></li>
+                            <li class="flex gap-3"><i data-lucide="workflow" class="h-5 w-5 shrink-0 text-slate-400"></i><span>Flussi integrati tra più funzioni</span></li>
+                            <li class="flex gap-3"><i data-lucide="users-round" class="h-5 w-5 shrink-0 text-slate-400"></i><span>Formazione e adozione dell’intero team</span></li>
+                        </ul>
+                        <p class="mt-6 border-t border-slate-100 pt-4 text-xs font-bold uppercase text-slate-500">Ideale per una trasformazione completa</p>
+                    </article>
                 </div>
             </div>
         </section>
 
-        <!-- ==========================================================================
-             SECTION 04: TARIFFE & FONDATORI
-             ========================================================================== -->
-        <section id="prezzi" class="py-20 lg:py-28 bg-white border-b border-neutral-200">
-            <div class="mx-auto max-w-4xl px-6 text-center">
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 mb-3">
-                    <span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span> Tariffa Fondatori 2026
-                </span>
-                <h2 class="swiss-h2 text-3xl sm:text-4xl text-neutral-950 mt-2">
-                    30 giorni gratuiti. Poi 19,90 € al mese per studio.
-                </h2>
-                <p class="mt-4 text-base text-neutral-600 max-w-xl mx-auto font-normal leading-relaxed">
-                    Unico canone fisso per tutto lo studio. Include collaboratori, dipendenti e consulenti senza costi aggiuntivi.
-                </p>
+        <section class="bg-slate-950 py-14 text-white lg:py-16">
+            <div class="mx-auto grid max-w-6xl items-center gap-8 px-5 sm:px-6 lg:grid-cols-[1fr_auto]">
+                <div>
+                    <p class="mb-3 text-xs font-extrabold uppercase text-indigo-300">Prima prova il ragionamento</p>
+                    <h2 class="text-3xl font-black sm:text-4xl">Cinque dati per vedere quanto margine resta.</h2>
+                    <p class="mt-4 max-w-2xl text-base leading-relaxed text-slate-300">Il calcolatore gratuito usa compenso, ore, costo orario e spese. Nessuna registrazione e nessun dato inviato al server.</p>
+                </div>
+                <a href="calcolo-margine-commessa.html" class="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-6 py-3.5 text-sm font-black text-slate-950 transition-colors hover:bg-indigo-50">
+                    Apri il calcolatore
+                    <i data-lucide="arrow-right" class="h-4 w-4"></i>
+                </a>
+            </div>
+        </section>
 
-                <div class="dark-ambient-gradient p-8 sm:p-10 max-w-xl mx-auto mt-10 text-left rounded-2xl border border-neutral-800 shadow-2xl text-white">
-                    <div class="flex items-baseline justify-between border-b border-neutral-800 pb-6">
-                        <div>
-                            <span class="text-xs text-neutral-400 block font-medium">Piano Studio Completo</span>
-                            <span class="swiss-mono text-4xl font-black text-white mt-1 block">19,90 € <span class="text-sm font-normal text-neutral-400">/ mese</span></span>
-                        </div>
-                        <span class="text-xs font-mono font-bold bg-blue-600/20 text-blue-400 border border-blue-500/30 px-2.5 py-1 rounded">Prezzo Bloccato</span>
+        <section id="prezzi" class="border-b border-slate-200 bg-white py-14 lg:py-18">
+            <div class="mx-auto max-w-5xl px-5 sm:px-6">
+                <div class="mx-auto mb-9 max-w-3xl text-center">
+                    <p class="mb-3 text-xs font-extrabold uppercase text-indigo-600">Tariffa Fondatori</p>
+                    <h2 class="text-3xl font-black text-slate-950 sm:text-4xl">30 giorni gratis. Poi 19,90 € al mese per studio.</h2>
+                    <p class="mt-4 text-base leading-relaxed text-slate-600">Il prezzo include collaboratori, dipendenti e consulenti esterni senza costi aggiuntivi. Per chi attiva entro il 30 settembre 2026 resta bloccato finché l’abbonamento rimane attivo.</p>
+                </div>
+                <div class="mx-auto grid max-w-4xl gap-7 rounded-xl border border-slate-800 bg-slate-950 p-6 text-white shadow-xl sm:p-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+                    <div>
+                        <p class="text-xs font-bold uppercase text-indigo-300">Un solo piano</p>
+                        <p class="mt-3 text-4xl font-black">19,90 €<span class="text-base font-bold text-slate-400"> / mese</span></p>
+                        <p class="mt-3 text-sm leading-relaxed text-slate-300">Per l’intero studio, non per singolo utente.</p>
                     </div>
-
-                    <ul class="mt-6 space-y-3 text-xs text-neutral-300 font-medium">
-                        <li class="flex items-center gap-2.5"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Progetti, ore, spese e margini illimitati</li>
-                        <li class="flex items-center gap-2.5"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Collaboratori illimitati senza costi extra</li>
-                        <li class="flex items-center gap-2.5"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Calcolo parcella D.Lgs 36/2023 con export PDF ed Excel</li>
-                        <li class="flex items-center gap-2.5"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Esportazione completa dello storico in JSON e PDF</li>
-                    </ul>
-
-                    <div class="mt-8">
-                        <a href="app.html" class="swiss-btn w-full bg-white text-neutral-950 hover:bg-neutral-100 font-bold text-center !py-3.5 shadow-lg">
-                            Inizia la prova gratuita (30 giorni)
+                    <div>
+                        <ul class="space-y-3 text-sm font-semibold text-slate-200">
+                            <li class="flex gap-3"><i data-lucide="check" class="h-5 w-5 shrink-0 text-emerald-400"></i> Progetti, ore, spese, margini e report</li>
+                            <li class="flex gap-3"><i data-lucide="check" class="h-5 w-5 shrink-0 text-emerald-400"></i> Collaboratori senza costi aggiuntivi</li>
+                            <li class="flex gap-3"><i data-lucide="check" class="h-5 w-5 shrink-0 text-emerald-400"></i> Nessuna demo o chiamata obbligatoria</li>
+                        </ul>
+                        <a href="app.html" class="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-5 py-3.5 text-sm font-black text-white transition-colors hover:bg-indigo-500">
+                            Inizia la prova gratuita
+                            <i data-lucide="arrow-right" class="h-4 w-4"></i>
                         </a>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- ==========================================================================
-             SECTION 05: FAQ
-             ========================================================================== -->
-        <section class="py-20 lg:py-24 bg-[#FAFAFA] border-b border-neutral-200">
-            <div class="mx-auto max-w-3xl px-6">
-                <div class="text-center mb-12">
-                    <span class="swiss-tag">FAQ</span>
-                    <h2 class="swiss-h2 text-3xl text-neutral-950 mt-3">Domande frequenti</h2>
+        <section class="bg-slate-50 py-14 lg:py-16">
+            <div class="mx-auto max-w-3xl px-5 sm:px-6">
+                <div class="mb-8 text-center">
+                    <p class="mb-3 text-xs font-extrabold uppercase text-indigo-600">Domande frequenti</p>
+                    <h2 class="text-3xl font-black text-slate-950">Prima di iniziare</h2>
                 </div>
-
-                <div class="space-y-4">
-                    <details class="swiss-card p-6 group cursor-pointer bg-white">
-                        <summary class="flex justify-between items-center text-sm font-bold text-neutral-950 list-none">
-                            <span>Chi può vedere compensi, costi orari e margini?</span>
-                            <i data-lucide="chevron-down" class="w-4 h-4 text-neutral-400 transition-transform group-open:rotate-180"></i>
-                        </summary>
-                        <p class="mt-4 pt-4 border-t border-neutral-100 text-xs text-neutral-600 leading-relaxed">
-                            Solo il titolare (Owner) e gli amministratori. I collaboratori e i dipendenti registrano ore e note senza poter visualizzare il compenso concordato con il cliente, le tariffe degli altri membri o i margini dello studio.
-                        </p>
+                <div class="space-y-3">
+                    <details class="group overflow-hidden rounded-lg border border-slate-200 bg-white">
+                        <summary class="flex cursor-pointer items-center justify-between gap-4 p-5 text-sm font-black text-slate-900"><span>Chi vede budget, costi e margini?</span><i data-lucide="chevron-down" class="h-4 w-4 shrink-0 text-slate-400 transition-transform group-open:rotate-180"></i></summary>
+                        <p class="border-t border-slate-100 px-5 pb-5 pt-4 text-sm leading-relaxed text-slate-600">Owner e amministratori dello studio. I collaboratori registrano ore e attività, ma l’interfaccia e le regole di accesso non mostrano loro budget, tariffe orarie, costi o marginalità.</p>
                     </details>
-
-                    <details class="swiss-card p-6 group cursor-pointer bg-white">
-                        <summary class="flex justify-between items-center text-sm font-bold text-neutral-950 list-none">
-                            <span>Devo configurare tutto prima di poterlo provare?</span>
-                            <i data-lucide="chevron-down" class="w-4 h-4 text-neutral-400 transition-transform group-open:rotate-180"></i>
-                        </summary>
-                        <p class="mt-4 pt-4 border-t border-neutral-100 text-xs text-neutral-600 leading-relaxed">
-                            No. Al primo accesso trovi già una commessa dimostrativa configurata con ore e spese simulate per capire subito il funzionamento.
-                        </p>
+                    <details class="group overflow-hidden rounded-lg border border-slate-200 bg-white">
+                        <summary class="flex cursor-pointer items-center justify-between gap-4 p-5 text-sm font-black text-slate-900"><span>Devo configurare tutto prima di provarlo?</span><i data-lucide="chevron-down" class="h-4 w-4 shrink-0 text-slate-400 transition-transform group-open:rotate-180"></i></summary>
+                        <p class="border-t border-slate-100 px-5 pb-5 pt-4 text-sm leading-relaxed text-slate-600">No. Al primo accesso trovi una commessa dimostrativa con ore e spese. Puoi modificarla oppure creare subito un lavoro reale.</p>
                     </details>
-
-                    <details class="swiss-card p-6 group cursor-pointer bg-white">
-                        <summary class="flex justify-between items-center text-sm font-bold text-neutral-950 list-none">
-                            <span>Posso esportare i dati e generare report PDF?</span>
-                            <i data-lucide="chevron-down" class="w-4 h-4 text-neutral-400 transition-transform group-open:rotate-180"></i>
-                        </summary>
-                        <p class="mt-4 pt-4 border-t border-neutral-100 text-xs text-neutral-600 leading-relaxed">
-                            Sì. Puoi generare report PDF professionali per singola commessa o per collaboratore e scaricare in qualunque momento un backup completo in formato JSON.
-                        </p>
+                    <details class="group overflow-hidden rounded-lg border border-slate-200 bg-white">
+                        <summary class="flex cursor-pointer items-center justify-between gap-4 p-5 text-sm font-black text-slate-900"><span>Posso esportare i miei dati?</span><i data-lucide="chevron-down" class="h-4 w-4 shrink-0 text-slate-400 transition-transform group-open:rotate-180"></i></summary>
+                        <p class="border-t border-slate-100 px-5 pb-5 pt-4 text-sm leading-relaxed text-slate-600">Sì. Puoi generare report PDF e scaricare dall’area account un’esportazione JSON dello storico dello studio.</p>
                     </details>
+                </div>
+                <div class="mt-7 flex flex-wrap justify-center gap-5 text-sm font-bold">
+                    <a href="sicurezza.html" class="text-indigo-600 hover:underline">Come proteggiamo i dati</a>
+                    <a href="software-gestione-commesse.html" class="text-slate-600 hover:text-indigo-600">Guida ai software commesse</a>
+                    <a href="gestionale-studio-architettura.html" class="text-slate-600 hover:text-indigo-600">Per studi di architettura</a>
                 </div>
             </div>
         </section>
     </main>
 
-    <!-- ==========================================================================
-         FOOTER (SWISS EDITORIAL)
-         ========================================================================== -->
-    <footer class="py-12 bg-white text-neutral-500 border-t border-neutral-200">
-        <div class="mx-auto max-w-6xl px-6 flex flex-col md:flex-row items-center justify-between gap-6 text-xs">
+    <footer class="bg-slate-950 py-10 text-white">
+        <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-7 px-5 text-center sm:px-6 lg:flex-row lg:text-left">
             <div>
-                <p class="font-bold text-neutral-950">Arch Time Pro</p>
-                <p class="mt-1">Stefano Morelli · P. IVA IT02603120425 · Ancona, Italia</p>
+                <p class="text-sm font-black uppercase">Arch <span class="text-indigo-400">Time</span> Pro</p>
+                <p class="mt-2 text-xs text-slate-400">Controllo semplice di ore, costi e margini per studi tecnici.</p>
+                <p class="mt-3 text-xs leading-relaxed text-slate-500">Stefano Morelli · Via Brecce Bianche 29, 60131 Ancona (AN), Italia</p>
+                <p class="mt-1 text-xs leading-relaxed text-slate-500">P. IVA IT02603120425 · C.F. MRLSFN81T03A271G</p>
             </div>
-            <nav class="flex flex-wrap justify-center gap-6 font-medium text-neutral-600">
-                <a href="calcolo-margine-commessa.html" class="hover:text-neutral-950">Calcolatore Margine</a>
-                <a href="calcolo-compenso-professionale-dlgs-36-2023.html" class="hover:text-neutral-950">Parcella D.Lgs 36/23</a>
-                <a href="sicurezza.html" class="hover:text-neutral-950">Sicurezza</a>
-                <a href="privacy.html" class="hover:text-neutral-950">Privacy</a>
-                <a href="termini.html" class="hover:text-neutral-950">Termini</a>
-            </nav>
-            <p>&copy; 2026 Arch Time Pro. Tutti i diritti riservati.</p>
+            <nav class="flex flex-wrap justify-center gap-x-6 gap-y-3 text-xs font-bold text-slate-400"><a href="calcolo-margine-commessa.html">Calcolatore</a><a href="metodo.html">Metodo</a><a href="sicurezza.html">Sicurezza</a><a href="privacy.html">Privacy</a><a href="termini.html">Termini</a><a href="dpa.html">DPA</a><a href="subresponsabili.html">Fornitori</a></nav>
         </div>
     </footer>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            if (window.lucide) lucide.createIcons();
-        });
-    </script>
+    <script>document.addEventListener('DOMContentLoaded', function () { if (window.lucide) lucide.createIcons(); });</script>
 </body>
 </html>
