@@ -44,9 +44,9 @@ main > section:first-child h1 .text-indigo-500,
 main > section:first-child h1 .text-indigo-600,
 main > section:first-child h1 .text-primary-500,
 main > section:first-child h1 .text-primary-600 {
-    color: #09090b !important;
+    color: #176b65 !important;
     background: none !important;
-    -webkit-text-fill-color: #09090b;
+    -webkit-text-fill-color: #176b65;
 }
 
 main > section:first-child a.bg-indigo-600,
