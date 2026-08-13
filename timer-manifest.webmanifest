@@ -1,0 +1,39 @@
+{
+  "name": "Arch Time Mini Timer",
+  "short_name": "Arch Timer",
+  "description": "Timer desktop leggero e sincronizzato con Arch Time Pro.",
+  "id": "/timer-pwa",
+  "start_url": "/timer.html?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#101827",
+  "theme_color": "#172033",
+  "orientation": "any",
+  "categories": ["business", "productivity"],
+  "icons": [
+    {
+      "src": "/assets/icons/icon-192-archtime-meter-20260516.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icons/icon-512-archtime-meter-20260516.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Apri il timer",
+      "short_name": "Timer",
+      "url": "/timer.html?source=shortcut"
+    },
+    {
+      "name": "Apri Arch Time Pro",
+      "short_name": "Arch Time Pro",
+      "url": "/app.html"
+    }
+  ]
+}

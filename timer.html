@@ -7,6 +7,9 @@
     <meta name="theme-color" content="#172033">
     <meta name="robots" content="noindex, nofollow">
     <title>Arch Time Mini Timer</title>
+    <link rel="manifest" href="/timer-manifest.webmanifest?v=2026-08-13-01">
+    <link rel="icon" href="/assets/icons/icon-192-archtime-meter-20260516.png" sizes="192x192">
+    <link rel="apple-touch-icon" href="/assets/icons/icon-192-archtime-meter-20260516.png">
     <script src="assets/vendor/supabase-2.39.3.js?v=privacy-security-2026-08-12-02"></script>
     <script src="assets/vendor/lucide-0.468.0.js?v=privacy-security-2026-08-12-02"></script>
     <script src="assets/js/00-runtime-config.js?v=phase3-2026-05-01"></script>
@@ -48,6 +51,7 @@
             border-bottom: 1px solid var(--line);
             background: linear-gradient(180deg, #ffffff, #f8fafc);
         }
+        .brand { min-width: 0; display: flex; align-items: center; gap: 11px; }
         .mark {
             width: 36px;
             height: 36px;
@@ -123,6 +127,16 @@
         .primary { background: #172033; color: white; }
         .primary.running { background: var(--danger); }
         .secondary { background: #eef2f7; color: #334155; }
+        .install {
+            margin-left: auto;
+            flex: 0 0 auto;
+            padding: 9px 11px;
+            border: 1px solid var(--line);
+            background: rgba(255,255,255,.82);
+            color: #334155;
+            font-size: 11px;
+            box-shadow: 0 1px 3px rgba(15,23,42,.06);
+        }
         .ghost { background: transparent; color: var(--muted); padding: 8px 0; }
         .tabs {
             display: grid;
@@ -168,16 +182,24 @@
             font-size: 11px;
             font-weight: 800;
         }
+        .install-hint { margin: 0; border-radius: 0; border-width: 1px 0 0; text-align: center; }
+        @media (max-width: 390px) {
+            .install span { display: none; }
+            .install { width: 36px; height: 36px; padding: 0; }
+        }
     </style>
 </head>
 <body>
     <main class="shell">
         <div class="topbar">
-            <div class="mark"><i data-lucide="clock-3" width="19" height="19"></i></div>
-            <div>
-                <h1>Arch Time Mini Timer</h1>
-                <p class="caption">Solo ore, senza dashboard</p>
+            <div class="brand">
+                <div class="mark"><i data-lucide="clock-3" width="19" height="19"></i></div>
+                <div>
+                    <h1>Arch Time Mini Timer</h1>
+                    <p class="caption">Solo ore, senza dashboard</p>
+                </div>
             </div>
+            <button id="btn-install-timer-pwa" class="install hidden" type="button" title="Installa sul computer"><i data-lucide="download" width="15" height="15"></i><span>Installa</span></button>
         </div>
 
         <section id="login-view" class="content">
@@ -256,8 +278,10 @@
 
             <div id="app-status" class="notice hidden"></div>
         </section>
+        <p id="timer-install-hint" class="notice install-hint hidden"></p>
     </main>
 
     <script src="assets/js/11-desktop-timer.js?v=billing-security-2026-08-12-01"></script>
+    <script src="assets/js/15-timer-pwa.js?v=2026-08-13-01"></script>
 </body>
 </html>
