@@ -56,7 +56,7 @@ jobs:
           if (-not $source) { throw "Installer NSIS non trovato" }
           New-Item -ItemType Directory -Force release-assets | Out-Null
           Copy-Item $source.FullName "release-assets/Arch-Time-Mini-Timer-Light-Setup-0.2.4.exe"
-          Copy-Item "desktop-timer-tauri/store-output/ArchTimeMiniTimer_0.2.4.0_x64.msix" "release-assets/ArchTimeMiniTimer_0.2.4.0_x64.msix"
+          Copy-Item "desktop-timer-tauri/store-output/ArchTimeMiniTimer_0.2.4.1_x64.msix" "release-assets/ArchTimeMiniTimer_0.2.4.1_x64.msix"
 
       - name: Create or update GitHub release
         shell: pwsh
@@ -75,4 +75,4 @@ jobs:
           name: Arch-Time-Mini-Timer-Light-0.2.4
           path: |
             release-assets/Arch-Time-Mini-Timer-Light-Setup-0.2.4.exe
-            release-assets/ArchTimeMiniTimer_0.2.4.0_x64.msix
+            release-assets/ArchTimeMiniTimer_0.2.4.1_x64.msix

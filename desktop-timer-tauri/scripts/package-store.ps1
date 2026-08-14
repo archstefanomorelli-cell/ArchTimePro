@@ -6,7 +6,7 @@ $outputPath = Join-Path $projectRoot "store-output"
 $releaseExe = Join-Path $projectRoot "src-tauri\target\release\arch-time-mini-timer-light.exe"
 $stagedExe = Join-Path $stagePath "ArchTimeMiniTimer.exe"
 $manifestPath = Join-Path $projectRoot "Package.appxmanifest"
-$packagePath = Join-Path $outputPath "ArchTimeMiniTimer_0.2.4.0_x64.msix"
+$packagePath = Join-Path $outputPath "ArchTimeMiniTimer_0.2.4.1_x64.msix"
 
 $resolvedProjectRoot = [System.IO.Path]::GetFullPath($projectRoot)
 $resolvedStagePath = [System.IO.Path]::GetFullPath($stagePath)
