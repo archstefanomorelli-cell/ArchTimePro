@@ -271,7 +271,7 @@
                             ${rhythm ? `<span class="normal-case tracking-normal font-black ${rhythm.gap > 25 || rhythm.costPercent > 100 ? 'text-red-600' : (rhythm.gap > 10 ? 'text-amber-600' : 'text-emerald-600')}">${rhythm.label}</span>` : `<span>${Math.round(summary.percent)}%</span>`}
                         </div>
                         <div class="relative w-full bg-slate-100 h-2.5 rounded-full overflow-visible">
-                            <div class="${rhythm ? rhythm.barClass : summary.barClass} h-full transition-all duration-1000 rounded-full" style="width: ${Math.min(rhythm ? rhythm.costPercent : summary.percent, 100)}%"></div>
+                            <div class="${summary.barClass} h-full transition-all duration-1000 rounded-full" style="width: ${Math.min(rhythm ? rhythm.costPercent : summary.percent, 100)}%"></div>
                             ${rhythm ? `<span class="absolute top-1/2 -translate-y-1/2 w-1 h-4 rounded-full ${rhythm.markerClass} shadow-sm" style="left: calc(${Math.min(rhythm.operationalPercent, 100)}% - 2px)"></span>` : ''}
                         </div>
                         <div class="flex justify-between text-[10px] lg:text-[11px] font-black text-slate-500 mt-2">
@@ -312,7 +312,7 @@
                             <small>Costi ${costPercent}%${rhythm ? ` · Piano ${progressPercent}%` : ''}</small>
                         </div>
                         <div class="project-list-progress-track">
-                            <span class="${rhythm ? rhythm.barClass : summary.barClass}" style="width:${Math.min(costPercent, 100)}%"></span>
+                            <span class="${summary.barClass}" style="width:${Math.min(costPercent, 100)}%"></span>
                             ${rhythm ? `<i class="${rhythm.markerClass}" style="left:calc(${Math.min(progressPercent, 100)}% - 2px)"></i>` : ''}
                         </div>
                     </div>
