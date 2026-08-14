@@ -407,5 +407,6 @@
         if (isPasswordRecoveryUrl()) showPasswordRecoveryView();
         else {
             if (typeof getNormativeQuoteHandoff === 'function' && getNormativeQuoteHandoff()) switchAuthTab('login');
-            checkUser();
+            const videoDemoMode = new URLSearchParams(window.location.search).get('videoDemo') === '1';
+            if (!videoDemoMode) checkUser();
         }

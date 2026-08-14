@@ -24,23 +24,38 @@
     function footerHtml() {
         return `
             <footer id="public-site-footer" class="bg-slate-950 py-10 text-white">
-                <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-7 px-5 text-center sm:px-6 lg:flex-row lg:text-left">
-                    <div>
+                <div class="mx-auto grid max-w-7xl gap-9 px-5 text-center sm:px-6 lg:grid-cols-[1.45fr_0.75fr_0.9fr_0.75fr] lg:text-left">
+                    <div class="lg:max-w-sm">
                         <p class="text-sm font-black uppercase">Arch <span class="text-indigo-400">Time</span> Pro</p>
                         <p class="mt-2 text-xs text-slate-400">Controllo semplice di ore, costi e margini per studi tecnici.</p>
                         <p class="mt-3 text-xs leading-relaxed text-slate-500">Stefano Morelli · Via Brecce Bianche 29, 60131 Ancona (AN), Italia</p>
                         <p class="mt-1 text-xs leading-relaxed text-slate-500">P. IVA IT02603120425 · C.F. MRLSFN81T03A271G</p>
                     </div>
-                    <nav class="flex flex-wrap justify-center gap-x-6 gap-y-3 text-xs font-bold text-slate-400" aria-label="Link nel piè di pagina">
+                    <nav class="public-footer-groups" aria-label="Prodotto">
+                        <p class="mb-3 text-xs font-black uppercase text-white">Prodotto</p>
+                        <div class="flex flex-col items-center gap-2.5 lg:items-start">
+                            <a href="metodo.html">Metodo</a>
+                            <a href="index.html#prezzi">Prezzi</a>
+                            <a href="app.html">Accedi</a>
+                        </div>
+                    </nav>
+                    <nav class="public-footer-groups" aria-label="Strumenti">
+                        <p class="mb-3 text-xs font-black uppercase text-white">Strumenti</p>
+                        <div class="flex flex-col items-center gap-2.5 lg:items-start">
                         <a href="calcolo-compenso-professionale-dlgs-36-2023.html" class="hover:text-white">Preventivo normativo</a>
-                        <a href="calcolo-margine-commessa.html" class="hover:text-white">Calcolatore</a>
-                        <a href="metodo.html" class="hover:text-white">Metodo</a>
+                            <a href="calcolo-margine-commessa.html">Calcolatore margine</a>
                         <a href="sicurezza.html" class="hover:text-white">Sicurezza</a>
+                        </div>
+                    </nav>
+                    <nav class="public-footer-groups" aria-label="Informazioni legali">
+                        <p class="mb-3 text-xs font-black uppercase text-white">Legale</p>
+                        <div class="flex flex-col items-center gap-2.5 lg:items-start">
                         <a href="privacy.html" class="hover:text-white">Privacy</a>
                         <a href="termini.html" class="hover:text-white">Termini</a>
                         <a href="dpa.html" class="hover:text-white">DPA</a>
                         <a href="subresponsabili.html" class="hover:text-white">Fornitori</a>
                         <button type="button" data-public-cookie-settings class="font-bold hover:text-white">Cookie</button>
+                        </div>
                     </nav>
                 </div>
             </footer>`;
