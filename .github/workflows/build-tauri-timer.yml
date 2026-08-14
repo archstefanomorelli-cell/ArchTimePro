@@ -72,7 +72,7 @@ jobs:
           gh release upload timer-v0.2.5 "release-assets/Arch-Time-Mini-Timer-Light-Setup-0.2.5.exe" --clobber
 
       - name: Upload workflow artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7.0.1
         with:
           name: Arch-Time-Mini-Timer-Light-0.2.5
           path: |
