@@ -6,7 +6,7 @@ Il comando seguente crea un pacchetto MSIX non firmato, destinato al caricamento
 npm run build:store
 ```
 
-Il file viene salvato in `store-output/ArchTimeMiniTimer_0.2.4.1_x64.msix`.
+Il file viene salvato in `store-output/ArchTimeMiniTimer_0.2.5.0_x64.msix`.
 
 La stessa procedura viene eseguita automaticamente dal workflow GitHub del timer, che pubblica il file tra gli artifact della build. Per compilare in locale servono i Visual Studio Build Tools con il componente C++ Desktop.
 

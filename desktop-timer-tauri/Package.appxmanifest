@@ -14,7 +14,7 @@
   <Identity
     Name="ArchTimePro.ArchTimeMiniTimer"
     Publisher="CN=9B2D1DCB-F661-4F25-9FE5-C483E56173DD"
-    Version="0.2.4.1" />
+    Version="0.2.5.0" />
 
   <Properties>
     <DisplayName>Arch Time Mini Timer</DisplayName>

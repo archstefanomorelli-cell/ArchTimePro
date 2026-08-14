@@ -6,7 +6,9 @@ $outputPath = Join-Path $projectRoot "store-output"
 $releaseExe = Join-Path $projectRoot "src-tauri\target\release\arch-time-mini-timer-light.exe"
 $stagedExe = Join-Path $stagePath "ArchTimeMiniTimer.exe"
 $manifestPath = Join-Path $projectRoot "Package.appxmanifest"
-$packagePath = Join-Path $outputPath "ArchTimeMiniTimer_0.2.4.1_x64.msix"
+$manifest = [xml](Get-Content -LiteralPath $manifestPath -Raw)
+$packageVersion = [string]$manifest.Package.Identity.Version
+$packagePath = Join-Path $outputPath "ArchTimeMiniTimer_${packageVersion}_x64.msix"
 
 $resolvedProjectRoot = [System.IO.Path]::GetFullPath($projectRoot)
 $resolvedStagePath = [System.IO.Path]::GetFullPath($stagePath)
@@ -19,6 +21,9 @@ if (-not (Test-Path -LiteralPath $releaseExe)) {
 
 Push-Location $projectRoot
 try {
+    & npm.cmd run store:validate
+    if ($LASTEXITCODE -ne 0) { throw "Validazione manifest Microsoft Store non riuscita." }
+
     if (Test-Path -LiteralPath $stagePath) {
         Remove-Item -LiteralPath $stagePath -Recurse -Force
     }
