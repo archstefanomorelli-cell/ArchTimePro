@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="description" content="Arch Time Mini Timer porta il timer di Arch Time Pro sul desktop Windows, sincronizzato con progetti e attività dello studio.">
+    <link rel="canonical" href="https://www.archtimepro.it/download.html">
+    <meta property="og:title" content="Arch Time Mini Timer per Windows">
+    <meta property="og:description" content="Registra le ore sulle commesse senza tenere aperto il browser.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.archtimepro.it/download.html">
+    <meta property="og:image" content="https://www.archtimepro.it/desktop-timer-tauri/store-assets/microsoft-store/01-timer-desktop-1366x768.png">
+    <title>Mini Timer per Windows | Arch Time Pro</title>
+    <link rel="manifest" href="/manifest.webmanifest?v=archtime-icon-meter-20260516">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32-archtime-meter-20260516.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon-archtime-meter-20260516.png">
+    <link rel="stylesheet" href="assets/tailwind-built.css?v=2026-08-12-01">
+    <link rel="stylesheet" href="assets/fonts.css?v=2026-08-12-01">
+    <link rel="stylesheet" href="assets/public-site.css?v=gradient-2026-08-13-01">
+    <script src="assets/vendor/lucide-0.468.0.js?v=privacy-security-2026-08-12-02"></script>
+    <script src="assets/js/12-analytics.js?v=privacy-2026-08-12-01" defer></script>
+    <script src="assets/js/14-public-shell.js?v=nav-2026-08-13-01" defer></script>
+    <style>
+        body { background: #fff; color: #0f172a; }
+        .timer-hero {
+            background:
+                radial-gradient(circle at 78% 34%, rgba(79, 70, 229, 0.15), transparent 31%),
+                linear-gradient(135deg, #ffffff 0%, #f5f7fc 54%, #e9eef8 100%) !important;
+        }
+        .timer-window {
+            display: block;
+            width: auto;
+            max-width: 100%;
+            max-height: 620px;
+            height: auto;
+            filter: drop-shadow(0 34px 42px rgba(15, 23, 42, 0.2));
+        }
+        .compact-stage {
+            background:
+                radial-gradient(circle at 76% 20%, rgba(52, 211, 153, 0.12), transparent 30%),
+                linear-gradient(135deg, #0f172a 0%, #1d2941 58%, #302f50 100%) !important;
+        }
+        .compact-glass {
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 28px 70px rgba(0, 0, 0, 0.24), inset 0 1px rgba(255, 255, 255, 0.16);
+            backdrop-filter: blur(18px);
+        }
+        .compact-window {
+            display: block;
+            width: min(100%, 520px);
+            height: auto;
+        }
+        @media (min-width: 1024px) {
+            .timer-hero-layout {
+                display: grid;
+                grid-template-columns: minmax(0, 1.08fr) minmax(360px, 0.92fr);
+                gap: 3.5rem;
+            }
+            .compact-layout {
+                display: grid;
+                grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+                gap: 4rem;
+            }
+        }
+        @media (max-width: 1023px) {
+            .timer-window { max-height: 520px; max-width: min(100%, 430px); }
+        }
+    </style>
+</head>
+<body id="top" class="selection:bg-indigo-100 selection:text-indigo-900">
+    <header><div><a href="index.html">Arch Time Pro</a></div></header>
+
+    <main>
+        <section class="timer-hero overflow-hidden border-b border-slate-200 pb-0 pt-28 lg:pt-32">
+            <div class="timer-hero-layout mx-auto max-w-7xl items-center gap-9 px-5 sm:px-6">
+                <div class="pb-12 text-center lg:pb-16 lg:text-left">
+                    <p class="mb-3 text-xs font-extrabold uppercase text-indigo-600">Timer desktop per Windows</p>
+                    <h1 class="text-4xl font-black leading-tight text-slate-950 sm:text-5xl lg:text-6xl">
+                        Le ore sulle commesse, senza tenere aperto il browser.
+                    </h1>
+                    <p class="mx-auto mt-5 max-w-2xl text-base font-medium leading-relaxed text-slate-600 sm:text-lg lg:mx-0">
+                        Seleziona progetto e attività. Arch Time Mini Timer mantiene il lavoro sincronizzato con lo studio e salva le ore direttamente in Arch Time Pro.
+                    </p>
+                    <div class="mt-7 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
+                        <span class="inline-flex w-full cursor-default items-center justify-center gap-2 rounded-lg bg-slate-900 px-6 py-3.5 text-sm font-black text-white shadow-lg sm:w-auto" aria-disabled="true">
+                            <i data-lucide="badge-check" class="h-4 w-4"></i>
+                            In certificazione Microsoft
+                        </span>
+                        <span class="inline-flex items-center gap-2 text-xs font-bold text-slate-500">
+                            <i data-lucide="monitor" class="h-4 w-4"></i>
+                            Windows 10 e 11
+                        </span>
+                    </div>
+                </div>
+
+                <div class="flex min-h-[430px] items-end justify-center lg:min-h-[620px] lg:justify-end">
+                    <img src="desktop-timer-tauri/store-assets/timer-window-full.png" alt="Arch Time Mini Timer aperto sul desktop Windows" class="timer-window object-contain object-bottom">
+                </div>
+            </div>
+        </section>
+
+        <section class="border-b border-slate-200 bg-white py-12 lg:py-14">
+            <div class="mx-auto grid max-w-6xl gap-8 px-5 sm:grid-cols-3 sm:px-6">
+                <article>
+                    <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600"><i data-lucide="refresh-cw" class="h-5 w-5"></i></div>
+                    <h2 class="mt-4 text-lg font-black text-slate-950">Sempre sincronizzato</h2>
+                    <p class="mt-2 text-sm leading-relaxed text-slate-600">Progetti, attività e timer restano allineati con l’app web. Se interrompi il timer da un dispositivo, lo stato si aggiorna anche sugli altri.</p>
+                </article>
+                <article>
+                    <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700"><i data-lucide="minimize-2" class="h-5 w-5"></i></div>
+                    <h2 class="mt-4 text-lg font-black text-slate-950">Compatto quando lavori</h2>
+                    <p class="mt-2 text-sm leading-relaxed text-slate-600">Riduci la finestra a un contatore discreto nell’angolo dello schermo, con progetto, attività e tempo sempre visibili.</p>
+                </article>
+                <article>
+                    <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-50 text-amber-700"><i data-lucide="bell-ring" class="h-5 w-5"></i></div>
+                    <h2 class="mt-4 text-lg font-black text-slate-950">Promemoria dopo 8 ore</h2>
+                    <p class="mt-2 text-sm leading-relaxed text-slate-600">Se il timer resta acceso troppo a lungo, Arch Time Pro invia lo stesso promemoria previsto per il timer web.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="compact-stage overflow-hidden py-14 text-white lg:py-18">
+            <div class="compact-layout mx-auto max-w-6xl items-center gap-10 px-5 sm:px-6">
+                <div>
+                    <p class="mb-3 text-xs font-extrabold uppercase text-emerald-300">Modalità compatta</p>
+                    <h2 class="text-3xl font-black leading-tight sm:text-4xl">Riduci il timer.<br>Continua a lavorare.</h2>
+                    <p class="mt-4 max-w-xl text-base leading-relaxed text-slate-300">Il mini timer resta in basso a destra e torna alla finestra completa quando interrompi la registrazione. Nessuna scheda del browser da cercare.</p>
+                </div>
+                <div class="compact-glass flex min-h-[220px] items-center justify-center rounded-xl p-5 sm:p-8">
+                    <img src="desktop-timer-tauri/store-assets/timer-window-compact.png" alt="Modalità compatta di Arch Time Mini Timer" class="compact-window">
+                </div>
+            </div>
+        </section>
+
+        <section class="border-b border-slate-200 bg-slate-50 py-14 lg:py-16">
+            <div class="mx-auto max-w-6xl px-5 sm:px-6">
+                <div class="mx-auto mb-10 max-w-3xl text-center">
+                    <p class="mb-3 text-xs font-extrabold uppercase text-indigo-600">Pronto in pochi passaggi</p>
+                    <h2 class="text-3xl font-black text-slate-950 sm:text-4xl">Lo stesso studio, direttamente sul desktop.</h2>
+                </div>
+                <ol class="grid gap-8 sm:grid-cols-3">
+                    <li class="border-t-2 border-indigo-600 pt-5"><span class="text-xs font-black text-indigo-600">01</span><h3 class="mt-2 text-lg font-black text-slate-950">Installa</h3><p class="mt-2 text-sm leading-relaxed text-slate-600">Scarica Arch Time Mini Timer dalla pagina ufficiale del Microsoft Store.</p></li>
+                    <li class="border-t-2 border-slate-300 pt-5"><span class="text-xs font-black text-slate-500">02</span><h3 class="mt-2 text-lg font-black text-slate-950">Accedi</h3><p class="mt-2 text-sm leading-relaxed text-slate-600">Usa le stesse credenziali del tuo account Arch Time Pro.</p></li>
+                    <li class="border-t-2 border-slate-300 pt-5"><span class="text-xs font-black text-slate-500">03</span><h3 class="mt-2 text-lg font-black text-slate-950">Registra</h3><p class="mt-2 text-sm leading-relaxed text-slate-600">Scegli progetto e attività, poi avvia il timer senza aprire l’app web.</p></li>
+                </ol>
+            </div>
+        </section>
+
+        <section class="bg-white py-14 lg:py-16">
+            <div class="mx-auto grid max-w-6xl items-center gap-8 px-5 sm:px-6 lg:grid-cols-[1fr_auto]">
+                <div>
+                    <p class="mb-3 text-xs font-extrabold uppercase text-indigo-600">Pubblicazione in corso</p>
+                    <h2 class="text-3xl font-black text-slate-950 sm:text-4xl">Il download si attiverà dopo la certificazione.</h2>
+                    <p class="mt-4 max-w-2xl text-base leading-relaxed text-slate-600">La pagina sarà collegata al Microsoft Store appena la revisione del pacchetto sarà completata.</p>
+                </div>
+                <span class="inline-flex cursor-default items-center justify-center gap-2 rounded-lg border border-slate-300 bg-slate-100 px-6 py-3.5 text-sm font-black text-slate-500" aria-disabled="true">
+                    <i data-lucide="download" class="h-4 w-4"></i>
+                    Download a breve
+                </span>
+            </div>
+        </section>
+    </main>
+
+    <footer><div><a href="index.html">Arch Time Pro</a></div></footer>
+</body>
+</html>
