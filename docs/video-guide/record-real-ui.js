@@ -7,7 +7,9 @@ const { chromium } = require('playwright');
 const root = path.resolve(__dirname, '..', '..');
 const serverScript = path.join(__dirname, 'server.js');
 const tutorialOutputDir = path.join(__dirname, 'videos-real');
-const methodOutputDir = path.join(__dirname, 'videos-method');
+const methodOutputDir = process.env.ARCHTIME_METHOD_OUTPUT_DIR
+    ? path.resolve(root, process.env.ARCHTIME_METHOD_OUTPUT_DIR)
+    : path.join(__dirname, 'videos-method');
 const baseUrl = 'http://127.0.0.1:8765/app.html?videoDemo=1';
 const browserCandidates = [
     'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
@@ -443,16 +445,31 @@ async function guidedSelect(page, selector, value) {
 }
 
 async function recordClip(browser, clip, options) {
-    const { outputDir, width, height, compact } = options;
+    const {
+        outputDir,
+        width,
+        height,
+        videoWidth = width,
+        videoHeight = height,
+        deviceScaleFactor = 1,
+        rootFontScale = 1,
+        compact
+    } = options;
     const context = await browser.newContext({
         viewport: { width, height },
-        deviceScaleFactor: 1,
-        recordVideo: { dir: outputDir, size: { width, height } }
+        deviceScaleFactor,
+        recordVideo: { dir: outputDir, size: { width: videoWidth, height: videoHeight } }
     });
     const page = await context.newPage();
     await installRoutes(page);
     await page.goto(`${baseUrl}&scene=${encodeURIComponent(clip.scene)}&v=${Date.now()}`, { waitUntil: 'networkidle' });
     await page.waitForFunction(() => window.__ARCHTIME_VIDEO_DEMO_READY__ === true, null, { timeout: 10000 });
+    if (rootFontScale !== 1) {
+        await page.evaluate(scale => {
+            const baseSize = Number.parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+            document.documentElement.style.fontSize = `${baseSize * scale}px`;
+        }, rootFontScale);
+    }
     await setupGuideOverlay(page, compact);
     if (clip.prepare) await clip.prepare(page);
     await page.waitForTimeout(700);
@@ -478,7 +495,15 @@ async function main() {
     const selectedClips = (methodMode ? methodClips : clips)
         .filter(clip => !clipFilter || clip.file.startsWith(clipFilter));
     const options = methodMode
-        ? { outputDir: methodOutputDir, width: 560, height: 420, compact: true }
+        ? {
+            outputDir: methodOutputDir,
+            width: 840,
+            height: 630,
+            videoWidth: 840,
+            videoHeight: 630,
+            rootFontScale: 1.5,
+            compact: true
+        }
         : { outputDir: tutorialOutputDir, width: 1440, height: 900, compact: false };
 
     await fs.mkdir(options.outputDir, { recursive: true });

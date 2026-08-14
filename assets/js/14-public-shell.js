@@ -36,7 +36,6 @@
                         <div class="flex flex-col items-center gap-2.5 lg:items-start">
                             <a href="metodo.html">Metodo</a>
                             <a href="index.html#prezzi">Prezzi</a>
-                            <a href="app.html">Accedi</a>
                         </div>
                     </nav>
                     <nav class="public-footer-groups" aria-label="Strumenti">
