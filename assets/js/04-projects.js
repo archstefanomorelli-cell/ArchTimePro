@@ -1623,13 +1623,13 @@
                 return `<span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Eff. ${formatMoney(stat.c, 0)} · ${formatTime(stat.h)}</span>`;
             }
 
-            const delta = Number(stat.c || 0) - Number(taskBudget || 0);
-            const deltaClass = delta > 0.01 ? 'text-red-600' : (delta < -0.01 ? 'text-emerald-600' : 'text-slate-400');
-            const deltaLabel = Math.abs(delta) < 0.01 ? 'in linea' : `${delta > 0 ? '+' : '-'}${formatMoney(Math.abs(delta), 0)}`;
+            const taskMargin = Number(taskBudget || 0) - Number(stat.c || 0);
+            const marginClass = taskMargin < -0.01 ? 'text-red-600' : (taskMargin > 0.01 ? 'text-emerald-600' : 'text-slate-400');
+            const marginLabel = Math.abs(taskMargin) < 0.01 ? 'in linea' : `${taskMargin > 0 ? '+' : '-'}${formatMoney(Math.abs(taskMargin), 0)}`;
 
             return `
                 <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Prev. ${formatMoney(taskBudget, 0)} · Eff. ${formatMoney(stat.c, 0)}</span>
-                <span class="text-[9px] font-black ${deltaClass} mt-0.5">${deltaLabel}</span>`;
+                <span class="text-[9px] font-black ${marginClass} mt-0.5">${marginLabel}</span>`;
         }
 
         function taskStatusButtonHtml(projectId, taskName, value, label, activeValue) {
