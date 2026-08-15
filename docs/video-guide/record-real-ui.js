@@ -460,6 +460,9 @@ async function recordClip(browser, clip, options) {
         deviceScaleFactor,
         recordVideo: { dir: outputDir, size: { width: videoWidth, height: videoHeight } }
     });
+    await context.addInitScript(() => {
+        document.documentElement.style.visibility = 'hidden';
+    });
     const page = await context.newPage();
     await installRoutes(page);
     await page.goto(`${baseUrl}&scene=${encodeURIComponent(clip.scene)}&v=${Date.now()}`, { waitUntil: 'networkidle' });
@@ -472,7 +475,9 @@ async function recordClip(browser, clip, options) {
     }
     await setupGuideOverlay(page, compact);
     if (clip.prepare) await clip.prepare(page);
-    await page.waitForTimeout(700);
+    await page.waitForTimeout(150);
+    await page.evaluate(() => { document.documentElement.style.visibility = 'visible'; });
+    await page.waitForTimeout(1200);
 
     for (const [caption, action] of clip.steps) {
         await setCaption(page, caption);

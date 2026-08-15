@@ -5,8 +5,35 @@
     if (!videos.length) return;
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const visibleVideos = new Set();
+
+    function startTime(video) {
+        const value = Number(video.dataset.demoStart || 0);
+        return Number.isFinite(value) && value > 0 ? value : 0;
+    }
+
+    function seekToStart(video) {
+        const start = startTime(video);
+        if (video.readyState >= 1 && video.currentTime < start - 0.05) {
+            video.currentTime = Math.min(start, Math.max(0, video.duration - 0.1));
+        }
+    }
+
+    function prepare(video) {
+        if (video.dataset.demoPrepared === 'true') return;
+        video.dataset.demoPrepared = 'true';
+        video.addEventListener('loadedmetadata', () => seekToStart(video));
+        video.addEventListener('ended', () => {
+            if (reduceMotion) return;
+            video.currentTime = startTime(video);
+            if (!document.hidden && visibleVideos.has(video)) {
+                video.play().catch(() => {});
+            }
+        });
+    }
 
     function load(video) {
+        prepare(video);
         if (video.src) return;
         video.src = video.dataset.demoSrc;
         video.load();
@@ -15,7 +42,15 @@
     function play(video) {
         load(video);
         if (reduceMotion || document.hidden) return;
-        video.play().catch(() => {});
+        if (video.readyState >= 1) {
+            seekToStart(video);
+            video.play().catch(() => {});
+            return;
+        }
+        video.addEventListener('loadedmetadata', () => {
+            seekToStart(video);
+            video.play().catch(() => {});
+        }, { once: true });
     }
 
     if (reduceMotion) {
@@ -31,7 +66,6 @@
         return;
     }
 
-    const visibleVideos = new Set();
     const observer = new IntersectionObserver(entries => {
         entries.forEach(entry => {
             const video = entry.target;

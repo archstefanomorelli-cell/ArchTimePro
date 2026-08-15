@@ -5,7 +5,11 @@ const { chromium } = require('playwright');
 async function main() {
     const input = path.resolve(process.argv[2]);
     const output = path.resolve(process.argv[3]);
-    const framePosition = Math.min(0.95, Math.max(0.05, Number(process.argv[4]) || 0.58));
+    const requestedFrame = String(process.argv[4] || '0.58').trim().toLowerCase();
+    const frameSeconds = requestedFrame.endsWith('s') ? Number.parseFloat(requestedFrame) : null;
+    const framePosition = frameSeconds === null
+        ? Math.min(0.95, Math.max(0.005, Number(requestedFrame) || 0.58))
+        : null;
     const executablePath = [
         'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
         'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
@@ -29,7 +33,10 @@ async function main() {
     await page.locator('video').evaluate((video, targetTime) => new Promise(resolve => {
         video.addEventListener('seeked', resolve, { once: true });
         video.currentTime = targetTime;
-    }), Math.max(0.1, metadata.duration * framePosition));
+    }), Math.max(0.1, Math.min(
+        metadata.duration - 0.1,
+        frameSeconds === null ? metadata.duration * framePosition : frameSeconds
+    )));
     await page.screenshot({ path: output });
     console.log(JSON.stringify(metadata));
     await browser.close();

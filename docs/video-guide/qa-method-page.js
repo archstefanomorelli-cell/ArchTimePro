@@ -19,12 +19,19 @@ async function inspectViewport(browser, name, viewport) {
     for (let index = 0; index < count; index += 1) {
         const video = videos.nth(index);
         await video.scrollIntoViewIfNeeded();
-        await video.evaluate(element => element.load());
+        await page.waitForFunction(videoIndex => {
+            const element = document.querySelectorAll('.method-demo-video')[videoIndex];
+            return element && element.dataset.demoPrepared === 'true' && Boolean(element.currentSrc);
+        }, index);
         await video.evaluate(element => new Promise((resolve, reject) => {
             if (element.readyState >= 1) return resolve();
             element.addEventListener('loadedmetadata', resolve, { once: true });
             element.addEventListener('error', () => reject(new Error(`video ${index + 1} non caricabile`)), { once: true });
         }));
+        await page.waitForFunction(videoIndex => {
+            const element = document.querySelectorAll('.method-demo-video')[videoIndex];
+            return element && element.currentTime >= 1.9;
+        }, index);
         const result = await video.evaluate(element => ({
             width: element.videoWidth,
             height: element.videoHeight,
@@ -37,7 +44,17 @@ async function inspectViewport(browser, name, viewport) {
         results.push(result);
     }
 
-    console.log(`${name}: ${results.length} video HD caricati correttamente`);
+    const firstVideo = videos.first();
+    await firstVideo.evaluate(element => {
+        element.currentTime = Math.max(0, element.duration - 0.05);
+        return element.play();
+    });
+    await page.waitForFunction(() => {
+        const element = document.querySelector('.method-demo-video');
+        return element && element.currentTime >= 2 && element.currentTime < 4;
+    });
+
+    console.log(`${name}: ${results.length} video HD caricati, avviati e ripetuti correttamente`);
     await page.close();
 }
 
