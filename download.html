@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="assets/public-site.css?v=product-heroes-2026-08-14-01">
     <script src="assets/vendor/lucide-0.468.0.js?v=privacy-security-2026-08-12-02"></script>
     <script src="assets/js/12-analytics.js?v=privacy-2026-08-12-01" defer></script>
-    <script src="assets/js/14-public-shell.js?v=footer-groups-2026-08-14-01" defer></script>
+    <script src="assets/js/14-public-shell.js?v=store-live-2026-08-17-01" defer></script>
     <style>
         body { background: #fff; color: #0f172a; }
         .timer-hero {
@@ -85,10 +85,10 @@
                         Seleziona progetto e attività. Arch Time Mini Timer mantiene il lavoro sincronizzato con lo studio e salva le ore direttamente in Arch Time Pro.
                     </p>
                     <div class="mt-7 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
-                        <span class="inline-flex w-full cursor-default items-center justify-center gap-2 rounded-lg bg-slate-900 px-6 py-3.5 text-sm font-black text-white shadow-lg sm:w-auto" aria-disabled="true">
-                            <i data-lucide="badge-check" class="h-4 w-4"></i>
-                            In certificazione Microsoft
-                        </span>
+                        <a href="ms-windows-store://pdp/?productid=9NZXZWR7DDDD" class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-slate-900 px-6 py-3.5 text-sm font-black text-white shadow-lg transition-colors hover:bg-indigo-600 sm:w-auto">
+                            <i data-lucide="download" class="h-4 w-4"></i>
+                            Scarica dal Microsoft Store
+                        </a>
                         <span class="inline-flex items-center gap-2 text-xs font-bold text-slate-500">
                             <i data-lucide="monitor" class="h-4 w-4"></i>
                             Windows 10 e 11
@@ -152,14 +152,20 @@
         <section class="bg-white py-14 lg:py-16">
             <div class="mx-auto grid max-w-6xl items-center gap-8 px-5 sm:px-6 lg:grid-cols-[1fr_auto]">
                 <div>
-                    <p class="mb-3 text-xs font-extrabold uppercase text-indigo-600">Pubblicazione in corso</p>
-                    <h2 class="text-3xl font-black text-slate-950 sm:text-4xl">Il download si attiverà dopo la certificazione.</h2>
-                    <p class="mt-4 max-w-2xl text-base leading-relaxed text-slate-600">La pagina sarà collegata al Microsoft Store appena la revisione del pacchetto sarà completata.</p>
+                    <p class="mb-3 text-xs font-extrabold uppercase text-indigo-600">Disponibile ora</p>
+                    <h2 class="text-3xl font-black text-slate-950 sm:text-4xl">Installa Arch Time Mini Timer.</h2>
+                    <p class="mt-4 max-w-2xl text-base leading-relaxed text-slate-600">Scarica la versione ufficiale certificata da Microsoft e accedi con lo stesso account Arch Time Pro.</p>
                 </div>
-                <span class="inline-flex cursor-default items-center justify-center gap-2 rounded-lg border border-slate-300 bg-slate-100 px-6 py-3.5 text-sm font-black text-slate-500" aria-disabled="true">
-                    <i data-lucide="download" class="h-4 w-4"></i>
-                    Download a breve
-                </span>
+                <div class="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
+                    <a href="ms-windows-store://pdp/?productid=9NZXZWR7DDDD" class="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-900 px-6 py-3.5 text-sm font-black text-white shadow-lg transition-colors hover:bg-indigo-600">
+                        <i data-lucide="download" class="h-4 w-4"></i>
+                        Apri Microsoft Store
+                    </a>
+                    <a href="https://apps.microsoft.com/detail/9nzxzwr7dddd?hl=it-IT&amp;gl=IT" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-5 py-3.5 text-sm font-black text-slate-700 transition-colors hover:border-indigo-300 hover:text-indigo-700">
+                        <i data-lucide="external-link" class="h-4 w-4"></i>
+                        Versione web
+                    </a>
+                </div>
             </div>
         </section>
     </main>
