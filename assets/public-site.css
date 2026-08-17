@@ -189,6 +189,16 @@ span.uppercase:not(.public-brand) {
 .public-footer-groups a:hover,
 .public-footer-groups button:hover { color: #fff; }
 
+.public-tools-menu > summary::-webkit-details-marker { display: none; }
+.public-tools-menu > summary::marker { content: ''; }
+.public-tools-menu[open] > summary { color: #4f46e5; }
+.public-tools-chevron { transition: transform 160ms ease; }
+.public-tools-menu[open] .public-tools-chevron { transform: rotate(180deg); }
+.public-tools-dropdown {
+    z-index: 70;
+    width: 18rem;
+}
+
 @media (min-width: 1024px) {
     .public-hero-split {
         grid-template-columns: minmax(0, 0.9fr) minmax(460px, 1.1fr);

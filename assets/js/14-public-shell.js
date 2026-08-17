@@ -10,9 +10,24 @@
                     </a>
                     <div class="flex items-center gap-5 lg:gap-8">
                         <nav class="hidden items-center gap-7 lg:flex" aria-label="Navigazione principale">
-                            <a href="index.html#prezzi" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Prezzi</a>
                             <a href="metodo.html" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Metodo</a>
-                            <a href="calcolo-compenso-professionale-dlgs-36-2023.html" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Preventivo</a>
+                            <details class="public-tools-menu relative" data-public-tools-menu>
+                                <summary class="flex cursor-pointer list-none items-center gap-1.5 text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">
+                                    <span>Utility</span>
+                                    <i data-lucide="chevron-down" class="public-tools-chevron h-3.5 w-3.5" aria-hidden="true"></i>
+                                </summary>
+                                <div class="public-tools-dropdown absolute left-1/2 top-full mt-3 w-72 -translate-x-1/2 overflow-hidden rounded-lg border border-slate-200 bg-white p-1.5 shadow-xl">
+                                    <a href="calcolo-compenso-professionale-dlgs-36-2023.html" class="flex items-center gap-3 rounded-md px-3 py-3 text-sm font-bold text-slate-700 transition-colors hover:bg-indigo-50 hover:text-indigo-700">
+                                        <i data-lucide="landmark" class="h-4 w-4 shrink-0 text-indigo-600" aria-hidden="true"></i>
+                                        <span>Calcolo parcella professionale</span>
+                                    </a>
+                                    <a href="calcolo-margine-commessa.html" class="flex items-center gap-3 rounded-md px-3 py-3 text-sm font-bold text-slate-700 transition-colors hover:bg-indigo-50 hover:text-indigo-700">
+                                        <i data-lucide="chart-no-axes-combined" class="h-4 w-4 shrink-0 text-emerald-600" aria-hidden="true"></i>
+                                        <span>Calcolatore margine</span>
+                                    </a>
+                                </div>
+                            </details>
+                            <a href="index.html#prezzi" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Prezzi</a>
                             <a href="download.html" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Download</a>
                         </nav>
                         <a href="app.html" class="hidden text-sm font-bold text-slate-600 transition-colors hover:text-slate-900 sm:block">Accedi</a>
@@ -38,14 +53,14 @@
                             <a href="metodo.html">Metodo</a>
                             <a href="index.html#prezzi">Prezzi</a>
                             <a href="download.html">Download</a>
+                            <a href="sicurezza.html" class="hover:text-white">Sicurezza</a>
                         </div>
                     </nav>
-                    <nav class="public-footer-groups" aria-label="Strumenti">
-                        <p class="mb-3 text-xs font-black uppercase text-white">Strumenti</p>
+                    <nav class="public-footer-groups" aria-label="Utility">
+                        <p class="mb-3 text-xs font-black uppercase text-white">Utility</p>
                         <div class="flex flex-col items-center gap-2.5 lg:items-start">
-                        <a href="calcolo-compenso-professionale-dlgs-36-2023.html" class="hover:text-white">Preventivo normativo</a>
+                            <a href="calcolo-compenso-professionale-dlgs-36-2023.html" class="hover:text-white">Calcolo parcella professionale</a>
                             <a href="calcolo-margine-commessa.html">Calcolatore margine</a>
-                        <a href="sicurezza.html" class="hover:text-white">Sicurezza</a>
                         </div>
                     </nav>
                     <nav class="public-footer-groups" aria-label="Informazioni legali">
@@ -70,6 +85,16 @@
 
         document.querySelector('[data-public-cookie-settings]')?.addEventListener('click', function () {
             window.archTimeAnalytics?.showPreferences();
+        });
+
+        const toolsMenu = document.querySelector('[data-public-tools-menu]');
+        document.addEventListener('click', function (event) {
+            if (toolsMenu?.open && !toolsMenu.contains(event.target)) toolsMenu.open = false;
+        });
+        toolsMenu?.addEventListener('keydown', function (event) {
+            if (event.key !== 'Escape') return;
+            toolsMenu.open = false;
+            toolsMenu.querySelector('summary')?.focus();
         });
 
         if (window.lucide) window.lucide.createIcons();
