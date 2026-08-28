@@ -257,7 +257,7 @@ Funzione:
 trial-lifecycle-email
 ```
 
-La funzione invia email operative ai manager che stanno usando i 30 giorni di
+La funzione invia email operative ai manager che stanno usando i 15 giorni di
 prova senza un abbonamento Stripe. Gli eventi previsti sono:
 
 ```text

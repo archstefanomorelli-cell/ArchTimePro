@@ -935,8 +935,11 @@ function switchAuthTab(mode) {
                         planBadge.innerText = status === 'free' ? 'FREE' : 'FONDATORI'; 
                         planBadge.classList.remove('force-hide');
                     } else {
-                        const createdAt = new Date(studioData?.created_at || new Date()); 
-                        const expireDate = new Date(createdAt.getTime() + 30 * 24 * 60 * 60 * 1000); 
+                        const createdAt = new Date(studioData?.created_at || new Date());
+                        const storedTrialEnd = studioData?.trial_ends_at ? new Date(studioData.trial_ends_at) : null;
+                        const expireDate = storedTrialEnd && !Number.isNaN(storedTrialEnd.getTime())
+                            ? storedTrialEnd
+                            : new Date(createdAt.getTime() + 15 * 24 * 60 * 60 * 1000);
                         const daysLeft = Math.ceil((expireDate.getTime() - Date.now()) / (1000 * 3600 * 24));
                         if (daysLeft > 0) {
                             trialBadge.innerText = `PROVA: ${daysLeft} GG`; 

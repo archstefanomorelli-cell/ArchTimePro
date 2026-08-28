@@ -35,7 +35,7 @@ as $$
           studio.subscription_status in ('active', 'free')
           or (
             studio.subscription_status = 'trialing'
-            and studio.created_at > now() - interval '30 days'
+            and studio.trial_ends_at > now()
           )
         )
     );
