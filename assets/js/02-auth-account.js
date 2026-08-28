@@ -1171,6 +1171,7 @@ function switchAuthTab(mode) {
             await fetchProjects(); 
             await fetchEntries(); 
             await fetchExpenses();
+            await trackAvailableAcquisitionMilestones();
             if(document.body.classList.contains('is-admin')) { 
                 await fetchProfiles(); 
                 renderCatalogAndTemplatesUI(); 

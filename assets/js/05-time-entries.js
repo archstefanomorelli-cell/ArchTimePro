@@ -495,6 +495,9 @@
             try {
                 await createEntryViaRpc(proj, task, hours, customDate, notes);
                 window.archTimeAnalytics?.track('time_entry_created', { source, is_demo_project: Boolean(proj.is_demo) });
+                if (!proj.is_demo) {
+                    await trackAcquisitionMilestone('first_time_entry', { source });
+                }
                 await fetchEntries();
             } catch (error) {
                 await appAlert('Registrazione non riuscita', error.message || 'Non è stato possibile salvare l’attività.', 'danger');

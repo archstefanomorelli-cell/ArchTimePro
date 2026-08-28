@@ -1496,6 +1496,10 @@
                 setup_type: projectSetupType,
                 normative_service_count: isNormativeProjectMode() ? normativeSelectedServices.size : 0
             });
+            await trackAcquisitionMilestone('first_project_created', {
+                has_budget: budget > 0,
+                setup_type: projectSetupType
+            });
             
             document.getElementById('edit-modal-name').value = ""; 
             document.getElementById('edit-modal-client').value = ""; 

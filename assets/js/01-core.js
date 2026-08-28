@@ -99,6 +99,41 @@ if (window.Chart?.defaults?.font) {
         let activePlan = 'premium'; 
         let showInactiveMembers = false; 
 
+        const ACQUISITION_MILESTONE_EVENTS = [
+            'first_project_created',
+            'first_time_entry',
+            'subscription_active'
+        ];
+
+        async function trackAcquisitionMilestone(eventName, parameters = {}) {
+            if (!ACQUISITION_MILESTONE_EVENTS.includes(eventName)) return false;
+            if (!userProfile?.is_owner || window.archTimeAnalytics?.getConsent?.() !== 'granted') return false;
+
+            const { data, error } = await supabaseClient.rpc('claim_acquisition_milestone', {
+                target_event: eventName
+            });
+            if (error) {
+                console.warn(`Milestone ${eventName} non disponibile.`, error.message);
+                return false;
+            }
+            if (data !== true) return false;
+
+            window.archTimeAnalytics?.track(eventName, {
+                studio_currency: studioData?.currency || 'EUR',
+                ...(parameters || {})
+            });
+            return true;
+        }
+
+        async function trackAvailableAcquisitionMilestones() {
+            if (!userProfile?.is_owner || window.archTimeAnalytics?.getConsent?.() !== 'granted') return;
+            await Promise.all(ACQUISITION_MILESTONE_EVENTS.map(eventName => trackAcquisitionMilestone(eventName)));
+        }
+
+        window.addEventListener('archtime:analytics-consent-granted', () => {
+            trackAvailableAcquisitionMilestones();
+        });
+
         let currentBusinessType = 'studio';
         const DEFAULT_QUOTE_SETTINGS = {
             version: 1,

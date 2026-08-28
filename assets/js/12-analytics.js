@@ -180,6 +180,7 @@
         if (choice === 'granted') {
             window.gtag('consent', 'update', { analytics_storage: 'granted' });
             loadGoogleTag();
+            window.dispatchEvent(new CustomEvent('archtime:analytics-consent-granted'));
         } else {
             window.gtag('consent', 'update', { analytics_storage: 'denied' });
             clearAnalyticsCookies();
