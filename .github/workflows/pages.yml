@@ -46,7 +46,7 @@ jobs:
             esac
             [ -e "$file" ] && cp "$file" dist/
           done
-          cp manifest.webmanifest timer-manifest.webmanifest sw.js robots.txt .nojekyll CNAME dist/
+          cp manifest.webmanifest sw.js robots.txt .nojekyll CNAME dist/
           cp apple-touch-icon*.png dist/
           cp assets/app.css dist/assets/app.css
           cp assets/app-pro.css dist/assets/app-pro.css
