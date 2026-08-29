@@ -28,7 +28,7 @@ Sono presenti:
 - `guida.html`
 - `privacy.html`
 - `termini.html`
-- `feedback.html`
+- `support.html`
 - `sicurezza.html`
 - `robots.txt`
 
@@ -67,7 +67,7 @@ Questo consente l'uso di link Stripe test senza bloccare l'app.
 
 ## Feedback beta
 
-La pagina `feedback.html` usa:
+La pagina `support.html` usa:
 
 - `assets/js/00-runtime-config.js`;
 - `assets/js/08-public-feedback.js`;
@@ -116,7 +116,7 @@ Resta per produzione:
 ## Verifiche consigliate dopo il prossimo deploy
 
 1. Aprire `robots.txt`.
-2. Aprire `feedback.html?v=3`.
+2. Aprire `support.html?v=3`.
 3. Inviare un feedback di prova.
 4. Verificare riga in Supabase `beta_feedback`.
 5. Aprire registrazione `app.html`.

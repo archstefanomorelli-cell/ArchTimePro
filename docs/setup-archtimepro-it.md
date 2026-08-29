@@ -72,7 +72,7 @@ Verificare:
 ```text
 https://www.archtimepro.it/
 https://www.archtimepro.it/app.html
-https://www.archtimepro.it/feedback.html
+https://www.archtimepro.it/support.html
 https://www.archtimepro.it/sicurezza.html
 https://www.archtimepro.it/robots.txt
 ```

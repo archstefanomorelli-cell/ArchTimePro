@@ -54,6 +54,7 @@
                             <a href="index.html#prezzi">Prezzi</a>
                             <a href="download.html">Download</a>
                             <a href="sicurezza.html" class="hover:text-white">Sicurezza</a>
+                            <a href="support.html" class="hover:text-white">Supporto</a>
                         </div>
                     </nav>
                     <nav class="public-footer-groups" aria-label="Utility">

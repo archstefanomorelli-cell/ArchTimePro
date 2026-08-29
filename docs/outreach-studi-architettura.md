@@ -6,7 +6,7 @@ Obiettivo: far conoscere Arch Time Pro a studi tecnici e studi di architettura s
 
 - Landing: `https://www.archtimepro.it/`
 - App beta: `https://www.archtimepro.it/app.html`
-- Feedback: `https://www.archtimepro.it/feedback.html`
+- Supporto: `https://www.archtimepro.it/support.html`
 - Sicurezza: `https://www.archtimepro.it/sicurezza.html`
 - Lista iniziale: `Lista studi.csv`, 40 studi divisi tra `Giovani Under 40` e `Non Under 40`.
 

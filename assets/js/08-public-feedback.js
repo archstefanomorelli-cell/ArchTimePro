@@ -35,19 +35,19 @@
 
         if (honeypot) {
             form.reset();
-            setStatus('Grazie, feedback inviato correttamente.', 'success');
+            setStatus('Grazie, richiesta inviata correttamente.', 'success');
             return;
         }
 
         const message = getValue('feedback-message');
         if (message.length < 10) {
-            setStatus('Scrivi almeno 10 caratteri per inviare un feedback utile.', 'error');
+            setStatus('Scrivi almeno 10 caratteri per descrivere la richiesta.', 'error');
             return;
         }
 
         const client = createClient();
         if (!client) {
-            setStatus('Invio feedback non configurato. Riprova dopo il prossimo deploy.', 'error');
+            setStatus('Invio della richiesta non configurato. Riprova dopo il prossimo deploy.', 'error');
             return;
         }
 
@@ -70,14 +70,14 @@
             if (error) throw error;
 
             form.reset();
-            setStatus('Grazie, feedback salvato. Lo leggeremo nella lista interna di lancio.', 'success');
+            setStatus('Richiesta ricevuta. La leggeremo appena possibile.', 'success');
         } catch (error) {
-            console.error('Feedback submit failed:', error);
-            setStatus('Non siamo riusciti a salvare il feedback. Riprova tra poco.', 'error');
+            console.error('Support request submit failed:', error);
+            setStatus('Non siamo riusciti a inviare la richiesta. Riprova tra poco.', 'error');
         } finally {
             if (submitButton) {
                 submitButton.disabled = false;
-                submitButton.textContent = 'Invia feedback';
+                submitButton.textContent = 'Invia richiesta';
             }
         }
     }

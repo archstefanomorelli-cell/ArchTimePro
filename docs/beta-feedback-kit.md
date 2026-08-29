@@ -19,7 +19,7 @@ https://www.archtimepro.it/
 Pagina feedback:
 
 ```text
-https://www.archtimepro.it/feedback.html
+https://www.archtimepro.it/support.html
 ```
 
 Pagina sicurezza:

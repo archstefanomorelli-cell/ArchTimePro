@@ -23,7 +23,7 @@ https://www.archtimepro.it/app.html
 Pagina feedback:
 
 ```text
-https://www.archtimepro.it/feedback.html
+https://www.archtimepro.it/support.html
 ```
 
 Pagina sicurezza:
@@ -49,7 +49,7 @@ Link app:
 https://www.archtimepro.it/app.html
 
 Feedback:
-https://www.archtimepro.it/feedback.html
+https://www.archtimepro.it/support.html
 
 Nota sui dati economici:
 https://www.archtimepro.it/sicurezza.html
@@ -78,7 +78,7 @@ https://www.archtimepro.it/sicurezza.html
 
 - Eseguire in Supabase `docs/sql/phase-3-beta-feedback.sql`.
 - Pubblicare il sito con workflow Pages verde.
-- Aprire `feedback.html`.
+- Aprire `support.html`.
 - Inviare un feedback di prova.
 - Verificare che la riga compaia nella tabella Supabase `beta_feedback`.
 

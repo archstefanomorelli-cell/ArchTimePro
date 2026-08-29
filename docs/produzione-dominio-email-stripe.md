@@ -18,7 +18,7 @@ Checklist da usare per il passaggio a `www.archtimepro.it`, email personalizzata
   - `https://www.archtimepro.it/privacy.html`
   - `https://www.archtimepro.it/termini.html`
   - `https://www.archtimepro.it/guida.html`
-  - `https://www.archtimepro.it/feedback.html`
+  - `https://www.archtimepro.it/support.html`
   - `https://www.archtimepro.it/sicurezza.html`
 
 ## Email

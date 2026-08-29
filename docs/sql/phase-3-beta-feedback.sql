@@ -45,4 +45,4 @@ grant insert (name, email, profile, message, page_url, user_agent)
 on public.beta_feedback
 to anon, authenticated;
 
-comment on table public.beta_feedback is 'Public beta feedback submitted from feedback.html. Insert-only for public users; no public select policy.';
+comment on table public.beta_feedback is 'Public support requests submitted from support.html. Insert-only for public users; no public select policy.';

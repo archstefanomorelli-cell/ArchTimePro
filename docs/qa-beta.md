@@ -15,7 +15,7 @@ Stato: ciclo funzionale online completato su GitHub Pages, incluso hardening RPC
 
 - `index.html` si carica senza errori console. Verificato.
 - CTA principali aprono `app.html`. Verificato.
-- `guida.html`, `privacy.html`, `termini.html`, `feedback.html`, `sicurezza.html` sono raggiungibili. Verificato.
+- `guida.html`, `privacy.html`, `termini.html`, `support.html`, `sicurezza.html` sono raggiungibili. Verificato.
 - Prezzi Starter/Premium sono leggibili su mobile. Da verificare su device reali.
 - La pagina registrazione di `app.html` mostra link a Termini, Privacy e Sicurezza economica. Da verificare online dopo deploy.
 

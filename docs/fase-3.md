@@ -28,7 +28,7 @@ Stato: beta su dominio definitivo attiva.
 - Aggiunto link a Sicurezza e Privacy Economica nella registrazione app.
 - Aggiunta checklist lancio beta controllata in `docs/beta-launch-checklist.md`.
 - Aggiunto registro feedback beta in `docs/beta-feedback-log.md`.
-- Aggiunto modulo feedback pubblico su `feedback.html` con salvataggio su Supabase.
+- Aggiunto modulo di supporto pubblico su `support.html` con salvataggio su Supabase.
 - Aggiunto script SQL `docs/sql/phase-3-beta-feedback.sql` per tabella `beta_feedback` insert-only.
 - Aggiunto `robots.txt` e meta `noindex,nofollow` alle pagine pubbliche per evitare indicizzazione della beta GitHub Pages.
 - Aggiunto audit pre-dominio in `docs/pre-dominio-audit.md`.
