@@ -11,6 +11,7 @@
                     <div class="flex items-center gap-5 lg:gap-8">
                         <nav class="hidden items-center gap-7 lg:flex" aria-label="Navigazione principale">
                             <a href="metodo.html" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Metodo</a>
+                            <a href="il-progetto.html" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Il progetto</a>
                             <details class="public-tools-menu relative" data-public-tools-menu>
                                 <summary class="flex cursor-pointer list-none items-center gap-1.5 text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">
                                     <span>Utility</span>
@@ -51,6 +52,7 @@
                         <p class="mb-3 text-xs font-black uppercase text-white">Prodotto</p>
                         <div class="flex flex-col items-center gap-2.5 lg:items-start">
                             <a href="metodo.html">Metodo</a>
+                            <a href="il-progetto.html">Il progetto</a>
                             <a href="index.html#prezzi">Prezzi</a>
                             <a href="download.html">Download</a>
                             <a href="sicurezza.html" class="hover:text-white">Sicurezza</a>
