@@ -522,11 +522,29 @@ if (window.Chart?.defaults?.font) {
 
                 btnsEl.innerHTML = '';
                 
+                let dialogSettled = false;
+                const cancelValue = options.prompt ? null : (options.confirm ? false : true);
                 const closeAndResolve = (val) => {
+                    if (dialogSettled) return;
+                    dialogSettled = true;
+                    modal.removeEventListener('click', handleBackdropClick);
+                    document.removeEventListener('keydown', handleEscape);
                     card.classList.remove('scale-100', 'opacity-100');
                     card.classList.add('scale-95', 'opacity-0');
                     setTimeout(() => { modal.classList.add('force-hide'); resolve(val); }, 200);
                 };
+
+                const handleBackdropClick = (event) => {
+                    if (event.target === modal) closeAndResolve(cancelValue);
+                };
+                const handleEscape = (event) => {
+                    if (event.key !== 'Escape') return;
+                    event.preventDefault();
+                    closeAndResolve(cancelValue);
+                };
+
+                modal.addEventListener('click', handleBackdropClick);
+                document.addEventListener('keydown', handleEscape);
 
                 if(options.confirm) {
                     const btnCancel = document.createElement('button');

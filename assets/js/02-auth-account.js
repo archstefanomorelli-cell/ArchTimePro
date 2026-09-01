@@ -136,6 +136,21 @@ function switchAuthTab(mode) {
                     source: document.referrer ? 'referral' : 'direct'
                 };
                 const legalAcceptedAt = new Date().toISOString();
+                const pendingNormativeQuote = typeof getNormativeQuoteHandoff === 'function'
+                    ? getNormativeQuoteHandoff()
+                    : null;
+                const signupMetadata = {
+                    full_name: fullName,
+                    role: finalRole,
+                    is_owner: isOwnerChoice,
+                    business_type: businessType,
+                    studio_id: isStaff ? code : null,
+                    signup_attribution: signupAttribution,
+                    terms_version: CURRENT_TERMS_VERSION,
+                    privacy_version: CURRENT_PRIVACY_VERSION,
+                    legal_accepted_at: legalAcceptedAt
+                };
+                if (pendingNormativeQuote) signupMetadata.pending_normative_quote = pendingNormativeQuote;
                 
                 if(isStaff && !code) return await appAlert("Attenzione", "Inserisci il codice invito!", "danger");
                 if(!fullName) return await appAlert("Attenzione", "Inserisci il tuo nome e cognome.", "danger");
@@ -146,17 +161,7 @@ function switchAuthTab(mode) {
                         email, password,
                         options: {
                             emailRedirectTo: getAppRedirectUrl(),
-                            data: {
-                                full_name: fullName,
-                                role: finalRole,
-                                is_owner: isOwnerChoice,
-                                business_type: businessType,
-                                studio_id: isStaff ? code : null,
-                                signup_attribution: signupAttribution,
-                                terms_version: CURRENT_TERMS_VERSION,
-                                privacy_version: CURRENT_PRIVACY_VERSION,
-                                legal_accepted_at: legalAcceptedAt
-                            }
+                            data: signupMetadata
                         }
                     });
                 } catch (error) {
@@ -879,6 +884,9 @@ function switchAuthTab(mode) {
 
             const { data: { user } } = await supabaseClient.auth.getUser();
             if(user) {
+                if (typeof hydrateNormativeQuoteHandoffFromAccount === 'function') {
+                    await hydrateNormativeQuoteHandoffFromAccount(user);
+                }
                 let profile = null;
                 let error = null;
                 try {

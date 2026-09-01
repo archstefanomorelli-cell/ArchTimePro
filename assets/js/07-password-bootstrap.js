@@ -84,7 +84,7 @@
             bindClick('btn-save-entry-edit', saveEntryEdit);
             bindClick('btn-close-edit-expense', closeEditExpenseModal);
             bindClick('btn-save-expense-edit', saveExpenseEdit);
-            bindClick('btn-close-edit-project', closeEditProjectModal);
+            bindClick('btn-close-edit-project', () => closeEditProjectModal());
             bindClick('btn-save-project-edit', saveModalProjectEdit);
             bindClick('btn-close-report', closeReportModal);
             bindClick('btn-close-project-quote-format', closeProjectQuoteFormatModal);
@@ -116,6 +116,54 @@
             document.getElementById('edit-entry-hours')?.addEventListener('input', updateEditCost);
             document.getElementById('edit-entry-hours')?.addEventListener('blur', () => normalizeDurationField('edit-entry-hours'));
             document.getElementById('edit-entry-project')?.addEventListener('change', updateEditTaskDropdown);
+            const dismissibleModals = [
+                ['modal-upgrade', closeUpgradeModal],
+                ['modal-edit-team', closeEditTeamMemberModal],
+                ['modal-account', closeAccountModal],
+                ['modal-studio-management', closeStudioManagementModal],
+                ['modal-quote-settings', closeQuoteSettingsModal],
+                ['modal-team-invite', closeTeamInviteModal],
+                ['modal-owner-onboarding', () => closeOwnerOnboarding(true)],
+                ['modal-task-builder', closeTaskBuilder],
+                ['modal-catalog', closeCatalogModal],
+                ['modal-templates', closeTemplatesModal],
+                ['modal-detail', closeDetail],
+                ['modal-manual', closeManualEntry],
+                ['modal-edit-entry', closeEditEntryModal],
+                ['modal-edit-expense', closeEditExpenseModal],
+                ['modal-project-type', closeProjectTypeModal],
+                ['modal-edit-project', () => closeEditProjectModal()],
+                ['modal-project-quote-format', closeProjectQuoteFormatModal],
+                ['modal-report', closeReportModal],
+                ['modal-team-report', closeTeamReportModal],
+                ['modal-forgot-password', closeForgotPassword]
+            ].map(([id, close]) => ({ modal: document.getElementById(id), close }));
+
+            dismissibleModals.forEach(({ modal, close }) => {
+                modal?.addEventListener('click', event => {
+                    if (event.target === modal) close();
+                });
+            });
+
+            document.addEventListener('keydown', event => {
+                if (event.key !== 'Escape') return;
+                const dialog = document.getElementById('custom-dialog');
+                if (dialog && !dialog.classList.contains('force-hide')) return;
+
+                const visibleModals = dismissibleModals
+                    .filter(({ modal }) => modal && !modal.classList.contains('force-hide'))
+                    .map((entry, index) => ({
+                        ...entry,
+                        index,
+                        zIndex: Number.parseInt(window.getComputedStyle(entry.modal).zIndex, 10) || 0
+                    }))
+                    .sort((a, b) => a.zIndex - b.zIndex || a.index - b.index);
+
+                const topmostModal = visibleModals.at(-1);
+                if (!topmostModal) return;
+                event.preventDefault();
+                topmostModal.close();
+            });
             document.addEventListener('blur', event => {
                 if (event.target?.classList?.contains('task-budget-input')) {
                     const amount = parseMoneyInput(event.target.value);

@@ -2,16 +2,23 @@
 // ================= GESTIONE PROGETTI =================
 
         const NORMATIVE_QUOTE_HANDOFF_KEY = 'archtime_normative_quote_handoff_v1';
+        const NORMATIVE_QUOTE_ACCOUNT_KEY = 'pending_normative_quote';
+
+        function isValidNormativeQuoteHandoff(payload) {
+            if (!payload || payload.version !== 1 || Number(payload.expiresAt || 0) < Date.now()) return false;
+            const quote = payload.quote || {};
+            return Number(quote.workValue || 0) > 0
+                && Array.isArray(quote.selectedCodes)
+                && quote.selectedCodes.length > 0;
+        }
 
         function getNormativeQuoteHandoff() {
             try {
                 const payload = JSON.parse(localStorage.getItem(NORMATIVE_QUOTE_HANDOFF_KEY) || 'null');
-                if (!payload || payload.version !== 1 || Number(payload.expiresAt || 0) < Date.now()) {
+                if (!isValidNormativeQuoteHandoff(payload)) {
                     localStorage.removeItem(NORMATIVE_QUOTE_HANDOFF_KEY);
                     return null;
                 }
-                const quote = payload.quote || {};
-                if (Number(quote.workValue || 0) <= 0 || !Array.isArray(quote.selectedCodes) || quote.selectedCodes.length === 0) return null;
                 return payload;
             } catch (error) {
                 localStorage.removeItem(NORMATIVE_QUOTE_HANDOFF_KEY);
@@ -19,8 +26,38 @@
             }
         }
 
-        function clearNormativeQuoteHandoff() {
+        async function clearNormativeQuoteAccountHandoff() {
+            try {
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                if (!user?.user_metadata?.[NORMATIVE_QUOTE_ACCOUNT_KEY]) return;
+                const { error } = await supabaseClient.auth.updateUser({
+                    data: { [NORMATIVE_QUOTE_ACCOUNT_KEY]: null }
+                });
+                if (error) throw error;
+            } catch (error) {
+                console.warn('Pulizia del preventivo temporaneo nell’account non riuscita:', error?.message || error);
+            }
+        }
+
+        async function hydrateNormativeQuoteHandoffFromAccount(user) {
+            const accountPayload = user?.user_metadata?.[NORMATIVE_QUOTE_ACCOUNT_KEY];
+            if (!accountPayload) return getNormativeQuoteHandoff();
+            if (!isValidNormativeQuoteHandoff(accountPayload)) {
+                await clearNormativeQuoteAccountHandoff();
+                return getNormativeQuoteHandoff();
+            }
+
+            const localPayload = getNormativeQuoteHandoff();
+            if (!localPayload || Number(accountPayload.createdAt || 0) >= Number(localPayload.createdAt || 0)) {
+                localStorage.setItem(NORMATIVE_QUOTE_HANDOFF_KEY, JSON.stringify(accountPayload));
+                return accountPayload;
+            }
+            return localPayload;
+        }
+
+        async function clearNormativeQuoteHandoff() {
             localStorage.removeItem(NORMATIVE_QUOTE_HANDOFF_KEY);
+            await clearNormativeQuoteAccountHandoff();
         }
 
         function isAdminUser() {
@@ -1184,6 +1221,47 @@
             if (phases) phases.scrollTop = 0;
         }
 
+        let projectModalInitialFingerprint = null;
+        let projectModalUsesNormativeHandoff = false;
+        let projectModalCloseInProgress = false;
+
+        function getProjectModalFingerprint() {
+            const modal = document.getElementById('modal-edit-project');
+            if (!modal) return '';
+            const fields = [...modal.querySelectorAll('input, select, textarea')].map((field, index) => ({
+                key: field.id || field.name || field.dataset?.serviceCode || field.dataset?.task || String(index),
+                value: field.type === 'checkbox' || field.type === 'radio' ? field.checked : field.value
+            }));
+            return JSON.stringify({
+                fields,
+                projectSetupType,
+                projectBudgetMode,
+                tasks: [...getCurrentProjectModalTasks()],
+                taskBudgets: { ...getCurrentProjectModalBudgets() },
+                normativeServices: [...normativeSelectedServices].sort()
+            });
+        }
+
+        function markProjectModalClean() {
+            projectModalInitialFingerprint = getProjectModalFingerprint();
+        }
+
+        function projectModalHasUnsavedChanges() {
+            const modal = document.getElementById('modal-edit-project');
+            return Boolean(
+                modal
+                && !modal.classList.contains('force-hide')
+                && projectModalInitialFingerprint !== null
+                && getProjectModalFingerprint() !== projectModalInitialFingerprint
+            );
+        }
+
+        function hideEditProjectModal() {
+            document.getElementById('modal-edit-project')?.classList.add('force-hide');
+            projectModalInitialFingerprint = null;
+            projectModalUsesNormativeHandoff = false;
+        }
+
         async function selectProjectSetupType(type) {
             projectSetupType = type === 'normative' ? 'normative' : 'studio';
             if (isNormativeProjectMode()) {
@@ -1199,6 +1277,7 @@
 
         function openCreateProjectModal(type = 'studio') {
             projectSetupType = type === 'normative' ? 'normative' : 'studio';
+            projectModalUsesNormativeHandoff = false;
             document.getElementById('edit-modal-proj-id').value = '';
             document.getElementById('edit-modal-name').value = '';
             document.getElementById('edit-modal-client').value = '';
@@ -1220,6 +1299,7 @@
             document.getElementById('modal-edit-project').classList.remove('force-hide');
             resetProjectModalScroll();
             lucide.createIcons();
+            markProjectModalClean();
         }
 
         function renderProjectModalTasks() {
@@ -1302,8 +1382,8 @@
             );
             normativeSelectedServices = new Set(quote.selectedCodes.map(String).filter(code => supportedCodes.has(code)));
             if (normativeSelectedServices.size === 0) {
-                clearNormativeQuoteHandoff();
-                closeEditProjectModal();
+                await clearNormativeQuoteHandoff();
+                await closeEditProjectModal(true);
                 await appAlert('Preventivo non valido', 'Le prestazioni salvate non sono più disponibili nella libreria corrente.', 'danger');
                 return false;
             }
@@ -1317,6 +1397,7 @@
             syncNormativeTasksFromSelection();
             renderNewProjectUI();
             resetProjectModalScroll();
+            projectModalUsesNormativeHandoff = true;
             window.archTimeAnalytics?.track('normative_quote_import_opened', {
                 selected_service_count: normativeSelectedServices.size
             });
@@ -1470,9 +1551,9 @@
                     is_archived: false,
                     task_statuses: {}
                 });
-                closeEditProjectModal();
+                await closeEditProjectModal(true);
                 renderProjects();
-                clearNormativeQuoteHandoff();
+                await clearNormativeQuoteHandoff();
                 await appAlert("Fatto", "Lavoro creato nella dimostrazione", "success");
                 return;
             }
@@ -1489,7 +1570,7 @@
                 );
             }
             if (typeof clearMarginCalculatorHandoff === 'function') clearMarginCalculatorHandoff();
-            if (isNormativeProjectMode()) clearNormativeQuoteHandoff();
+            if (isNormativeProjectMode()) await clearNormativeQuoteHandoff();
             window.archTimeAnalytics?.track('project_created', {
                 has_budget: budget > 0,
                 task_count: newProjectTasks.length,
@@ -1513,7 +1594,7 @@
             
             renderNewProjectUI(); 
             fetchProjects(); 
-            closeEditProjectModal();
+            await closeEditProjectModal(true);
             await appAlert("Fatto", "Lavoro Creato!", "success"); 
             switchAppTab('operate');
         }
@@ -2132,6 +2213,8 @@
             document.getElementById('modal-edit-project').classList.remove('force-hide'); 
             resetProjectModalScroll();
             lucide.createIcons();
+            projectModalUsesNormativeHandoff = false;
+            markProjectModalClean();
         }
 
         function renderEditProjectTasks() {
@@ -2139,7 +2222,22 @@
             lucide.createIcons();
         }
 
-        function closeEditProjectModal() { document.getElementById('modal-edit-project').classList.add('force-hide'); }
+        async function closeEditProjectModal(force = false) {
+            if (projectModalCloseInProgress) return false;
+            if (!force && projectModalHasUnsavedChanges()) {
+                projectModalCloseInProgress = true;
+                const confirmed = await appConfirm(
+                    'Chiudere senza salvare?',
+                    'Sei sicuro di voler chiudere? Perderai tutti i dati inseriti o le modifiche non salvate.',
+                    'danger'
+                );
+                projectModalCloseInProgress = false;
+                if (!confirmed) return false;
+            }
+            if (projectModalUsesNormativeHandoff) await clearNormativeQuoteHandoff();
+            hideEditProjectModal();
+            return true;
+        }
         
         async function saveModalProjectEdit() {
             const id = document.getElementById('edit-modal-proj-id').value; 
@@ -2212,7 +2310,7 @@
             }
             await supabaseClient.from('entries').update({ project_name: name }).eq('project_id', id);
             await fetchProjects(); await fetchEntries();
-            closeEditProjectModal(); showProjectDetail(id); 
+            await closeEditProjectModal(true); showProjectDetail(id);
         }
 
         async function addExpense(projectId) {
