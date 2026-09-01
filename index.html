@@ -30,8 +30,9 @@
         details > summary::-webkit-details-marker { display: none; }
     </style>
     <script src="assets/js/12-analytics.js?v=privacy-2026-08-12-01" defer></script>
-    <link rel="stylesheet" href="assets/public-site.css?v=utility-menu-2026-08-17-01">
+    <link rel="stylesheet" href="assets/public-site.css?v=public-hero-linked-bars-2026-09-01-01">
     <script src="assets/js/14-public-shell.js?v=about-us-2026-08-31-01" defer></script>
+    <script src="assets/js/16-home-hero-bars.js?v=2026-09-01-02" defer></script>
 </head>
 <body id="top" class="selection:bg-indigo-100 selection:text-indigo-900">
     <header class="fixed top-0 z-50 w-full border-b border-slate-100 bg-white/90 backdrop-blur-xl">
@@ -52,16 +53,16 @@
 
     <main>
         <section class="bg-grid border-b border-slate-100 pb-14 pt-28 lg:pb-16 lg:pt-32">
-            <div class="mx-auto max-w-7xl px-5 sm:px-6">
-                <div class="mx-auto max-w-4xl text-center">
+            <div class="public-hero-split public-home-hero relative z-10 mx-auto max-w-7xl px-5 sm:px-6">
+                <div class="public-hero-copy">
                     <p class="mb-3 text-xs font-extrabold uppercase text-indigo-600">Per studi di architettura, ingegneria e imprese</p>
                     <h1 class="text-4xl font-black leading-tight text-slate-950 sm:text-5xl lg:text-6xl">
                         <span class="text-indigo-600">Arch Time Pro.</span><br>Il margine di ogni commessa, sotto controllo.
                     </h1>
-                    <p class="mx-auto mt-5 max-w-2xl text-base font-medium leading-relaxed text-slate-600 sm:text-lg">
+                    <p class="mx-auto mt-5 max-w-2xl text-base font-medium leading-relaxed text-slate-600 sm:text-lg lg:mx-0">
                         Il team registra ore e attività. Tu vedi costi, spese e margine aggiornato di ogni commessa, senza introdurre un gestionale aziendale complesso.
                     </p>
-                    <div class="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                    <div class="public-hero-actions mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
                         <a href="calcolo-margine-commessa.html" class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-6 py-3.5 text-sm font-black text-white shadow-lg shadow-indigo-500/20 transition-colors hover:bg-indigo-700 sm:w-auto">
                             <i data-lucide="calculator" class="h-4 w-4"></i>
                             Calcola una commessa
@@ -73,7 +74,31 @@
                     </div>
                     <p class="mt-4 text-xs font-semibold text-slate-500">Nessuna demo obbligatoria · collaboratori inclusi · dati economici riservati alla direzione</p>
                 </div>
-
+                <div class="hero-control-visual" aria-hidden="true">
+                    <div class="hero-control-guides"><span></span><span></span><span></span><span></span></div>
+                    <div class="hero-control-bars">
+                        <div class="hero-control-metric" style="--bar-height: 58%; --bar-delay: -0.7s;" data-counter-min="26" data-counter-max="54" data-counter-suffix="h">
+                            <div class="hero-control-value">42h</div>
+                            <div class="hero-control-track"><span class="hero-control-fill hero-control-fill-time"></span></div>
+                            <div class="hero-control-icon"><i data-lucide="timer"></i></div>
+                        </div>
+                        <div class="hero-control-metric" style="--bar-height: 76%; --bar-delay: -0.7s;" data-counter-min="6.8" data-counter-max="15.4" data-counter-decimals="1" data-counter-prefix="€ " data-counter-suffix="k">
+                            <div class="hero-control-value">€ 11,1k</div>
+                            <div class="hero-control-track"><span class="hero-control-fill hero-control-fill-cost"></span></div>
+                            <div class="hero-control-icon"><i data-lucide="euro"></i></div>
+                        </div>
+                        <div class="hero-control-metric hero-control-metric-team" style="--bar-height: 48%; --bar-delay: -1.4s;" data-counter-min="3" data-counter-max="8">
+                            <div class="hero-control-value">6</div>
+                            <div class="hero-control-track"><span class="hero-control-fill hero-control-fill-team"></span></div>
+                            <div class="hero-control-icon"><i data-lucide="users"></i></div>
+                        </div>
+                        <div class="hero-control-metric" style="--bar-height: 84%; --bar-delay: -3.3s;" data-counter-min="18" data-counter-max="38" data-counter-suffix="%">
+                            <div class="hero-control-value">31%</div>
+                            <div class="hero-control-track"><span class="hero-control-fill hero-control-fill-margin"></span></div>
+                            <div class="hero-control-icon"><i data-lucide="trending-up"></i></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
