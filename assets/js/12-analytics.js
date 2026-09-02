@@ -232,7 +232,7 @@
             try { destination = new URL(link.href, window.location.href); }
             catch (error) { return; }
 
-            if (destination.pathname.endsWith('/calcolo-margine-commessa.html')) {
+            if (destination.pathname.endsWith('/calcolo-margine-commessa.html') || destination.pathname.endsWith('/calcolo-costo-orario-studio-professionale.html')) {
                 track('calculator_cta_click', {
                     cta_text: (link.textContent || 'Apri calcolatore').trim().replace(/\s+/g, ' ').slice(0, 80),
                     source_page: window.location.pathname,

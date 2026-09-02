@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#172033">
+    <meta name="robots" content="index, follow">
+    <meta name="description" content="Calcola gratis il costo orario reale di uno studio professionale, la tariffa consigliata, le ore fatturabili e il punto di pareggio.">
+    <link rel="canonical" href="https://www.archtimepro.it/calcolo-costo-orario-studio-professionale.html">
+    <meta property="og:title" content="Calcolo costo orario studio professionale | Arch Time Pro">
+    <meta property="og:description" content="Costi annuali, capacità produttiva e margine desiderato: scopri la tariffa sotto la quale il tuo studio lavora in perdita.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.archtimepro.it/calcolo-costo-orario-studio-professionale.html">
+    <title>Calcolo costo orario studio professionale | Arch Time Pro</title>
+    <link rel="stylesheet" href="assets/tailwind-built.css?v=2026-08-12-01">
+    <link rel="stylesheet" href="assets/fonts.css?v=2026-08-12-01">
+    <script src="assets/vendor/lucide-0.468.0.js?v=privacy-security-2026-08-12-02"></script>
+    <style>
+        .number-field:focus-within { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12); }
+        .result-enter { animation: resultEnter 280ms ease-out both; }
+        @keyframes resultEnter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        @media (prefers-reduced-motion: reduce) { .result-enter { animation: none; } }
+    </style>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Calcolo costo orario studio professionale",
+      "url": "https://www.archtimepro.it/calcolo-costo-orario-studio-professionale.html",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+      "provider": { "@type": "Organization", "name": "Arch Time Pro", "url": "https://www.archtimepro.it/" }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {"@type":"Question","name":"Come si calcola il costo orario di uno studio professionale?","acceptedAnswer":{"@type":"Answer","text":"Si dividono i costi annuali complessivi dello studio, compresi compenso del titolare e costo dei collaboratori, per le ore realmente fatturabili nell'anno."}},
+        {"@type":"Question","name":"Le ore non fatturabili vanno considerate?","acceptedAnswer":{"@type":"Answer","text":"Sì. Amministrazione, formazione, acquisizione clienti e organizzazione riducono le ore vendibili e aumentano il costo economico di ogni ora fatturabile."}},
+        {"@type":"Question","name":"Costo orario e tariffa oraria sono la stessa cosa?","acceptedAnswer":{"@type":"Answer","text":"No. Il costo orario è la soglia minima per coprire i costi; la tariffa consigliata aggiunge il margine desiderato e deve essere valutata nel contesto del singolo incarico."}}
+      ]
+    }
+    </script>
+    <script src="assets/js/12-analytics.js?v=privacy-2026-08-12-01" defer></script>
+    <link rel="stylesheet" href="assets/public-site.css?v=utility-menu-2026-08-17-01">
+    <script src="assets/js/14-public-shell.js?v=hourly-cost-tool-2026-09-02-01" defer></script>
+    <script src="assets/js/15-hourly-cost-calculator.js?v=2026-09-02-01" defer></script>
+</head>
+<body class="bg-white selection:bg-indigo-100 selection:text-indigo-900">
+    <header></header>
+
+    <main>
+        <section class="public-page-dot-grid border-b border-slate-100 pb-12 pt-28 lg:pb-16 lg:pt-32">
+            <div class="mx-auto max-w-7xl px-5 sm:px-6">
+                <div class="mx-auto mb-9 max-w-4xl text-center">
+                    <p class="mb-3 text-xs font-extrabold uppercase text-indigo-600">Calcolatore gratuito · nessuna registrazione</p>
+                    <h1 class="mb-4 text-4xl font-black leading-tight text-slate-950 sm:text-5xl lg:text-6xl">Quanto deve costare davvero <span class="text-indigo-600">un'ora del tuo studio?</span></h1>
+                    <p class="mx-auto max-w-3xl text-base font-medium leading-relaxed text-slate-600 sm:text-lg">Trasforma costi annuali, tempo disponibile e quota non fatturabile in un costo orario minimo e in una tariffa sostenibile.</p>
+                </div>
+
+                <div class="mx-auto grid max-w-6xl overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl shadow-slate-200/60 lg:grid-cols-[1fr_0.95fr]">
+                    <section class="p-5 sm:p-7 lg:p-9" aria-labelledby="hourly-calculator-title">
+                        <div class="mb-7 flex items-start justify-between gap-4">
+                            <div>
+                                <h2 id="hourly-calculator-title" class="text-2xl font-black text-slate-900">La struttura economica</h2>
+                                <p class="mt-1 text-sm leading-relaxed text-slate-500">Usa importi annuali al netto dell'IVA e costi completi per lo studio.</p>
+                            </div>
+                            <button id="hourly-example" type="button" class="shrink-0 rounded-lg border border-slate-200 px-3 py-2 text-xs font-bold text-slate-600 transition-colors hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700">Usa esempio</button>
+                        </div>
+
+                        <form id="hourly-cost-form" novalidate>
+                            <fieldset>
+                                <legend class="mb-4 text-xs font-black uppercase text-indigo-600">01 · Costi annuali</legend>
+                                <div class="grid gap-5 sm:grid-cols-2">
+                                    <label class="block sm:col-span-2">
+                                        <span class="mb-2 block text-sm font-bold text-slate-800">Costi generali dello studio</span>
+                                        <span class="number-field flex items-center rounded-lg border border-slate-300 bg-white transition-all">
+                                            <span class="pl-4 text-sm font-bold text-slate-400">€</span>
+                                            <input id="annual-overhead" type="text" inputmode="decimal" autocomplete="off" placeholder="36.000" class="min-w-0 flex-1 rounded-lg border-0 bg-transparent px-3 py-3.5 text-base font-bold text-slate-900 outline-none">
+                                            <span class="pr-4 text-xs font-bold text-slate-400">/ anno</span>
+                                        </span>
+                                        <span class="mt-1.5 block text-xs leading-relaxed text-slate-500">Affitto, software, assicurazioni, utenze, consulenze, attrezzature e altri costi di struttura.</span>
+                                    </label>
+                                    <label class="block">
+                                        <span class="mb-2 block text-sm font-bold text-slate-800">Compenso annuo del titolare</span>
+                                        <span class="number-field flex items-center rounded-lg border border-slate-300 bg-white transition-all">
+                                            <span class="pl-4 text-sm font-bold text-slate-400">€</span>
+                                            <input id="owner-compensation" type="text" inputmode="decimal" autocomplete="off" placeholder="45.000" class="min-w-0 flex-1 rounded-lg border-0 bg-transparent px-3 py-3.5 text-base font-bold text-slate-900 outline-none">
+                                        </span>
+                                        <span class="mt-1.5 block text-xs leading-relaxed text-slate-500">Il compenso lordo che lo studio deve riconoscere al titolare.</span>
+                                    </label>
+                                    <label class="block">
+                                        <span class="mb-2 block text-sm font-bold text-slate-800">Costo annuo dei collaboratori</span>
+                                        <span class="number-field flex items-center rounded-lg border border-slate-300 bg-white transition-all">
+                                            <span class="pl-4 text-sm font-bold text-slate-400">€</span>
+                                            <input id="team-annual-cost" type="text" inputmode="decimal" autocomplete="off" placeholder="70.000" class="min-w-0 flex-1 rounded-lg border-0 bg-transparent px-3 py-3.5 text-base font-bold text-slate-900 outline-none">
+                                        </span>
+                                        <span class="mt-1.5 block text-xs leading-relaxed text-slate-500">Costo totale sostenuto dallo studio, anche zero.</span>
+                                    </label>
+                                </div>
+                            </fieldset>
+
+                            <fieldset class="mt-8 border-t border-slate-200 pt-7">
+                                <legend class="mb-4 text-xs font-black uppercase text-indigo-600">02 · Capacità produttiva</legend>
+                                <div class="grid gap-5 sm:grid-cols-2">
+                                    <label class="block">
+                                        <span class="mb-2 block text-sm font-bold text-slate-800">Persone produttive equivalenti</span>
+                                        <span class="number-field flex items-center rounded-lg border border-slate-300 bg-white transition-all">
+                                            <input id="productive-people" type="text" inputmode="decimal" autocomplete="off" placeholder="3" class="min-w-0 flex-1 rounded-lg border-0 bg-transparent px-4 py-3.5 text-base font-bold text-slate-900 outline-none">
+                                            <span class="pr-4 text-xs font-bold text-slate-400">persone</span>
+                                        </span>
+                                        <span class="mt-1.5 block text-xs leading-relaxed text-slate-500">Titolare incluso; usa 0,5 per una presenza al 50%.</span>
+                                    </label>
+                                    <label class="block">
+                                        <span class="mb-2 block text-sm font-bold text-slate-800">Giorni lavorabili per persona</span>
+                                        <span class="number-field flex items-center rounded-lg border border-slate-300 bg-white transition-all">
+                                            <input id="workable-days" type="number" min="1" max="366" step="1" inputmode="numeric" placeholder="220" class="min-w-0 flex-1 rounded-lg border-0 bg-transparent px-4 py-3.5 text-base font-bold text-slate-900 outline-none">
+                                            <span class="pr-4 text-xs font-bold text-slate-400">/ anno</span>
+                                        </span>
+                                    </label>
+                                    <label class="block">
+                                        <span class="mb-2 block text-sm font-bold text-slate-800">Ore lavorabili al giorno</span>
+                                        <span class="number-field flex items-center rounded-lg border border-slate-300 bg-white transition-all">
+                                            <input id="hours-per-day" type="text" inputmode="decimal" autocomplete="off" placeholder="8" class="min-w-0 flex-1 rounded-lg border-0 bg-transparent px-4 py-3.5 text-base font-bold text-slate-900 outline-none">
+                                            <span class="pr-4 text-xs font-bold text-slate-400">ore</span>
+                                        </span>
+                                    </label>
+                                    <label class="block">
+                                        <span class="mb-2 block text-sm font-bold text-slate-800">Tempo non fatturabile</span>
+                                        <span class="number-field flex items-center rounded-lg border border-slate-300 bg-white transition-all">
+                                            <input id="non-billable-share" type="text" inputmode="decimal" autocomplete="off" placeholder="35" class="min-w-0 flex-1 rounded-lg border-0 bg-transparent px-4 py-3.5 text-base font-bold text-slate-900 outline-none">
+                                            <span class="pr-4 text-xs font-bold text-slate-400">%</span>
+                                        </span>
+                                        <span class="mt-1.5 block text-xs leading-relaxed text-slate-500">Amministrazione, acquisizione, formazione e organizzazione.</span>
+                                    </label>
+                                </div>
+                            </fieldset>
+
+                            <fieldset class="mt-8 border-t border-slate-200 pt-7">
+                                <legend class="mb-4 text-xs font-black uppercase text-indigo-600">03 · Obiettivo</legend>
+                                <label class="block">
+                                    <span class="mb-2 block text-sm font-bold text-slate-800">Margine desiderato sulla tariffa</span>
+                                    <span class="number-field flex items-center rounded-lg border border-slate-300 bg-white transition-all">
+                                        <input id="desired-margin" type="text" inputmode="decimal" autocomplete="off" placeholder="20" class="min-w-0 flex-1 rounded-lg border-0 bg-transparent px-4 py-3.5 text-base font-bold text-slate-900 outline-none">
+                                        <span class="pr-4 text-xs font-bold text-slate-400">%</span>
+                                    </span>
+                                    <span class="mt-1.5 block text-xs leading-relaxed text-slate-500">È la quota della tariffa che deve restare dopo aver coperto i costi.</span>
+                                </label>
+                            </fieldset>
+
+                            <p id="hourly-error" class="mt-5 hidden rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700" role="alert"></p>
+                            <div class="mt-6 flex flex-col gap-3 sm:flex-row">
+                                <button type="submit" class="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-indigo-600 px-6 py-3.5 text-sm font-black text-white shadow-lg shadow-indigo-500/20 transition-colors hover:bg-indigo-700"><i data-lucide="calculator" class="h-4 w-4"></i>Calcola il costo orario</button>
+                                <button id="hourly-reset" type="button" class="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 px-5 py-3.5 text-sm font-bold text-slate-600 transition-colors hover:bg-slate-50"><i data-lucide="rotate-ccw" class="h-4 w-4"></i>Azzera</button>
+                            </div>
+                            <p class="mt-4 flex items-center gap-2 text-xs leading-relaxed text-slate-500"><i data-lucide="lock-keyhole" class="h-4 w-4 shrink-0 text-emerald-600"></i>I dati restano nel browser e non vengono inviati ad Arch Time Pro.</p>
+                        </form>
+                    </section>
+
+                    <section class="flex min-h-[560px] flex-col bg-slate-950 p-5 text-white sm:p-7 lg:p-9" aria-labelledby="hourly-result-title">
+                        <div id="hourly-result-empty" class="m-auto max-w-sm text-center">
+                            <div class="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-lg border border-slate-700 bg-slate-900 text-indigo-300"><i data-lucide="badge-euro" class="h-7 w-7"></i></div>
+                            <h2 id="hourly-result-title" class="text-2xl font-black">Qui apparirà la soglia economica del tuo studio</h2>
+                            <p class="mt-3 text-sm leading-relaxed text-slate-400">Le ore non fatturabili restano un costo e devono essere sostenute da quelle vendute ai clienti.</p>
+                        </div>
+
+                        <div id="hourly-result-content" class="hidden result-enter" aria-live="polite">
+                            <div class="border-b border-slate-800 pb-6">
+                                <p class="text-xs font-bold uppercase text-slate-400">Costo orario minimo</p>
+                                <p id="result-minimum-hourly" class="mt-2 text-4xl font-black text-white sm:text-5xl">€ 0</p>
+                                <p id="result-loss-threshold" class="mt-2 text-sm font-bold text-amber-300">Sotto questa cifra lo studio non copre i costi.</p>
+                            </div>
+
+                            <div class="py-6">
+                                <p class="text-xs font-bold uppercase text-indigo-300">Tariffa oraria consigliata</p>
+                                <p id="result-recommended-rate" class="mt-2 text-4xl font-black text-indigo-200">€ 0</p>
+                                <p id="result-margin-copy" class="mt-2 text-sm leading-relaxed text-slate-400">Include il margine desiderato.</p>
+                            </div>
+
+                            <div class="mb-7">
+                                <div class="mb-2 flex justify-between text-xs font-bold text-slate-400"><span>Composizione della tariffa</span><span id="result-rate-composition">0% costi · 0% margine</span></div>
+                                <div class="flex h-3 overflow-hidden rounded-full bg-slate-800"><div id="result-cost-share-bar" class="h-full bg-indigo-400 transition-all duration-500" style="width:0%"></div><div id="result-margin-share-bar" class="h-full bg-emerald-400 transition-all duration-500" style="width:0%"></div></div>
+                            </div>
+
+                            <dl class="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-slate-800 bg-slate-800">
+                                <div class="bg-slate-900 p-4"><dt class="text-xs font-bold text-slate-400">Costi annuali</dt><dd id="result-annual-cost" class="mt-1.5 text-lg font-black text-white">€ 0</dd></div>
+                                <div class="bg-slate-900 p-4"><dt class="text-xs font-bold text-slate-400">Ore fatturabili</dt><dd id="result-billable-hours" class="mt-1.5 text-lg font-black text-white">0</dd></div>
+                                <div class="bg-slate-900 p-4"><dt class="text-xs font-bold text-slate-400">Fatturato di pareggio</dt><dd id="result-break-even-revenue" class="mt-1.5 text-lg font-black text-white">€ 0</dd></div>
+                                <div class="bg-slate-900 p-4"><dt class="text-xs font-bold text-slate-400">Ore al pareggio</dt><dd id="result-break-even-hours" class="mt-1.5 text-lg font-black text-white">0</dd></div>
+                            </dl>
+
+                            <div id="hourly-insight" class="mt-5 border-l-2 border-indigo-400 bg-slate-900 px-4 py-3 text-sm leading-relaxed text-slate-300"></div>
+                            <div class="mt-7 border-t border-slate-800 pt-6">
+                                <p class="text-sm font-bold leading-relaxed text-white">Ora verifica cosa succede quando applichi questo costo a una commessa reale.</p>
+                                <a id="hourly-margin-cta" href="calcolo-margine-commessa.html?source=hourly-cost-calculator" class="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-white px-5 py-3.5 text-sm font-black text-slate-950 transition-colors hover:bg-indigo-50">Usalo nel calcolo di una commessa<i data-lucide="arrow-right" class="h-4 w-4"></i></a>
+                                <a href="app.html?source=hourly-cost-calculator" class="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-slate-700 px-5 py-3 text-sm font-bold text-slate-200 hover:bg-slate-900">Controllalo nel tempo con Arch Time Pro</a>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </section>
+
+        <section class="border-b border-slate-100 bg-white py-12 lg:py-16">
+            <div class="mx-auto max-w-6xl px-5 sm:px-6">
+                <div class="mb-9 max-w-3xl"><p class="mb-3 text-xs font-extrabold uppercase text-indigo-600">Il punto che spesso manca</p><h2 class="text-3xl font-black text-slate-950 sm:text-4xl">Non tutte le ore lavorate possono essere vendute.</h2><p class="mt-4 leading-relaxed text-slate-600">Il costo orario diventa credibile solo quando il tempo dedicato allo studio, ma non imputabile ai clienti, viene distribuito sulle ore realmente fatturabili.</p></div>
+                <div class="grid gap-7 md:grid-cols-3">
+                    <article class="border-t-2 border-indigo-500 pt-5"><i data-lucide="building-2" class="h-5 w-5 text-indigo-600"></i><h3 class="mt-3 text-lg font-black">Tutti i costi annuali</h3><p class="mt-2 text-sm leading-relaxed text-slate-600">Struttura, titolare e collaboratori concorrono alla soglia economica minima dello studio.</p></article>
+                    <article class="border-t-2 border-amber-500 pt-5"><i data-lucide="clock-3" class="h-5 w-5 text-amber-600"></i><h3 class="mt-3 text-lg font-black">Solo le ore vendibili</h3><p class="mt-2 text-sm leading-relaxed text-slate-600">Amministrazione, formazione, preventivi e acquisizione riducono la capacità fatturabile.</p></article>
+                    <article class="border-t-2 border-emerald-500 pt-5"><i data-lucide="trending-up" class="h-5 w-5 text-emerald-600"></i><h3 class="mt-3 text-lg font-black">Un margine esplicito</h3><p class="mt-2 text-sm leading-relaxed text-slate-600">La tariffa consigliata separa ciò che copre i costi da ciò che costruisce il margine.</p></article>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-slate-950 py-14 text-white lg:py-16">
+            <div class="mx-auto grid max-w-6xl gap-9 px-5 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
+                <div><p class="mb-3 text-xs font-extrabold uppercase text-indigo-300">La formula</p><h2 class="text-3xl font-black sm:text-4xl">Dal costo annuo alla tariffa.</h2></div>
+                <div class="space-y-5 text-sm leading-relaxed text-slate-300">
+                    <p><strong class="text-white">Costo orario minimo</strong> = costi annuali complessivi ÷ ore annuali fatturabili.</p>
+                    <p><strong class="text-white">Tariffa consigliata</strong> = costo orario minimo ÷ (1 − margine desiderato).</p>
+                    <p class="border-l-2 border-indigo-400 pl-4">Un margine del 20% significa che il costo deve rappresentare l'80% della tariffa. Non equivale ad aggiungere semplicemente il 20% al costo.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white py-12 lg:py-16">
+            <div class="mx-auto grid max-w-6xl gap-8 px-5 sm:px-6 lg:grid-cols-[0.72fr_1.28fr]">
+                <div><p class="text-xs font-black uppercase text-indigo-600">Domande frequenti</p><h2 class="mt-2 text-3xl font-black leading-tight text-slate-950">Prima di usare il risultato</h2></div>
+                <div>
+                    <div class="divide-y divide-slate-200 border-y border-slate-200">
+                        <details class="group py-5" open><summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-black text-slate-900">Come si calcola il costo orario di uno studio professionale?<i data-lucide="chevron-down" class="h-4 w-4 shrink-0 text-indigo-600 transition-transform group-open:rotate-180"></i></summary><p class="mt-3 text-sm leading-relaxed text-slate-600">Si dividono tutti i costi annuali, compresi compenso del titolare e costo dei collaboratori, per le ore realmente fatturabili prodotte dallo studio.</p></details>
+                        <details class="group py-5"><summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-black text-slate-900">Perché devo inserire il tempo non fatturabile?<i data-lucide="chevron-down" class="h-4 w-4 shrink-0 text-indigo-600 transition-transform group-open:rotate-180"></i></summary><p class="mt-3 text-sm leading-relaxed text-slate-600">Perché attività amministrative, commerciali, formative e organizzative consumano tempo e generano costi, pur non comparendo nelle fatture ai clienti.</p></details>
+                        <details class="group py-5"><summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-black text-slate-900">La tariffa calcolata deve essere applicata a ogni incarico?<i data-lucide="chevron-down" class="h-4 w-4 shrink-0 text-indigo-600 transition-transform group-open:rotate-180"></i></summary><p class="mt-3 text-sm leading-relaxed text-slate-600">No. È un riferimento gestionale interno. Responsabilità, complessità, rischio, mercato, condizioni contrattuali e normativa possono richiedere valutazioni diverse.</p></details>
+                    </div>
+                    <div class="mt-7 border-l-2 border-amber-500 bg-amber-50 px-4 py-3 text-xs text-amber-950"><p class="font-black">Stima gestionale da verificare</p><p class="mt-1 leading-relaxed">Il risultato dipende esclusivamente dai dati inseriti e non costituisce consulenza fiscale, contabile, lavoristica o tariffaria. Il professionista resta responsabile della verifica dei costi, della capacità produttiva e della tariffa applicata al singolo incarico.</p></div>
+                    <p class="mt-6 text-xs leading-relaxed text-slate-500">L'interesse professionale per il calcolo dei costi orari è documentato anche dagli applicativi CNAPPC-Cresme richiamati dall'<a href="https://ordinearchitetti.mi.it/it/news/2016-04-26/due-applicativi-per-la-professione" target="_blank" rel="noopener" class="font-bold text-indigo-600 hover:underline">Ordine degli Architetti di Milano</a> e dall'<a href="https://www.ordinearchitetti.mb.it/professione/parcelle.html" target="_blank" rel="noopener" class="font-bold text-indigo-600 hover:underline">Ordine degli Architetti di Monza e Brianza</a>.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer></footer>
+</body>
+</html>

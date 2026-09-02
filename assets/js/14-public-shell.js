@@ -26,6 +26,10 @@
                                         <i data-lucide="chart-no-axes-combined" class="h-4 w-4 shrink-0 text-emerald-600" aria-hidden="true"></i>
                                         <span>Calcolatore margine</span>
                                     </a>
+                                    <a href="calcolo-costo-orario-studio-professionale.html" class="flex items-center gap-3 rounded-md px-3 py-3 text-sm font-bold text-slate-700 transition-colors hover:bg-indigo-50 hover:text-indigo-700">
+                                        <i data-lucide="badge-euro" class="h-4 w-4 shrink-0 text-amber-600" aria-hidden="true"></i>
+                                        <span>Calcolo costo orario</span>
+                                    </a>
                                 </div>
                             </details>
                             <a href="index.html#prezzi" class="text-sm font-bold text-slate-500 transition-colors hover:text-indigo-600">Prezzi</a>
@@ -64,6 +68,7 @@
                         <div class="flex flex-col items-center gap-2.5 lg:items-start">
                             <a href="calcolo-compenso-professionale-dlgs-36-2023.html" class="hover:text-white">Calcolo parcella professionale</a>
                             <a href="calcolo-margine-commessa.html">Calcolatore margine</a>
+                            <a href="calcolo-costo-orario-studio-professionale.html">Calcolo costo orario</a>
                         </div>
                     </nav>
                     <nav class="public-footer-groups" aria-label="Informazioni legali">

@@ -16,6 +16,7 @@
     const resultContent = document.getElementById('result-content');
     const calculatorCta = document.getElementById('calculator-cta');
     const HANDOFF_KEY = 'archtime-margin-calculator-handoff';
+    const HOURLY_COST_HANDOFF_KEY = 'archtime-hourly-cost-calculator-handoff';
     let startTracked = false;
     let latestValidValues = null;
 
@@ -218,4 +219,20 @@
         }
         track('margin_calculator_cta_clicked', { destination: '/app.html' });
     });
+
+    try {
+        const handoff = JSON.parse(localStorage.getItem(HOURLY_COST_HANDOFF_KEY) || 'null');
+        const isRecent = handoff?.savedAt && (Date.now() - Number(handoff.savedAt)) < (7 * 24 * 60 * 60 * 1000);
+        if (isRecent && Number.isFinite(Number(handoff.minimumHourly)) && Number(handoff.minimumHourly) > 0) {
+            fields.hourlyCost.value = Number(handoff.minimumHourly).toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const help = document.getElementById('hourly-cost-help');
+            if (help) {
+                help.textContent = 'Costo orario importato dal calcolatore dello studio. Puoi modificarlo.';
+                help.classList.add('font-bold', 'text-indigo-600');
+            }
+            track('margin_calculator_hourly_cost_imported');
+        }
+    } catch (error) {
+        localStorage.removeItem(HOURLY_COST_HANDOFF_KEY);
+    }
 })();
