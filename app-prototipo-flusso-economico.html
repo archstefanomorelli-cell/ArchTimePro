@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https://*.supabase.co https://www.google.com https://www.google.it; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://www.google-analytics.com https://region1.google-analytics.com https://www.google.com https://www.google.it https://stats.g.doubleclick.net; frame-src https://js.stripe.com https://hooks.stripe.com; form-action 'self' https://buy.stripe.com; object-src 'none'; base-uri 'self'">
+    <meta name="theme-color" content="#172033">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Arch Time">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="/manifest.webmanifest?v=archtime-icon-meter-20260516">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32-archtime-meter-20260516.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon-archtime-meter-20260516.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-archtime-meter-20260516.png">
+    <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon-archtime-meter-20260516.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="/apple-touch-icon-167.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180.png">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Arch Time Pro - Prototipo flusso economico</title>
+    <script>
+        const prototypeParams = new URLSearchParams(window.location.search);
+        if (prototypeParams.get('videoDemo') !== '1') {
+            prototypeParams.set('videoDemo', '1');
+            prototypeParams.set('prototypeFlow', '1');
+            history.replaceState(null, '', `${window.location.pathname}?${prototypeParams.toString()}`);
+        }
+        if (new URLSearchParams(window.location.search).get('videoDemo') === '1') {
+            document.documentElement.classList.add('video-demo-boot');
+        }
+        const requestedTheme = new URLSearchParams(window.location.search).get('theme');
+        if (requestedTheme !== 'classic') {
+            document.documentElement.classList.add('theme-pro');
+        }
+        const isStandaloneApp = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+        if (isStandaloneApp) {
+            document.documentElement.classList.add('pwa-standalone');
+        }
+    </script>
+    <style>
+        html.video-demo-boot body { visibility: hidden; }
+    </style>
+    
+    <link rel="stylesheet" href="assets/tailwind-built.css?v=2026-08-12-01">
+    <link rel="stylesheet" href="assets/fonts.css?v=2026-08-12-01">
+    
+    <script src="assets/vendor/supabase-2.39.3.js?v=privacy-security-2026-08-12-02"></script>
+    <script src="assets/vendor/lucide-0.468.0.js?v=privacy-security-2026-08-12-02"></script>
+    <script src="assets/vendor/chart-4.4.7.js?v=privacy-security-2026-08-12-02"></script>
+    <script src="assets/vendor/jspdf-2.5.1.js?v=privacy-security-2026-08-12-02"></script>
+    <script src="assets/vendor/jspdf-autotable-3.5.31.js?v=privacy-security-2026-08-12-02"></script>
+    <script src="assets/vendor/exceljs-4.4.0.js?v=privacy-security-2026-08-12-02"></script>
+    <link rel="stylesheet" href="assets/app.css?v=plus-jakarta-2026-08-13-01">
+    <link rel="stylesheet" href="assets/app-pro.css?v=studio-management-glass-2026-08-13-01">
+    <link rel="stylesheet" href="assets/app-flow-prototype.css?v=2026-08-28-23">
+    <script src="assets/js/12-analytics.js?v=privacy-2026-08-12-01" defer></script>
+</head>
+<body class="text-slate-800 pb-20 lg:pb-0">
+
+    <div id="auth-container" class="min-h-screen flex flex-col lg:flex-row bg-white">
+        <div class="hidden lg:flex lg:w-1/2 bg-slate-900 flex-col justify-center px-20 relative overflow-hidden lg:h-screen lg:sticky lg:top-0">
+            <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+            <div class="relative z-10">
+                <h1 id="landing-title" class="text-6xl font-black text-white mb-6 tracking-tight">Arch <span class="text-primary-500">Time</span> Pro</h1>
+                <p class="text-slate-400 text-xl mb-10 max-w-md leading-relaxed">Gestisci commesse, ore e costi del tuo studio. Tieni sotto controllo il margine di ogni progetto.</p>
+                <div class="space-y-6">
+                    <div class="flex items-start gap-4 text-slate-300"><div class="bg-primary-500/20 p-2.5 rounded-xl border border-primary-500/30"><i data-lucide="bar-chart-3" class="text-primary-400 w-5 h-5"></i></div><div><p class="font-bold text-white">Analisi Margini Reali</p><p class="text-sm mt-1 text-slate-400">Traccia ore e spese extra per scoprire il vero utile.</p></div></div>
+                    <div class="flex items-start gap-4 text-slate-300"><div class="bg-primary-500/20 p-2.5 rounded-xl border border-primary-500/30"><i data-lucide="shield-check" class="text-primary-400 w-5 h-5"></i></div><div><p class="font-bold text-white">Privacy Finanziaria</p><p class="text-sm mt-1 text-slate-400">Tariffe interne riservate e inviti gratuiti per il team.</p></div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-full lg:w-1/2 min-h-screen flex items-center justify-center p-4 sm:p-6 bg-slate-50 lg:bg-white relative auth-panel">
+            <div class="w-full max-w-md p-5 sm:p-8 bg-white border border-slate-200 lg:border-none shadow-sm lg:shadow-none rounded-2xl auth-card">
+                <div class="text-center mb-6 lg:hidden">
+                    <h2 class="text-3xl font-black text-slate-900 tracking-tight">Arch Time Pro</h2>
+                    <p class="text-xs text-slate-500 font-bold mt-2 uppercase tracking-wider">Ore, costi e margini in un unico spazio</p>
+                </div>
+                <div class="flex p-1 bg-slate-100 rounded-xl mb-8 border border-slate-200">
+                    <button id="tab-login" class="flex-1 py-2.5 text-sm font-bold rounded-lg bg-white shadow-sm text-slate-900 transition-all border border-slate-200/50">Accedi</button>
+                    <button id="tab-signup" class="flex-1 py-2.5 text-sm font-bold text-slate-500 hover:text-slate-700 transition-all">Nuovo utente</button>
+                </div>
+                <div id="auth-context-copy" class="mb-5 bg-primary-50 border border-primary-100 rounded-xl p-3.5 text-xs text-primary-900 leading-relaxed">
+                    <strong class="font-black">Prova gratuita.</strong> Entra nel tuo spazio di lavoro oppure crea un nuovo account.
+                </div>
+                <div id="pwa-install-hint" class="force-hide pwa-install-hint mb-5">
+                    <div class="pwa-install-icon"><i data-lucide="smartphone" class="w-4 h-4"></i></div>
+                    <div class="min-w-0">
+                        <p class="pwa-install-title">Usala come app</p>
+                        <p class="pwa-install-copy" data-pwa-install-copy>Da Safari: Condividi e poi Aggiungi alla schermata Home.</p>
+                    </div>
+                    <button type="button" class="force-hide pwa-install-action" data-pwa-install-action>Installa</button>
+                    <button id="btn-dismiss-pwa-hint" type="button" class="pwa-install-close" data-pwa-dismiss aria-label="Nascondi suggerimento"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
+                </div>
+                <div class="space-y-4">
+                    <div id="signup-fields" class="force-hide space-y-4">
+                        <div class="p-4 sm:p-5 bg-slate-50 rounded-xl border border-slate-200">
+                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-3">Tipo di account</label>
+                            <div class="space-y-3">
+                                <label class="flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-primary-300 transition-all shadow-sm">
+                                    <input type="radio" name="main-role" value="owner" class="w-4 h-4 text-primary-600 focus:ring-primary-500">
+                                    <span class="text-sm font-bold text-slate-700">Manager (crea spazio di lavoro)</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-primary-300 transition-all shadow-sm">
+                                    <input type="radio" name="main-role" value="staff" class="w-4 h-4 text-primary-600 focus:ring-primary-500">
+                                    <span class="text-sm font-bold text-slate-700">Collaboratore (unisciti)</span>
+                                </label>
+                            </div>
+                            <div id="trial-info-container" class="force-hide mt-4 p-3.5 bg-primary-50 border border-primary-100 rounded-xl flex gap-3 items-start"><i data-lucide="gift" class="w-5 h-5 text-primary-600 shrink-0"></i><p class="text-xs text-primary-900 leading-relaxed"><strong class="font-black">15 giorni di prova gratuita.</strong><br>Poi Tariffa Fondatori a 19,90 €/mese per studio.</p></div>
+                        </div>
+                        <div id="invite-code-container" class="force-hide">
+                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Codice invito manager</label>
+                            <input type="text" id="invite-code-input" placeholder="Incolla codice" class="w-full border border-primary-200 bg-primary-50/30 rounded-xl p-3.5 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all">
+                        </div>
+                        <input type="text" id="full-name" placeholder="Nome e cognome" class="w-full border border-slate-200 rounded-xl p-3.5 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all bg-white">
+                    </div>
+                    
+                    <input type="email" id="email" placeholder="Email professionale" class="w-full border border-slate-200 rounded-xl p-3.5 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all bg-white">
+                    
+                    <input type="password" id="password" placeholder="Password" class="w-full border border-slate-200 rounded-xl p-3.5 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all bg-white">
+                    
+                    <div id="forgot-link-container" class="text-right mt-1 mb-2">
+                        <button id="btn-forgot-password" class="text-[10px] font-bold text-slate-400 hover:text-primary-600 transition-colors uppercase tracking-wider">Password dimenticata?</button>
+                    </div>
+                    
+                    <div id="signup-legal" class="force-hide mt-4 mb-2 bg-slate-50 border border-slate-200 rounded-xl p-3.5">
+                        <label class="flex items-start gap-2.5 cursor-pointer group">
+                            <input type="checkbox" id="accept-terms" class="mt-0.5 w-4 h-4 text-primary-600 border-slate-300 rounded focus:ring-primary-500 transition-all cursor-pointer">
+                            <span class="text-[10px] text-slate-500 leading-tight">
+                                Ho letto la <a href="privacy.html" target="_blank" class="font-bold text-slate-700 group-hover:text-primary-600 hover:underline transition-colors">Privacy Policy</a> e accetto i <a href="termini.html" target="_blank" class="font-bold text-slate-700 group-hover:text-primary-600 hover:underline transition-colors">Termini di Servizio</a>.*
+                            </span>
+                        </label>
+                        <div class="mt-2 pl-6 text-[10px] text-slate-400 leading-tight">
+                            Dubbi sui dati economici? Leggi la pagina <a href="sicurezza.html" target="_blank" class="font-bold text-slate-600 hover:text-primary-600 hover:underline transition-colors">Sicurezza e Privacy Economica</a>.
+                        </div>
+                    </div>
+
+                    <button id="btn-auth" class="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold hover:bg-slate-800 transition-all active:scale-[0.98] shadow-sm mt-2">Accedi ora</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="limbo-container" class="force-hide min-h-screen flex items-center justify-center p-4 bg-slate-900 relative overflow-hidden z-[900]">
+        <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+        <div class="relative z-10 w-full max-w-lg bg-white border border-slate-200 rounded-3xl p-8 shadow-2xl">
+            <div class="w-16 h-16 bg-slate-100 text-slate-500 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-slate-200"><i data-lucide="door-open" class="w-8 h-8"></i></div>
+            <h2 class="text-2xl font-black text-slate-900 mb-2 tracking-tight text-center" id="limbo-user-name">Bentornato!</h2>
+            <p class="text-slate-500 text-sm mb-8 leading-relaxed text-center font-medium">Al momento non fai più parte di alcun team aziendale. <br>Scegli come vuoi continuare:</p>
+            
+            <div class="space-y-6">
+                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200">
+                    <h3 class="text-sm font-black text-slate-800 mb-3 flex items-center gap-2"><i data-lucide="link" class="w-4 h-4 text-primary-500"></i> Unisciti a uno Studio</h3>
+                    <div class="flex gap-2">
+                        <input type="text" id="limbo-invite-code" placeholder="Incolla codice invito" class="flex-1 border border-slate-200 rounded-xl p-3 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all bg-white">
+                        <button id="btn-limbo-join" class="bg-primary-600 text-white px-5 rounded-xl font-bold hover:bg-primary-700 transition-all shadow-sm active:scale-95 shrink-0 text-sm">Entra</button>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <div class="flex-1 h-[1px] bg-slate-200"></div>
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">OPPURE</span>
+                    <div class="flex-1 h-[1px] bg-slate-200"></div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <h3 class="text-sm font-black text-slate-800 mb-3 flex items-center gap-2"><i data-lucide="briefcase" class="w-4 h-4 text-amber-500"></i> Crea il tuo spazio di lavoro</h3>
+                    <input type="radio" name="limbo-business-type" value="studio" checked hidden>
+                    <input type="text" id="limbo-studio-name" placeholder="Nome del tuo studio" class="w-full border border-slate-200 rounded-xl p-3 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all mb-3 bg-slate-50">
+                    <button id="btn-limbo-create" class="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold hover:bg-slate-800 transition-all active:scale-[0.98] shadow-sm flex justify-center items-center gap-2">Diventa manager</button>
+                </div>
+            </div>
+            
+            <div class="text-center mt-6">
+                <button data-action="logout" class="text-[11px] font-bold text-slate-400 hover:text-slate-600 transition-colors uppercase tracking-wider">Esci dall'account</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="paywall-container" class="force-hide fixed inset-0 z-[200] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
+        <div class="bg-white border border-slate-200 rounded-2xl p-8 max-w-md w-full text-center shadow-xl">
+            <div class="w-16 h-16 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-red-100"><i data-lucide="lock" class="w-8 h-8"></i></div>
+            <h2 class="text-2xl font-black text-slate-900 mb-2 tracking-tight">Abbonamento scaduto</h2>
+            <p class="text-slate-500 text-sm mb-8 leading-relaxed">L'abbonamento per questo Spazio di Lavoro è scaduto. Attiva un piano per continuare a lavorare.</p>
+            
+            <div class="flex flex-col gap-3 mb-6">
+                <button data-plan-checkout="founder" class="w-full bg-primary-600 text-white py-3.5 rounded-xl font-bold hover:bg-primary-700 transition-all shadow-sm active:scale-[0.98] flex justify-center items-center gap-2">
+                    <i data-lucide="zap" class="w-4 h-4"></i> Attiva Tariffa Fondatori (19,90 €/mese)
+                </button>
+            </div>
+
+            <button id="btn-paywall-export-data" class="mb-4 inline-flex items-center justify-center gap-2 text-xs font-bold text-slate-500 hover:text-primary-600 transition-colors">
+                <i data-lucide="download" class="w-4 h-4"></i> Esporta i dati dello studio
+            </button>
+            
+            <button data-action="logout" class="text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors">Esci dall'account</button>
+        </div>
+    </div>
+
+    <div id="modal-upgrade" class="force-hide fixed inset-0 z-[300] modal flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full text-center shadow-xl border border-slate-200 relative">
+            <button id="btn-close-upgrade" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+            <div class="w-16 h-16 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-amber-100"><i data-lucide="zap" class="w-8 h-8"></i></div>
+            <h2 class="text-xl font-black text-slate-900 mb-2 tracking-tight">Attiva Arch Time Pro</h2>
+            <p id="upgrade-message" class="text-slate-500 text-sm mb-8 leading-relaxed">Questa funzione è compresa nella Tariffa Fondatori.</p>
+            <button data-plan-checkout="founder" class="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold hover:bg-slate-800 transition-all shadow-sm active:scale-[0.98] flex justify-center items-center gap-2">Attiva a 19,90 €/mese</button>
+        </div>
+    </div>
+
+    <div id="app-container" class="force-hide min-h-screen flex flex-col">
+        <header class="bg-white/90 backdrop-blur-md border-b border-slate-200 px-4 sm:px-6 py-3 sticky top-0 z-40 shadow-sm">
+            <div class="max-w-7xl mx-auto flex justify-between items-center">
+                <div class="flex items-center gap-2 sm:gap-3 min-w-0">
+                    <img id="header-logo" class="h-8 object-contain force-hide rounded-lg" alt="Logo">
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-2">
+                            <h1 id="header-title" class="text-base sm:text-lg font-black text-slate-900 tracking-tight whitespace-nowrap">ARCH <span class="text-primary-600">TIME</span> PRO</h1>
+                            <span id="trial-badge" class="admin-only force-hide text-[9px] px-1.5 py-0.5 rounded-md font-bold border whitespace-nowrap tracking-wider transition-all"></span>
+                            <span id="plan-badge" class="admin-only force-hide text-[9px] px-2 py-0.5 rounded-md border border-slate-200 bg-slate-50 text-slate-500 font-bold uppercase tracking-wider hidden sm:inline-block"></span>
+                        </div>
+                        <div class="hidden sm:flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider min-w-0">
+                            <span id="header-studio-name" class="truncate max-w-[220px]">Spazio di lavoro</span>
+                            <span class="text-slate-300">•</span>
+                            <span id="header-user-role">Utente</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 lg:gap-4 shrink-0">
+                    <button id="btn-header-pdf" class="secondary-action admin-only"><i data-lucide="file-text" class="w-4 h-4"></i> <span class="hidden lg:inline">Report studio</span></button>
+                    <button id="btn-header-invite" class="secondary-action admin-only"><i data-lucide="user-plus" class="w-4 h-4"></i> <span class="hidden xl:inline">Invita collaboratore</span></button>
+                    <div class="hidden lg:block h-6 w-[1px] bg-slate-200 admin-only mx-2"></div>
+                    
+                    <button id="btn-open-account" class="flex items-center gap-2 border border-slate-200 bg-white hover:border-primary-200 hover:bg-primary-50 p-1.5 lg:px-3 lg:py-2 rounded-xl transition-all group shadow-sm">
+                        <span class="w-7 h-7 rounded-lg bg-slate-100 text-slate-500 group-hover:bg-primary-100 group-hover:text-primary-600 flex items-center justify-center"><i data-lucide="user" class="w-4 h-4"></i></span>
+                        <span id="user-display" class="hidden lg:inline text-xs font-bold text-slate-600 uppercase truncate max-w-[120px] group-hover:text-primary-600 tracking-wide"></span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-4 lg:px-6 py-6 lg:py-10 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 flex-grow w-full">
+            <div id="pwa-install-hint-app" class="force-hide pwa-install-hint pwa-install-hint-app lg:hidden">
+                <div class="pwa-install-icon"><i data-lucide="smartphone" class="w-4 h-4"></i></div>
+                <div class="min-w-0">
+                    <p class="pwa-install-title">Installa Arch Time</p>
+                    <p class="pwa-install-copy" data-pwa-install-copy>Da Safari: Condividi e poi Aggiungi alla schermata Home.</p>
+                </div>
+                <button type="button" class="force-hide pwa-install-action" data-pwa-install-action>Installa</button>
+                <button type="button" class="pwa-install-close" data-pwa-dismiss aria-label="Nascondi suggerimento"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
+            </div>
+            
+            <div class="lg:col-span-4 flex flex-col gap-6 lg:gap-8">
+                
+                <section class="app-panel bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mobile-tab active" data-tab="operate">
+                    <div>
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-lg font-black text-slate-800 tracking-tight flex items-center gap-2"><i data-lucide="clock" class="text-primary-500 w-5 h-5"></i> Timer</h2>
+                            <button id="btn-open-manual-entry" class="secondary-action compact">Manuale</button>
+                        </div>
+                        <div class="space-y-4">
+                            <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1" id="lbl-timer-project">Progetto</label><select id="project-select" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white shadow-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all appearance-none cursor-pointer text-slate-700"></select></div>
+                            <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Attività</label><select id="task-select" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white shadow-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all appearance-none cursor-pointer text-slate-700"></select></div>
+                            <div><input type="text" id="timer-notes" placeholder="Aggiungi una nota (opzionale)" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white shadow-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all text-slate-700 placeholder:text-slate-400"></div>
+                        </div>
+                        <div class="mt-8 mb-8"><div id="timer-display" class="text-5xl lg:text-6xl font-black tracking-tighter text-center text-slate-800 tabular-nums">00:00:00</div></div>
+                        <button id="btn-toggle-timer" class="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold text-base shadow-sm hover:bg-slate-800 transition-all active:scale-[0.98] flex justify-center items-center gap-2"><i data-lucide="play-circle" id="btn-icon" class="w-5 h-5"></i> <span id="btn-text">Avvia ora</span></button>
+                    </div>
+                </section>
+
+                <section class="studio-management-summary app-panel bg-white border border-slate-200 rounded-2xl p-5 shadow-sm admin-only mobile-tab" data-tab="manage">
+                    <div class="flex items-center gap-3">
+                        <div class="relative w-12 h-12 shrink-0 bg-slate-50 border border-slate-200 rounded-xl overflow-hidden flex items-center justify-center text-primary-500">
+                            <i id="studio-summary-logo-placeholder" data-lucide="building-2" class="w-5 h-5"></i>
+                            <img id="studio-summary-logo" class="absolute inset-0 w-full h-full object-contain p-1.5 force-hide" alt="Logo dello studio">
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-[9px] font-black uppercase tracking-wider text-primary-600">Studio e team</p>
+                            <h2 id="studio-summary-name" class="text-base font-black text-slate-900 tracking-tight truncate">Spazio di lavoro</h2>
+                            <p id="studio-summary-status" class="text-[10px] font-medium text-slate-500 mt-0.5">Configurazione dello studio</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 mt-4">
+                        <div class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5">
+                            <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400">Team attivo</p>
+                            <p id="studio-summary-team-count" class="text-lg font-black text-slate-800 mt-0.5">0</p>
+                        </div>
+                        <div class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5">
+                            <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400">Costo medio team</p>
+                            <p id="studio-summary-average-cost" class="text-lg font-black text-slate-800 mt-0.5">-</p>
+                        </div>
+                    </div>
+                    <button id="btn-open-studio-management" class="secondary-action w-full justify-center mt-4"><i data-lucide="settings-2" class="w-4 h-4"></i> Gestisci studio e team</button>
+                </section>
+            </div>
+
+            <div class="lg:col-span-8 flex flex-col gap-6 lg:gap-8">
+                
+                <section class="admin-only mobile-tab" data-tab="analyze">
+                    <div class="analytics-section-heading">
+                        <h2>Analisi finanziaria</h2>
+                        <p>Margini, redditività e segnali operativi dei lavori dello studio.</p>
+                    </div>
+
+                    <div class="analytics-primary-grid">
+                        <div class="analytics-kpi analytics-kpi-primary border border-slate-200 bg-white">
+                            <h3>Margine lavori attivi</h3>
+                            <div id="kpi-margin" class="analytics-kpi-value text-primary-600">0,00 <span data-studio-currency-code>EUR</span></div>
+                            <p id="kpi-margin-note">Sui lavori attivi</p>
+                        </div>
+                        <div id="card-profit" class="analytics-kpi analytics-kpi-profit border border-slate-200 bg-white">
+                            <h3 id="label-profit">Utile lavori chiusi</h3>
+                            <div id="kpi-profit" class="analytics-kpi-value text-emerald-700">0,00 <span data-studio-currency-code>EUR</span></div>
+                            <p>Consuntivo archiviati</p>
+                        </div>
+                        <div class="analytics-kpi analytics-kpi-costs border border-slate-200 bg-white">
+                            <h3>Costi lavori attivi</h3>
+                            <div id="kpi-active-costs" class="analytics-kpi-value text-slate-800">0,00 <span data-studio-currency-code>EUR</span></div>
+                            <p>Ore e spese registrate</p>
+                        </div>
+                    </div>
+
+                    <div id="studio-health-strip" class="studio-health-strip" aria-label="Andamento globale dello studio">
+                        <div class="studio-health-heading">
+                            <div>
+                                <h3>Andamento globale dello studio</h3>
+                                <p>Assorbimento complessivo dei budget dei progetti attivi.</p>
+                            </div>
+                            <strong id="studio-health-value">0%</strong>
+                        </div>
+                        <div id="studio-health-track" class="studio-health-track" role="progressbar" aria-label="Budget complessivo assorbito" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                            <span id="studio-health-marker" class="studio-health-marker" style="left: 0%"></span>
+                        </div>
+                        <div class="studio-health-meta">
+                            <span id="studio-health-budget">Budget complessivo 0,00 EUR</span>
+                            <span id="studio-health-residual">Margine residuo 0,00 EUR</span>
+                        </div>
+                    </div>
+
+                    <button id="btn-toggle-analytics" type="button" class="analytics-summary-row" data-ui-action="toggle-analytics" aria-expanded="false" aria-controls="analytics-details">
+                        <span class="analytics-summary-metrics">
+                            <span><small>Allineati</small><strong id="analytics-inline-aligned">0</strong></span>
+                            <span><small>Da monitorare</small><strong id="analytics-inline-alerts">0</strong></span>
+                            <span><small>Fuori budget</small><strong id="analytics-inline-over-budget">0</strong></span>
+                            <span><small>Posizione di cassa</small><strong id="analytics-inline-week-cost">-</strong></span>
+                            <span><small>Attività più assorbente</small><strong id="analytics-inline-top-task">-</strong></span>
+                        </span>
+                        <span class="analytics-summary-action">
+                            <span id="analytics-toggle-label">Apri grafici</span>
+                            <i id="analytics-toggle-icon" data-lucide="chevron-down"></i>
+                        </span>
+                    </button>
+
+                    <div id="analytics-details" class="force-hide mt-3">
+                        <div class="analytics-workspace bg-white border border-slate-200 rounded-2xl overflow-hidden">
+                        <span id="analytics-trend-label" class="force-hide" aria-hidden="true"></span>
+                        <div class="analytics-chart-panel prototype-cash-comparison-panel">
+                            <div class="analytics-panel-heading">
+                                <div>
+                                    <h3>Incassato vs costi sostenuti</h3>
+                                    <p>Ore e spese coperte dagli incassi di ogni commessa.</p>
+                                </div>
+                                <span id="analytics-cash-position" class="analytics-status-chip">Posizione netta</span>
+                            </div>
+                            <div id="analytics-cash-controls" class="prototype-cash-controls" aria-label="Filtra la posizione di cassa"></div>
+                            <div class="analytics-chart-wrap"><canvas id="chart-risk"></canvas></div>
+                            <div id="empty-risk" class="analytics-empty force-hide"><i data-lucide="wallet-cards"></i><span>Registra costi o incassi per confrontare le commesse.</span></div>
+                            <div id="analytics-cash-exposure-list" class="prototype-cash-exposure-list"></div>
+                        </div>
+                        <div class="analytics-priority-panel">
+                            <div class="analytics-panel-heading">
+                                <div>
+                                    <h3>Priorità commesse</h3>
+                                    <p>Ordinate per rischio economico.</p>
+                                </div>
+                            </div>
+                            <div id="analytics-priority-list" class="analytics-priority-list"></div>
+                        </div>
+                        <div class="analytics-chart-panel">
+                            <div class="analytics-panel-heading">
+                                <div>
+                                    <h3>Tempo per attività</h3>
+                                    <p>Dove si concentrano le ore dei lavori attivi.</p>
+                                </div>
+                            </div>
+                            <div class="analytics-chart-wrap"><canvas id="chart-tasks-dist"></canvas></div>
+                            <div id="empty-tasks" class="analytics-empty force-hide"><i data-lucide="timer-reset"></i><span>Le attività compariranno dopo le prime ore registrate.</span></div>
+                        </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="admin-only mobile-tab active" data-tab="operate">
+                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4 pl-1">
+                        <div class="projects-section-heading">
+                            <h2 id="lbl-active-projects" class="text-lg lg:text-xl font-black text-slate-800 tracking-tight">Progetti</h2>
+                            <p>Commesse attive e archiviate, con budget, costi e margini sempre sotto controllo.</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="project-view-switch" role="group" aria-label="Visualizzazione progetti">
+                                <button type="button" data-ui-action="set-project-view" data-project-view="grid" title="Vista griglia" aria-label="Vista griglia"><i data-lucide="layout-grid"></i></button>
+                                <button type="button" data-ui-action="set-project-view" data-project-view="list" title="Vista lista" aria-label="Vista lista"><i data-lucide="list"></i></button>
+                            </div>
+                            <button id="btn-open-project-modal" class="secondary-action compact dark project-toolbar-action !text-white" style="color:#fff !important;"><i data-lucide="plus"></i><span>Nuovo progetto</span></button>
+                            <button id="toggle-archived-btn" class="secondary-action compact project-toolbar-action"><i data-lucide="archive"></i><span>Archivio</span></button>
+                        </div>
+                    </div>
+                    <div id="projects-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+                </section>
+
+                <section class="mobile-tab active" data-tab="operate">
+                    <div class="activity-register-heading-row">
+                        <div class="activity-section-heading">
+                            <h2>Registro Attività</h2>
+                            <p>Ore e note dello studio, organizzate per settimana.</p>
+                        </div>
+
+                        <div class="activity-week-control">
+                            <button id="btn-prev-week" class="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-white rounded-md shadow-sm transition-colors border border-transparent hover:border-slate-200"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+                            <div id="week-picker-trigger" class="relative cursor-pointer group px-2 flex items-center justify-center">
+                                <input type="date" id="week-picker" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" style="pointer-events: none;">
+                                <span id="week-display" class="text-[11px] font-bold text-slate-600 min-w-[130px] text-center uppercase tracking-wider group-hover:text-primary-600 transition-colors pointer-events-none"></span>
+                            </div>
+                            <button id="btn-next-week" class="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-white rounded-md shadow-sm transition-colors border border-transparent hover:border-slate-200"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                        </div>
+                    </div>
+                    <div class="activity-register-panel bg-white border border-slate-200 rounded-2xl shadow-sm overflow-x-auto">
+                        <table class="w-full text-sm text-center hidden lg:table">
+                            <thead class="hidden">
+    <tr>
+        <th class="px-5 py-4 text-center font-bold whitespace-nowrap">Team</th>
+        <th class="px-5 py-4 text-center font-bold w-full">Progetto</th>
+        <th class="px-5 py-4 text-center font-bold min-w-[150px]">Attività / Note</th>
+        <th class="px-5 py-4 text-center font-bold whitespace-nowrap">Tempo</th>
+        <th class="px-5 py-4 admin-only text-center font-bold whitespace-nowrap">Costo</th>
+        <th class="px-5 py-4 text-center font-bold whitespace-nowrap"></th>
+    </tr>
+</thead>
+                            <tbody id="entries-table-desktop" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                        <div id="entries-empty-state" class="force-hide p-10 text-center text-slate-400 font-medium text-sm">Nessuna attività registrata in questa settimana.</div>
+                        <div id="entries-list-mobile" class="lg:hidden bg-slate-50/60 py-1"></div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 flex justify-around p-2 pb-safe z-50 shadow-[0_-12px_28px_-18px_rgba(15,23,42,0.35)]">
+            <button class="nav-btn text-primary-600 flex flex-col items-center justify-center p-2 w-full rounded-2xl active:scale-95 transition-all" data-tab="operate"><i data-lucide="clock" class="w-5 h-5 mb-1"></i><span class="text-[10px] font-black tracking-wide">Lavoro</span></button>
+            <button class="nav-btn text-slate-400 admin-only flex flex-col items-center justify-center p-2 w-full rounded-2xl active:scale-95 transition-all hover:text-slate-600" data-tab="analyze"><i data-lucide="pie-chart" class="w-5 h-5 mb-1"></i><span class="text-[10px] font-black tracking-wide">Analisi</span></button>
+            <button class="nav-btn text-slate-400 admin-only flex flex-col items-center justify-center p-2 w-full rounded-2xl active:scale-95 transition-all hover:text-slate-600" data-tab="manage"><i data-lucide="settings" class="w-5 h-5 mb-1"></i><span class="text-[10px] font-black tracking-wide">Gestione</span></button>
+        </nav>
+    </div>
+
+    <div id="modal-edit-team" class="force-hide fixed inset-0 z-[220] modal flex items-center justify-center p-4">
+        <div class="w-full max-w-md p-6 lg:p-8 shadow-xl border border-slate-200 rounded-2xl relative bg-white">
+            <button id="btn-close-edit-team" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+            <h2 class="text-lg font-black text-slate-800 tracking-tight mb-1 flex items-center gap-2"><i data-lucide="user-cog" class="text-primary-500 w-5 h-5"></i> Modifica collaboratore</h2>
+            <p class="text-xs text-slate-500 font-medium mb-4">Ruolo, costo interno e gestione del membro.</p>
+            <input type="hidden" id="edit-team-id">
+            <div class="team-modal-summary">
+                <div class="team-modal-avatar"><i data-lucide="user-round" class="w-4 h-4"></i></div>
+                <div class="min-w-0">
+                    <p id="edit-team-summary-name" class="team-modal-summary-name">Collaboratore</p>
+                    <p id="edit-team-summary-meta" class="team-modal-summary-meta">Email e ruolo</p>
+                </div>
+            </div>
+            <div class="space-y-4 mt-4">
+                <div>
+                    <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Nome e cognome</label>
+                    <input type="text" id="edit-team-name" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Ruolo</label>
+                        <select id="edit-team-role" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all appearance-none text-slate-700"></select>
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Costo orario (<span data-studio-currency-symbol>€</span>)</label>
+                        <input type="number" step="0.01" id="edit-team-cost" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all font-bold">
+                    </div>
+                </div>
+                <div class="team-modal-note">
+                    <i data-lucide="calculator" class="w-4 h-4"></i>
+                    <span>Il nuovo costo orario si applica alle attività successive. Le registrazioni già salvate mantengono il costo storico.</span>
+                </div>
+                <div class="flex gap-2 pt-4 mt-2 border-t border-slate-100">
+                    <button id="btn-delete-team" class="bg-white text-red-500 border border-red-100 hover:bg-red-50 hover:text-red-600 hover:border-red-200 px-4 py-3.5 rounded-xl transition-colors shadow-sm flex items-center justify-center shrink-0" title="Sgancia dallo studio"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    <button id="btn-save-team-edit" class="flex-1 bg-slate-900 text-white py-3.5 rounded-xl font-bold shadow-sm hover:bg-slate-800 transition-all active:scale-[0.98]">Salva modifiche</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-account" class="force-hide fixed inset-0 z-[200] modal flex items-center justify-center p-4">
+        <div class="w-full max-w-sm p-5 lg:p-6 shadow-xl border border-slate-200 rounded-2xl relative bg-white max-h-[95vh] overflow-y-auto">
+            <button id="btn-close-account" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+            <div class="text-center mb-5 bg-slate-50 border border-slate-200 rounded-2xl p-4">
+                <h2 class="text-xl font-black text-slate-900 tracking-tight" id="account-name">Nome utente</h2>
+                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-1" id="account-email">email@studio.it</p>
+                <div class="mt-2 inline-block px-2.5 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold uppercase rounded-md border border-slate-200 tracking-wider" id="account-role">RUOLO</div>
+            </div>
+            
+            <div id="billing-section" class="border-t border-slate-100 pt-4 force-hide">
+                <h3 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2.5 flex items-center gap-1.5"><i data-lucide="credit-card" class="w-3.5 h-3.5"></i> Abbonamento</h3>
+                <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl flex justify-between items-center mb-3">
+                    <div><p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Piano attuale</p><p class="text-base font-black text-slate-900 tracking-tight" id="account-plan-name">FONDATORI</p></div>
+                    <div id="account-plan-status" class="w-2 h-2 bg-emerald-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
+                </div>
+                <div id="account-upgrade-btn-container" class="force-hide"><button data-plan-change="founder" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold hover:bg-slate-800 transition-all shadow-sm text-sm mb-2 flex items-center justify-center gap-2"><i data-lucide="zap" class="w-4 h-4 text-amber-400"></i> Attiva Tariffa Fondatori</button></div>
+                <div id="account-downgrade-btn-container" class="force-hide"><button data-plan-change="founder" class="w-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 py-3 rounded-xl font-bold transition-all shadow-sm text-sm mb-2 flex items-center justify-center gap-2">Tariffa Fondatori</button></div>
+                <button id="account-stripe-portal-btn" data-plan-change="portal" class="w-full bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-800 py-3 rounded-xl font-bold transition-all shadow-sm text-sm mb-2 flex items-center justify-center gap-2"><i data-lucide="external-link" class="w-4 h-4"></i> Gestisci su Stripe</button>
+            </div>
+
+            <div class="border-t border-slate-100 mt-5 pt-4 flex flex-col gap-2">
+                <button id="btn-export-user-data" class="w-full bg-primary-50 border border-primary-100 text-primary-700 hover:bg-primary-100 py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1.5 text-[10px] font-bold uppercase tracking-wider"><i data-lucide="download" class="w-3.5 h-3.5"></i> Esporta dati (JSON)</button>
+                <button data-action="logout" class="w-full bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-800 py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase tracking-wider"><i data-lucide="log-out" class="w-3.5 h-3.5"></i> Esci dall'account</button>
+                <button id="btn-delete-account" class="w-full text-[10px] font-bold uppercase tracking-wider text-red-500 bg-red-50 border border-red-100 hover:bg-red-100 hover:text-red-600 py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1.5 mt-1"><i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> Elimina definitivamente account</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-studio-management" class="force-hide fixed inset-0 z-[190] modal flex items-center justify-center p-2 sm:p-4">
+        <div class="studio-management-modal w-full max-w-4xl shadow-xl border border-slate-200 rounded-2xl relative bg-white overflow-hidden flex flex-col">
+            <div class="px-4 sm:px-6 pt-5 sm:pt-6 pb-4 border-b border-slate-200 bg-white shrink-0">
+                <button id="btn-close-studio-management" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors" aria-label="Chiudi"><i data-lucide="x" class="w-4 h-4"></i></button>
+                <div class="pr-12">
+                    <p class="text-[10px] font-black uppercase tracking-wider text-primary-600">Configurazione</p>
+                    <h2 class="text-xl font-black text-slate-900 tracking-tight mt-1">Studio e team</h2>
+                    <p class="text-xs text-slate-500 mt-1">Identità, attività e persone in un unico spazio.</p>
+                </div>
+                <div class="studio-management-tabs grid grid-cols-4 gap-1 mt-5 bg-slate-100 border border-slate-200 rounded-xl p-1" role="tablist" aria-label="Gestione studio">
+                    <button type="button" data-ui-action="switch-studio-management-tab" data-management-tab="identity" class="studio-management-tab" role="tab" aria-selected="true"><i data-lucide="building-2"></i><span>Identità studio</span><span id="management-identity-issues" class="management-issue-badge force-hide">0</span></button>
+                    <button type="button" data-ui-action="switch-studio-management-tab" data-management-tab="activities" class="studio-management-tab" role="tab" aria-selected="false"><i data-lucide="list-checks"></i><span>Attività studio</span><span id="management-activities-issues" class="management-issue-badge force-hide">0</span></button>
+                    <button type="button" data-ui-action="switch-studio-management-tab" data-management-tab="team" class="studio-management-tab" role="tab" aria-selected="false"><i data-lucide="users"></i><span>Team</span><span id="management-team-issues" class="management-issue-badge force-hide">0</span></button>
+                    <button type="button" data-ui-action="switch-studio-management-tab" data-management-tab="clients" class="studio-management-tab" role="tab" aria-selected="false"><i data-lucide="contact-round"></i><span>Clienti</span></button>
+                </div>
+            </div>
+
+            <div class="studio-management-body flex-1 overflow-y-auto p-4 sm:p-6 bg-slate-50/70">
+                <section data-management-panel="identity" role="tabpanel">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+                            <div class="flex items-center justify-between gap-3 mb-3">
+                                <div>
+                                    <p id="lbl-identity-title" class="text-[11px] font-black text-slate-700 uppercase tracking-wider">Identità studio</p>
+                                    <p class="text-[10px] text-slate-500 mt-0.5">Logo e nome visualizzati nell’app</p>
+                                </div>
+                                <button id="btn-save-studio-name" class="secondary-action icon-only compact" title="Salva nome"><i data-lucide="save" class="w-3.5 h-3.5"></i></button>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <input type="file" id="account-logo-input" accept="image/*" class="hidden">
+                                <button type="button" id="btn-edit-studio-logo" class="relative w-12 h-12 shrink-0 bg-slate-50 border border-slate-200 rounded-xl overflow-hidden flex items-center justify-center text-slate-400 hover:text-primary-600 hover:border-primary-300 hover:bg-primary-50 transition-all" title="Carica o sostituisci logo" aria-label="Carica o sostituisci logo">
+                                    <i id="account-logo-placeholder" data-lucide="image-plus" class="w-4 h-4"></i>
+                                    <img id="account-logo-preview" class="absolute inset-0 w-full h-full object-contain p-1 force-hide" alt="Logo dello studio">
+                                </button>
+                                <input type="text" id="account-studio-name" placeholder="Nome studio" class="min-w-0 flex-1 border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all">
+                            </div>
+                        </div>
+
+                        <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+                            <div class="flex items-center justify-between gap-3 mb-3">
+                                <div>
+                                    <p class="text-[11px] font-black text-slate-700 uppercase tracking-wider">Valuta dello studio</p>
+                                    <p class="text-[10px] text-slate-500 mt-0.5">Si applica a progetti, costi e report</p>
+                                </div>
+                                <button id="btn-save-studio-currency" class="secondary-action icon-only compact" title="Salva valuta"><i data-lucide="save" class="w-3.5 h-3.5"></i></button>
+                            </div>
+                            <select id="account-studio-currency" class="w-full border-2 border-primary-200 rounded-xl p-3 text-sm font-bold bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10">
+                                <option value="EUR">EUR (€)</option>
+                                <option value="CHF">CHF (franco svizzero)</option>
+                            </select>
+                        </div>
+
+                        <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm lg:col-span-2">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div>
+                                    <p class="text-[11px] font-black text-slate-700 uppercase tracking-wider">Dati preventivo</p>
+                                    <p id="quote-settings-preview" class="text-[10px] text-slate-500 mt-0.5">Completa intestazione e fiscalità</p>
+                                </div>
+                                <button id="btn-open-quote-settings" class="secondary-action compact justify-center"><i data-lucide="receipt-text" class="w-3.5 h-3.5"></i> Configura preventivi</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section data-management-panel="activities" role="tabpanel" class="force-hide">
+                    <div class="prototype-activity-libraries">
+                        <div class="prototype-library-panel">
+                            <div class="prototype-library-head">
+                                <div><div class="flex items-center gap-2"><h3 id="lbl-catalog-title">Attività dello studio</h3><span id="prototype-activity-count" class="prototype-library-count">0 attività</span></div><p id="lbl-catalog-desc">Il vocabolario personalizzato usato nei progetti e nel timer.</p></div>
+                                <button id="btn-open-catalog-account" class="prototype-library-create"><i data-lucide="plus"></i> Nuova attività</button>
+                            </div>
+                            <div id="prototype-activity-list" class="prototype-library-list"></div>
+                        </div>
+                        <div class="prototype-library-panel">
+                            <div class="prototype-library-head">
+                                <div><div class="flex items-center gap-2"><h3>Libreria template</h3><span id="prototype-template-count" class="prototype-library-count">0 template</span></div><p>Gruppi di attività pronti da riutilizzare nelle nuove commesse.</p></div>
+                                <button id="btn-open-templates-studio" class="prototype-library-create"><i data-lucide="plus"></i> Nuovo template</button>
+                            </div>
+                            <div id="prototype-template-list" class="prototype-library-list"></div>
+                        </div>
+                    </div>
+                    <div class="mt-4 bg-primary-50 border border-primary-100 rounded-xl p-4 flex items-start gap-3">
+                        <i data-lucide="info" class="w-4 h-4 text-primary-600 mt-0.5 shrink-0"></i>
+                        <p class="text-xs text-primary-900 leading-relaxed">Le attività dello studio restano modificabili. La libreria normativa dei progetti parametrici rimane invece protetta e separata.</p>
+                    </div>
+                </section>
+
+                <section data-management-panel="clients" role="tabpanel" class="force-hide">
+                    <div class="bg-white border border-slate-200 rounded-xl p-4 sm:p-5 shadow-sm">
+                        <div class="flex items-start justify-between gap-3 mb-4">
+                            <div><div class="flex items-center gap-2"><h3 class="text-base font-black text-slate-900 tracking-tight">Libreria clienti</h3><span id="prototype-client-count" class="text-[10px] font-bold text-primary-700 bg-primary-50 border border-primary-100 px-2 py-1 rounded-md">0 clienti</span></div><p class="text-xs text-slate-500 mt-0.5">Dati anagrafici riutilizzati nei progetti e nei documenti.</p></div>
+                            <button type="button" data-prototype-new-client="library" class="bg-slate-900 text-white px-3 py-2 rounded-lg text-[10px] font-bold hover:bg-slate-800 whitespace-nowrap flex items-center gap-1.5"><i data-lucide="plus" class="w-3.5 h-3.5"></i> Nuovo cliente</button>
+                        </div>
+                        <div id="prototype-client-list" class="space-y-2"></div>
+                    </div>
+                </section>
+
+                <section data-management-panel="team" role="tabpanel" class="force-hide">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                        <div>
+                            <h3 class="text-base font-black text-slate-900 tracking-tight">Persone dello studio</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">Ruoli, costi orari e accessi del team.</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button id="btn-open-team-report" class="secondary-action compact flex-1 sm:flex-none justify-center"><i data-lucide="file-text" class="w-3 h-3"></i> Report</button>
+                            <button id="btn-generate-invite" class="secondary-action compact flex-1 sm:flex-none justify-center"><i data-lucide="link" class="w-3 h-3"></i> Invita</button>
+                        </div>
+                    </div>
+                    <div id="team-list" class="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-5"></div>
+                    <div class="flex justify-start">
+                        <button id="btn-toggle-inactive" class="text-[9px] font-bold uppercase tracking-wider text-slate-400 hover:text-primary-600 transition-colors flex items-center gap-1.5">
+                            <i data-lucide="eye-off" class="w-3 h-3" id="icon-toggle-inactive"></i>
+                            <span id="label-toggle-inactive">Mostra inattivi</span>
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-prototype-client" class="force-hide fixed inset-0 z-[230] modal flex items-center justify-center p-3 sm:p-4">
+        <form id="prototype-client-form" class="w-full max-w-xl bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-xl relative max-h-[92vh] overflow-y-auto">
+            <button type="button" id="prototype-client-close" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2" aria-label="Chiudi"><i data-lucide="x" class="w-4 h-4"></i></button>
+            <input type="hidden" id="prototype-client-id">
+            <div class="pr-10 mb-5"><p class="text-[10px] font-black uppercase tracking-wider text-primary-600">Libreria clienti</p><h2 id="prototype-client-form-title" class="text-xl font-black text-slate-900 tracking-tight mt-1">Nuovo cliente</h2><p class="text-xs text-slate-500 mt-1">I dati fiscali saranno riutilizzati nei progetti e nei documenti.</p></div>
+            <div class="space-y-3">
+                <div><label class="prototype-client-label">Nome o ragione sociale</label><input id="prototype-client-name" required class="prototype-client-input" placeholder="Es. Famiglia Rossi o Rossi Srl"></div>
+                <div><label class="prototype-client-label">Indirizzo</label><input id="prototype-client-address" class="prototype-client-input" placeholder="Via, CAP, città e provincia"></div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3"><div><label class="prototype-client-label">Codice fiscale</label><input id="prototype-client-tax-code" class="prototype-client-input" placeholder="Codice fiscale"></div><div><label class="prototype-client-label">Partita IVA</label><input id="prototype-client-vat" class="prototype-client-input" placeholder="Partita IVA"></div></div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3"><div><label class="prototype-client-label">Email</label><input id="prototype-client-email" type="email" class="prototype-client-input" placeholder="cliente@esempio.it"></div><div><label class="prototype-client-label">Telefono</label><input id="prototype-client-phone" class="prototype-client-input" placeholder="Telefono"></div></div>
+            </div>
+            <div class="flex gap-2 mt-6"><button type="button" id="prototype-client-cancel" class="secondary-action flex-1 justify-center">Annulla</button><button type="submit" id="prototype-client-save" class="flex-1 bg-slate-900 text-white px-4 py-3 rounded-xl text-xs font-bold hover:bg-slate-800">Salva cliente</button></div>
+        </form>
+    </div>
+
+    <div id="modal-quote-settings" class="force-hide fixed inset-0 z-[210] modal flex items-center justify-center p-4">
+        <div class="w-full max-w-2xl p-5 lg:p-7 shadow-xl border border-slate-200 rounded-2xl relative bg-white max-h-[94vh] overflow-y-auto">
+            <button id="btn-close-quote-settings" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+            <div class="pr-10 mb-5">
+                <p class="text-[10px] font-black uppercase tracking-wider text-primary-600">Impostazioni preventivi</p>
+                <h2 class="text-xl font-black text-slate-900 tracking-tight mt-1">Intestazione e fiscalità</h2>
+                <p class="text-xs text-slate-500 leading-relaxed mt-1">Configura come devono essere calcolati e presentati gli importi nei PDF destinati ai clienti.</p>
+            </div>
+
+            <div class="space-y-5">
+                <section class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5">Configurazione</label>
+                    <select id="quote-fiscal-preset" class="w-full border-2 border-primary-200 rounded-xl p-3 text-sm font-bold bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10">
+                        <option value="forfettario">Regime forfettario</option>
+                        <option value="ordinario">Regime ordinario</option>
+                        <option value="custom">Personalizzato</option>
+                    </select>
+                    <p class="text-[10px] text-slate-500 leading-relaxed mt-2">I valori restano modificabili: verifica la configurazione con il tuo consulente fiscale.</p>
+                </section>
+
+                <section>
+                    <h3 class="text-[11px] font-black text-slate-700 uppercase tracking-wider mb-3">Intestazione</h3>
+                    <div class="grid sm:grid-cols-2 gap-3">
+                        <div class="sm:col-span-2"><label class="text-[10px] font-bold text-slate-500 block mb-1">Professionista o ragione sociale</label><input id="quote-issuer-name" type="text" class="w-full border border-slate-200 rounded-xl p-3 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10"></div>
+                        <div class="sm:col-span-2"><label class="text-[10px] font-bold text-slate-500 block mb-1">Indirizzo</label><input id="quote-issuer-address" type="text" class="w-full border border-slate-200 rounded-xl p-3 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10"></div>
+                        <div><label class="text-[10px] font-bold text-slate-500 block mb-1">Partita IVA</label><input id="quote-vat-number" type="text" class="w-full border border-slate-200 rounded-xl p-3 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10"></div>
+                        <div><label class="text-[10px] font-bold text-slate-500 block mb-1">Codice fiscale</label><input id="quote-tax-code" type="text" class="w-full border border-slate-200 rounded-xl p-3 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10"></div>
+                        <div class="sm:col-span-2"><label class="text-[10px] font-bold text-slate-500 block mb-1">Email</label><input id="quote-issuer-email" type="email" class="w-full border border-slate-200 rounded-xl p-3 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10"></div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3 class="text-[11px] font-black text-slate-700 uppercase tracking-wider mb-3">Calcolo</h3>
+                    <div class="grid sm:grid-cols-2 gap-3">
+                        <label class="border border-slate-200 rounded-xl p-3 bg-white flex items-start gap-3"><input id="quote-pension-enabled" type="checkbox" class="mt-1 accent-indigo-600"><span class="flex-1"><strong class="text-xs text-slate-800 block">Contributo previdenziale</strong><span class="flex items-center gap-2 mt-2"><input id="quote-pension-label" type="text" value="Contributo integrativo" class="min-w-0 flex-1 border border-slate-200 rounded-lg p-2 text-xs"><input id="quote-pension-rate" type="number" min="0" max="100" step="0.01" class="w-20 border border-slate-200 rounded-lg p-2 text-xs text-right" aria-label="Aliquota contributo previdenziale"><small class="text-slate-400">%</small></span></span></label>
+                        <label class="border border-slate-200 rounded-xl p-3 bg-white flex items-start gap-3"><input id="quote-vat-enabled" type="checkbox" class="mt-1 accent-indigo-600"><span class="flex-1"><strong class="text-xs text-slate-800 block">IVA</strong><span class="flex items-center gap-2 mt-2"><input id="quote-vat-rate" type="number" min="0" max="100" step="0.01" class="w-24 border border-slate-200 rounded-lg p-2 text-xs text-right" aria-label="Aliquota IVA"><small class="text-slate-400">%</small></span></span></label>
+                        <label class="border border-slate-200 rounded-xl p-3 bg-white flex items-start gap-3"><input id="quote-withholding-enabled" type="checkbox" class="mt-1 accent-indigo-600"><span class="flex-1"><strong class="text-xs text-slate-800 block">Ritenuta d'acconto</strong><span class="flex items-center gap-2 mt-2"><input id="quote-withholding-rate" type="number" min="0" max="100" step="0.01" class="w-24 border border-slate-200 rounded-lg p-2 text-xs text-right" aria-label="Aliquota ritenuta"><small class="text-slate-400">%</small></span></span></label>
+                        <label class="border border-slate-200 rounded-xl p-3 bg-white flex items-start gap-3"><input id="quote-stamp-enabled" type="checkbox" class="mt-1 accent-indigo-600"><span class="flex-1"><strong class="text-xs text-slate-800 block">Bollo previsto</strong><span class="flex items-center gap-2 mt-2"><small class="text-slate-400">oltre <span data-studio-currency-symbol>€</span></small><input id="quote-stamp-threshold" type="number" min="0" step="0.01" class="w-24 border border-slate-200 rounded-lg p-2 text-xs text-right"><small class="text-slate-400">importo <span data-studio-currency-symbol>€</span></small><input id="quote-stamp-amount" type="number" min="0" step="0.01" class="w-20 border border-slate-200 rounded-lg p-2 text-xs text-right"></span></span></label>
+                    </div>
+                </section>
+
+                <section>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5">Note e condizioni del preventivo</label>
+                    <textarea id="quote-fiscal-note" rows="3" class="w-full border border-slate-200 rounded-xl p-3 text-xs leading-relaxed outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10" placeholder="Ad esempio: validità dell'offerta, modalità di pagamento, esclusioni o altre condizioni"></textarea>
+                    <p class="text-[10px] text-slate-400 leading-relaxed mt-1.5">Facoltative. Saranno riportate in fondo al PDF esattamente come le hai scritte.</p>
+                </section>
+            </div>
+
+            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 mt-6 pt-4 border-t border-slate-100">
+                <button id="btn-cancel-quote-settings" class="secondary-action justify-center">Annulla</button>
+                <button id="btn-save-quote-settings" class="bg-slate-900 text-white px-5 py-3 rounded-xl text-sm font-bold hover:bg-slate-800 transition-all flex items-center justify-center gap-2"><i data-lucide="save" class="w-4 h-4"></i> Salva impostazioni</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-team-invite" class="force-hide fixed inset-0 z-[200] modal flex items-center justify-center p-4">
+        <div class="w-full max-w-md p-6 lg:p-8 shadow-xl border border-slate-200 rounded-2xl relative bg-white">
+            <button id="btn-close-team-invite" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+            <h2 class="text-lg font-black text-slate-800 tracking-tight mb-1 flex items-center gap-2 pr-10"><i data-lucide="mail-plus" class="text-primary-500 w-5 h-5"></i> Invita collaboratore</h2>
+            <p class="text-xs text-slate-500 font-medium mb-4 pr-10">Invia un link con il codice team già pronto per la registrazione.</p>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Email collaboratore</label>
+                    <input type="email" id="team-invite-email" placeholder="nome@email.it" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all">
+                </div>
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-3">
+                    <div class="flex items-center justify-between gap-3 mb-1">
+                        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Codice team</p>
+                        <span class="text-[9px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-full">Incluso nel link</span>
+                    </div>
+                    <p id="team-invite-code-preview" class="font-mono text-xs font-black text-slate-700 break-all"></p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <button id="btn-copy-team-invite" class="bg-white text-slate-700 border border-slate-200 py-3 rounded-xl font-bold hover:bg-slate-50 transition-all active:scale-[0.98] flex items-center justify-center gap-2 text-sm"><i data-lucide="copy" class="w-4 h-4"></i> Copia codice</button>
+                    <button id="btn-send-team-invite" class="bg-slate-900 text-white py-3 rounded-xl font-bold shadow-sm hover:bg-slate-800 transition-all active:scale-[0.98] flex items-center justify-center gap-2 text-sm"><i data-lucide="send" class="w-4 h-4"></i> Invia email</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-owner-onboarding" class="force-hide fixed inset-0 z-[300] modal flex items-center justify-center p-4">
+        <div class="w-full max-w-lg p-5 lg:p-8 shadow-xl border border-slate-200 rounded-2xl relative bg-white max-h-[92vh] overflow-y-auto">
+            <button id="btn-skip-onboarding" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+            <div class="mb-6">
+                <div class="w-12 h-12 bg-primary-50 text-primary-600 rounded-2xl flex items-center justify-center mb-4 border border-primary-100"><i data-lucide="sparkles" class="w-6 h-6"></i></div>
+                <h2 class="text-2xl font-black text-slate-900 tracking-tight">Configura il tuo spazio</h2>
+                <p class="text-sm text-slate-500 leading-relaxed mt-2">Tre passaggi veloci per partire con dati ordinati, costi corretti e un primo lavoro pronto da salvare.</p>
+            </div>
+
+            <div class="space-y-5">
+                <div id="onboarding-calculator-summary" class="force-hide border border-primary-200 bg-primary-50 rounded-2xl p-4">
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <p class="text-[10px] font-black uppercase tracking-wider text-primary-600">Dal calcolatore</p>
+                            <h3 class="mt-1 text-sm font-black text-slate-900">La tua commessa è già impostata</h3>
+                        </div>
+                        <button id="btn-clear-calculator-handoff" type="button" class="text-[10px] font-bold text-slate-500 hover:text-slate-800">Ignora dati</button>
+                    </div>
+                    <dl class="mt-3 grid grid-cols-2 gap-2 text-xs sm:grid-cols-4">
+                        <div class="rounded-lg bg-white p-2.5"><dt class="font-bold text-slate-400">Compenso</dt><dd id="handoff-fee" class="mt-1 font-black text-slate-800">0 €</dd></div>
+                        <div class="rounded-lg bg-white p-2.5"><dt class="font-bold text-slate-400">Ore stimate</dt><dd id="handoff-hours" class="mt-1 font-black text-slate-800">0 h</dd></div>
+                        <div class="rounded-lg bg-white p-2.5"><dt class="font-bold text-slate-400">Costo orario</dt><dd id="handoff-cost" class="mt-1 font-black text-slate-800">0 €/h</dd></div>
+                        <div class="rounded-lg bg-white p-2.5"><dt class="font-bold text-slate-400">Spese</dt><dd id="handoff-expenses" class="mt-1 font-black text-slate-800">0 €</dd></div>
+                    </dl>
+                    <p class="mt-3 text-[10px] font-semibold leading-relaxed text-primary-900">Compenso e costo orario sono precompilati. Ore e spese restano come riferimento: le registrerai sulle persone e sulle attività corrette.</p>
+                </div>
+
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="w-6 h-6 rounded-lg bg-primary-600 text-white text-[11px] font-black flex items-center justify-center">1</span>
+                        <h3 class="text-sm font-black text-slate-800 tracking-tight">Identità</h3>
+                    </div>
+                    <div class="space-y-3">
+                        <input type="text" id="onboarding-studio-name" placeholder="Nome studio" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all">
+                        <div class="bg-white border border-slate-200 rounded-xl p-3">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Settore scelto</p>
+                            <p id="onboarding-business-label" class="text-sm font-black text-slate-800">Studio Tecnico</p>
+                        </div>
+                        <button id="btn-save-onboarding-identity" class="w-full bg-white border border-slate-200 text-slate-700 py-3 rounded-xl font-bold hover:bg-slate-50 transition-all shadow-sm text-sm flex items-center justify-center gap-2"><i data-lucide="save" class="w-4 h-4"></i> Salva identità</button>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-2xl p-4">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="w-6 h-6 rounded-lg bg-slate-900 text-white text-[11px] font-black flex items-center justify-center">2</span>
+                        <h3 class="text-sm font-black text-slate-800 tracking-tight">Costo orario</h3>
+                    </div>
+                    <input type="number" step="0.01" id="onboarding-hourly-cost" placeholder="Costo orario interno (€)" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all font-bold">
+                    <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-2 leading-relaxed">Lo puoi modificare quando vuoi dalla tab Team, anche per ogni collaboratore.</p>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-2xl p-4">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="w-6 h-6 rounded-lg bg-slate-900 text-white text-[11px] font-black flex items-center justify-center">3</span>
+                        <h3 class="text-sm font-black text-slate-800 tracking-tight">Primo lavoro</h3>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <input type="text" id="onboarding-project-name" placeholder="Nome lavoro" class="border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all">
+                        <input type="text" id="onboarding-project-client" placeholder="Cliente" class="border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all">
+                    </div>
+                    <div class="mt-3">
+                        <input type="number" id="onboarding-project-budget" placeholder="Budget indicativo" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all font-bold">
+                    </div>
+                    <button id="btn-prepare-first-project" class="w-full bg-slate-900 text-white py-3.5 mt-4 rounded-xl font-bold hover:bg-slate-800 transition-all active:scale-[0.98] shadow-sm flex items-center justify-center gap-2"><i data-lucide="folder-plus" class="w-4 h-4"></i> Prepara il primo lavoro</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-legal-update" class="force-hide fixed inset-0 z-[600] modal flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="legal-update-title">
+        <div class="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-xl sm:p-8">
+            <div class="mb-5 flex h-11 w-11 items-center justify-center rounded-xl border border-primary-100 bg-primary-50 text-primary-600">
+                <i data-lucide="shield-check" class="h-5 w-5"></i>
+            </div>
+            <h2 id="legal-update-title" class="text-xl font-black text-slate-900">Documenti aggiornati</h2>
+            <p class="mt-2 text-sm leading-relaxed text-slate-600">Abbiamo reso più chiari trattamento dei dati, sicurezza e condizioni del servizio. Leggi la <a href="privacy.html" target="_blank" rel="noopener" class="font-bold text-primary-600 underline underline-offset-2">Privacy Policy</a> e accetta i <a href="termini.html" target="_blank" rel="noopener" class="font-bold text-primary-600 underline underline-offset-2">Termini di servizio</a> per continuare.</p>
+            <p id="legal-update-error" class="force-hide mt-3 rounded-lg border border-red-100 bg-red-50 p-3 text-xs font-semibold text-red-700"></p>
+            <button id="btn-accept-legal-update" type="button" class="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-primary-600 px-4 py-3 text-sm font-bold text-white shadow-sm transition-all hover:bg-primary-700 disabled:cursor-wait disabled:opacity-60">
+                <i data-lucide="check" class="h-4 w-4"></i> Accetta e continua
+            </button>
+        </div>
+    </div>
+
+    <div id="modal-task-builder" class="force-hide fixed inset-0 z-[200] modal flex items-center justify-center p-4">
+        <div class="w-full max-w-md p-6 lg:p-8 shadow-xl border border-slate-200 rounded-2xl relative bg-white flex flex-col max-h-[90vh]">
+            <button id="btn-close-task-builder" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+            <h2 class="text-lg font-black text-slate-800 tracking-tight mb-1 flex items-center gap-2"><i data-lucide="layers" class="text-primary-500 w-5 h-5"></i> Costruttore Attività</h2>
+            <p class="text-[11px] text-slate-500 mb-6 uppercase tracking-wider font-bold">Aggiungi e ordina le fasi.</p>
+            <div class="flex-1 overflow-y-auto mb-6 pr-2 space-y-6">
+                <div>
+                    <div class="flex justify-between items-center mb-2.5">
+                        <h3 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Attività Selezionate</h3>
+                        <span class="text-[9px] text-primary-600 font-bold bg-primary-50 px-1.5 py-0.5 rounded-md border border-primary-100 uppercase tracking-wider">Ordine Salvato</span>
+                    </div>
+                    <div id="builder-selected-tasks" class="space-y-2 min-h-[60px] p-3.5 bg-slate-50 border border-slate-200 rounded-xl"></div>
+                </div>
+                <div class="space-y-5">
+                    <div>
+                        <div class="flex justify-between items-center mb-2.5">
+                            <h3 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Aggiungi dal Catalogo</h3>
+                            <button id="btn-open-catalog-builder" class="text-[9px] font-bold text-slate-500 hover:text-primary-600 bg-white border border-slate-200 hover:border-primary-200 hover:bg-primary-50 px-2 py-1 rounded-md transition-all flex items-center gap-1 shadow-sm"><i data-lucide="settings" class="w-3 h-3"></i> Gestisci</button>
+                        </div>
+                        <div id="builder-catalog-tasks" class="flex flex-wrap gap-1.5"></div>
+                    </div>
+                    <div class="pt-4 border-t border-slate-100">
+                        <h3 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Creane una nuova al volo</h3>
+                        <div class="flex gap-2">
+                            <input type="text" id="builder-new-task-input" placeholder="Es. Lavoro Custom" class="flex-1 border border-slate-200 rounded-xl p-3 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all bg-white">
+                            <button id="btn-add-task-builder" class="bg-primary-600 text-white px-4 rounded-xl hover:bg-primary-700 transition-all shadow-sm font-bold text-sm flex items-center gap-1.5"><i data-lucide="plus" class="w-4 h-4"></i> Crea</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button id="btn-confirm-task-builder" class="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold hover:bg-slate-800 transition-all active:scale-[0.98] shrink-0 shadow-sm flex items-center justify-center gap-2"><i data-lucide="check" class="w-4 h-4"></i> Conferma Ordine</button>
+        </div>
+    </div>
+
+    <div id="modal-catalog" class="force-hide fixed inset-0 z-[300] modal flex items-center justify-center p-4">
+        <div class="w-full max-w-lg p-6 lg:p-8 shadow-xl border border-slate-200 rounded-2xl relative bg-white">
+            <button id="btn-close-catalog" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+            <h2 id="modal-catalog-title" class="text-lg font-black text-slate-800 tracking-tight mb-1 flex items-center gap-2 pr-10"><i data-lucide="book-open" class="text-primary-500 w-5 h-5"></i> Catalogo attività</h2>
+            <p id="modal-catalog-desc" class="text-xs text-slate-500 font-medium mb-6 pr-10">Personalizza il vocabolario dello studio.</p>
+            <div class="flex gap-2 mb-6">
+                <input type="text" id="new-catalog-item" placeholder="Nuova attività" class="flex-1 border border-slate-200 rounded-xl p-3 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all bg-white">
+                <button id="btn-add-catalog" class="bg-primary-600 text-white px-5 rounded-xl hover:bg-primary-700 transition-all font-bold text-sm shadow-sm shrink-0">Aggiungi</button>
+                <button id="btn-cancel-catalog" class="hidden bg-slate-100 text-slate-600 px-4 py-3 rounded-xl font-bold hover:bg-slate-200 shadow-sm text-sm transition-all border border-slate-200"><i data-lucide="x" class="w-4 h-4"></i></button>
+            </div>
+            <div class="max-h-[40vh] overflow-y-auto pr-2"><div id="catalog-manage-list" class="flex flex-wrap gap-1.5"></div></div>
+        </div>
+    </div>
+
+    <div id="modal-templates" class="force-hide fixed inset-0 z-[250] modal flex items-center justify-center p-4">
+        <div class="w-full max-w-2xl max-h-[92vh] overflow-y-auto p-6 lg:p-8 shadow-xl border border-slate-200 rounded-2xl relative bg-white">
+            <button id="btn-close-templates" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+            <h2 id="modal-template-title" class="text-lg font-black text-slate-800 tracking-tight mb-1 flex items-center gap-2 pr-10"><i data-lucide="layers" class="text-primary-500 w-5 h-5"></i> Template progetti</h2>
+            <p class="text-xs text-slate-500 font-medium mb-6 pr-10">Crea pacchetti per i lavori standard.</p>
+            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 shadow-sm mb-6">
+                <input type="text" id="new-template-name" placeholder="Nome template (es. Ristrutturazione)" class="w-full border border-slate-200 bg-white rounded-xl p-3 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all mb-4 text-slate-900">
+                <div class="flex items-center justify-between gap-3 mb-2.5">
+                    <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Attività incluse</span>
+                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Trascina per ordinare</span>
+                </div>
+                <div id="new-template-selected-tasks" class="space-y-2 min-h-[44px] mb-3"></div>
+                <div class="grid grid-cols-[minmax(0,1fr)_auto] gap-2 mb-3">
+                    <select id="new-template-task-select" class="min-w-0 border border-slate-200 rounded-xl p-2.5 text-xs bg-white shadow-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all appearance-none cursor-pointer text-slate-700"></select>
+                    <button type="button" data-ui-action="add-inline-template-task" class="secondary-action compact"><i data-lucide="plus" class="w-3.5 h-3.5"></i> Aggiungi</button>
+                </div>
+                <div class="grid grid-cols-[minmax(0,1fr)_auto] gap-2 mb-5">
+                    <input type="text" id="new-template-inline-task" placeholder="Nuova attività al volo" class="min-w-0 border border-slate-200 rounded-xl p-2.5 text-xs bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all">
+                    <button type="button" data-ui-action="create-inline-template-task" class="secondary-action compact">Crea</button>
+                </div>
+                <div id="new-template-catalog-tasks" class="hidden"></div>
+                <div class="flex gap-2">
+                    <button id="btn-save-template" class="flex-1 bg-slate-900 text-white py-3.5 rounded-xl font-bold hover:bg-slate-800 shadow-sm text-sm transition-all active:scale-[0.98]">Salva template</button>
+                    <button id="btn-cancel-edit-template" class="hidden bg-white text-slate-600 px-4 py-3.5 rounded-xl font-bold hover:bg-slate-50 shadow-sm text-sm transition-all border border-slate-200"><i data-lucide="x" class="w-4 h-4"></i></button>
+                </div>
+            </div>
+            <div class="max-h-[30vh] overflow-y-auto pr-2"><div id="templates-manage-list" class="space-y-2"></div></div>
+        </div>
+    </div>
+
+    <div id="modal-detail" class="force-hide fixed inset-0 z-[100] modal flex items-end lg:items-center justify-center lg:p-4">
+        <div class="w-full h-[90vh] lg:h-auto lg:max-w-4xl lg:max-h-[90vh] overflow-y-auto p-6 lg:p-10 shadow-xl border border-slate-200 relative rounded-t-3xl lg:rounded-2xl bg-white">
+            <button id="btn-close-detail" class="sticky top-0 ml-auto -mr-2 lg:-mr-4 text-slate-400 hover:text-slate-700 bg-white/95 hover:bg-slate-100 backdrop-blur rounded-full p-2 transition-colors z-20 shadow-sm border border-slate-200 flex"><i data-lucide="x"></i></button>
+            <div id="detail-content" class="mt-2 lg:mt-1"></div>
+        </div>
+    </div>
+    
+    <div id="modal-manual" class="force-hide fixed inset-0 z-[100] modal flex items-center justify-center p-4">
+        <div class="w-full max-w-md p-6 lg:p-8 shadow-xl border border-slate-200 rounded-2xl relative bg-white">
+            <button id="btn-close-manual-entry" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+            <h2 class="text-lg font-black text-slate-800 tracking-tight mb-1 pr-10">Inserimento manuale</h2>
+            <p class="text-xs text-slate-500 font-medium mb-6 pr-10">Registra ore già svolte senza usare il timer.</p>
+            <div class="space-y-4">
+                <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Progetto</label><select id="manual-project" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all appearance-none"></select></div>
+                <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Attività</label><select id="manual-task" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all appearance-none"></select></div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Da (opzionale)</label><input type="time" id="manual-start" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all"></div>
+                    <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">A (opzionale)</label><input type="time" id="manual-end" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all"></div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Data</label><input type="date" id="manual-date" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all"></div>
+                    <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Ore totali</label><input type="text" id="manual-hours" placeholder="00:00" inputmode="decimal" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all font-bold font-mono"></div>
+                </div>
+
+                <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Note (opzionali)</label><input type="text" id="manual-notes" placeholder="Aggiungi una nota" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all"></div>
+                
+                <button id="btn-save-manual-entry" class="w-full bg-slate-900 text-white py-3.5 mt-4 rounded-xl font-bold shadow-sm hover:bg-slate-800 transition-all active:scale-[0.98]">Salva ore</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="modal-edit-entry" class="force-hide fixed inset-0 z-[100] modal flex items-center justify-center p-4">
+        <div class="w-full max-w-md p-6 lg:p-8 shadow-xl border border-slate-200 rounded-2xl relative bg-white">
+            <button id="btn-close-edit-entry" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+            <h2 class="text-lg font-black text-slate-800 tracking-tight mb-1 flex items-center gap-2 pr-10"><i data-lucide="edit" class="text-primary-500 w-5 h-5"></i> Modifica attività</h2>
+            <p class="text-xs text-slate-500 font-medium mb-6 pr-10">Aggiorna dati, note e durata della registrazione.</p>
+            <input type="hidden" id="edit-entry-id">
+            <div class="space-y-4">
+                <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Data</label><input type="date" id="edit-entry-date" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all"></div>
+                <div class="admin-only"><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Team</label><select id="edit-entry-user" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all appearance-none"></select></div>
+                <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Progetto</label><select id="edit-entry-project" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all appearance-none"></select></div>
+                <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Attività</label><select id="edit-entry-task" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all appearance-none"></select></div>
+                <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Note</label><input type="text" id="edit-entry-notes" placeholder="Note" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all"></div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Ore</label><input type="text" id="edit-entry-hours" placeholder="00:00" inputmode="decimal" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all font-mono"></div>
+                    <div class="admin-only"><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Costo (<span data-studio-currency-symbol>€</span>)</label><input type="number" step="0.01" id="edit-entry-cost" readonly class="w-full border border-slate-200 bg-slate-50 text-slate-500 font-bold rounded-xl p-3 text-sm outline-none"></div>
+                </div>
+                <button id="btn-save-entry-edit" class="w-full bg-slate-900 text-white py-3.5 mt-4 rounded-xl font-bold shadow-sm hover:bg-slate-800 transition-all active:scale-[0.98]">Salva modifiche</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-edit-expense" class="force-hide fixed inset-0 z-[100] modal flex items-center justify-center p-4">
+        <div class="w-full max-w-md p-6 lg:p-8 shadow-xl border border-slate-200 rounded-2xl relative bg-white">
+            <button id="btn-close-edit-expense" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+            <h2 class="text-lg font-black text-slate-800 tracking-tight mb-1 flex items-center gap-2 pr-10"><i data-lucide="receipt" class="text-amber-500 w-5 h-5"></i> Modifica spesa</h2>
+            <p class="text-xs text-slate-500 font-medium mb-6 pr-10">Aggiorna descrizione e importo della spesa viva.</p>
+            <input type="hidden" id="edit-expense-id">
+            <input type="hidden" id="edit-expense-project-id">
+            <div class="space-y-4">
+                <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Descrizione</label><input type="text" id="edit-expense-desc" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 transition-all"></div>
+                <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Importo</label><div class="flex gap-2 bg-white p-3 rounded-xl border border-slate-200 focus-within:border-amber-500 focus-within:ring-4 focus-within:ring-amber-500/10 transition-all"><span data-studio-currency-symbol class="text-slate-400 font-bold text-sm">€</span><input type="number" step="0.01" id="edit-expense-amount" class="bg-transparent w-full outline-none text-sm font-bold text-slate-800"></div></div>
+                <button id="btn-save-expense-edit" class="w-full bg-slate-900 text-white py-3.5 mt-4 rounded-xl font-bold shadow-sm hover:bg-slate-800 transition-all active:scale-[0.98]">Salva modifica</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="modal-project-type" class="force-hide fixed inset-0 z-[120] modal flex items-center justify-center p-4">
+        <div class="w-full max-w-xl p-6 lg:p-8 shadow-xl border border-slate-200 rounded-2xl relative bg-white">
+            <button id="btn-close-project-type" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+            <h2 class="text-lg font-black text-slate-800 tracking-tight mb-1 flex items-center gap-2 pr-10"><i data-lucide="folder-plus" class="text-primary-500 w-5 h-5"></i> Come vuoi impostare il progetto?</h2>
+            <p class="text-xs text-slate-500 font-medium mb-6 pr-10">Scegli la struttura delle attività. Potrai definire budget e anagrafica nel passaggio successivo.</p>
+            <div class="project-type-options">
+                <button type="button" data-ui-action="select-project-type" data-project-type="studio" class="project-type-option">
+                    <span class="project-type-icon"><i data-lucide="sliders-horizontal" class="w-5 h-5"></i></span>
+                    <span class="min-w-0 text-left">
+                        <strong>Attività dello studio</strong>
+                        <small>Usa template e attività personalizzabili dello studio.</small>
+                    </span>
+                    <i data-lucide="chevron-right" class="project-type-chevron"></i>
+                </button>
+                <button type="button" data-ui-action="select-project-type" data-project-type="normative" class="project-type-option">
+                    <span class="project-type-icon is-normative"><i data-lucide="landmark" class="w-5 h-5"></i></span>
+                    <span class="min-w-0 text-left">
+                        <strong>Prestazioni parametriche</strong>
+                        <small>Compenso professionale calcolato secondo D.M. 17 giugno 2016 come modificato dal D.Lgs. 36/2023, Allegato I.13, in vigore dal 1 luglio 2023.</small>
+                    </span>
+                    <i data-lucide="chevron-right" class="project-type-chevron"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-edit-project" class="force-hide fixed inset-0 z-[100] modal flex items-center justify-center p-4">
+        <div class="w-full max-w-5xl max-h-[92vh] p-6 lg:p-8 shadow-xl border border-slate-200 rounded-2xl relative bg-white overflow-y-auto">
+            <button id="btn-close-edit-project" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+            <h2 id="project-modal-title" class="text-lg font-black text-slate-800 tracking-tight mb-1 flex items-center gap-2 pr-10"><i data-lucide="folder-plus" class="text-primary-500 w-5 h-5"></i> Nuovo progetto</h2>
+            <p id="project-modal-desc" class="text-xs text-slate-500 font-medium mb-6 pr-10">Imposta anagrafica, budget e flusso di lavoro in un unico passaggio.</p>
+            <input type="hidden" id="edit-modal-proj-id">
+            <div class="project-modal-layout grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-5">
+                <div id="project-modal-identity" class="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-4">
+                    <div class="flex items-center gap-2 text-[11px] font-black text-slate-600 uppercase tracking-wider"><span class="w-5 h-5 rounded-md bg-primary-600 text-white flex items-center justify-center text-[10px]">1</span>Anagrafica</div>
+                    <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Nome</label><input type="text" id="edit-modal-name" placeholder="Nome lavoro" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all"></div>
+                    <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Cliente</label><div class="grid grid-cols-[minmax(0,1fr)_auto] gap-2"><select id="edit-modal-client" class="min-w-0 w-full border-2 border-primary-200 rounded-xl p-3 text-sm font-normal bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all"><option value="">Nessun cliente selezionato</option></select><button type="button" data-prototype-new-client="project" class="px-3 border border-primary-200 rounded-xl bg-primary-50 text-primary-700 text-[10px] font-bold hover:bg-primary-100 whitespace-nowrap flex items-center gap-1"><i data-lucide="plus" class="w-3.5 h-3.5"></i> Nuovo</button></div></div>
+                    <div id="project-budget-control">
+                        <div class="flex items-center justify-between gap-3 mb-1.5 ml-1">
+                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Budget totale</label>
+                            <div class="flex items-center gap-1 rounded-lg border border-slate-200 bg-white p-0.5">
+                                <button type="button" id="budget-mode-manual" data-ui-action="set-project-budget-mode" data-budget-mode="manual" class="px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-wider transition-all">Libero</button>
+                                <button type="button" id="budget-mode-auto" data-ui-action="set-project-budget-mode" data-budget-mode="auto" class="px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-wider transition-all">Somma attività</button>
+                            </div>
+                        </div>
+                        <div class="flex gap-2 bg-white p-3 rounded-xl border border-slate-200 focus-within:border-primary-500 focus-within:ring-4 focus-within:ring-primary-500/10 transition-all"><span data-studio-currency-symbol class="text-slate-400 font-bold text-sm">€</span><input type="number" id="edit-modal-budget" placeholder="0.00" class="bg-transparent w-full outline-none text-sm font-bold text-slate-800"></div>
+                        <p id="project-budget-mode-note" class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-2 leading-relaxed">Inserisci una cifra unica oppure usa la somma delle attività.</p>
+                    </div>
+                </div>
+                <div id="project-modal-workflow" class="bg-slate-50 border border-slate-200 rounded-2xl p-4">
+                    <div class="flex items-center gap-2 text-[11px] font-black text-slate-600 uppercase tracking-wider mb-3"><span class="w-5 h-5 rounded-md bg-primary-600 text-white flex items-center justify-center text-[10px]">2</span><span id="project-task-section-title">Template e attività</span></div>
+                    <div id="project-studio-task-controls" class="flex gap-2 mb-3">
+                        <select id="new-proj-template" class="flex-1 border border-slate-200 rounded-xl p-3 text-sm bg-white shadow-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all appearance-none cursor-pointer text-slate-700"><option value="" selected disabled>Scegli un template</option></select>
+                        <button id="btn-manage-templates" class="secondary-action icon-only" title="Gestisci template"><i data-lucide="layers" class="w-4 h-4"></i></button>
+                    </div>
+                    <div id="project-normative-builder" class="force-hide">
+                        <div class="normative-calculation-card">
+                            <div class="normative-calculation-heading">
+                                <div>
+                                    <span>Parametri dell'opera</span>
+                                    <strong>Calcolo automatico del compenso</strong>
+                                </div>
+                                <i data-lucide="calculator" class="w-4 h-4"></i>
+                            </div>
+                            <div class="normative-calculation-grid">
+                                <label class="normative-field normative-field-wide">
+                                    <span>Valore dell'opera (V)</span>
+                                    <div class="normative-money-input">
+                                        <b data-studio-currency-symbol>€</b>
+                                        <input type="text" id="normative-work-value" inputmode="decimal" placeholder="0">
+                                    </div>
+                                </label>
+                                <label id="normative-inhabitants-field" class="normative-field normative-field-wide force-hide">
+                                    <span>Numero di abitanti</span>
+                                    <div class="normative-money-input">
+                                        <i data-lucide="users" class="w-3.5 h-3.5 text-slate-400"></i>
+                                        <input type="text" id="normative-inhabitants" inputmode="numeric" placeholder="0">
+                                    </div>
+                                </label>
+                                <label class="normative-field">
+                                    <span>Categoria d'opera</span>
+                                    <select id="normative-category"></select>
+                                </label>
+                                <label class="normative-field">
+                                    <span>Tipologia</span>
+                                    <select id="normative-destination"></select>
+                                    <span id="normative-destination-description" class="normative-selection-description"></span>
+                                </label>
+                                <label class="normative-field normative-field-wide">
+                                    <span>Grado di complessità</span>
+                                    <select id="normative-complexity"></select>
+                                    <span id="normative-complexity-description" class="normative-selection-description"></span>
+                                </label>
+                            </div>
+                            <div class="normative-calculation-summary">
+                                <span><small>Parametro P</small><strong id="normative-parameter-p">0,0000%</strong></span>
+                                <span><small>Complessità G</small><strong id="normative-complexity-g">-</strong></span>
+                                <span><small>Compenso CP</small><strong id="normative-fee-total">0 EUR</strong></span>
+                                <span><small>Spese e oneri <b id="normative-expenses-rate">0%</b></small><strong id="normative-expenses-amount">0 EUR</strong></span>
+                                <span class="is-total"><small>Totale preventivo</small><strong id="normative-quote-total">0 EUR</strong></span>
+                            </div>
+                            <p class="normative-calculation-disclaimer">Spese e oneri accessori applicati automaticamente nella misura massima prevista. Eventuale maggiorazione BIM non inclusa.</p>
+                        </div>
+                        <div class="project-normative-note">
+                            <i data-lucide="landmark" class="w-4 h-4"></i>
+                            <div>
+                                <strong>Prestazioni di dettaglio</strong>
+                                <span>Ogni voce selezionata calcola la propria quota di compenso. Arch Time Pro la raggruppa nella macrofase usata dal timer.</span>
+                            </div>
+                        </div>
+                        <div id="project-normative-phases" class="project-normative-phases"></div>
+                    </div>
+                    <div class="bg-white border border-slate-200 rounded-xl p-3.5 shadow-sm">
+                        <div class="flex justify-between items-center mb-2.5">
+                            <span id="project-timer-activities-label" class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Attività incluse</span>
+                            <span id="project-task-order-hint" class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Trascina per ordinare</span>
+                        </div>
+                        <div id="edit-proj-selected-tasks" class="space-y-2 min-h-[44px]"></div>
+                        <div id="project-custom-task-controls">
+                            <div class="mt-3 pt-3 border-t border-slate-100 grid grid-cols-[minmax(0,1fr)_auto] gap-2">
+                                <select id="project-inline-task-select" class="min-w-0 border border-slate-200 rounded-xl p-2.5 text-xs bg-white shadow-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all appearance-none cursor-pointer text-slate-700"></select>
+                                <button type="button" data-ui-action="add-inline-project-task" class="secondary-action compact"><i data-lucide="plus" class="w-3.5 h-3.5"></i> Aggiungi</button>
+                            </div>
+                            <div class="mt-2 grid grid-cols-[minmax(0,1fr)_auto] gap-2">
+                                <input type="text" id="project-inline-new-task" placeholder="Nuova attività al volo" class="min-w-0 border border-slate-200 rounded-xl p-2.5 text-xs bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all">
+                                <button type="button" data-ui-action="create-inline-project-task" class="secondary-action compact">Crea</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button id="btn-save-project-edit" class="w-full bg-slate-900 text-white py-3.5 mt-5 rounded-xl font-bold shadow-sm hover:bg-slate-800 transition-all active:scale-[0.98]">Crea progetto</button>
+        </div>
+    </div>
+
+    <div id="modal-project-quote-format" class="force-hide fixed inset-0 z-[110] modal flex items-center justify-center p-4">
+        <div class="w-full max-w-md p-6 lg:p-7 shadow-xl border border-slate-200 rounded-2xl relative bg-white">
+            <button id="btn-close-project-quote-format" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors" aria-label="Chiudi"><i data-lucide="x" class="w-4 h-4"></i></button>
+            <div class="w-10 h-10 rounded-xl bg-primary-50 text-primary-600 flex items-center justify-center mb-4"><i data-lucide="receipt-text" class="w-5 h-5"></i></div>
+            <h2 class="text-lg font-black text-slate-800 tracking-tight mb-1">Esporta preventivo</h2>
+            <p id="project-quote-format-name" class="text-sm font-bold text-slate-600 pr-10 truncate">Progetto</p>
+            <p class="text-xs text-slate-500 font-medium mt-1 mb-5">Scegli il formato più adatto.</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button type="button" data-ui-action="export-selected-project-quote" data-quote-format="pdf" class="group min-h-[92px] border border-slate-200 rounded-xl p-4 text-left bg-white hover:border-primary-300 hover:bg-primary-50 transition-all shadow-sm">
+                    <span class="flex items-center gap-2 text-sm font-black text-slate-800"><i data-lucide="file-text" class="w-4 h-4 text-primary-600"></i> PDF</span>
+                    <span class="block text-xs text-slate-500 font-medium mt-2 leading-relaxed">Pronto da inviare o stampare.</span>
+                </button>
+                <button type="button" data-ui-action="export-selected-project-quote" data-quote-format="excel" class="group min-h-[92px] border border-slate-200 rounded-xl p-4 text-left bg-white hover:border-emerald-300 hover:bg-emerald-50 transition-all shadow-sm">
+                    <span class="flex items-center gap-2 text-sm font-black text-slate-800"><i data-lucide="file-spreadsheet" class="w-4 h-4 text-emerald-600"></i> Excel</span>
+                    <span class="block text-xs text-slate-500 font-medium mt-2 leading-relaxed">Modificabile prima della consegna.</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-report" class="force-hide fixed inset-0 z-[100] modal flex items-center justify-center p-4">
+        <div class="w-full max-w-sm p-6 lg:p-8 shadow-xl border border-slate-200 rounded-2xl relative bg-white">
+            <button id="btn-close-report" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+            <h2 class="text-lg font-black text-slate-800 tracking-tight mb-2 flex items-center gap-2"><i data-lucide="file-text" class="text-primary-500 w-5 h-5"></i> Report PDF</h2>
+            <p class="text-xs text-slate-500 font-medium mb-6">Seleziona il periodo da esportare.</p>
+            <div id="report-modal-content"></div>
+        </div>
+    </div>
+
+    <div id="modal-team-report" class="force-hide fixed inset-0 z-[220] modal flex items-center justify-center p-4">
+        <div class="w-full max-w-sm p-6 lg:p-8 shadow-xl border border-slate-200 rounded-2xl relative bg-white">
+            <button id="btn-close-team-report" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+            <h2 class="text-lg font-black text-slate-800 tracking-tight mb-2 flex items-center gap-2"><i data-lucide="users" class="text-primary-500 w-5 h-5"></i> Report team PDF</h2>
+            <p class="text-xs text-slate-500 font-medium mb-6">Seleziona periodo e collaboratore da esportare.</p>
+            <div id="team-report-modal-content">
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Collaboratore</label>
+                        <select id="team-report-user" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all appearance-none cursor-pointer text-slate-700">
+                            <option value="all">Tutto il team</option>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Dal</label>
+                            <input type="date" id="team-report-start" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all">
+                        </div>
+                        <div>
+                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Al</label>
+                            <input type="date" id="team-report-end" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all">
+                        </div>
+                    </div>
+                    <button id="btn-generate-team-report" class="w-full bg-slate-900 text-white py-3.5 mt-2 rounded-xl font-bold hover:bg-slate-800 transition-all active:scale-[0.98] shadow-sm flex items-center justify-center gap-2"><i data-lucide="file-text" class="w-4 h-4"></i> Genera report</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="custom-dialog" class="force-hide fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl p-6 lg:p-8 max-w-sm w-full text-center shadow-xl border border-slate-200 transform transition-all scale-95 opacity-0" id="custom-dialog-card">
+            <div id="custom-dialog-icon" class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6"></div>
+            <h2 id="custom-dialog-title" class="text-xl font-black text-slate-900 mb-2 tracking-tight"></h2>
+            <p id="custom-dialog-msg" class="text-slate-500 text-sm mb-6 leading-relaxed whitespace-pre-wrap"></p>
+            <input type="text" id="custom-dialog-input" class="force-hide w-full border border-slate-200 rounded-xl p-3 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all mb-6 text-center font-bold">
+            <div class="flex gap-3 justify-center w-full" id="custom-dialog-buttons"></div>
+        </div>
+    </div>
+
+    <div id="modal-forgot-password" class="force-hide fixed inset-0 z-[500] modal flex items-center justify-center p-4">
+        <div class="w-full max-w-sm p-6 lg:p-8 shadow-xl border border-slate-200 rounded-2xl relative bg-white">
+            <button id="btn-close-forgot-password" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+            <h2 class="text-xl font-black text-slate-800 tracking-tight mb-2">Recupera Password</h2>
+            <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-6">Ti invieremo un link sicuro.</p>
+            <input type="email" id="forgot-email" placeholder="La tua email" class="w-full border border-slate-200 rounded-xl p-3.5 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all mb-4 bg-white">
+            <button id="btn-send-reset-link" class="w-full bg-primary-600 text-white py-3.5 rounded-xl font-bold shadow-sm hover:bg-primary-700 transition-all active:scale-[0.98]">Invia Link</button>
+        </div>
+    </div>
+
+    <div id="update-password-container" class="force-hide min-h-screen flex items-center justify-center p-4 bg-slate-900 relative overflow-hidden z-[999]">
+        <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+        <div class="relative z-10 w-full max-w-md bg-white border border-slate-200 rounded-3xl p-8 shadow-2xl text-center">
+            <div class="w-16 h-16 bg-primary-50 text-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-primary-100"><i data-lucide="key" class="w-8 h-8"></i></div>
+            <h2 class="text-2xl font-black text-slate-900 mb-2 tracking-tight">Nuova Password</h2>
+            <p class="text-slate-500 text-sm mb-6 leading-relaxed font-medium">Inserisci la tua nuova password di accesso.</p>
+            <input type="password" id="new-password" placeholder="Nuova password (min 6 caratteri)" class="w-full border border-slate-200 rounded-xl p-3.5 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all mb-4 text-center font-bold">
+            <button id="btn-save-new-password" class="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold hover:bg-slate-800 transition-all active:scale-[0.98] shadow-sm">Salva e Accedi</button>
+        </div>
+    </div>
+
+    <script src="assets/js/00-runtime-config.js?v=stripe-founder-2026-06-29"></script>
+    <script src="assets/js/normative-engine.js?v=2026-08-01-01"></script>
+    <script src="assets/js/01-core.js?v=studio-positioning-2026-09-06-01"></script>
+    <script src="assets/js/02-auth-account.js?v=studio-positioning-2026-09-06-01"></script>
+    <script src="assets/js/03-team.js?v=studio-management-2026-08-12-01"></script>
+    <script src="assets/js/04-projects.js?v=quote-handoff-2026-09-01-01"></script>
+    <script src="assets/js/05-time-entries.js?v=timer-sync-2026-08-12-02"></script>
+    <script src="assets/js/06-reports.js?v=quote-format-modal-2026-08-12-01"></script>
+    <script src="assets/js/07-password-bootstrap.js?v=modal-dismiss-2026-09-01-01"></script>
+    <script src="assets/js/09-video-demo.js?v=quote-fiscal-2026-08-03-01"></script>
+    <script src="assets/js/10-flow-prototype.js?v=2026-09-01-01"></script>
+    <script src="assets/js/11-document-prototype.js?v=2026-08-28-08"></script>
+</body>
+</html>

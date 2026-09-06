@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Arch Time Mini Timer - Store</title>
+  <style>
+    @font-face {
+      font-family: "Plus Jakarta Sans";
+      src: url("../frontend/fonts/plus-jakarta-sans-latin-400-normal.woff2") format("woff2");
+      font-weight: 400;
+    }
+    @font-face {
+      font-family: "Plus Jakarta Sans";
+      src: url("../frontend/fonts/plus-jakarta-sans-latin-700-normal.woff2") format("woff2");
+      font-weight: 700;
+    }
+    @font-face {
+      font-family: "Plus Jakarta Sans";
+      src: url("../frontend/fonts/plus-jakarta-sans-latin-800-normal.woff2") format("woff2");
+      font-weight: 800;
+    }
+    * { box-sizing: border-box; }
+    html, body { width: 1366px; height: 768px; margin: 0; overflow: hidden; }
+    body {
+      font-family: "Plus Jakarta Sans", Arial, sans-serif;
+      color: #111827;
+      background: #f6f8fc;
+    }
+    .shot {
+      position: relative;
+      display: none;
+      width: 1366px;
+      height: 768px;
+      overflow: hidden;
+    }
+    .shot.active { display: block; }
+    .shot-one {
+      background:
+        radial-gradient(circle at 72% 28%, rgba(79, 70, 229, .18), transparent 31%),
+        linear-gradient(135deg, #ffffff 0%, #f1f5fb 52%, #e7edf8 100%);
+    }
+    .shot-two {
+      color: #ffffff;
+      background:
+        radial-gradient(circle at 70% 28%, rgba(52, 211, 153, .16), transparent 28%),
+        linear-gradient(135deg, #111827 0%, #1d2941 58%, #313a58 100%);
+    }
+    .brand {
+      position: absolute;
+      top: 52px;
+      left: 64px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 18px;
+      font-weight: 800;
+    }
+    .brand img { width: 44px; height: 44px; }
+    .copy {
+      position: absolute;
+      left: 64px;
+      top: 190px;
+      width: 620px;
+    }
+    .eyebrow {
+      margin: 0 0 18px;
+      color: #4f46e5;
+      font-size: 15px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+    .shot-two .eyebrow { color: #6ee7b7; }
+    h1 {
+      margin: 0;
+      max-width: 590px;
+      font-size: 54px;
+      line-height: 1.08;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+    .copy p:last-child {
+      max-width: 520px;
+      margin: 25px 0 0;
+      color: #4b5563;
+      font-size: 21px;
+      line-height: 1.5;
+    }
+    .shot-two .copy p:last-child { color: #d6dbea; }
+    .full-app {
+      position: absolute;
+      right: 110px;
+      top: 44px;
+      width: 395px;
+      height: auto;
+      border-radius: 17px;
+      box-shadow: 0 34px 70px rgba(15, 23, 42, .25);
+    }
+    .compact-stage {
+      position: absolute;
+      right: 70px;
+      top: 258px;
+      width: 540px;
+      height: 220px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255, 255, 255, .16);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, .08);
+      box-shadow: 0 32px 70px rgba(0, 0, 0, .25), inset 0 1px rgba(255, 255, 255, .18);
+      backdrop-filter: blur(18px);
+    }
+    .compact-stage img {
+      width: 438px;
+      height: 138px;
+      image-rendering: auto;
+    }
+  </style>
+</head>
+<body>
+  <section class="shot shot-one" data-shot="1">
+    <div class="brand"><img src="../frontend/icon.png" alt="">Arch Time Pro</div>
+    <div class="copy">
+      <p class="eyebrow">Timer desktop</p>
+      <h1>Le ore sulle commesse, senza tenere aperto il browser.</h1>
+      <p>Seleziona progetto e attività. Arch Time Mini Timer mantiene tutto sincronizzato con lo studio.</p>
+    </div>
+    <img class="full-app" src="timer-window-full.png" alt="Interfaccia completa del timer">
+  </section>
+
+  <section class="shot shot-two" data-shot="2">
+    <div class="brand"><img src="../frontend/icon.png" alt="">Arch Time Pro</div>
+    <div class="copy">
+      <p class="eyebrow">Modalità compatta</p>
+      <h1>Riduci il timer. Continua a lavorare.</h1>
+      <p>Il mini timer resta nell’angolo dello schermo, con progetto, attività e tempo sempre visibili.</p>
+    </div>
+    <div class="compact-stage"><img src="timer-window-compact.png" alt="Mini timer compatto"></div>
+  </section>
+  <script>
+    const shot = new URLSearchParams(location.search).get('shot') || '1';
+    document.querySelector(`[data-shot="${shot}"]`)?.classList.add('active');
+  </script>
+</body>
+</html>

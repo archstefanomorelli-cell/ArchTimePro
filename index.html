@@ -30,9 +30,9 @@
         details > summary::-webkit-details-marker { display: none; }
     </style>
     <script src="assets/js/12-analytics.js?v=privacy-2026-08-12-01" defer></script>
-    <link rel="stylesheet" href="assets/public-site.css?v=hero-glass-bars-2026-09-06-01">
+    <link rel="stylesheet" href="assets/public-site.css?v=hero-project-liquid-2026-09-06-01">
     <script src="assets/js/14-public-shell.js?v=about-us-2026-08-31-01" defer></script>
-    <script src="assets/js/16-home-hero-bars.js?v=2026-09-06-03" defer></script>
+    <script src="assets/js/16-home-projects.js?v=2026-09-06-04" defer></script>
 </head>
 <body id="top" class="selection:bg-indigo-100 selection:text-indigo-900">
     <header class="fixed top-0 z-50 w-full border-b border-slate-100 bg-white/90 backdrop-blur-xl">
@@ -74,34 +74,126 @@
                     </div>
                     <p class="mt-4 text-xs font-semibold text-slate-500">Nessuna demo obbligatoria · collaboratori inclusi · dati economici riservati alla direzione</p>
                 </div>
-                <div class="hero-control-visual" role="img" aria-label="Simulazione del controllo di commessa: le ore alimentano i costi, mentre il margine disponibile diminuisce. Il team varia nel tempo.">
-                    <div class="hero-control-caption" aria-hidden="true"><span>Una commessa, tutto connesso</span><span>Simulazione</span></div>
-                    <div class="hero-control-chart" aria-hidden="true">
-                    <div class="hero-control-guides"><span></span><span></span><span></span><span></span></div>
-                    <div class="hero-control-bars">
-                        <div class="hero-control-metric" style="--level: 0.35;">
-                            <div class="hero-control-value">84h</div>
-                            <div class="hero-control-track"><span class="hero-control-fill hero-control-fill-time"></span></div>
-                            <div class="hero-control-icon"><i data-lucide="timer"></i><span>Ore</span></div>
-                        </div>
-                        <div class="hero-control-metric" style="--level: 0.3848;">
-                            <div class="hero-control-value">5,8k €</div>
-                            <div class="hero-control-track"><span class="hero-control-fill hero-control-fill-cost"></span></div>
-                            <div class="hero-control-icon"><i data-lucide="euro"></i><span>Costi</span></div>
-                        </div>
-                        <div class="hero-control-metric" style="--level: 0.3333;">
-                            <div class="hero-control-value">3</div>
-                            <div class="hero-control-track"><span class="hero-control-fill hero-control-fill-team"></span></div>
-                            <div class="hero-control-icon"><i data-lucide="users"></i><span>Team</span></div>
-                        </div>
-                        <div class="hero-control-metric" style="--level: 0.6793;">
-                            <div class="hero-control-value">68%</div>
-                            <div class="hero-control-track"><span class="hero-control-fill hero-control-fill-margin"></span></div>
-                            <div class="hero-control-icon"><i data-lucide="trending-up"></i><span>Margine</span></div>
-                        </div>
+                <section class="hero-projects" aria-label="Esplora i progetti dimostrativi">
+                    <div class="hero-project-deck">
+                        <article class="hero-project-card is-active" data-project="0" data-tone="green" style="--slot: 0;" aria-label="Villa sul lago">
+                            <button class="hero-project-select" type="button" aria-expanded="false" aria-controls="hero-project-details-0" aria-label="Esplora Villa sul lago" aria-current="true">
+                                <span class="hero-project-topline"><span><i data-lucide="house"></i>Residenziale</span><span class="hero-project-number">01</span></span>
+                                <span class="hero-project-name">Villa sul lago</span>
+                                <span class="hero-project-client">Cliente privato</span>
+                                <span class="hero-project-status"><span></span>Allineato</span>
+                                <span class="hero-project-metrics">
+                                    <span><small>Budget</small><strong>18.000 €</strong></span>
+                                    <span><small>Costi</small><strong>7200 €</strong></span>
+                                    <span><small>Margine</small><strong class="is-positive">10.800 €</strong></span>
+                                </span>
+                                <span class="hero-project-progress-label"><span>Costi consumati</span><strong>40%</strong></span>
+                                <span class="hero-project-progress"><span style="width: 40%"></span><i style="left: 45%"></i></span>
+                                <span class="hero-project-bottom"><span><i data-lucide="timer"></i>124 ore registrate</span><i data-lucide="chevron-down" class="hero-project-expand"></i></span>
+                            </button>
+                            <div class="hero-project-details" id="hero-project-details-0" hidden>
+                                <div class="hero-project-details-title"><span>Attività</span><span>Piano costi 45%</span></div>
+                                <div class="hero-project-task"><span>Rilievo e sopralluogo</span><span data-state="done">Completata</span></div>
+                                <div class="hero-project-task"><span>Progetto definitivo</span><span data-state="progress">In corso</span></div>
+                                <div class="hero-project-task"><span>Direzione lavori</span><span data-state="todo">Da fare</span></div>
+                            </div>
+                        </article>
+                        <article class="hero-project-card" data-project="1" data-tone="amber" style="--slot: 1;" aria-label="Casa della luce">
+                            <button class="hero-project-select" type="button" aria-expanded="false" aria-controls="hero-project-details-1" aria-label="Esplora Casa della luce">
+                                <span class="hero-project-topline"><span><i data-lucide="armchair"></i>Interior design</span><span class="hero-project-number">02</span></span>
+                                <span class="hero-project-name">Casa della luce</span>
+                                <span class="hero-project-client">Cliente privato</span>
+                                <span class="hero-project-status"><span></span>Da monitorare</span>
+                                <span class="hero-project-metrics">
+                                    <span><small>Budget</small><strong>12.500 €</strong></span>
+                                    <span><small>Costi</small><strong>8500 €</strong></span>
+                                    <span><small>Margine</small><strong class="is-positive">4000 €</strong></span>
+                                </span>
+                                <span class="hero-project-progress-label"><span>Costi consumati</span><strong>68%</strong></span>
+                                <span class="hero-project-progress"><span style="width: 68%"></span><i style="left: 42%"></i></span>
+                                <span class="hero-project-bottom"><span><i data-lucide="timer"></i>146 ore registrate</span><i data-lucide="chevron-down" class="hero-project-expand"></i></span>
+                            </button>
+                            <div class="hero-project-details" id="hero-project-details-1" hidden>
+                                <div class="hero-project-details-title"><span>Attività</span><span>Piano costi 42%</span></div>
+                                <div class="hero-project-task"><span>Concept e distribuzione</span><span data-state="done">Completata</span></div>
+                                <div class="hero-project-task"><span>Scelta dei materiali</span><span data-state="progress">In corso</span></div>
+                                <div class="hero-project-task"><span>Progetto esecutivo</span><span data-state="todo">Da fare</span></div>
+                            </div>
+                        </article>
+                        <article class="hero-project-card" data-project="2" data-tone="green" style="--slot: 2;" aria-label="Atelier 21">
+                            <button class="hero-project-select" type="button" aria-expanded="false" aria-controls="hero-project-details-2" aria-label="Esplora Atelier 21">
+                                <span class="hero-project-topline"><span><i data-lucide="building-2"></i>Spazi di lavoro</span><span class="hero-project-number">03</span></span>
+                                <span class="hero-project-name">Atelier 21</span>
+                                <span class="hero-project-client">Studio associato</span>
+                                <span class="hero-project-status"><span></span>Allineato</span>
+                                <span class="hero-project-metrics">
+                                    <span><small>Budget</small><strong>24.000 €</strong></span>
+                                    <span><small>Costi</small><strong>9120 €</strong></span>
+                                    <span><small>Margine</small><strong class="is-positive">14.880 €</strong></span>
+                                </span>
+                                <span class="hero-project-progress-label"><span>Costi consumati</span><strong>38%</strong></span>
+                                <span class="hero-project-progress"><span style="width: 38%"></span><i style="left: 40%"></i></span>
+                                <span class="hero-project-bottom"><span><i data-lucide="timer"></i>157 ore registrate</span><i data-lucide="chevron-down" class="hero-project-expand"></i></span>
+                            </button>
+                            <div class="hero-project-details" id="hero-project-details-2" hidden>
+                                <div class="hero-project-details-title"><span>Attività</span><span>Piano costi 40%</span></div>
+                                <div class="hero-project-task"><span>Studio di fattibilità</span><span data-state="done">Completata</span></div>
+                                <div class="hero-project-task"><span>Progetto architettonico</span><span data-state="progress">In corso</span></div>
+                                <div class="hero-project-task"><span>Pratiche edilizie</span><span data-state="todo">Da fare</span></div>
+                            </div>
+                        </article>
+                        <article class="hero-project-card" data-project="3" data-tone="red" style="--slot: -2;" aria-label="Corte degli ulivi">
+                            <button class="hero-project-select" type="button" aria-expanded="false" aria-controls="hero-project-details-3" aria-label="Esplora Corte degli ulivi">
+                                <span class="hero-project-topline"><span><i data-lucide="landmark"></i>Recupero edilizio</span><span class="hero-project-number">04</span></span>
+                                <span class="hero-project-name">Corte degli ulivi</span>
+                                <span class="hero-project-client">Cliente privato</span>
+                                <span class="hero-project-status"><span></span>Fuori budget</span>
+                                <span class="hero-project-metrics">
+                                    <span><small>Budget</small><strong>15.000 €</strong></span>
+                                    <span><small>Costi</small><strong>15.900 €</strong></span>
+                                    <span><small>Margine</small><strong class="is-negative">-900 €</strong></span>
+                                </span>
+                                <span class="hero-project-progress-label"><span>Costi consumati</span><strong>106%</strong></span>
+                                <span class="hero-project-progress"><span style="width: 100%"></span><i style="left: 90%"></i></span>
+                                <span class="hero-project-bottom"><span><i data-lucide="timer"></i>274 ore registrate</span><i data-lucide="chevron-down" class="hero-project-expand"></i></span>
+                            </button>
+                            <div class="hero-project-details" id="hero-project-details-3" hidden>
+                                <div class="hero-project-details-title"><span>Attività</span><span>Piano costi 90%</span></div>
+                                <div class="hero-project-task"><span>Rilievo dell'esistente</span><span data-state="done">Completata</span></div>
+                                <div class="hero-project-task"><span>Progetto di recupero</span><span data-state="done">Completata</span></div>
+                                <div class="hero-project-task"><span>Verifiche finali</span><span data-state="progress">In corso</span></div>
+                            </div>
+                        </article>
+                        <article class="hero-project-card" data-project="4" data-tone="green" style="--slot: -1;" aria-label="Spazio Forma">
+                            <button class="hero-project-select" type="button" aria-expanded="false" aria-controls="hero-project-details-4" aria-label="Esplora Spazio Forma">
+                                <span class="hero-project-topline"><span><i data-lucide="drafting-compass"></i>Progettazione</span><span class="hero-project-number">05</span></span>
+                                <span class="hero-project-name">Spazio Forma</span>
+                                <span class="hero-project-client">Associazione culturale</span>
+                                <span class="hero-project-status"><span></span>Allineato</span>
+                                <span class="hero-project-metrics">
+                                    <span><small>Budget</small><strong>32.000 €</strong></span>
+                                    <span><small>Costi</small><strong>8320 €</strong></span>
+                                    <span><small>Margine</small><strong class="is-positive">23.680 €</strong></span>
+                                </span>
+                                <span class="hero-project-progress-label"><span>Costi consumati</span><strong>26%</strong></span>
+                                <span class="hero-project-progress"><span style="width: 26%"></span><i style="left: 30%"></i></span>
+                                <span class="hero-project-bottom"><span><i data-lucide="timer"></i>143 ore registrate</span><i data-lucide="chevron-down" class="hero-project-expand"></i></span>
+                            </button>
+                            <div class="hero-project-details" id="hero-project-details-4" hidden>
+                                <div class="hero-project-details-title"><span>Attività</span><span>Piano costi 30%</span></div>
+                                <div class="hero-project-task"><span>Analisi preliminare</span><span data-state="done">Completata</span></div>
+                                <div class="hero-project-task"><span>Progetto di fattibilità</span><span data-state="progress">In corso</span></div>
+                                <div class="hero-project-task"><span>Progetto esecutivo</span><span data-state="todo">Da fare</span></div>
+                            </div>
+                        </article>
                     </div>
+                    <div class="hero-project-nav">
+                        <button type="button" class="hero-project-prev" aria-label="Progetto precedente" title="Progetto precedente"><i data-lucide="arrow-left"></i></button>
+                        <span class="hero-project-position" aria-live="polite" aria-atomic="true">Villa sul lago <span>01 / 05</span></span>
+                        <button type="button" class="hero-project-next" aria-label="Progetto successivo" title="Progetto successivo"><i data-lucide="arrow-right"></i></button>
+                        <button type="button" class="hero-project-playback" data-paused="false" aria-label="Metti in pausa lo scorrimento" title="Metti in pausa lo scorrimento"><span data-pause-icon><i data-lucide="pause"></i></span><span data-play-icon><i data-lucide="play"></i></span></button>
                     </div>
-                </div>
+                </section>
             </div>
         </section>
 
