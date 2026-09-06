@@ -1,64 +1,57 @@
 (function () {
-    const metrics = [...document.querySelectorAll('.hero-control-metric[data-counter-min]')];
-    if (!metrics.length) return;
+    const visual = document.querySelector('.hero-control-visual');
+    if (!visual) return;
+    const metrics = [...visual.querySelectorAll('.hero-control-metric')];
+    if (metrics.length !== 4) return;
+    const outputs = metrics.map(metric => metric.querySelector('.hero-control-value'));
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const money = new Intl.NumberFormat('it-IT', { maximumFractionDigits: 1, minimumFractionDigits: 1 });
+    let frame = 0;
+    let visible = true;
+    let elapsed = 0;
+    let lastTime = 0;
 
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const formatters = new Map();
-    const palettes = new WeakMap();
-
-    const formatterFor = decimals => {
-        if (!formatters.has(decimals)) {
-            formatters.set(decimals, new Intl.NumberFormat('it-IT', {
-                minimumFractionDigits: decimals,
-                maximumFractionDigits: decimals
-            }));
-        }
-        return formatters.get(decimals);
-    };
-
-    const readScale = fill => {
-        const transform = window.getComputedStyle(fill).transform;
-        if (!transform || transform === 'none') return 1;
-        const values = transform.match(/matrix(?:3d)?\(([^)]+)\)/)?.[1].split(',').map(Number) || [];
-        return transform.startsWith('matrix3d') ? (values[5] || 1) : (values[3] || 1);
-    };
-
-    const readRgb = (fill, property) => window.getComputedStyle(fill)
-        .getPropertyValue(property)
-        .split(',')
-        .map(channel => Number(channel.trim()));
-
-    const mixRgb = (light, dark, progress) => light.map((channel, index) =>
-        Math.round(channel + (dark[index] - channel) * progress)
-    );
-
-    const updateCounters = () => {
-        metrics.forEach(metric => {
-            const fill = metric.querySelector('.hero-control-fill');
-            const output = metric.querySelector('.hero-control-value');
-            if (!fill || !output) return;
-
-            const min = Number(metric.dataset.counterMin || 0);
-            const max = Number(metric.dataset.counterMax || min);
-            const decimals = Number(metric.dataset.counterDecimals || 0);
-            const progress = reducedMotion ? 1 : Math.max(0, Math.min(1, (readScale(fill) - 0.34) / 0.66));
-            const value = min + (max - min) * progress;
-            output.textContent = `${metric.dataset.counterPrefix || ''}${formatterFor(decimals).format(value)}${metric.dataset.counterSuffix || ''}`;
-
-            if (!palettes.has(fill)) {
-                palettes.set(fill, {
-                    light: readRgb(fill, '--bar-light-rgb'),
-                    dark: readRgb(fill, '--bar-dark-rgb')
-                });
-            }
-            const { light, dark } = palettes.get(fill);
-            if (light.length === 3 && dark.length === 3) {
-                fill.style.backgroundColor = `rgb(${mixRgb(light, dark, progress).join(', ')})`;
-            }
+    // One illustrative budget keeps hours, costs and margin consistent.
+    function render(time) {
+        const workload = (1 - Math.cos(time * Math.PI * 2 / 12000)) / 2;
+        const hours = Math.round(84 + workload * 112);
+        const costs = hours * 58 + 900;
+        const margin = (18000 - costs) / 18000;
+        const teamProgress = (1 - Math.cos(time * Math.PI * 2 / 20000)) / 2;
+        const team = 3 + Math.round(teamProgress * 4);
+        const values = [hours + 'h', money.format(costs / 1000) + 'k €', String(team), Math.round(margin * 100) + '%'];
+        const levels = [(84 + workload * 112) / 240, costs / 15000, (3 + teamProgress * 4) / 9, margin];
+        metrics.forEach((metric, index) => {
+            metric.style.setProperty('--level', levels[index].toFixed(4));
+            if (outputs[index].textContent !== values[index]) outputs[index].textContent = values[index];
         });
+    }
 
-        if (!reducedMotion) window.requestAnimationFrame(updateCounters);
-    };
+    function tick(time) {
+        if (lastTime) elapsed += Math.min(time - lastTime, 100);
+        lastTime = time;
+        render(elapsed);
+        frame = window.requestAnimationFrame(tick);
+    }
 
-    updateCounters();
+    function syncPlayback() {
+        window.cancelAnimationFrame(frame);
+        lastTime = 0;
+        if (motion.matches) {
+            render(4000);
+        } else if (visible && !document.hidden) {
+            frame = window.requestAnimationFrame(tick);
+        }
+    }
+
+    render(0);
+    if ('IntersectionObserver' in window) {
+        new IntersectionObserver(entries => {
+            visible = entries[0].isIntersecting;
+            syncPlayback();
+        }).observe(visual);
+    }
+    document.addEventListener('visibilitychange', syncPlayback);
+    motion.addEventListener('change', syncPlayback);
+    syncPlayback();
 })();

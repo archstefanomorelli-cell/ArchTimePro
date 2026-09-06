@@ -76,7 +76,7 @@ function switchAuthTab(mode) {
                         ? '<strong class="font-black">Il preventivo è pronto.</strong> Crea il tuo spazio come Manager: lo ritroverai già compilato al primo accesso.'
                         : '<strong class="font-black">Il preventivo è pronto.</strong> Accedi e lo ritroverai già compilato, pronto per diventare una commessa.')
                     : (isSignupMode
-                        ? '<strong class="font-black">Nuovo spazio di lavoro.</strong> Scegli Manager per creare uno studio/impresa, oppure Collaboratore se hai ricevuto un codice invito.'
+                        ? '<strong class="font-black">Nuovo spazio di lavoro.</strong> Scegli Manager per creare uno studio, oppure Collaboratore se hai ricevuto un codice invito.'
                         : '<strong class="font-black">Bentornato.</strong> Accedi per registrare ore, controllare lavori e consultare i dati del tuo spazio.');
             }
             
@@ -531,7 +531,7 @@ function switchAuthTab(mode) {
                 if (studioData?.subscription_status === 'active' && hasStripeSubscription) {
                     return await appAlert("Abbonamento attivo", "Prima di poter eliminare definitivamente l'account e distruggere lo Spazio di Lavoro, devi annullare l'abbonamento attivo dal portale pagamenti.", "danger");
                 }
-                const warning = currentBusinessType === 'impresa' ? "Se sei il Titolare, eliminerai anche l'intera Impresa, tutti i cantieri e i dati storici." : "Se sei il Manager, eliminerai anche l'intero Studio, tutti i progetti e i dati storici.";
+                const warning = currentBusinessType === 'impresa' ? "Se sei il Titolare, eliminerai anche l'intero spazio di lavoro, tutti i cantieri e i dati storici." : "Se sei il Manager, eliminerai anche l'intero Studio, tutti i progetti e i dati storici.";
                 
                 if(await appConfirm("Distruzione Spazio di Lavoro", `ATTENZIONE: Stai per eliminare il tuo account da Owner. ${warning}\nQuesta operazione è IRREVERSIBILE e tutti i collaboratori verranno espulsi. Vuoi procedere?`, "danger")) {
                     const check = await appPrompt("Conferma di sicurezza", "Scrivi ELIMINA per confermare la cancellazione:", "ELIMINA");
@@ -795,7 +795,7 @@ function switchAuthTab(mode) {
             if (!modal) return;
 
             document.getElementById('onboarding-studio-name').value = studioData?.name || '';
-            document.getElementById('onboarding-business-label').innerText = currentBusinessType === 'impresa' ? 'Impresa Edile' : 'Studio Tecnico';
+            document.getElementById('onboarding-business-label').innerText = currentBusinessType === 'impresa' ? 'Studio' : 'Studio Tecnico';
             const calculatorHandoff = getMarginCalculatorHandoff();
             document.getElementById('onboarding-project-name').value = calculatorHandoff ? 'Commessa dal calcolatore' : '';
             document.getElementById('onboarding-project-client').value = '';

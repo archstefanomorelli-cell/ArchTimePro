@@ -19,7 +19,7 @@
     <link rel="apple-touch-icon" sizes="167x167" href="/apple-touch-icon-167.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180.png">
     <meta name="robots" content="noindex, nofollow">
-    <title>Arch Time Pro - Studio & Impresa Management</title>
+    <title>Arch Time Pro - Gestione commesse dello studio</title>
     <script>
         if (new URLSearchParams(window.location.search).get('videoDemo') === '1') {
             document.documentElement.classList.add('video-demo-boot');
@@ -57,7 +57,7 @@
             <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
             <div class="relative z-10">
                 <h1 id="landing-title" class="text-6xl font-black text-white mb-6 tracking-tight">Arch <span class="text-primary-500">Time</span> Pro</h1>
-                <p class="text-slate-400 text-xl mb-10 max-w-md leading-relaxed">Il gestionale definitivo per il controllo dei margini negli Studi Tecnici e Imprese Edili.</p>
+                <p class="text-slate-400 text-xl mb-10 max-w-md leading-relaxed">Gestisci commesse, ore e costi del tuo studio. Tieni sotto controllo il margine di ogni progetto.</p>
                 <div class="space-y-6">
                     <div class="flex items-start gap-4 text-slate-300"><div class="bg-primary-500/20 p-2.5 rounded-xl border border-primary-500/30"><i data-lucide="bar-chart-3" class="text-primary-400 w-5 h-5"></i></div><div><p class="font-bold text-white">Analisi Margini Reali</p><p class="text-sm mt-1 text-slate-400">Traccia ore e spese extra per scoprire il vero utile.</p></div></div>
                     <div class="flex items-start gap-4 text-slate-300"><div class="bg-primary-500/20 p-2.5 rounded-xl border border-primary-500/30"><i data-lucide="shield-check" class="text-primary-400 w-5 h-5"></i></div><div><p class="font-bold text-white">Privacy Finanziaria</p><p class="text-sm mt-1 text-slate-400">Tariffe interne riservate e inviti gratuiti per il team.</p></div></div>
@@ -160,17 +160,8 @@
 
                 <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
                     <h3 class="text-sm font-black text-slate-800 mb-3 flex items-center gap-2"><i data-lucide="briefcase" class="w-4 h-4 text-amber-500"></i> Crea il tuo spazio di lavoro</h3>
-                    <div class="flex gap-2 mb-3">
-                        <label class="flex-1 flex items-center justify-center gap-2 p-2.5 bg-slate-50 rounded-lg border border-slate-200 cursor-pointer hover:border-primary-300 transition-all relative has-[:checked]:bg-white has-[:checked]:border-primary-500 has-[:checked]:ring-1 has-[:checked]:ring-primary-500">
-                            <input type="radio" name="limbo-business-type" value="studio" checked class="sr-only">
-                            <span class="text-xs font-bold text-slate-700">Studio Tecnico</span>
-                        </label>
-                        <label class="flex-1 flex items-center justify-center gap-2 p-2.5 bg-slate-50 rounded-lg border border-slate-200 cursor-pointer hover:border-amber-300 transition-all relative has-[:checked]:bg-white has-[:checked]:border-amber-500 has-[:checked]:ring-1 has-[:checked]:ring-amber-500">
-                            <input type="radio" name="limbo-business-type" value="impresa" class="sr-only">
-                            <span class="text-xs font-bold text-slate-700">Impresa Edile</span>
-                        </label>
-                    </div>
-                    <input type="text" id="limbo-studio-name" placeholder="Nome della tua azienda" class="w-full border border-slate-200 rounded-xl p-3 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all mb-3 bg-slate-50">
+                    <input type="radio" name="limbo-business-type" value="studio" checked hidden>
+                    <input type="text" id="limbo-studio-name" placeholder="Nome del tuo studio" class="w-full border border-slate-200 rounded-xl p-3 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all mb-3 bg-slate-50">
                     <button id="btn-limbo-create" class="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold hover:bg-slate-800 transition-all active:scale-[0.98] shadow-sm flex justify-center items-center gap-2">Diventa manager</button>
                 </div>
             </div>
@@ -749,7 +740,7 @@
                         <h3 class="text-sm font-black text-slate-800 tracking-tight">Identità</h3>
                     </div>
                     <div class="space-y-3">
-                        <input type="text" id="onboarding-studio-name" placeholder="Nome studio o impresa" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all">
+                        <input type="text" id="onboarding-studio-name" placeholder="Nome studio" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all">
                         <div class="bg-white border border-slate-200 rounded-xl p-3">
                             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Settore scelto</p>
                             <p id="onboarding-business-label" class="text-sm font-black text-slate-800">Studio Tecnico</p>
@@ -1172,8 +1163,8 @@
 
     <script src="assets/js/00-runtime-config.js?v=stripe-founder-2026-06-29"></script>
     <script src="assets/js/normative-engine.js?v=2026-08-01-01"></script>
-    <script src="assets/js/01-core.js?v=modal-dismiss-2026-09-01-01"></script>
-    <script src="assets/js/02-auth-account.js?v=quote-handoff-2026-09-01-01"></script>
+    <script src="assets/js/01-core.js?v=studio-positioning-2026-09-06-01"></script>
+    <script src="assets/js/02-auth-account.js?v=studio-positioning-2026-09-06-01"></script>
     <script src="assets/js/03-team.js?v=studio-management-2026-08-12-01"></script>
     <script src="assets/js/04-projects.js?v=quote-handoff-2026-09-01-01"></script>
     <script src="assets/js/05-time-entries.js?v=acquisition-funnel-2026-08-28-01"></script>

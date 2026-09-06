@@ -202,9 +202,9 @@ if (window.Chart?.defaults?.font) {
             impresa: {
                 appNameHtmlLanding: 'Arch <span class="text-primary-500">Time</span> Pro',
                 appNameHtmlHeader: 'ARCH <span class="text-primary-600">TIME</span> PRO',
-                managerLabel: 'Titolare Impresa',
+                managerLabel: 'Responsabile Studio',
                 studioNameLabel: 'Ragione Sociale',
-                identityTitle: 'Identità Impresa',
+                identityTitle: 'Identità Studio',
                 catalogTitle: 'Lavorazioni Cantiere',
                 catalogDesc: 'Personalizza l\'elenco lavorazioni.',
                 activeProjectsTitle: 'Cantieri',

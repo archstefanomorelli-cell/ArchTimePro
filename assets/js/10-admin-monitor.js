@@ -51,7 +51,7 @@
     }
 
     function businessTypeLabel(value) {
-        if (value === 'company') return 'Impresa';
+        if (value === 'company') return 'Studio';
         if (value === 'studio') return 'Studio tecnico';
         return value || 'Non indicato';
     }
