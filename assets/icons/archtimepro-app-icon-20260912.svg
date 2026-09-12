@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Icona applicazione Arch Time Pro</title>
+  <desc id="desc">Il simbolo Arch Time Pro su un fondo indaco scuro.</desc>
+  <defs>
+    <linearGradient id="tile" x1="82" y1="54" x2="438" y2="462" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22214f"/>
+      <stop offset="1" stop-color="#101528"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#090c18" flood-opacity=".28"/>
+    </filter>
+  </defs>
+  <rect x="28" y="28" width="456" height="456" rx="108" fill="url(#tile)"/>
+  <g filter="url(#shadow)">
+    <circle cx="256" cy="256" r="170" fill="#ffffff" fill-opacity=".035" stroke="#f6f7fb" stroke-width="20"/>
+    <path d="M164 183h106" fill="none" stroke="#807df0" stroke-linecap="round" stroke-width="30"/>
+    <path d="M164 256h184" fill="none" stroke="#e5a53d" stroke-linecap="round" stroke-width="30"/>
+    <path d="M164 329h66" fill="none" stroke="#e46470" stroke-linecap="round" stroke-width="30"/>
+  </g>
+</svg>

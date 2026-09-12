@@ -9,11 +9,11 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Arch Time">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="manifest" href="/manifest.webmanifest?v=archtime-icon-meter-20260516">
-    <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32-archtime-meter-20260516.png">
-    <link rel="apple-touch-icon" href="/apple-touch-icon-archtime-meter-20260516.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-archtime-meter-20260516.png">
-    <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon-archtime-meter-20260516.png">
+    <link rel="manifest" href="/manifest.webmanifest?v=archtime-bars-20260912">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32-archtime-bars-20260912.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon-bars-20260912.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-bars-20260912.png">
+    <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon-bars-20260912.png">
     <link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120.png">
     <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152.png">
     <link rel="apple-touch-icon" sizes="167x167" href="/apple-touch-icon-167.png">
@@ -46,7 +46,7 @@
     <script src="assets/vendor/jspdf-2.5.1.js?v=privacy-security-2026-08-12-02"></script>
     <script src="assets/vendor/jspdf-autotable-3.5.31.js?v=privacy-security-2026-08-12-02"></script>
     <script src="assets/vendor/exceljs-4.4.0.js?v=privacy-security-2026-08-12-02"></script>
-    <link rel="stylesheet" href="assets/app.css?v=plus-jakarta-2026-08-13-01">
+    <link rel="stylesheet" href="assets/app.css?v=brand-2026-09-12-01">
     <link rel="stylesheet" href="assets/app-pro.css?v=studio-management-glass-2026-08-13-01">
     <script src="assets/js/12-analytics.js?v=acquisition-funnel-2026-08-28-01" defer></script>
 </head>
@@ -56,7 +56,7 @@
         <div class="hidden lg:flex lg:w-1/2 bg-slate-900 flex-col justify-center px-20 relative overflow-hidden lg:h-screen lg:sticky lg:top-0">
             <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
             <div class="relative z-10">
-                <h1 id="landing-title" class="text-6xl font-black text-white mb-6 tracking-tight">Arch <span class="text-primary-500">Time</span> Pro</h1>
+                <h1 id="landing-title" class="app-auth-brand text-white mb-6"><img src="assets/icons/archtimepro-mark-inverse-20260912.svg" alt=""><span>Arch Time Pro</span></h1>
                 <p class="text-slate-400 text-xl mb-10 max-w-md leading-relaxed">Gestisci commesse, ore e costi del tuo studio. Tieni sotto controllo il margine di ogni progetto.</p>
                 <div class="space-y-6">
                     <div class="flex items-start gap-4 text-slate-300"><div class="bg-primary-500/20 p-2.5 rounded-xl border border-primary-500/30"><i data-lucide="bar-chart-3" class="text-primary-400 w-5 h-5"></i></div><div><p class="font-bold text-white">Analisi Margini Reali</p><p class="text-sm mt-1 text-slate-400">Traccia ore e spese extra per scoprire il vero utile.</p></div></div>
@@ -68,7 +68,7 @@
         <div class="w-full lg:w-1/2 min-h-screen flex items-center justify-center p-4 sm:p-6 bg-slate-50 lg:bg-white relative auth-panel">
             <div class="w-full max-w-md p-5 sm:p-8 bg-white border border-slate-200 lg:border-none shadow-sm lg:shadow-none rounded-2xl auth-card">
                 <div class="text-center mb-6 lg:hidden">
-                    <h2 class="text-3xl font-black text-slate-900 tracking-tight">Arch Time Pro</h2>
+                    <div class="app-auth-brand-mobile"><img src="assets/icons/archtimepro-mark-20260912.svg" alt=""><h2 class="text-2xl font-black text-slate-900 tracking-tight">Arch Time Pro</h2></div>
                     <p class="text-xs text-slate-500 font-bold mt-2 uppercase tracking-wider">Ore, costi e margini in un unico spazio</p>
                 </div>
                 <div class="flex p-1 bg-slate-100 rounded-xl mb-8 border border-slate-200">
@@ -209,7 +209,7 @@
                     <img id="header-logo" class="h-8 object-contain force-hide rounded-lg" alt="Logo">
                     <div class="min-w-0">
                         <div class="flex items-center gap-2">
-                            <h1 id="header-title" class="text-base sm:text-lg font-black text-slate-900 tracking-tight whitespace-nowrap">ARCH <span class="text-primary-600">TIME</span> PRO</h1>
+                            <h1 id="header-title" class="app-header-brand text-base sm:text-lg font-black text-slate-900 tracking-tight whitespace-nowrap"><img src="assets/icons/archtimepro-mark-20260912.svg" alt=""><span>ARCH TIME PRO</span></h1>
                             <span id="trial-badge" class="admin-only force-hide text-[9px] px-1.5 py-0.5 rounded-md font-bold border whitespace-nowrap tracking-wider transition-all"></span>
                             <span id="plan-badge" class="admin-only force-hide text-[9px] px-2 py-0.5 rounded-md border border-slate-200 bg-slate-50 text-slate-500 font-bold uppercase tracking-wider hidden sm:inline-block"></span>
                         </div>
@@ -1163,7 +1163,7 @@
 
     <script src="assets/js/00-runtime-config.js?v=stripe-founder-2026-06-29"></script>
     <script src="assets/js/normative-engine.js?v=2026-08-01-01"></script>
-    <script src="assets/js/01-core.js?v=studio-positioning-2026-09-06-01"></script>
+    <script src="assets/js/01-core.js?v=brand-2026-09-12-01"></script>
     <script src="assets/js/02-auth-account.js?v=studio-positioning-2026-09-06-01"></script>
     <script src="assets/js/03-team.js?v=studio-management-2026-08-12-01"></script>
     <script src="assets/js/04-projects.js?v=quote-handoff-2026-09-01-01"></script>

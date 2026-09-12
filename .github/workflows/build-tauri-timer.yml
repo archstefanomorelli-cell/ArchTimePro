@@ -57,7 +57,7 @@ jobs:
           $storePackage = Get-ChildItem "desktop-timer-tauri/store-output/ArchTimeMiniTimer_*.msix" | Sort-Object LastWriteTime -Descending | Select-Object -First 1
           if (-not $storePackage) { throw "Pacchetto MSIX non trovato" }
           New-Item -ItemType Directory -Force release-assets | Out-Null
-          Copy-Item $source.FullName "release-assets/Arch-Time-Mini-Timer-Light-Setup-0.2.5.exe"
+          Copy-Item $source.FullName "release-assets/Arch-Time-Mini-Timer-Light-Setup-0.2.6.exe"
           Copy-Item $storePackage.FullName (Join-Path "release-assets" $storePackage.Name)
 
       - name: Create or update GitHub release
@@ -65,16 +65,16 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release view timer-v0.2.5 2>$null
+          gh release view timer-v0.2.6 2>$null
           if ($LASTEXITCODE -ne 0) {
-            gh release create timer-v0.2.5 --title "Arch Time Mini Timer 0.2.5" --notes "Nuova interfaccia Plus Jakarta Sans e liquid glass. Include il pacchetto per Microsoft Store."
+            gh release create timer-v0.2.6 --title "Arch Time Mini Timer 0.2.6" --notes "Nuova identità Arch Time Pro coordinata per sito, app e Microsoft Store."
           }
-          gh release upload timer-v0.2.5 "release-assets/Arch-Time-Mini-Timer-Light-Setup-0.2.5.exe" --clobber
+          gh release upload timer-v0.2.6 "release-assets/Arch-Time-Mini-Timer-Light-Setup-0.2.6.exe" --clobber
 
       - name: Upload workflow artifact
         uses: actions/upload-artifact@v7.0.1
         with:
-          name: Arch-Time-Mini-Timer-Light-0.2.5
+          name: Arch-Time-Mini-Timer-Light-0.2.6
           path: |
-            release-assets/Arch-Time-Mini-Timer-Light-Setup-0.2.5.exe
+            release-assets/Arch-Time-Mini-Timer-Light-Setup-0.2.6.exe
             release-assets/ArchTimeMiniTimer_*.msix

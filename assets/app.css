@@ -145,3 +145,44 @@
             padding-right: 2.5rem !important;
         }
 
+/* Coordinated Arch Time Pro identity */
+.app-auth-brand,
+.app-auth-brand-mobile,
+.app-header-brand {
+    display: flex;
+    align-items: center;
+}
+
+.app-auth-brand {
+    gap: 1rem;
+    font-size: 3.35rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.app-auth-brand img {
+    width: 4.25rem;
+    height: 4.25rem;
+    flex: 0 0 auto;
+}
+
+.app-auth-brand-mobile {
+    justify-content: center;
+    gap: 0.65rem;
+}
+
+.app-auth-brand-mobile img {
+    width: 2.35rem;
+    height: 2.35rem;
+    flex: 0 0 auto;
+}
+
+.app-header-brand {
+    gap: 0.5rem;
+}
+
+.app-header-brand img {
+    width: 1.7rem;
+    height: 1.7rem;
+    flex: 0 0 auto;
+}

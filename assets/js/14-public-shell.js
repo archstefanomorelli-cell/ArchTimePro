@@ -5,8 +5,9 @@
         return `
             <header id="public-site-header" class="fixed top-0 z-50 w-full border-b border-slate-100 bg-white/90 backdrop-blur-xl">
                 <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-6">
-                    <a href="index.html" class="flex items-center" aria-label="Arch Time Pro, homepage">
-                        <span class="public-brand text-xl font-black uppercase text-slate-900">Arch <span class="text-indigo-600">Time</span> Pro</span>
+                    <a href="index.html" class="public-brand-lockup" aria-label="Arch Time Pro, homepage">
+                        <img class="public-brand-mark" src="assets/icons/archtimepro-mark-20260912.svg" alt="" width="36" height="36">
+                        <span class="public-brand text-xl font-black uppercase text-slate-900">Arch Time Pro</span>
                     </a>
                     <div class="flex items-center gap-5 lg:gap-8">
                         <nav class="hidden items-center gap-7 lg:flex" aria-label="Navigazione principale">
@@ -47,7 +48,10 @@
             <footer id="public-site-footer" class="bg-slate-950 py-10 text-white">
                 <div class="mx-auto grid max-w-7xl gap-9 px-5 text-center sm:px-6 lg:grid-cols-[1.45fr_0.75fr_0.9fr_0.75fr] lg:text-left">
                     <div class="lg:max-w-sm">
-                        <p class="text-sm font-black uppercase">Arch <span class="text-indigo-400">Time</span> Pro</p>
+                        <a href="index.html" class="public-footer-brand" aria-label="Arch Time Pro, homepage">
+                            <img src="assets/icons/archtimepro-mark-inverse-20260912.svg" alt="" width="34" height="34">
+                            <span class="text-sm font-black uppercase">Arch Time Pro</span>
+                        </a>
                         <p class="mt-2 text-xs text-slate-400">Controllo semplice di ore, costi e margini per studi tecnici.</p>
                         <p class="mt-3 text-xs leading-relaxed text-slate-500">Stefano Morelli · Via Brecce Bianche 29, 60131 Ancona (AN), Italia</p>
                         <p class="mt-1 text-xs leading-relaxed text-slate-500">P. IVA IT02603120425 · C.F. MRLSFN81T03A271G</p>
@@ -85,7 +89,27 @@
             </footer>`;
     }
 
+    function ensureBrandAssets() {
+        const manifest = document.querySelector('link[rel="manifest"]');
+        if (manifest) manifest.href = '/manifest.webmanifest?v=archtime-bars-20260912';
+
+        let favicon = document.querySelector('link[rel="icon"]');
+        if (!favicon) {
+            favicon = document.createElement('link');
+            favicon.rel = 'icon';
+            favicon.type = 'image/png';
+            favicon.sizes = '32x32';
+            document.head.appendChild(favicon);
+        }
+        favicon.href = '/assets/icons/favicon-32-archtime-bars-20260912.png';
+
+        document.querySelectorAll('link[rel="apple-touch-icon"], link[rel="apple-touch-icon-precomposed"]').forEach(function (link) {
+            link.href = '/apple-touch-icon-bars-20260912.png';
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
+        ensureBrandAssets();
         const header = document.querySelector('body > header');
         const footer = document.querySelector('body > footer');
         if (header) header.outerHTML = headerHtml();

@@ -179,8 +179,8 @@ if (window.Chart?.defaults?.font) {
         }
         const THEMES = {
             studio: {
-                appNameHtmlLanding: 'Arch <span class="text-primary-500">Time</span> Pro',
-                appNameHtmlHeader: 'ARCH <span class="text-primary-600">TIME</span> PRO',
+                appNameHtmlLanding: '<img src="assets/icons/archtimepro-mark-inverse-20260912.svg" alt=""><span>Arch Time Pro</span>',
+                appNameHtmlHeader: '<img src="assets/icons/archtimepro-mark-20260912.svg" alt=""><span>ARCH TIME PRO</span>',
                 managerLabel: 'Manager Studio',
                 studioNameLabel: 'Nome Studio',
                 identityTitle: 'Identità Studio',
@@ -200,8 +200,8 @@ if (window.Chart?.defaults?.font) {
                 chartPalette: ['#312e81','#4338ca','#4f46e5','#6366f1','#818cf8']
             },
             impresa: {
-                appNameHtmlLanding: 'Arch <span class="text-primary-500">Time</span> Pro',
-                appNameHtmlHeader: 'ARCH <span class="text-primary-600">TIME</span> PRO',
+                appNameHtmlLanding: '<img src="assets/icons/archtimepro-mark-inverse-20260912.svg" alt=""><span>Arch Time Pro</span>',
+                appNameHtmlHeader: '<img src="assets/icons/archtimepro-mark-20260912.svg" alt=""><span>ARCH TIME PRO</span>',
                 managerLabel: 'Responsabile Studio',
                 studioNameLabel: 'Ragione Sociale',
                 identityTitle: 'Identità Studio',

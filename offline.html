@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#172033">
     <meta name="robots" content="noindex, nofollow">
-    <link rel="manifest" href="/manifest.webmanifest?v=archtime-icon-meter-20260516">
-    <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32-archtime-meter-20260516.png">
-    <link rel="apple-touch-icon" href="/apple-touch-icon-archtime-meter-20260516.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-archtime-meter-20260516.png">
-    <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon-archtime-meter-20260516.png">
+    <link rel="manifest" href="/manifest.webmanifest?v=archtime-bars-20260912">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32-archtime-bars-20260912.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon-bars-20260912.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-bars-20260912.png">
+    <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon-bars-20260912.png">
     <link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120.png">
     <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152.png">
     <link rel="apple-touch-icon" sizes="167x167" href="/apple-touch-icon-167.png">
@@ -39,15 +39,8 @@
         .mark {
             width: 52px;
             height: 52px;
-            border-radius: 14px;
-            display: grid;
-            place-items: center;
             margin: 0 auto 18px;
-            background: #172033;
-            color: #ffffff;
-            font-size: 13px;
-            font-weight: 900;
-            letter-spacing: 0.04em;
+            display: block;
         }
         h1 {
             margin: 0 0 8px;
@@ -77,7 +70,7 @@
 </head>
 <body>
     <main>
-        <div class="mark">ATP</div>
+        <img class="mark" src="assets/icons/archtimepro-mark-20260912.svg" alt="Arch Time Pro">
         <h1>Connessione assente</h1>
         <p>Arch Time Pro ha bisogno della rete per sincronizzare login, progetti, ore e report.</p>
         <button type="button" onclick="window.location.reload()">Riprova</button>

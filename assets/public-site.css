@@ -102,6 +102,34 @@ body .text-center h3 {
     transform-origin: left center;
 }
 
+.public-brand-lockup,
+.public-footer-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    min-width: 0;
+}
+
+.public-brand-mark {
+    width: 2.25rem;
+    height: 2.25rem;
+    flex: 0 0 auto;
+}
+
+.public-footer-brand {
+    color: #ffffff;
+}
+
+.public-footer-brand img {
+    width: 2.125rem;
+    height: 2.125rem;
+    flex: 0 0 auto;
+}
+
+.public-footer-brand:hover {
+    color: #ffffff;
+}
+
 p.uppercase,
 span.uppercase:not(.public-brand) {
     transform: scaleX(0.985);
@@ -419,6 +447,8 @@ body > section.bg-slate-900 {
 
 @media (max-width: 420px) {
     #public-site-header .public-brand { font-size: 0.98rem; }
+    #public-site-header .public-brand-mark { width: 1.9rem; height: 1.9rem; }
+    #public-site-header .public-brand-lockup { gap: 0.5rem; }
     #public-site-header .public-primary-cta { padding-inline: 0.8rem; }
 }
 
