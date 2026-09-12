@@ -44,6 +44,21 @@ async function inspect(page, name, url, viewport, selector) {
   results.appDesktop = await inspect(page, 'app-login-desktop', `${base}/app.html`, { width: 1440, height: 900 }, '#landing-title img');
   results.appMobile = await inspect(page, 'app-login-mobile', `${base}/app.html`, { width: 390, height: 844 }, '.app-auth-brand-mobile img');
   results.appDashboard = await inspect(page, 'app-dashboard', `${base}/app.html?videoDemo=1`, { width: 1440, height: 900 }, '#header-title img');
+  results.appHeader = await page.evaluate(() => ({
+    studioLogoPresent: Boolean(document.getElementById('header-logo')),
+    productMarkVisible: Boolean(document.querySelector('#header-title img'))
+  }));
+  if (results.appHeader.studioLogoPresent || !results.appHeader.productMarkVisible) {
+    throw new Error(`app-header: ${JSON.stringify(results.appHeader)}`);
+  }
+  results.octoberPrototype = await inspect(page, 'october-prototype', `${base}/app-prototipo-flusso-economico.html?videoDemo=1`, { width: 1440, height: 900 }, '#header-title img');
+  results.octoberPrototypeHeader = await page.evaluate(() => ({
+    studioLogoPresent: Boolean(document.getElementById('header-logo')),
+    productMarkVisible: Boolean(document.querySelector('#header-title img'))
+  }));
+  if (results.octoberPrototypeHeader.studioLogoPresent || !results.octoberPrototypeHeader.productMarkVisible) {
+    throw new Error(`october-prototype-header: ${JSON.stringify(results.octoberPrototypeHeader)}`);
+  }
   results.offline = await inspect(page, 'offline', `${base}/offline.html`, { width: 390, height: 844 }, '.mark');
   results.desktopTimer = await inspect(page, 'desktop-timer', `${base}/desktop-timer-tauri/frontend/index.html`, { width: 430, height: 740 }, '.brand-mark img');
 

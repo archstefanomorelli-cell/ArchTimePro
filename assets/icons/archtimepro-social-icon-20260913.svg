@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Simbolo social Arch Time Pro</title>
+  <desc id="desc">Il simbolo Arch Time Pro su un riquadro bianco.</desc>
+  <rect x="10" y="10" width="492" height="492" rx="112" fill="#ffffff" stroke="#dfe3ed" stroke-width="12"/>
+  <circle cx="256" cy="256" r="174" fill="#f8f8ff" stroke="#45439f" stroke-width="22"/>
+  <path d="M158 181h112" fill="none" stroke="#5956d6" stroke-linecap="round" stroke-width="32"/>
+  <path d="M158 256h196" fill="none" stroke="#d48a14" stroke-linecap="round" stroke-width="32"/>
+  <path d="M158 331h72" fill="none" stroke="#c94855" stroke-linecap="round" stroke-width="32"/>
+</svg>

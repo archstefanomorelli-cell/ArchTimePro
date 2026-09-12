@@ -7,6 +7,7 @@ const iconsDir = path.join(root, 'assets', 'icons');
 const tempDir = path.join(root, 'tmp', 'brand-assets');
 const markSvg = path.join(iconsDir, 'archtimepro-mark-20260912.svg');
 const appIconSvg = path.join(iconsDir, 'archtimepro-app-icon-20260912.svg');
+const appleTouchSvg = path.join(iconsDir, 'archtimepro-apple-touch-20260913.svg');
 const browserCandidates = [
   'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
   'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
@@ -65,16 +66,25 @@ async function main() {
   }
   await renderPng(page, markSvg, 32, path.join(iconsDir, 'favicon-32-archtime-bars-20260912.png'));
 
+  const appleSizes = [120, 152, 167, 180];
+  const appleGenerated = new Map();
+  for (const size of appleSizes) {
+    const target = path.join(tempDir, `archtimepro-apple-touch-${size}.png`);
+    await renderPng(page, appleTouchSvg, size, target);
+    appleGenerated.set(size, target);
+  }
+
   const rootCopies = new Map([
     ['apple-touch-icon.png', 180],
     ['apple-touch-icon-precomposed.png', 180],
     ['apple-touch-icon-bars-20260912.png', 180],
+    ['apple-touch-icon-fullbleed-20260913.png', 180],
     ['apple-touch-icon-120.png', 120],
     ['apple-touch-icon-152.png', 152],
     ['apple-touch-icon-167.png', 167],
     ['apple-touch-icon-180.png', 180]
   ]);
-  rootCopies.forEach((size, filename) => fs.copyFileSync(generated.get(size), path.join(root, filename)));
+  rootCopies.forEach((size, filename) => fs.copyFileSync(appleGenerated.get(size), path.join(root, filename)));
 
   fs.copyFileSync(generated.get(192), path.join(iconsDir, 'icon-192-archtime-bars-20260912.png'));
   fs.copyFileSync(generated.get(512), path.join(iconsDir, 'icon-512-archtime-bars-20260912.png'));

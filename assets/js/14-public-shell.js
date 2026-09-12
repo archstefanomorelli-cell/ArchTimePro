@@ -104,7 +104,7 @@
         favicon.href = '/assets/icons/favicon-32-archtime-bars-20260912.png';
 
         document.querySelectorAll('link[rel="apple-touch-icon"], link[rel="apple-touch-icon-precomposed"]').forEach(function (link) {
-            link.href = '/apple-touch-icon-bars-20260912.png';
+            link.href = '/apple-touch-icon-fullbleed-20260913.png';
         });
     }
 

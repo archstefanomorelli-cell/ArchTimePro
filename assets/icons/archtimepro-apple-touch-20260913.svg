@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Icona Home Screen Arch Time Pro</title>
+  <desc id="desc">Il simbolo Arch Time Pro su un fondo indaco a pieno formato.</desc>
+  <defs>
+    <linearGradient id="tile" x1="42" y1="28" x2="470" y2="492" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#27265d"/>
+      <stop offset="1" stop-color="#101528"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#tile)"/>
+  <circle cx="256" cy="256" r="169" fill="#ffffff" fill-opacity=".035" stroke="#f6f7fb" stroke-width="20"/>
+  <path d="M164 183h106" fill="none" stroke="#807df0" stroke-linecap="round" stroke-width="30"/>
+  <path d="M164 256h184" fill="none" stroke="#e5a53d" stroke-linecap="round" stroke-width="30"/>
+  <path d="M164 329h66" fill="none" stroke="#e46470" stroke-linecap="round" stroke-width="30"/>
+</svg>
