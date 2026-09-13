@@ -53,6 +53,10 @@
                             <span class="text-sm font-black uppercase">Arch Time Pro</span>
                         </a>
                         <p class="mt-2 text-xs text-slate-400">Controllo semplice di ore, costi e margini per studi tecnici.</p>
+                        <a class="public-instagram-link" href="https://www.instagram.com/archtimepro/" target="_blank" rel="noopener noreferrer" aria-label="Arch Time Pro su Instagram">
+                            <i data-lucide="instagram" aria-hidden="true"></i>
+                            <span>@archtimepro</span>
+                        </a>
                         <p class="mt-3 text-xs leading-relaxed text-slate-500">Stefano Morelli · Via Brecce Bianche 29, 60131 Ancona (AN), Italia</p>
                         <p class="mt-1 text-xs leading-relaxed text-slate-500">P. IVA IT02603120425 · C.F. MRLSFN81T03A271G</p>
                     </div>
