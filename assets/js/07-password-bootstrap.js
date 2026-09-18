@@ -55,10 +55,18 @@
             bindClick('btn-save-studio-name', saveStudioName);
             bindClick('btn-save-studio-currency', saveStudioCurrency);
             bindClick('btn-edit-studio-logo', () => document.getElementById('account-logo-input')?.click());
-            bindClick('btn-skip-onboarding', () => closeOwnerOnboarding(true));
-            bindClick('btn-save-onboarding-identity', saveOnboardingIdentity);
+            bindClick('btn-skip-onboarding', openOnboardingFeedback);
+            bindClick('btn-explore-without-onboarding', openOnboardingFeedback);
             bindClick('btn-prepare-first-project', prepareFirstProjectFromOnboarding);
             bindClick('btn-clear-calculator-handoff', clearMarginCalculatorHandoff);
+            bindClick('btn-return-onboarding', returnToOwnerOnboarding);
+            bindClick('btn-dismiss-onboarding-feedback', () => finishOnboardingWithoutProject('no_answer'));
+            bindClick('btn-onboarding-go-timer', () => closeOnboardingReady(true));
+            bindClick('btn-onboarding-open-dashboard', () => closeOnboardingReady(false));
+            bindClick('btn-close-first-value', () => document.getElementById('modal-first-value')?.classList.add('force-hide'));
+            document.querySelectorAll('[data-onboarding-reason]').forEach(button => {
+                button.addEventListener('click', () => submitOnboardingReason(button.dataset.onboardingReason));
+            });
             bindClick('btn-open-catalog-account', openCatalogModal);
             bindClick('btn-open-quote-settings', openQuoteSettingsModal);
             bindClick('btn-close-quote-settings', closeQuoteSettingsModal);
@@ -123,7 +131,9 @@
                 ['modal-studio-management', closeStudioManagementModal],
                 ['modal-quote-settings', closeQuoteSettingsModal],
                 ['modal-team-invite', closeTeamInviteModal],
-                ['modal-owner-onboarding', () => closeOwnerOnboarding(true)],
+                ['modal-owner-onboarding', openOnboardingFeedback],
+                ['modal-onboarding-ready', () => closeOnboardingReady(false)],
+                ['modal-first-value', () => document.getElementById('modal-first-value')?.classList.add('force-hide')],
                 ['modal-task-builder', closeTaskBuilder],
                 ['modal-catalog', closeCatalogModal],
                 ['modal-templates', closeTemplatesModal],

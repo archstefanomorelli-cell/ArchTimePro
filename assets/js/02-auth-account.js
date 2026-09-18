@@ -65,6 +65,21 @@ function switchAuthTab(mode) {
             
             document.getElementById('signup-fields').classList.toggle('force-hide', !isSignupMode); 
             document.getElementById('signup-legal').classList.toggle('force-hide', !isSignupMode);
+
+            if (isSignupMode) {
+                const inviteCode = new URLSearchParams(window.location.search).get('invite');
+                const role = inviteCode ? 'staff' : 'owner';
+                document.querySelectorAll('input[name="main-role"]').forEach(input => {
+                    input.checked = input.value === role;
+                });
+                const roleTitle = document.getElementById('signup-role-title');
+                const roleCopy = document.getElementById('signup-role-copy');
+                if (roleTitle) roleTitle.textContent = inviteCode ? 'Unisciti allo studio' : 'Crea lo spazio del tuo studio';
+                if (roleCopy) roleCopy.textContent = inviteCode
+                    ? 'Il codice ricevuto dal responsabile è già pronto. Completa i tuoi dati per entrare nel team.'
+                    : 'Parti come responsabile. I collaboratori potranno unirsi in seguito tramite invito.';
+                toggleSignupOptions();
+            }
             
             document.getElementById('btn-auth').innerText = isSignupMode ? "Crea account" : "Accedi ora"; 
 
@@ -76,7 +91,7 @@ function switchAuthTab(mode) {
                         ? '<strong class="font-black">Il preventivo è pronto.</strong> Crea il tuo spazio come Manager: lo ritroverai già compilato al primo accesso.'
                         : '<strong class="font-black">Il preventivo è pronto.</strong> Accedi e lo ritroverai già compilato, pronto per diventare una commessa.')
                     : (isSignupMode
-                        ? '<strong class="font-black">Nuovo spazio di lavoro.</strong> Scegli Manager per creare uno studio, oppure Collaboratore se hai ricevuto un codice invito.'
+                        ? '<strong class="font-black">15 giorni gratuiti.</strong> Crea il tuo spazio senza inserire una carta di pagamento.'
                         : '<strong class="font-black">Bentornato.</strong> Accedi per registrare ore, controllare lavori e consultare i dati del tuo spazio.');
             }
             
@@ -105,10 +120,12 @@ function switchAuthTab(mode) {
             document.querySelectorAll('input[name="main-role"]').forEach(input => { if(input.value === 'staff') input.checked = true; }); 
             document.getElementById('invite-code-input').value = urlParams.get('invite'); 
             toggleSignupOptions(); 
-        } else if (urlParams.get('source') === 'margin-calculator' && getMarginCalculatorHandoff()) {
+        } else if (urlParams.get('mode') === 'signup' || urlParams.get('source')) {
             switchAuthTab('signup');
-            const contextCopy = document.getElementById('auth-context-copy');
-            if (contextCopy) contextCopy.innerHTML = '<strong class="font-black">Il calcolo è pronto.</strong> Crea lo spazio di lavoro: ritroverai compenso, ore, costo orario e spese nel primo avvio.';
+            if (urlParams.get('source') === 'margin-calculator' && getMarginCalculatorHandoff()) {
+                const contextCopy = document.getElementById('auth-context-copy');
+                if (contextCopy) contextCopy.innerHTML = '<strong class="font-black">Il calcolo è pronto.</strong> Crea lo spazio di lavoro: ritroverai compenso, ore, costo orario e spese nel primo avvio.';
+            }
         }
 
         async function handleAuthAction() {
@@ -779,6 +796,15 @@ function switchAuthTab(mode) {
         function shouldShowOwnerOnboarding() {
             if (!userProfile || !studioData) return false;
             if (!(userProfile.is_owner || userProfile.role === 'admin')) return false;
+            const demoName = THEMES[currentBusinessType]?.demoProject;
+            const demoClient = THEMES[currentBusinessType]?.demoClient;
+            const hasMeaningfulProject = projects.some(project => {
+                if (project.is_demo) return false;
+                return Number(project.budget || 0) > 0
+                    || (project.name && project.name !== demoName)
+                    || (project.client && project.client !== demoClient);
+            });
+            if (hasMeaningfulProject) return false;
             const key = ownerOnboardingKey();
             return key && localStorage.getItem(key) !== 'done';
         }
@@ -792,11 +818,8 @@ function switchAuthTab(mode) {
             const modal = document.getElementById('modal-owner-onboarding');
             if (!modal) return;
 
-            document.getElementById('onboarding-studio-name').value = studioData?.name || '';
-            document.getElementById('onboarding-business-label').innerText = currentBusinessType === 'impresa' ? 'Studio' : 'Studio Tecnico';
             const calculatorHandoff = getMarginCalculatorHandoff();
             document.getElementById('onboarding-project-name').value = calculatorHandoff ? 'Commessa dal calcolatore' : '';
-            document.getElementById('onboarding-project-client').value = '';
             document.getElementById('onboarding-project-budget').value = calculatorHandoff?.values?.fee || '';
             document.getElementById('onboarding-hourly-cost').value = calculatorHandoff?.values?.hourlyCost || userProfile?.hourly_cost || '';
 
@@ -815,6 +838,11 @@ function switchAuthTab(mode) {
             window.archTimeAnalytics?.track('onboarding_view', {
                 has_calculator_handoff: Boolean(calculatorHandoff)
             });
+            const viewedKey = `archtime-onboarding-viewed:${userProfile?.studio_id || 'unknown'}`;
+            if (!sessionStorage.getItem(viewedKey)) {
+                sessionStorage.setItem(viewedKey, '1');
+                recordOnboardingEvent('onboarding_viewed');
+            }
             lucide.createIcons();
         }
 
@@ -826,55 +854,125 @@ function switchAuthTab(mode) {
             }
         }
 
-        async function saveOnboardingIdentity() {
-            const name = document.getElementById('onboarding-studio-name').value.trim();
-            const businessType = studioData?.business_type || currentBusinessType || 'studio';
-
-            if (!name) return await appAlert("Attenzione", "Inserisci il nome dello spazio di lavoro.", "danger");
-
-            await supabaseClient.from('studios').update({ name }).eq('id', userProfile.studio_id);
-            if (studioData) {
-                studioData.name = name;
-            }
-
-            document.getElementById('account-studio-name').value = name;
-            applyTheme(businessType);
-            renderNewProjectUI();
-            window.archTimeAnalytics?.track('onboarding_identity_saved');
-            await appAlert("Fatto", "Identità salvata.", "success");
-        }
-
         async function saveOnboardingHourlyCost() {
             const costInput = document.getElementById('onboarding-hourly-cost');
             const cost = parseFloat(costInput?.value);
-            if (isNaN(cost) || cost < 0) return;
+            if (isNaN(cost) || cost <= 0) throw new Error('Inserisci un costo orario maggiore di zero.');
             const { error } = await supabaseClient.rpc('set_my_hourly_cost', { new_hourly_cost: cost });
             if (error) throw error;
             if (userProfile) userProfile.hourly_cost = cost;
             const profile = profiles.find(item => item.id === userProfile.id);
             if (profile) profile.hourly_cost = cost;
+            return cost;
+        }
+
+        async function recordOnboardingEvent(eventName, reason = null) {
+            if (!userProfile?.studio_id || !userProfile?.id) return false;
+            const { error } = await supabaseClient.from('onboarding_events').insert([{
+                studio_id: userProfile.studio_id,
+                profile_id: userProfile.id,
+                event_name: eventName,
+                reason
+            }]);
+            if (error) {
+                console.warn('Evento onboarding non registrato.', error.message);
+                return false;
+            }
+            return true;
+        }
+
+        function openOnboardingFeedback() {
+            document.getElementById('modal-owner-onboarding')?.classList.add('force-hide');
+            document.getElementById('modal-onboarding-feedback')?.classList.remove('force-hide');
+            window.archTimeAnalytics?.track('onboarding_exit_prompt');
+            lucide.createIcons();
+        }
+
+        function returnToOwnerOnboarding() {
+            document.getElementById('modal-onboarding-feedback')?.classList.add('force-hide');
+            document.getElementById('modal-owner-onboarding')?.classList.remove('force-hide');
+        }
+
+        async function finishOnboardingWithoutProject(reason = 'no_answer') {
+            document.getElementById('modal-onboarding-feedback')?.classList.add('force-hide');
+            markOwnerOnboardingDone();
+            await recordOnboardingEvent('onboarding_dismissed', reason);
+            window.archTimeAnalytics?.track('onboarding_dismissed', { reason });
+        }
+
+        async function submitOnboardingReason(reason) {
+            await finishOnboardingWithoutProject(reason);
+            await appAlert('Grazie', 'La risposta è stata registrata. Puoi esplorare liberamente l’app.', 'success');
+        }
+
+        function closeOnboardingReady(openTimer = false) {
+            document.getElementById('modal-onboarding-ready')?.classList.add('force-hide');
+            switchAppTab(openTimer ? 'operate' : 'analyze');
+            if (!openTimer) return;
+            const timerPanel = document.getElementById('timer-panel');
+            timerPanel?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => document.getElementById('btn-toggle-timer')?.focus(), 450);
         }
 
         async function prepareFirstProjectFromOnboarding() {
-            await saveOnboardingHourlyCost();
             const name = document.getElementById('onboarding-project-name').value.trim();
-            const client = document.getElementById('onboarding-project-client').value.trim();
-            const budget = document.getElementById('onboarding-project-budget').value;
+            const budget = parseFloat(document.getElementById('onboarding-project-budget').value);
+            const hourlyCost = parseFloat(document.getElementById('onboarding-hourly-cost').value);
             const defaults = THEMES[currentBusinessType].defaultCatalog.slice(0, 3);
+            const button = document.getElementById('btn-prepare-first-project');
+            const calculatorHandoff = getMarginCalculatorHandoff();
 
-            openCreateProjectModal();
-            document.getElementById('edit-modal-name').value = name || THEMES[currentBusinessType].demoProject;
-            document.getElementById('edit-modal-client').value = client || THEMES[currentBusinessType].demoClient;
-            document.getElementById('edit-modal-budget').value = budget || '';
-            newProjectTasks = defaults.length > 0 ? defaults : ['Generico'];
-            renderNewProjectUI();
-            switchAppTab('operate');
-            window.archTimeAnalytics?.track('onboarding_project_prepared', {
-                has_budget: Boolean(Number(budget) > 0),
-                from_calculator: Boolean(getMarginCalculatorHandoff())
-            });
-            closeOwnerOnboarding(true);
-            document.getElementById('edit-modal-name')?.focus();
+            if (!name) return await appAlert('Manca il nome', 'Inserisci il nome della prima commessa.', 'danger');
+            if (!Number.isFinite(budget) || budget <= 0) return await appAlert('Compenso non valido', 'Inserisci il compenso previsto per la commessa.', 'danger');
+            if (!Number.isFinite(hourlyCost) || hourlyCost <= 0) return await appAlert('Costo orario non valido', 'Inserisci un costo orario interno maggiore di zero.', 'danger');
+
+            button.disabled = true;
+            button.classList.add('opacity-60', 'cursor-wait');
+            try {
+                await saveOnboardingHourlyCost();
+                const projectId = crypto.randomUUID();
+                const { error } = await supabaseClient.from('projects').insert([{
+                    id: projectId,
+                    studio_id: userProfile.studio_id,
+                    name,
+                    client: '',
+                    budget,
+                    tasks: defaults.length > 0 ? defaults : ['Generico'],
+                    is_demo: false,
+                    project_setup_type: 'studio'
+                }]).select().single();
+                if (error) throw error;
+
+                if (typeof clearMarginCalculatorHandoff === 'function') clearMarginCalculatorHandoff();
+                markOwnerOnboardingDone();
+                closeOwnerOnboarding(false);
+                await recordOnboardingEvent('onboarding_project_created');
+                window.archTimeAnalytics?.track('onboarding_project_created', {
+                    has_budget: true,
+                    task_count: defaults.length,
+                    from_calculator: Boolean(calculatorHandoff)
+                });
+                await trackAcquisitionMilestone('first_project_created', { has_budget: true, setup_type: 'studio' });
+                await fetchProjects();
+
+                const projectIndex = projects.findIndex(project => project.id === projectId);
+                const projectSelect = document.getElementById('project-select');
+                if (projectSelect && projectIndex >= 0) {
+                    projectSelect.value = String(projectIndex);
+                    updateTaskDropdown();
+                }
+
+                document.getElementById('onboarding-ready-project-name').textContent = name;
+                document.getElementById('onboarding-ready-budget').textContent = formatMoney(budget, 0);
+                document.getElementById('onboarding-ready-hourly-cost').textContent = `${formatHandoffNumber(hourlyCost, 2)} €/h`;
+                document.getElementById('modal-onboarding-ready')?.classList.remove('force-hide');
+                lucide.createIcons();
+            } catch (error) {
+                await appAlert('Creazione non riuscita', error.message || 'Non è stato possibile creare la prima commessa.', 'danger');
+            } finally {
+                button.disabled = false;
+                button.classList.remove('opacity-60', 'cursor-wait');
+            }
         }
 
         async function checkUser() {

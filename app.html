@@ -69,7 +69,7 @@
                 </div>
                 <div class="flex p-1 bg-slate-100 rounded-xl mb-8 border border-slate-200">
                     <button id="tab-login" class="flex-1 py-2.5 text-sm font-bold rounded-lg bg-white shadow-sm text-slate-900 transition-all border border-slate-200/50">Accedi</button>
-                    <button id="tab-signup" class="flex-1 py-2.5 text-sm font-bold text-slate-500 hover:text-slate-700 transition-all">Nuovo utente</button>
+                    <button id="tab-signup" class="flex-1 py-2.5 text-sm font-bold text-slate-500 hover:text-slate-700 transition-all">Crea account</button>
                 </div>
                 <div id="auth-context-copy" class="mb-5 bg-primary-50 border border-primary-100 rounded-xl p-3.5 text-xs text-primary-900 leading-relaxed">
                     <strong class="font-black">Prova gratuita.</strong> Entra nel tuo spazio di lavoro oppure crea un nuovo account.
@@ -85,17 +85,15 @@
                 </div>
                 <div class="space-y-4">
                     <div id="signup-fields" class="force-hide space-y-4">
-                        <div class="p-4 sm:p-5 bg-slate-50 rounded-xl border border-slate-200">
-                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-3">Tipo di account</label>
-                            <div class="space-y-3">
-                                <label class="flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-primary-300 transition-all shadow-sm">
-                                    <input type="radio" name="main-role" value="owner" class="w-4 h-4 text-primary-600 focus:ring-primary-500">
-                                    <span class="text-sm font-bold text-slate-700">Manager (crea spazio di lavoro)</span>
-                                </label>
-                                <label class="flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-primary-300 transition-all shadow-sm">
-                                    <input type="radio" name="main-role" value="staff" class="w-4 h-4 text-primary-600 focus:ring-primary-500">
-                                    <span class="text-sm font-bold text-slate-700">Collaboratore (unisciti)</span>
-                                </label>
+                        <div id="signup-account-type" class="p-4 sm:p-5 bg-slate-50 rounded-xl border border-slate-200">
+                            <input type="radio" name="main-role" value="owner" class="force-hide" checked>
+                            <input type="radio" name="main-role" value="staff" class="force-hide">
+                            <div class="flex items-start gap-3">
+                                <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-primary-100 bg-primary-50 text-primary-600"><i data-lucide="building-2" class="h-4 w-4"></i></span>
+                                <div>
+                                    <p id="signup-role-title" class="text-sm font-black text-slate-800">Crea lo spazio del tuo studio</p>
+                                    <p id="signup-role-copy" class="mt-1 text-xs leading-relaxed text-slate-500">Parti come responsabile. I collaboratori potranno unirsi in seguito tramite invito.</p>
+                                </div>
                             </div>
                             <div id="trial-info-container" class="force-hide mt-4 p-3.5 bg-primary-50 border border-primary-100 rounded-xl flex gap-3 items-start"><i data-lucide="gift" class="w-5 h-5 text-primary-600 shrink-0"></i><p class="text-xs text-primary-900 leading-relaxed"><strong class="font-black">15 giorni di prova gratuita.</strong><br>Poi Tariffa Fondatori a 19,90 €/mese per studio.</p></div>
                         </div>
@@ -241,7 +239,7 @@
             
             <div class="lg:col-span-4 flex flex-col gap-6 lg:gap-8">
                 
-                <section class="app-panel bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mobile-tab active" data-tab="operate">
+                <section id="timer-panel" class="app-panel bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mobile-tab active" data-tab="operate">
                     <div>
                         <div class="flex justify-between items-center mb-6">
                             <h2 class="text-lg font-black text-slate-800 tracking-tight flex items-center gap-2"><i data-lucide="clock" class="text-primary-500 w-5 h-5"></i> Timer</h2>
@@ -702,13 +700,14 @@
         </div>
     </div>
 
-    <div id="modal-owner-onboarding" class="force-hide fixed inset-0 z-[300] modal flex items-center justify-center p-4">
+    <div id="modal-owner-onboarding" class="force-hide fixed inset-0 z-[300] modal flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="owner-onboarding-title">
         <div class="w-full max-w-lg p-5 lg:p-8 shadow-xl border border-slate-200 rounded-2xl relative bg-white max-h-[92vh] overflow-y-auto">
-            <button id="btn-skip-onboarding" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+            <button id="btn-skip-onboarding" aria-label="Chiudi configurazione" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
             <div class="mb-6">
                 <div class="w-12 h-12 bg-primary-50 text-primary-600 rounded-2xl flex items-center justify-center mb-4 border border-primary-100"><i data-lucide="sparkles" class="w-6 h-6"></i></div>
-                <h2 class="text-2xl font-black text-slate-900 tracking-tight">Configura il tuo spazio</h2>
-                <p class="text-sm text-slate-500 leading-relaxed mt-2">Tre passaggi veloci per partire con dati ordinati, costi corretti e un primo lavoro pronto da salvare.</p>
+                <p class="mb-2 text-[10px] font-black uppercase tracking-wider text-primary-600">Primo risultato in circa un minuto</p>
+                <h2 id="owner-onboarding-title" class="text-2xl font-black text-slate-900 tracking-tight">Crea la prima commessa</h2>
+                <p class="text-sm text-slate-500 leading-relaxed mt-2">Inserisci solo i tre dati necessari. Attività, cliente e dettagli potranno essere completati in seguito.</p>
             </div>
 
             <div class="space-y-5">
@@ -729,45 +728,71 @@
                     <p class="mt-3 text-[10px] font-semibold leading-relaxed text-primary-900">Compenso e costo orario sono precompilati. Ore e spese restano come riferimento: le registrerai sulle persone e sulle attività corrette.</p>
                 </div>
 
-                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4">
-                    <div class="flex items-center gap-2 mb-3">
-                        <span class="w-6 h-6 rounded-lg bg-primary-600 text-white text-[11px] font-black flex items-center justify-center">1</span>
-                        <h3 class="text-sm font-black text-slate-800 tracking-tight">Identità</h3>
-                    </div>
-                    <div class="space-y-3">
-                        <input type="text" id="onboarding-studio-name" placeholder="Nome studio" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all">
-                        <div class="bg-white border border-slate-200 rounded-xl p-3">
-                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Settore scelto</p>
-                            <p id="onboarding-business-label" class="text-sm font-black text-slate-800">Studio Tecnico</p>
+                <div class="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5">
+                    <label for="onboarding-project-name" class="mb-1.5 block text-[10px] font-black uppercase tracking-wider text-slate-500">Nome commessa</label>
+                    <input type="text" id="onboarding-project-name" placeholder="Es. Ristrutturazione appartamento" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all">
+                    <div class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                        <div>
+                            <label for="onboarding-project-budget" class="mb-1.5 block text-[10px] font-black uppercase tracking-wider text-slate-500">Compenso previsto</label>
+                            <div class="relative"><input type="number" min="0.01" step="0.01" id="onboarding-project-budget" placeholder="15000" class="w-full border border-slate-200 rounded-xl p-3 pr-10 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all font-bold"><span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">€</span></div>
                         </div>
-                        <button id="btn-save-onboarding-identity" class="w-full bg-white border border-slate-200 text-slate-700 py-3 rounded-xl font-bold hover:bg-slate-50 transition-all shadow-sm text-sm flex items-center justify-center gap-2"><i data-lucide="save" class="w-4 h-4"></i> Salva identità</button>
+                        <div>
+                            <label for="onboarding-hourly-cost" class="mb-1.5 block text-[10px] font-black uppercase tracking-wider text-slate-500">Costo orario interno</label>
+                            <div class="relative"><input type="number" min="0.01" step="0.01" id="onboarding-hourly-cost" placeholder="35" class="w-full border border-slate-200 rounded-xl p-3 pr-12 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all font-bold"><span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">€/h</span></div>
+                        </div>
                     </div>
-                </div>
-
-                <div class="bg-white border border-slate-200 rounded-2xl p-4">
-                    <div class="flex items-center gap-2 mb-3">
-                        <span class="w-6 h-6 rounded-lg bg-slate-900 text-white text-[11px] font-black flex items-center justify-center">2</span>
-                        <h3 class="text-sm font-black text-slate-800 tracking-tight">Costo orario</h3>
-                    </div>
-                    <input type="number" step="0.01" id="onboarding-hourly-cost" placeholder="Costo orario interno (€)" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all font-bold">
-                    <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-2 leading-relaxed">Lo puoi modificare quando vuoi dalla tab Team, anche per ogni collaboratore.</p>
-                </div>
-
-                <div class="bg-white border border-slate-200 rounded-2xl p-4">
-                    <div class="flex items-center gap-2 mb-3">
-                        <span class="w-6 h-6 rounded-lg bg-slate-900 text-white text-[11px] font-black flex items-center justify-center">3</span>
-                        <h3 class="text-sm font-black text-slate-800 tracking-tight">Primo lavoro</h3>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <input type="text" id="onboarding-project-name" placeholder="Nome lavoro" class="border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all">
-                        <input type="text" id="onboarding-project-client" placeholder="Cliente" class="border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all">
-                    </div>
-                    <div class="mt-3">
-                        <input type="number" id="onboarding-project-budget" placeholder="Budget indicativo" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all font-bold">
-                    </div>
-                    <button id="btn-prepare-first-project" class="w-full bg-slate-900 text-white py-3.5 mt-4 rounded-xl font-bold hover:bg-slate-800 transition-all active:scale-[0.98] shadow-sm flex items-center justify-center gap-2"><i data-lucide="folder-plus" class="w-4 h-4"></i> Prepara il primo lavoro</button>
+                    <p class="mt-3 text-xs leading-relaxed text-slate-500">Useremo tre attività iniziali della libreria dello studio. Potrai modificarle subito dopo.</p>
+                    <button id="btn-prepare-first-project" class="w-full bg-slate-900 text-white py-3.5 mt-4 rounded-xl font-bold hover:bg-slate-800 transition-all active:scale-[0.98] shadow-sm flex items-center justify-center gap-2"><i data-lucide="folder-plus" class="w-4 h-4"></i> Crea la commessa</button>
+                    <button id="btn-explore-without-onboarding" type="button" class="mt-2 w-full py-2.5 text-xs font-bold text-slate-500 transition-colors hover:text-slate-800">Per ora esploro l'app</button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div id="modal-onboarding-feedback" class="force-hide fixed inset-0 z-[320] modal flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="onboarding-feedback-title">
+        <div class="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-5 shadow-xl sm:p-7">
+            <div class="mb-5 flex h-11 w-11 items-center justify-center rounded-xl border border-amber-100 bg-amber-50 text-amber-600"><i data-lucide="message-circle-question" class="h-5 w-5"></i></div>
+            <h2 id="onboarding-feedback-title" class="text-xl font-black tracking-tight text-slate-900">Cosa ti sta fermando?</h2>
+            <p class="mt-2 text-sm leading-relaxed text-slate-500">Una risposta ci aiuta a rendere il primo utilizzo più semplice.</p>
+            <div class="mt-5 grid gap-2">
+                <button type="button" data-onboarding-reason="missing_data" class="rounded-xl border border-slate-200 px-4 py-3 text-left text-sm font-bold text-slate-700 transition-colors hover:border-primary-300 hover:bg-primary-50">Non ho i dati sottomano</button>
+                <button type="button" data-onboarding-reason="exploring" class="rounded-xl border border-slate-200 px-4 py-3 text-left text-sm font-bold text-slate-700 transition-colors hover:border-primary-300 hover:bg-primary-50">Voglio prima esplorare</button>
+                <button type="button" data-onboarding-reason="unclear" class="rounded-xl border border-slate-200 px-4 py-3 text-left text-sm font-bold text-slate-700 transition-colors hover:border-primary-300 hover:bg-primary-50">Non so cosa inserire</button>
+                <button type="button" data-onboarding-reason="not_relevant" class="rounded-xl border border-slate-200 px-4 py-3 text-left text-sm font-bold text-slate-700 transition-colors hover:border-primary-300 hover:bg-primary-50">Non è quello che cercavo</button>
+            </div>
+            <div class="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-between">
+                <button id="btn-dismiss-onboarding-feedback" type="button" class="px-3 py-2.5 text-xs font-bold text-slate-400 hover:text-slate-700">Chiudi senza rispondere</button>
+                <button id="btn-return-onboarding" type="button" class="rounded-xl bg-slate-900 px-4 py-2.5 text-xs font-bold text-white hover:bg-slate-800">Continua la configurazione</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-onboarding-ready" class="force-hide fixed inset-0 z-[320] modal flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="onboarding-ready-project-name">
+        <div class="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-xl sm:p-8">
+            <div class="mb-5 flex h-11 w-11 items-center justify-center rounded-xl border border-emerald-100 bg-emerald-50 text-emerald-600"><i data-lucide="check" class="h-5 w-5"></i></div>
+            <p class="text-[10px] font-black uppercase tracking-wider text-emerald-600">Commessa pronta</p>
+            <h2 id="onboarding-ready-project-name" class="mt-1 text-xl font-black tracking-tight text-slate-900">Prima commessa</h2>
+            <div class="mt-5 grid grid-cols-2 gap-3">
+                <div class="rounded-xl border border-slate-200 bg-slate-50 p-3"><small class="text-[9px] font-black uppercase tracking-wider text-slate-400">Compenso</small><strong id="onboarding-ready-budget" class="mt-1 block text-base text-slate-900">0 €</strong></div>
+                <div class="rounded-xl border border-slate-200 bg-slate-50 p-3"><small class="text-[9px] font-black uppercase tracking-wider text-slate-400">Costo orario</small><strong id="onboarding-ready-hourly-cost" class="mt-1 block text-base text-slate-900">0 €/h</strong></div>
+            </div>
+            <p class="mt-4 text-sm leading-relaxed text-slate-500">Il timer è già impostato sulla commessa. Avvialo durante la prossima attività e vedrai subito il costo incidere sul margine.</p>
+            <button id="btn-onboarding-go-timer" type="button" class="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-3.5 text-sm font-bold text-white hover:bg-slate-800"><i data-lucide="timer" class="h-4 w-4"></i> Vai al timer</button>
+            <button id="btn-onboarding-open-dashboard" type="button" class="mt-2 w-full py-2.5 text-xs font-bold text-slate-500 hover:text-slate-800">Esplora la dashboard</button>
+        </div>
+    </div>
+
+    <div id="modal-first-value" class="force-hide fixed inset-0 z-[320] modal flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="first-value-title">
+        <div class="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-xl sm:p-8">
+            <div class="mb-5 flex h-11 w-11 items-center justify-center rounded-xl border border-primary-100 bg-primary-50 text-primary-600"><i data-lucide="trending-up" class="h-5 w-5"></i></div>
+            <p class="text-[10px] font-black uppercase tracking-wider text-primary-600">Il primo dato è entrato</p>
+            <h2 id="first-value-title" class="mt-1 text-xl font-black tracking-tight text-slate-900">Ora il margine reagisce al lavoro reale.</h2>
+            <div class="mt-5 grid grid-cols-3 gap-2">
+                <div class="rounded-xl border border-slate-200 bg-slate-50 p-3"><small class="text-[8px] font-black uppercase tracking-wider text-slate-400">Budget</small><strong id="first-value-budget" class="mt-1 block text-sm text-slate-900">0 €</strong></div>
+                <div class="rounded-xl border border-slate-200 bg-slate-50 p-3"><small class="text-[8px] font-black uppercase tracking-wider text-slate-400">Costi</small><strong id="first-value-cost" class="mt-1 block text-sm text-slate-900">0 €</strong></div>
+                <div class="rounded-xl border border-emerald-100 bg-emerald-50 p-3"><small class="text-[8px] font-black uppercase tracking-wider text-emerald-600">Margine</small><strong id="first-value-margin" class="mt-1 block text-sm text-emerald-700">0 €</strong></div>
+            </div>
+            <button id="btn-close-first-value" type="button" class="mt-5 w-full rounded-xl bg-slate-900 px-4 py-3.5 text-sm font-bold text-white hover:bg-slate-800">Continua</button>
         </div>
     </div>
 
@@ -1159,12 +1184,12 @@
     <script src="assets/js/00-runtime-config.js?v=stripe-founder-2026-06-29"></script>
     <script src="assets/js/normative-engine.js?v=2026-08-01-01"></script>
     <script src="assets/js/01-core.js?v=brand-2026-09-12-01"></script>
-    <script src="assets/js/02-auth-account.js?v=brand-header-2026-09-13-01"></script>
+    <script src="assets/js/02-auth-account.js?v=activation-flow-2026-09-18-01"></script>
     <script src="assets/js/03-team.js?v=studio-management-2026-08-12-01"></script>
     <script src="assets/js/04-projects.js?v=quote-handoff-2026-09-01-01"></script>
-    <script src="assets/js/05-time-entries.js?v=acquisition-funnel-2026-08-28-01"></script>
+    <script src="assets/js/05-time-entries.js?v=activation-flow-2026-09-18-01"></script>
     <script src="assets/js/06-reports.js?v=quote-format-modal-2026-08-12-01"></script>
-    <script src="assets/js/07-password-bootstrap.js?v=modal-dismiss-2026-09-01-01"></script>
+    <script src="assets/js/07-password-bootstrap.js?v=activation-flow-2026-09-18-01"></script>
     <script src="assets/js/09-video-demo.js?v=quote-fiscal-2026-08-03-01"></script>
 </body>
 </html>

@@ -491,7 +491,50 @@
             return true;
         }
 
+        function firstValueStorageKey() {
+            return userProfile?.studio_id ? `archtime-first-value:${userProfile.studio_id}` : '';
+        }
+
+        function hasRealTimeEntries() {
+            return entries.some(entry => {
+                const project = projects.find(item => item.id === entry.project_id);
+                return project && !project.is_demo && Number(entry.duration || 0) > 0;
+            });
+        }
+
+        async function showFirstValueMoment(projectId) {
+            const key = firstValueStorageKey();
+            if (!key || localStorage.getItem(key) === 'done') return;
+
+            const project = projects.find(item => item.id === projectId);
+            const modal = document.getElementById('modal-first-value');
+            if (!project || !modal) return;
+
+            const summary = getProjectCostSummary(project);
+            const marginElement = document.getElementById('first-value-margin');
+            const marginCard = marginElement?.parentElement;
+
+            document.getElementById('first-value-budget').textContent = formatMoney(summary.budget, 0);
+            document.getElementById('first-value-cost').textContent = formatMoney(summary.totalCost, 2);
+            if (marginElement) {
+                marginElement.textContent = formatMoney(summary.margin, 2);
+                marginElement.classList.toggle('text-red-700', summary.margin < 0);
+                marginElement.classList.toggle('text-emerald-700', summary.margin >= 0);
+            }
+            marginCard?.classList.toggle('border-red-100', summary.margin < 0);
+            marginCard?.classList.toggle('bg-red-50', summary.margin < 0);
+            marginCard?.classList.toggle('border-emerald-100', summary.margin >= 0);
+            marginCard?.classList.toggle('bg-emerald-50', summary.margin >= 0);
+
+            localStorage.setItem(key, 'done');
+            modal.classList.remove('force-hide');
+            await recordOnboardingEvent('first_value_seen');
+            window.archTimeAnalytics?.track('first_value_seen', { source: 'time_entry' });
+            lucide.createIcons();
+        }
+
         async function saveEntry(proj, task, hours, customDate = null, notes = "", source = "manual") {
+            const shouldShowFirstValue = !proj.is_demo && !hasRealTimeEntries();
             try {
                 await createEntryViaRpc(proj, task, hours, customDate, notes);
                 window.archTimeAnalytics?.track('time_entry_created', { source, is_demo_project: Boolean(proj.is_demo) });
@@ -499,6 +542,7 @@
                     await trackAcquisitionMilestone('first_time_entry', { source });
                 }
                 await fetchEntries();
+                if (shouldShowFirstValue) await showFirstValueMoment(proj.id);
             } catch (error) {
                 await appAlert('Registrazione non riuscita', error.message || 'Non è stato possibile salvare l’attività.', 'danger');
             }
