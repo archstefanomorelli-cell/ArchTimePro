@@ -191,7 +191,6 @@ app.setAppUserModelId('it.archtimepro.timer');
 Menu.setApplicationMenu(null);
 
 app.whenReady().then(() => {
-  setLaunchAtLogin(true);
   createTray();
   mainWindow = createWindow();
 
