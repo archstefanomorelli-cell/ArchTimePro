@@ -814,7 +814,7 @@ function switchAuthTab(mode) {
             if (key) localStorage.setItem(key, 'done');
         }
 
-        function openOwnerOnboarding() {
+        async function openOwnerOnboarding() {
             const modal = document.getElementById('modal-owner-onboarding');
             if (!modal) return;
 
@@ -840,8 +840,8 @@ function switchAuthTab(mode) {
             });
             const viewedKey = `archtime-onboarding-viewed:${userProfile?.studio_id || 'unknown'}`;
             if (!sessionStorage.getItem(viewedKey)) {
-                sessionStorage.setItem(viewedKey, '1');
-                recordOnboardingEvent('onboarding_viewed');
+                const recorded = await recordOnboardingEvent('onboarding_viewed');
+                if (recorded) sessionStorage.setItem(viewedKey, '1');
             }
             lucide.createIcons();
         }
@@ -868,14 +868,16 @@ function switchAuthTab(mode) {
 
         async function recordOnboardingEvent(eventName, reason = null) {
             if (!userProfile?.studio_id || !userProfile?.id) return false;
-            const { error } = await supabaseClient.from('onboarding_events').insert([{
-                studio_id: userProfile.studio_id,
-                profile_id: userProfile.id,
-                event_name: eventName,
-                reason
-            }]);
+            const { error } = await supabaseClient.rpc('record_my_onboarding_event', {
+                event_name_input: eventName,
+                reason_input: reason
+            });
             if (error) {
-                console.warn('Evento onboarding non registrato.', error.message);
+                console.error('Evento onboarding non registrato.', {
+                    eventName,
+                    message: error.message,
+                    code: error.code
+                });
                 return false;
             }
             return true;
