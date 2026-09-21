@@ -17,6 +17,7 @@
     let cashAnalyticsFilter = 'all';
     let cashAnalyticsExpanded = false;
     let billingAlertsExpanded = false;
+    let quickProjectId = '';
     const excelTaskNoteRows = new Map();
     const paymentPresets = {
         standard: [{ label: 'Acconto', percent: 30, status: 'pending' }, { label: 'Consegna intermedia', percent: 30, status: 'pending' }, { label: 'Saldo', percent: 40, status: 'pending' }],
@@ -216,6 +217,120 @@
         badge.className = 'flow-demo-chip';
         badge.textContent = 'Prototipo locale';
         headerInner.insertBefore(badge, headerInner.lastElementChild);
+    }
+
+    function quickProjectTasks() {
+        const tasks = [...new Set((activityCatalog || []).map(task => String(task || '').trim()).filter(Boolean))];
+        return tasks.length ? tasks : ['Attività generale'];
+    }
+
+    function renderQuickProjectTaskOptions() {
+        ['prototype-quick-project-task', 'prototype-onboarding-project-task'].forEach(id => {
+            const select = document.getElementById(id);
+            if (select) select.innerHTML = quickProjectTasks().map((task, index) => optionHtml(task, task, index === 0)).join('');
+        });
+    }
+
+    function resetQuickProjectForm() {
+        const form = document.getElementById('prototype-quick-project-form');
+        form?.reset();
+        renderQuickProjectTaskOptions();
+        const optional = form?.querySelector('.prototype-quick-optional');
+        if (optional) optional.open = false;
+    }
+
+    function openQuickProjectModal() {
+        closeProjectTypeModal();
+        resetQuickProjectForm();
+        document.getElementById('modal-prototype-quick-project')?.classList.remove('force-hide');
+        setTimeout(() => document.getElementById('prototype-quick-project-name')?.focus(), 30);
+        lucide.createIcons();
+    }
+
+    function closeQuickProjectModal() {
+        document.getElementById('modal-prototype-quick-project')?.classList.add('force-hide');
+    }
+
+    function openCompleteProjectSetup() {
+        closeQuickProjectModal();
+        if (quickProjectId && projects.some(project => String(project.id) === String(quickProjectId))) {
+            openEditProjectModal(quickProjectId);
+            return;
+        }
+        openCreateProjectModal('studio');
+    }
+
+    function focusQuickProjectTimer(projectId, task) {
+        const projectIndex = projects.findIndex(project => String(project.id) === String(projectId));
+        if (projectIndex < 0) return;
+        switchAppTab('operate');
+        const projectSelect = document.getElementById('project-select');
+        if (projectSelect) projectSelect.value = String(projectIndex);
+        updateTaskDropdown();
+        const taskSelect = document.getElementById('task-select');
+        if (taskSelect) taskSelect.value = task;
+        const ready = document.getElementById('prototype-quick-ready');
+        ready?.classList.remove('force-hide');
+        document.querySelector('[data-tab="operate"] #timer-display')?.closest('section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setTimeout(() => document.getElementById('btn-toggle-timer')?.focus({ preventScroll: true }), 450);
+    }
+
+    function commitQuickProject({ name, task, client = '', budget = 0, origin = 'quick_modal' }) {
+        const id = `prototype-quick-${Date.now()}`;
+        const project = {
+            id,
+            name,
+            client,
+            budget,
+            tasks: [task],
+            task_budgets: budget > 0 ? { [task]: budget } : {},
+            task_statuses: { [task]: 'todo' },
+            project_setup_type: 'studio',
+            studio_id: userProfile?.studio_id || 'prototype-studio',
+            is_archived: false,
+            prototype_quick_start: true
+        };
+        projects.unshift(project);
+        metaByProject.set(id, { address: '', description: '', payments: [], taskNotes: {}, taskTranches: {} });
+        quickProjectId = id;
+        closeQuickProjectModal();
+        renderProjects();
+        renderStrategicCharts();
+        focusQuickProjectTimer(id, task);
+        window.archTimeAnalytics?.track('quick_project_created', {
+            has_client: Boolean(client),
+            has_budget: budget > 0,
+            origin
+        });
+        return project;
+    }
+
+    function createQuickProject(event) {
+        event.preventDefault();
+        const name = document.getElementById('prototype-quick-project-name')?.value.trim();
+        const task = document.getElementById('prototype-quick-project-task')?.value || quickProjectTasks()[0];
+        const client = document.getElementById('prototype-quick-project-client')?.value.trim() || '';
+        const budget = Math.max(0, Number(document.getElementById('prototype-quick-project-budget')?.value || 0));
+        if (!name) {
+            document.getElementById('prototype-quick-project-name')?.focus();
+            return;
+        }
+        commitQuickProject({ name, task, client, budget });
+    }
+
+    function createQuickProjectFromOnboarding() {
+        const nameInput = document.getElementById('onboarding-project-name');
+        const name = nameInput?.value.trim();
+        if (!name) {
+            nameInput?.focus();
+            return;
+        }
+        const task = document.getElementById('prototype-onboarding-project-task')?.value || quickProjectTasks()[0];
+        const client = document.getElementById('onboarding-project-client')?.value.trim() || '';
+        const budget = Math.max(0, Number(document.getElementById('onboarding-project-budget')?.value || 0));
+        document.getElementById('modal-owner-onboarding')?.classList.add('force-hide');
+        if (typeof markOwnerOnboardingDone === 'function') markOwnerOnboardingDone();
+        commitQuickProject({ name, task, client, budget, origin: 'onboarding' });
     }
 
     function cashBarHtml(project, compact = false) {
@@ -886,6 +1001,29 @@
     };
 
     document.addEventListener('click', event => {
+        if (event.target.closest('#btn-prepare-first-project')) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            createQuickProjectFromOnboarding();
+            return;
+        }
+        const prototypeAction = event.target.closest('[data-prototype-action]')?.dataset.prototypeAction;
+        if (prototypeAction === 'open-quick-project') {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            openQuickProjectModal();
+            return;
+        }
+        if (prototypeAction === 'close-quick-project') {
+            event.preventDefault();
+            closeQuickProjectModal();
+            return;
+        }
+        if (prototypeAction === 'open-complete-project' || prototypeAction === 'complete-quick-project') {
+            event.preventDefault();
+            openCompleteProjectSetup();
+            return;
+        }
         const newClient = event.target.closest('[data-prototype-new-client]');
         if (newClient) { openPrototypeClientModal(newClient.dataset.prototypeNewClient || 'library'); return; }
         const skip = event.target.closest('#prototype-save-without-payments');
@@ -1052,17 +1190,30 @@
         if (event.target.matches('[data-prototype-task-note]')) modalTaskNotes[event.target.dataset.prototypeTaskNote] = event.target.value;
     });
     const prototypeClientModal = document.getElementById('modal-prototype-client');
+    const quickProjectModal = document.getElementById('modal-prototype-quick-project');
     prototypeClientModal?.addEventListener('click', event => {
         if (event.target === prototypeClientModal) closePrototypeClientModal();
     });
+    quickProjectModal?.addEventListener('click', event => {
+        if (event.target === quickProjectModal) closeQuickProjectModal();
+    });
     document.addEventListener('keydown', event => {
-        if (event.key !== 'Escape' || !prototypeClientModal || prototypeClientModal.classList.contains('force-hide')) return;
+        if (event.key !== 'Escape') return;
         const dialog = document.getElementById('custom-dialog');
         if (dialog && !dialog.classList.contains('force-hide')) return;
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        closePrototypeClientModal();
+        if (quickProjectModal && !quickProjectModal.classList.contains('force-hide')) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            closeQuickProjectModal();
+            return;
+        }
+        if (prototypeClientModal && !prototypeClientModal.classList.contains('force-hide')) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            closePrototypeClientModal();
+        }
     }, true);
+    document.getElementById('prototype-quick-project-form')?.addEventListener('submit', createQuickProject);
     document.getElementById('prototype-client-form')?.addEventListener('submit', savePrototypeClient);
     const baseRenderCatalogAndTemplatesUI = renderCatalogAndTemplatesUI;
     renderCatalogAndTemplatesUI = function () {
@@ -1078,5 +1229,5 @@
         clientForProject,
         clients: prototypeClients
     };
-    window.addEventListener('load', () => setTimeout(() => { ensurePrototypeBadge(); seedProjectMeta(); renderClientLibrary(); renderClientSelect(); renderPrototypeActivityLibraries(); renderProjects(); }, 100));
+    window.addEventListener('load', () => setTimeout(() => { ensurePrototypeBadge(); seedProjectMeta(); renderQuickProjectTaskOptions(); renderClientLibrary(); renderClientSelect(); renderPrototypeActivityLibraries(); renderProjects(); }, 100));
 })();
