@@ -39,6 +39,11 @@
             bindClick('btn-open-templates-studio', openTemplatesModal);
             bindClick('btn-open-project-modal', openProjectTypeModal);
             bindClick('btn-close-project-type', closeProjectTypeModal);
+            bindClick('btn-open-quick-project', openQuickProjectModal);
+            bindClick('btn-close-quick-project', closeQuickProjectModal);
+            bindClick('btn-open-complete-project', openCompleteProjectFromQuickStart);
+            bindClick('btn-complete-quick-project', completeLastQuickProject);
+            document.getElementById('quick-project-form')?.addEventListener('submit', createQuickProject);
             bindClick('btn-open-team-report', openTeamReportModal);
             bindClick('btn-generate-invite', generateInviteLink);
             bindClick('btn-close-team-invite', closeTeamInviteModal);
@@ -142,6 +147,7 @@
                 ['modal-edit-entry', closeEditEntryModal],
                 ['modal-edit-expense', closeEditExpenseModal],
                 ['modal-project-type', closeProjectTypeModal],
+                ['modal-quick-project', closeQuickProjectModal],
                 ['modal-edit-project', () => closeEditProjectModal()],
                 ['modal-project-quote-format', closeProjectQuoteFormatModal],
                 ['modal-report', closeReportModal],

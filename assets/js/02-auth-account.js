@@ -820,8 +820,12 @@ function switchAuthTab(mode) {
 
             const calculatorHandoff = getMarginCalculatorHandoff();
             document.getElementById('onboarding-project-name').value = calculatorHandoff ? 'Commessa dal calcolatore' : '';
+            document.getElementById('onboarding-project-client').value = '';
             document.getElementById('onboarding-project-budget').value = calculatorHandoff?.values?.fee || '';
             document.getElementById('onboarding-hourly-cost').value = calculatorHandoff?.values?.hourlyCost || userProfile?.hourly_cost || '';
+            if (typeof renderQuickProjectTaskOptions === 'function') renderQuickProjectTaskOptions();
+            const optionalData = document.getElementById('onboarding-optional-data');
+            if (optionalData) optionalData.open = Boolean(calculatorHandoff);
 
             const summary = document.getElementById('onboarding-calculator-summary');
             if (summary) {
@@ -918,56 +922,29 @@ function switchAuthTab(mode) {
 
         async function prepareFirstProjectFromOnboarding() {
             const name = document.getElementById('onboarding-project-name').value.trim();
-            const budget = parseFloat(document.getElementById('onboarding-project-budget').value);
-            const hourlyCost = parseFloat(document.getElementById('onboarding-hourly-cost').value);
-            const defaults = THEMES[currentBusinessType].defaultCatalog.slice(0, 3);
+            const client = document.getElementById('onboarding-project-client').value.trim();
+            const budget = Math.max(0, parseFloat(document.getElementById('onboarding-project-budget').value) || 0);
+            const hourlyCost = Math.max(0, parseFloat(document.getElementById('onboarding-hourly-cost').value) || 0);
+            const task = document.getElementById('onboarding-project-task')?.value || activityCatalog[0] || 'Attività generale';
             const button = document.getElementById('btn-prepare-first-project');
             const calculatorHandoff = getMarginCalculatorHandoff();
 
             if (!name) return await appAlert('Manca il nome', 'Inserisci il nome della prima commessa.', 'danger');
-            if (!Number.isFinite(budget) || budget <= 0) return await appAlert('Compenso non valido', 'Inserisci il compenso previsto per la commessa.', 'danger');
-            if (!Number.isFinite(hourlyCost) || hourlyCost <= 0) return await appAlert('Costo orario non valido', 'Inserisci un costo orario interno maggiore di zero.', 'danger');
 
             button.disabled = true;
             button.classList.add('opacity-60', 'cursor-wait');
             try {
-                await saveOnboardingHourlyCost();
-                const projectId = crypto.randomUUID();
-                const { error } = await supabaseClient.from('projects').insert([{
-                    id: projectId,
-                    studio_id: userProfile.studio_id,
-                    name,
-                    client: '',
-                    budget,
-                    tasks: defaults.length > 0 ? defaults : ['Generico'],
-                    is_demo: false,
-                    project_setup_type: 'studio'
-                }]).select().single();
-                if (error) throw error;
-
-                if (typeof clearMarginCalculatorHandoff === 'function') clearMarginCalculatorHandoff();
+                if (hourlyCost > 0) await saveOnboardingHourlyCost();
+                await createQuickProjectRecord({ name, client, budget, task, source: 'onboarding' });
                 markOwnerOnboardingDone();
                 closeOwnerOnboarding(false);
                 await recordOnboardingEvent('onboarding_project_created');
                 window.archTimeAnalytics?.track('onboarding_project_created', {
-                    has_budget: true,
-                    task_count: defaults.length,
+                    has_budget: budget > 0,
+                    has_hourly_cost: hourlyCost > 0,
+                    task_count: 1,
                     from_calculator: Boolean(calculatorHandoff)
                 });
-                await trackAcquisitionMilestone('first_project_created', { has_budget: true, setup_type: 'studio' });
-                await fetchProjects();
-
-                const projectIndex = projects.findIndex(project => project.id === projectId);
-                const projectSelect = document.getElementById('project-select');
-                if (projectSelect && projectIndex >= 0) {
-                    projectSelect.value = String(projectIndex);
-                    updateTaskDropdown();
-                }
-
-                document.getElementById('onboarding-ready-project-name').textContent = name;
-                document.getElementById('onboarding-ready-budget').textContent = formatMoney(budget, 0);
-                document.getElementById('onboarding-ready-hourly-cost').textContent = `${formatHandoffNumber(hourlyCost, 2)} €/h`;
-                document.getElementById('modal-onboarding-ready')?.classList.remove('force-hide');
                 lucide.createIcons();
             } catch (error) {
                 await appAlert('Creazione non riuscita', error.message || 'Non è stato possibile creare la prima commessa.', 'danger');

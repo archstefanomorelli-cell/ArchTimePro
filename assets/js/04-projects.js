@@ -3,6 +3,7 @@
 
         const NORMATIVE_QUOTE_HANDOFF_KEY = 'archtime_normative_quote_handoff_v1';
         const NORMATIVE_QUOTE_ACCOUNT_KEY = 'pending_normative_quote';
+        let quickProjectId = '';
 
         function isValidNormativeQuoteHandoff(payload) {
             if (!payload || payload.version !== 1 || Number(payload.expiresAt || 0) < Date.now()) return false;
@@ -1212,6 +1213,135 @@
 
         function closeProjectTypeModal() {
             document.getElementById('modal-project-type')?.classList.add('force-hide');
+        }
+
+        function getQuickProjectTasks() {
+            const tasks = [...new Set((activityCatalog || []).map(task => String(task || '').trim()).filter(Boolean))];
+            return tasks.length > 0 ? tasks : ['Attività generale'];
+        }
+
+        function renderQuickProjectTaskOptions() {
+            const tasks = getQuickProjectTasks();
+            ['quick-project-task', 'onboarding-project-task'].forEach(id => {
+                const select = document.getElementById(id);
+                if (!select) return;
+                const selected = tasks.includes(select.value) ? select.value : tasks[0];
+                select.innerHTML = tasks.map(task => optionHtml(task, task, task === selected)).join('');
+                select.value = selected;
+            });
+        }
+
+        function openQuickProjectModal() {
+            if (activePlan === 'starter') {
+                const activeCount = projects.filter(project => project.is_archived !== true).length;
+                if (activeCount >= 5) return openUpgradeModal('Lavori Illimitati');
+            }
+            closeProjectTypeModal();
+            document.getElementById('quick-project-form')?.reset();
+            document.querySelector('#quick-project-form .quick-project-optional')?.removeAttribute('open');
+            renderQuickProjectTaskOptions();
+            document.getElementById('modal-quick-project')?.classList.remove('force-hide');
+            setTimeout(() => document.getElementById('quick-project-name')?.focus(), 30);
+            lucide.createIcons();
+        }
+
+        function closeQuickProjectModal() {
+            document.getElementById('modal-quick-project')?.classList.add('force-hide');
+        }
+
+        function focusQuickProjectTimer(projectId, task) {
+            const projectIndex = projects.findIndex(project => String(project.id) === String(projectId));
+            if (projectIndex < 0) return;
+            switchAppTab('operate');
+            const projectSelect = document.getElementById('project-select');
+            if (projectSelect) projectSelect.value = String(projectIndex);
+            updateTaskDropdown();
+            const taskSelect = document.getElementById('task-select');
+            if (taskSelect) taskSelect.value = task;
+            document.getElementById('quick-project-ready')?.classList.remove('force-hide');
+            document.getElementById('timer-panel')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => document.getElementById('btn-toggle-timer')?.focus({ preventScroll: true }), 450);
+        }
+
+        async function createQuickProjectRecord({ name, task, client = '', budget = 0, source = 'quick_modal' }) {
+            const safeName = String(name || '').trim();
+            const safeTask = String(task || getQuickProjectTasks()[0]).trim();
+            const safeClient = String(client || '').trim();
+            const safeBudget = Math.max(0, Number(budget || 0));
+            if (!safeName) throw new Error('Inserisci il nome della commessa.');
+
+            const projectId = crypto.randomUUID();
+            const payload = {
+                id: projectId,
+                studio_id: userProfile.studio_id,
+                name: safeName,
+                client: safeClient,
+                budget: safeBudget,
+                tasks: [safeTask],
+                is_demo: false,
+                project_setup_type: 'studio'
+            };
+
+            if (typeof isVideoDemoMode === 'function' && isVideoDemoMode()) {
+                projects.unshift({ ...payload, is_archived: false, task_statuses: {} });
+                renderProjects();
+            } else {
+                const { error } = await supabaseClient.from('projects').insert([payload]).select().single();
+                if (error) throw error;
+                await fetchProjects();
+            }
+
+            quickProjectId = projectId;
+            if (typeof clearMarginCalculatorHandoff === 'function') clearMarginCalculatorHandoff();
+            window.archTimeAnalytics?.track('quick_project_created', {
+                source,
+                has_budget: safeBudget > 0,
+                has_client: Boolean(safeClient)
+            });
+            await trackAcquisitionMilestone('first_project_created', {
+                has_budget: safeBudget > 0,
+                setup_type: 'quick'
+            });
+            focusQuickProjectTimer(projectId, safeTask);
+            return projectId;
+        }
+
+        async function createQuickProject(event) {
+            event?.preventDefault();
+            const button = document.getElementById('btn-create-quick-project');
+            const nameInput = document.getElementById('quick-project-name');
+            const name = nameInput?.value.trim();
+            if (!name) {
+                nameInput?.focus();
+                return;
+            }
+            button.disabled = true;
+            button.classList.add('opacity-60', 'cursor-wait');
+            try {
+                await createQuickProjectRecord({
+                    name,
+                    task: document.getElementById('quick-project-task')?.value,
+                    client: document.getElementById('quick-project-client')?.value,
+                    budget: document.getElementById('quick-project-budget')?.value,
+                    source: 'quick_modal'
+                });
+                closeQuickProjectModal();
+            } catch (error) {
+                await appAlert('Creazione non riuscita', error.message || 'Non è stato possibile creare la commessa.', 'danger');
+            } finally {
+                button.disabled = false;
+                button.classList.remove('opacity-60', 'cursor-wait');
+            }
+        }
+
+        function openCompleteProjectFromQuickStart() {
+            closeQuickProjectModal();
+            openCreateProjectModal('studio');
+        }
+
+        async function completeLastQuickProject() {
+            if (!quickProjectId) return;
+            await openEditProjectModal(quickProjectId);
         }
 
         function resetProjectModalScroll() {

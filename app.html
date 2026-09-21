@@ -43,7 +43,7 @@
     <script src="assets/vendor/jspdf-autotable-3.5.31.js?v=privacy-security-2026-08-12-02"></script>
     <script src="assets/vendor/exceljs-4.4.0.js?v=privacy-security-2026-08-12-02"></script>
     <link rel="stylesheet" href="assets/app.css?v=brand-2026-09-12-01">
-    <link rel="stylesheet" href="assets/app-pro.css?v=studio-management-glass-2026-08-13-01">
+    <link rel="stylesheet" href="assets/app-pro.css?v=quick-start-2026-09-21-01">
     <script src="assets/js/12-analytics.js?v=acquisition-funnel-2026-08-28-01" defer></script>
 </head>
 <body class="text-slate-800 pb-20 lg:pb-0">
@@ -244,6 +244,11 @@
                         <div class="flex justify-between items-center mb-6">
                             <h2 class="text-lg font-black text-slate-800 tracking-tight flex items-center gap-2"><i data-lucide="clock" class="text-primary-500 w-5 h-5"></i> Timer</h2>
                             <button id="btn-open-manual-entry" class="secondary-action compact">Manuale</button>
+                        </div>
+                        <div id="quick-project-ready" class="quick-project-ready force-hide" role="status">
+                            <span class="quick-project-ready-icon"><i data-lucide="check"></i></span>
+                            <span><strong>Commessa pronta.</strong><small>Puoi avviare il timer e completare i dati economici in seguito.</small></span>
+                            <button id="btn-complete-quick-project" type="button">Completa</button>
                         </div>
                         <div class="space-y-4">
                             <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1" id="lbl-timer-project">Progetto</label><select id="project-select" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white shadow-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all appearance-none cursor-pointer text-slate-700"></select></div>
@@ -705,9 +710,9 @@
             <button id="btn-skip-onboarding" aria-label="Chiudi configurazione" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
             <div class="mb-6">
                 <div class="w-12 h-12 bg-primary-50 text-primary-600 rounded-2xl flex items-center justify-center mb-4 border border-primary-100"><i data-lucide="sparkles" class="w-6 h-6"></i></div>
-                <p class="mb-2 text-[10px] font-black uppercase tracking-wider text-primary-600">Primo risultato in circa un minuto</p>
+                <p class="mb-2 text-[10px] font-black uppercase tracking-wider text-primary-600">Primo risultato in circa 30 secondi</p>
                 <h2 id="owner-onboarding-title" class="text-2xl font-black text-slate-900 tracking-tight">Crea la prima commessa</h2>
-                <p class="text-sm text-slate-500 leading-relaxed mt-2">Inserisci solo i tre dati necessari. Attività, cliente e dettagli potranno essere completati in seguito.</p>
+                <p class="text-sm text-slate-500 leading-relaxed mt-2">Bastano un nome e un'attività. Compenso, costo orario e cliente possono essere aggiunti in seguito.</p>
             </div>
 
             <div class="space-y-5">
@@ -731,18 +736,19 @@
                 <div class="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5">
                     <label for="onboarding-project-name" class="mb-1.5 block text-[10px] font-black uppercase tracking-wider text-slate-500">Nome commessa</label>
                     <input type="text" id="onboarding-project-name" placeholder="Es. Ristrutturazione appartamento" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all">
-                    <div class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                        <div>
-                            <label for="onboarding-project-budget" class="mb-1.5 block text-[10px] font-black uppercase tracking-wider text-slate-500">Compenso previsto</label>
-                            <div class="relative"><input type="number" min="0.01" step="0.01" id="onboarding-project-budget" placeholder="15000" class="w-full border border-slate-200 rounded-xl p-3 pr-10 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all font-bold"><span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">€</span></div>
-                        </div>
-                        <div>
-                            <label for="onboarding-hourly-cost" class="mb-1.5 block text-[10px] font-black uppercase tracking-wider text-slate-500">Costo orario interno</label>
-                            <div class="relative"><input type="number" min="0.01" step="0.01" id="onboarding-hourly-cost" placeholder="35" class="w-full border border-slate-200 rounded-xl p-3 pr-12 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all font-bold"><span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">€/h</span></div>
-                        </div>
+                    <div class="mt-3">
+                        <label for="onboarding-project-task" class="mb-1.5 block text-[10px] font-black uppercase tracking-wider text-slate-500">Prima attività</label>
+                        <select id="onboarding-project-task" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all"></select>
                     </div>
-                    <p class="mt-3 text-xs leading-relaxed text-slate-500">Useremo tre attività iniziali della libreria dello studio. Potrai modificarle subito dopo.</p>
-                    <button id="btn-prepare-first-project" class="w-full bg-slate-900 text-white py-3.5 mt-4 rounded-xl font-bold hover:bg-slate-800 transition-all active:scale-[0.98] shadow-sm flex items-center justify-center gap-2"><i data-lucide="folder-plus" class="w-4 h-4"></i> Crea la commessa</button>
+                    <details id="onboarding-optional-data" class="quick-project-optional mt-3">
+                        <summary><span><i data-lucide="plus"></i> Aggiungi dati economici</span><small>Opzionale</small></summary>
+                        <div class="quick-project-optional-grid">
+                            <div><label for="onboarding-project-client">Cliente</label><input type="text" id="onboarding-project-client" placeholder="Nome cliente"></div>
+                            <div><label for="onboarding-project-budget">Compenso previsto</label><div class="quick-project-money"><span data-studio-currency-symbol>€</span><input type="number" min="0" step="0.01" id="onboarding-project-budget" placeholder="0"></div></div>
+                            <div><label for="onboarding-hourly-cost">Costo orario interno</label><div class="quick-project-money"><span data-studio-currency-symbol>€</span><input type="number" min="0" step="0.01" id="onboarding-hourly-cost" placeholder="0"></div></div>
+                        </div>
+                    </details>
+                    <button id="btn-prepare-first-project" class="w-full bg-slate-900 text-white py-3.5 mt-4 rounded-xl font-bold hover:bg-slate-800 transition-all active:scale-[0.98] shadow-sm flex items-center justify-center gap-2"><i data-lucide="play" class="w-4 h-4"></i> Crea e vai al timer</button>
                     <button id="btn-explore-without-onboarding" type="button" class="mt-2 w-full py-2.5 text-xs font-bold text-slate-500 transition-colors hover:text-slate-800">Per ora esploro l'app</button>
                 </div>
             </div>
@@ -958,11 +964,19 @@
     </div>
     
     <div id="modal-project-type" class="force-hide fixed inset-0 z-[120] modal flex items-center justify-center p-4">
-        <div class="w-full max-w-xl p-6 lg:p-8 shadow-xl border border-slate-200 rounded-2xl relative bg-white">
+        <div class="quick-start-dialog w-full max-w-2xl p-6 lg:p-8 shadow-xl border border-slate-200 rounded-2xl relative bg-white">
             <button id="btn-close-project-type" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
-            <h2 class="text-lg font-black text-slate-800 tracking-tight mb-1 flex items-center gap-2 pr-10"><i data-lucide="folder-plus" class="text-primary-500 w-5 h-5"></i> Come vuoi impostare il progetto?</h2>
-            <p class="text-xs text-slate-500 font-medium mb-6 pr-10">Scegli la struttura delle attività. Potrai definire budget e anagrafica nel passaggio successivo.</p>
-            <div class="project-type-options">
+            <p class="quick-start-kicker"><i data-lucide="zap"></i> Parti dal lavoro</p>
+            <h2 class="text-xl font-black text-slate-800 tracking-tight mt-2 mb-1 flex items-center gap-2 pr-10"><i data-lucide="folder-plus" class="text-primary-500 w-5 h-5"></i> Come vuoi iniziare?</h2>
+            <p class="text-sm text-slate-500 font-medium mb-5 pr-10">Crea subito la commessa per il timer oppure definisci ora tutta la struttura.</p>
+            <button id="btn-open-quick-project" type="button" class="quick-start-option">
+                <span class="quick-start-icon"><i data-lucide="play"></i></span>
+                <span class="min-w-0 text-left"><span class="quick-start-label">Consigliato</span><strong>Commessa rapida</strong><small>Nome, prima attività e timer. Il resto può aspettare.</small></span>
+                <span class="quick-start-time">30 sec</span>
+                <i data-lucide="chevron-right" class="project-type-chevron"></i>
+            </button>
+            <div class="quick-start-separator"><span>Configurazione completa</span></div>
+            <div class="project-type-options quick-start-advanced">
                 <button type="button" data-ui-action="select-project-type" data-project-type="studio" class="project-type-option">
                     <span class="project-type-icon"><i data-lucide="sliders-horizontal" class="w-5 h-5"></i></span>
                     <span class="min-w-0 text-left">
@@ -980,6 +994,28 @@
                     <i data-lucide="chevron-right" class="project-type-chevron"></i>
                 </button>
             </div>
+        </div>
+    </div>
+
+    <div id="modal-quick-project" class="force-hide fixed inset-0 modal flex items-center justify-center p-4">
+        <div class="quick-project-dialog w-full max-w-lg p-6 lg:p-8 shadow-xl border border-slate-200 rounded-2xl relative bg-white">
+            <button id="btn-close-quick-project" type="button" aria-label="Chiudi" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+            <p class="quick-start-kicker">Nuova commessa · avvio rapido</p>
+            <h2 class="text-xl font-black text-slate-900 tracking-tight mt-2 mb-1">Cosa stai per iniziare?</h2>
+            <p class="text-sm text-slate-500 mb-6">Bastano un nome e un'attività. Potrai completare tutto il resto in seguito.</p>
+            <form id="quick-project-form" class="quick-project-form">
+                <label><span>Nome commessa</span><input id="quick-project-name" type="text" maxlength="100" placeholder="Es. Casa Rossi" required autocomplete="off"></label>
+                <label><span>Prima attività</span><select id="quick-project-task"></select></label>
+                <details class="quick-project-optional">
+                    <summary><span><i data-lucide="plus"></i> Aggiungi cliente e compenso</span><small>Opzionale</small></summary>
+                    <div class="quick-project-optional-grid">
+                        <div><label for="quick-project-client">Cliente</label><input id="quick-project-client" type="text" maxlength="100" placeholder="Es. Mario Rossi" autocomplete="off"></div>
+                        <div><label for="quick-project-budget">Compenso</label><div class="quick-project-money"><span data-studio-currency-symbol>€</span><input id="quick-project-budget" type="number" min="0" step="0.01" placeholder="0"></div></div>
+                    </div>
+                </details>
+                <button id="btn-create-quick-project" type="submit" class="quick-project-submit"><i data-lucide="play"></i><span>Crea e prepara il timer</span></button>
+                <button id="btn-open-complete-project" type="button" class="quick-project-complete-link">Preferisco configurare subito budget e attività</button>
+            </form>
         </div>
     </div>
 
@@ -1184,12 +1220,12 @@
     <script src="assets/js/00-runtime-config.js?v=stripe-founder-2026-06-29"></script>
     <script src="assets/js/normative-engine.js?v=2026-08-01-01"></script>
     <script src="assets/js/01-core.js?v=brand-2026-09-12-01"></script>
-    <script src="assets/js/02-auth-account.js?v=activation-flow-2026-09-19-01"></script>
+    <script src="assets/js/02-auth-account.js?v=quick-start-2026-09-21-01"></script>
     <script src="assets/js/03-team.js?v=studio-management-2026-08-12-01"></script>
-    <script src="assets/js/04-projects.js?v=quote-handoff-2026-09-01-01"></script>
+    <script src="assets/js/04-projects.js?v=quick-start-2026-09-21-01"></script>
     <script src="assets/js/05-time-entries.js?v=activation-flow-2026-09-18-01"></script>
     <script src="assets/js/06-reports.js?v=quote-format-modal-2026-08-12-01"></script>
-    <script src="assets/js/07-password-bootstrap.js?v=activation-flow-2026-09-18-01"></script>
+    <script src="assets/js/07-password-bootstrap.js?v=quick-start-2026-09-21-01"></script>
     <script src="assets/js/09-video-demo.js?v=quote-fiscal-2026-08-03-01"></script>
 </body>
 </html>
