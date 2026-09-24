@@ -220,7 +220,7 @@ function switchAuthTab(mode) {
                     if (!isStaff) {
                         window.archTimeAnalytics?.trackAdsConversion('AW-18190596284/RCALCNbqsdIcELzx-eFD');
                     }
-                    await appAlert("Controlla la tua email", "Ti abbiamo inviato un link per confermare la registrazione. Dopo la conferma potrai accedere ad Arch Time Pro.", "success");
+                    await appAlert("Controlla la tua email", "Ti abbiamo inviato un link per confermare la registrazione. Se non lo trovi, controlla anche Spam o Posta indesiderata e cerca il mittente info@archtimepro.it. Dopo la conferma potrai accedere ad Arch Time Pro.", "success");
                     switchAuthTab('login');
                 }
             } else { 
@@ -998,6 +998,23 @@ function switchAuthTab(mode) {
                     }
                     if (!studio) return;
                     studioData = studio;
+
+                    if (studioData.subscription_status === 'trialing' && !studioData.trial_ends_at) {
+                        try {
+                            const trial = await startMyTrialForApp();
+                            studioData.trial_started_at = trial?.started_at || null;
+                            studioData.trial_ends_at = trial?.ends_at || null;
+                        } catch (trialError) {
+                            console.error('Avvio della prova non riuscito:', trialError);
+                            await appAlert(
+                                'Prova non avviata',
+                                'Non è stato possibile avviare i 15 giorni di prova. Ricarica la pagina; se il problema continua, contatta l’assistenza.',
+                                'danger'
+                            );
+                            return;
+                        }
+                    }
+
                     updateCurrencyUI();
 
                     const status = studioData?.subscription_status || 'trialing';
@@ -1025,11 +1042,12 @@ function switchAuthTab(mode) {
                         planBadge.innerText = status === 'free' ? 'FREE' : 'FONDATORI'; 
                         planBadge.classList.remove('force-hide');
                     } else {
-                        const createdAt = new Date(studioData?.created_at || new Date());
                         const storedTrialEnd = studioData?.trial_ends_at ? new Date(studioData.trial_ends_at) : null;
-                        const expireDate = storedTrialEnd && !Number.isNaN(storedTrialEnd.getTime())
-                            ? storedTrialEnd
-                            : new Date(createdAt.getTime() + 15 * 24 * 60 * 60 * 1000);
+                        if (!storedTrialEnd || Number.isNaN(storedTrialEnd.getTime())) {
+                            await appAlert('Prova non disponibile', 'La scadenza della prova non è disponibile. Ricarica la pagina e riprova.', 'danger');
+                            return;
+                        }
+                        const expireDate = storedTrialEnd;
                         const daysLeft = Math.ceil((expireDate.getTime() - Date.now()) / (1000 * 3600 * 24));
                         if (daysLeft > 0) {
                             trialBadge.innerText = `PROVA: ${daysLeft} GG`; 

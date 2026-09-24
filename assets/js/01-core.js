@@ -76,6 +76,12 @@ if (window.Chart?.defaults?.font) {
             return fallback.data;
         }
 
+        async function startMyTrialForApp() {
+            const { data, error } = await supabaseClient.rpc('start_my_trial_if_needed');
+            if (error) throw error;
+            return Array.isArray(data) ? (data[0] || null) : data;
+        }
+
         async function setMyTimerStateForApp(timerState = {}) {
             const { error } = await supabaseClient.rpc('set_my_timer_state', {
                 timer_start: timerState.start ?? null,
