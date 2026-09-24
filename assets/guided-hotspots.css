@@ -1,0 +1,199 @@
+.archtime-guide-hotspot {
+    position: fixed;
+    z-index: 8800;
+    width: 14px;
+    height: 14px;
+    padding: 0;
+    border: 3px solid #fff;
+    border-radius: 999px;
+    background: #4f46e5;
+    box-shadow: 0 3px 10px rgba(15, 23, 42, .22);
+    cursor: pointer;
+    transition: transform .18s ease, background-color .18s ease;
+}
+
+.archtime-guide-hotspot::before,
+.archtime-guide-hotspot::after {
+    content: "";
+    position: absolute;
+    inset: -7px;
+    border: 1px solid rgba(79, 70, 229, .38);
+    border-radius: inherit;
+    animation: archtime-guide-pulse 2.2s ease-out infinite;
+    pointer-events: none;
+}
+
+.archtime-guide-hotspot::after {
+    animation-delay: 1.1s;
+}
+
+.archtime-guide-hotspot:hover,
+.archtime-guide-hotspot:focus-visible {
+    background: #3730a3;
+    outline: none;
+    transform: scale(1.14);
+}
+
+.archtime-guide-popover {
+    position: fixed;
+    z-index: 8801;
+    width: min(330px, calc(100vw - 24px));
+    padding: 18px;
+    border: 1px solid rgba(148, 163, 184, .34);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, .94);
+    box-shadow: 0 20px 55px rgba(15, 23, 42, .18);
+    backdrop-filter: blur(22px) saturate(145%);
+    -webkit-backdrop-filter: blur(22px) saturate(145%);
+    color: #0f172a;
+}
+
+.archtime-guide-popover::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 18px;
+    right: 18px;
+    height: 2px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #4f46e5, #818cf8);
+}
+
+.archtime-guide-kicker {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+    color: #6366f1;
+    font-size: 9px;
+    font-weight: 800;
+    line-height: 1.2;
+    text-transform: uppercase;
+}
+
+.archtime-guide-close {
+    display: grid;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    place-items: center;
+    border: 0;
+    border-radius: 8px;
+    background: rgba(241, 245, 249, .86);
+    color: #64748b;
+    cursor: pointer;
+}
+
+.archtime-guide-close:hover,
+.archtime-guide-close:focus-visible {
+    color: #0f172a;
+    outline: 2px solid rgba(99, 102, 241, .2);
+}
+
+.archtime-guide-title {
+    margin: 0;
+    color: #111827;
+    font-size: 17px;
+    font-weight: 750;
+    line-height: 1.25;
+}
+
+.archtime-guide-copy {
+    margin: 7px 0 0;
+    color: #475569;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.55;
+}
+
+.archtime-guide-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.archtime-guide-skip,
+.archtime-guide-next,
+.archtime-guide-choice {
+    min-height: 36px;
+    border-radius: 9px;
+    font-size: 11px;
+    font-weight: 750;
+    cursor: pointer;
+}
+
+.archtime-guide-skip {
+    padding: 8px 2px;
+    border: 0;
+    background: transparent;
+    color: #94a3b8;
+}
+
+.archtime-guide-skip:hover,
+.archtime-guide-skip:focus-visible {
+    color: #475569;
+    outline: none;
+}
+
+.archtime-guide-next {
+    padding: 8px 14px;
+    border: 1px solid #312e81;
+    background: #3730a3;
+    color: #fff;
+    box-shadow: 0 7px 16px rgba(49, 46, 129, .18);
+}
+
+.archtime-guide-next:hover,
+.archtime-guide-next:focus-visible {
+    background: #312e81;
+    outline: 2px solid rgba(99, 102, 241, .24);
+    outline-offset: 2px;
+}
+
+.archtime-guide-choices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.archtime-guide-choice {
+    padding: 9px 10px;
+    border: 1px solid #c7d2fe;
+    background: rgba(238, 242, 255, .74);
+    color: #3730a3;
+}
+
+.archtime-guide-choice:hover,
+.archtime-guide-choice:focus-visible {
+    border-color: #818cf8;
+    background: #eef2ff;
+    outline: none;
+}
+
+@keyframes archtime-guide-pulse {
+    0% { opacity: .72; transform: scale(.68); }
+    75%, 100% { opacity: 0; transform: scale(1.75); }
+}
+
+@media (max-width: 640px) {
+    .archtime-guide-popover {
+        padding: 16px;
+        border-radius: 12px;
+    }
+
+    .archtime-guide-title { font-size: 16px; }
+    .archtime-guide-copy { font-size: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .archtime-guide-hotspot::before,
+    .archtime-guide-hotspot::after {
+        animation: none;
+        opacity: .45;
+        transform: scale(1.35);
+    }
+}

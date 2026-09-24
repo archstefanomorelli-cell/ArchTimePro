@@ -331,6 +331,7 @@
         document.getElementById('modal-owner-onboarding')?.classList.add('force-hide');
         if (typeof markOwnerOnboardingDone === 'function') markOwnerOnboardingDone();
         commitQuickProject({ name, task, client, budget, origin: 'onboarding' });
+        window.dispatchEvent(new CustomEvent('archtime:onboarding-complete', { detail: { hasProject: true } }));
     }
 
     function cashBarHtml(project, compact = false) {

@@ -86,13 +86,14 @@ function switchAuthTab(mode) {
             const contextCopy = document.getElementById('auth-context-copy');
             if (contextCopy) {
                 const normativeQuotePending = typeof getNormativeQuoteHandoff === 'function' && getNormativeQuoteHandoff();
-                contextCopy.innerHTML = normativeQuotePending
-                    ? (isSignupMode
-                        ? '<strong class="font-black">Il preventivo è pronto.</strong> Crea il tuo spazio come Manager: lo ritroverai già compilato al primo accesso.'
-                        : '<strong class="font-black">Il preventivo è pronto.</strong> Accedi e lo ritroverai già compilato, pronto per diventare una commessa.')
-                    : (isSignupMode
-                        ? '<strong class="font-black">15 giorni gratuiti.</strong> Crea il tuo spazio senza inserire una carta di pagamento.'
-                        : '<strong class="font-black">Bentornato.</strong> Accedi per registrare ore, controllare lavori e consultare i dati del tuo spazio.');
+                contextCopy.classList.toggle('force-hide', isSignupMode && !normativeQuotePending);
+                if (!contextCopy.classList.contains('force-hide')) {
+                    contextCopy.innerHTML = normativeQuotePending
+                        ? (isSignupMode
+                            ? '<strong class="font-black">Il preventivo è pronto.</strong> Crea il tuo spazio come Manager: lo ritroverai già compilato al primo accesso.'
+                            : '<strong class="font-black">Il preventivo è pronto.</strong> Accedi e lo ritroverai già compilato, pronto per diventare una commessa.')
+                        : '<strong class="font-black">Bentornato.</strong> Accedi per registrare ore, controllare lavori e consultare i dati del tuo spazio.';
+                }
             }
             
             let forgotLink = document.getElementById('forgot-link-container');
@@ -904,6 +905,7 @@ function switchAuthTab(mode) {
             markOwnerOnboardingDone();
             await recordOnboardingEvent('onboarding_dismissed', reason);
             window.archTimeAnalytics?.track('onboarding_dismissed', { reason });
+            window.dispatchEvent(new CustomEvent('archtime:onboarding-complete', { detail: { hasProject: false } }));
         }
 
         async function submitOnboardingReason(reason) {
@@ -945,6 +947,7 @@ function switchAuthTab(mode) {
                     task_count: 1,
                     from_calculator: Boolean(calculatorHandoff)
                 });
+                window.dispatchEvent(new CustomEvent('archtime:onboarding-complete', { detail: { hasProject: true } }));
                 lucide.createIcons();
             } catch (error) {
                 await appAlert('Creazione non riuscita', error.message || 'Non è stato possibile creare la prima commessa.', 'danger');
