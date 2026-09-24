@@ -251,8 +251,7 @@
         document.body.appendChild(hotspot);
         requestAnimationFrame(() => {
             positionHotspot();
-            const hasHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-            if (!hasHover) showPopover();
+            showPopover();
         });
     }
 
