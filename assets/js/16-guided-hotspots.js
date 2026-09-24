@@ -35,16 +35,10 @@
             title: 'Leggi l’andamento dello studio',
             copy: 'Apri i grafici quando iniziano a entrare ore e spese: mostrano costi, margini e commesse che richiedono attenzione.'
         },
-        workMode: {
-            selector: '#btn-header-invite',
-            title: 'Come lavori abitualmente?',
-            copy: 'La risposta serve solo a mostrarti i suggerimenti pertinenti. Potrai sempre invitare il team in seguito.',
-            choices: true
-        },
         invite: {
             selector: '#btn-header-invite',
-            title: 'Invita un collaboratore',
-            copy: 'Il team può registrare ore e attività senza accedere a budget, costi interni e margini riservati alla direzione.'
+            title: 'Invita il tuo team',
+            copy: 'Qui puoi invitare collaboratori e colleghi. Potranno registrare ore e attività senza vedere budget, costi interni e margini riservati alla direzione.'
         },
         report: {
             selector: '#btn-header-pdf',
@@ -65,7 +59,7 @@
     }
 
     function defaultState() {
-        return { started: false, finished: false, completed: [], workMode: null };
+        return { started: false, finished: false, completed: [] };
     }
 
     function readState(reset = false) {
@@ -108,7 +102,7 @@
 
     function buildOrder() {
         const firstSteps = hasRealProject() ? ['timer', 'project'] : ['project', 'timer'];
-        orderedSteps = [...firstSteps, 'analytics', 'workMode', 'invite', 'report'];
+        orderedSteps = [...firstSteps, 'analytics', 'invite', 'report'];
     }
 
     function isAppReady() {
@@ -123,11 +117,6 @@
             const style = getComputedStyle(modal);
             return style.display !== 'none' && style.visibility !== 'hidden';
         });
-    }
-
-    function stepAllowed(stepId) {
-        if (stepId === 'invite') return state.workMode === 'team';
-        return true;
     }
 
     function targetFor(stepId) {
@@ -189,7 +178,7 @@
     }
 
     function nextIncompleteStep() {
-        return orderedSteps.find(stepId => !state.completed.includes(stepId) && stepAllowed(stepId));
+        return orderedSteps.find(stepId => !state.completed.includes(stepId));
     }
 
     function markStepComplete(stepId = activeStep) {
@@ -203,13 +192,6 @@
         window.setTimeout(() => showStep(next), 240);
     }
 
-    function chooseWorkMode(mode) {
-        state.workMode = mode;
-        saveState();
-        track('onboarding_work_mode_selected', { mode });
-        markStepComplete('workMode');
-    }
-
     function showPopover() {
         if (!activeStep || popover) return;
         const step = steps[activeStep];
@@ -217,21 +199,16 @@
         popover.className = 'archtime-guide-popover';
         popover.setAttribute('role', 'dialog');
         popover.setAttribute('aria-label', step.title);
-        const currentPosition = orderedSteps.filter(stepId => stepAllowed(stepId)).indexOf(activeStep) + 1;
-        const total = orderedSteps.filter(stepId => stepAllowed(stepId)).length;
+        const currentPosition = orderedSteps.indexOf(activeStep) + 1;
+        const total = orderedSteps.length;
         popover.innerHTML = `
             <div class="archtime-guide-kicker"><span>Guida rapida · ${currentPosition}/${total}</span><button type="button" class="archtime-guide-close" aria-label="Chiudi suggerimento">×</button></div>
             <h3 class="archtime-guide-title">${step.title}</h3>
             <p class="archtime-guide-copy">${step.copy}</p>
-            ${step.choices ? `
-                <div class="archtime-guide-choices">
-                    <button type="button" class="archtime-guide-choice" data-guide-mode="solo">Lavoro da solo</button>
-                    <button type="button" class="archtime-guide-choice" data-guide-mode="team">Lavoro con un team</button>
-                </div>` : `
-                <div class="archtime-guide-actions">
-                    <button type="button" class="archtime-guide-skip">Salta la guida</button>
-                    <button type="button" class="archtime-guide-next">${activeStep === 'report' ? 'Ho capito' : 'Avanti'}</button>
-                </div>`}
+            <div class="archtime-guide-actions">
+                <button type="button" class="archtime-guide-skip">Salta la guida</button>
+                <button type="button" class="archtime-guide-next">${activeStep === 'report' ? 'Ho capito' : 'Avanti'}</button>
+            </div>
         `;
         document.body.appendChild(popover);
         popover.querySelector('.archtime-guide-close')?.addEventListener('click', () => {
@@ -240,9 +217,6 @@
         });
         popover.querySelector('.archtime-guide-skip')?.addEventListener('click', () => finishGuide(true));
         popover.querySelector('.archtime-guide-next')?.addEventListener('click', () => markStepComplete());
-        popover.querySelectorAll('[data-guide-mode]').forEach(button => {
-            button.addEventListener('click', () => chooseWorkMode(button.dataset.guideMode));
-        });
         requestAnimationFrame(positionPopover);
     }
 
@@ -304,7 +278,6 @@
         state.finished = false;
         if (reset) {
             state.completed = [];
-            state.workMode = null;
         }
         saveState();
         buildOrder();
