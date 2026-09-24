@@ -142,6 +142,7 @@
     }
 
     function removeGuideElements() {
+        if (activeStep) targetFor(activeStep)?.classList.remove('archtime-guide-target');
         hotspot?.remove();
         popover?.remove();
         hotspot = null;
@@ -154,8 +155,8 @@
         const target = targetFor(activeStep);
         if (!isVisible(target)) return;
         const rect = target.getBoundingClientRect();
-        hotspot.style.left = `${Math.min(window.innerWidth - 18, Math.max(4, rect.right - 7))}px`;
-        hotspot.style.top = `${Math.min(window.innerHeight - 18, Math.max(4, rect.top - 7))}px`;
+        hotspot.style.left = `${Math.min(window.innerWidth - 22, Math.max(4, rect.right - 13))}px`;
+        hotspot.style.top = `${Math.min(window.innerHeight - 22, Math.max(4, rect.top - 7))}px`;
         if (popover) positionPopover();
     }
 
@@ -265,6 +266,7 @@
         }
 
         activeStep = stepId;
+        target.classList.add('archtime-guide-target');
         hotspot = document.createElement('button');
         hotspot.type = 'button';
         hotspot.className = 'archtime-guide-hotspot';
@@ -275,7 +277,8 @@
         document.body.appendChild(hotspot);
         requestAnimationFrame(() => {
             positionHotspot();
-            showPopover();
+            const hasHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+            if (!hasHover) showPopover();
         });
     }
 

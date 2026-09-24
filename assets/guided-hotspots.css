@@ -1,13 +1,13 @@
 .archtime-guide-hotspot {
     position: fixed;
-    z-index: 8800;
-    width: 14px;
-    height: 14px;
+    z-index: 8803;
+    width: 18px;
+    height: 18px;
     padding: 0;
     border: 3px solid #fff;
     border-radius: 999px;
     background: #4f46e5;
-    box-shadow: 0 3px 10px rgba(15, 23, 42, .22);
+    box-shadow: 0 4px 13px rgba(49, 46, 129, .34);
     cursor: pointer;
     transition: transform .18s ease, background-color .18s ease;
 }
@@ -16,11 +16,16 @@
 .archtime-guide-hotspot::after {
     content: "";
     position: absolute;
-    inset: -7px;
-    border: 1px solid rgba(79, 70, 229, .38);
+    inset: -8px;
+    border: 2px solid rgba(79, 70, 229, .42);
     border-radius: inherit;
     animation: archtime-guide-pulse 2.2s ease-out infinite;
     pointer-events: none;
+}
+
+.archtime-guide-target {
+    outline: 2px solid rgba(79, 70, 229, .34) !important;
+    outline-offset: 3px;
 }
 
 .archtime-guide-hotspot::after {
@@ -37,8 +42,8 @@
 .archtime-guide-popover {
     position: fixed;
     z-index: 8801;
-    width: min(330px, calc(100vw - 24px));
-    padding: 18px;
+    width: min(305px, calc(100vw - 24px));
+    padding: 16px;
     border: 1px solid rgba(148, 163, 184, .34);
     border-radius: 14px;
     background: rgba(255, 255, 255, .94);
@@ -181,6 +186,7 @@
 
 @media (max-width: 640px) {
     .archtime-guide-popover {
+        width: min(330px, calc(100vw - 24px));
         padding: 16px;
         border-radius: 12px;
     }

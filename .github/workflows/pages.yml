@@ -50,6 +50,7 @@ jobs:
           cp apple-touch-icon*.png dist/
           cp assets/app.css dist/assets/app.css
           cp assets/app-pro.css dist/assets/app-pro.css
+          cp assets/guided-hotspots.css dist/assets/guided-hotspots.css
           cp assets/fonts.css dist/assets/fonts.css
           cp assets/public-site.css dist/assets/public-site.css
           cp assets/tailwind-built.css dist/assets/tailwind-built.css
