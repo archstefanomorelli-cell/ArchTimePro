@@ -92,7 +92,15 @@
 
     function hasRealProject() {
         try {
-            return typeof projects !== 'undefined' && projects.some(project => !project.is_demo);
+            if (typeof projects === 'undefined') return false;
+            const theme = typeof THEMES !== 'undefined' ? THEMES[currentBusinessType] : null;
+            return projects.some(project => {
+                const isKnownDemo = project.is_demo === true
+                    || (studioData?.demo_generated === true
+                        && project.name === theme?.demoProject
+                        && project.client === theme?.demoClient);
+                return !isKnownDemo;
+            });
         } catch (_) {
             return false;
         }

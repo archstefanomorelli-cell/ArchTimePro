@@ -800,7 +800,11 @@ function switchAuthTab(mode) {
             const demoName = THEMES[currentBusinessType]?.demoProject;
             const demoClient = THEMES[currentBusinessType]?.demoClient;
             const hasMeaningfulProject = projects.some(project => {
-                if (project.is_demo) return false;
+                const isKnownDemo = project.is_demo === true
+                    || (studioData.demo_generated === true
+                        && project.name === demoName
+                        && project.client === demoClient);
+                if (isKnownDemo) return false;
                 return Number(project.budget || 0) > 0
                     || (project.name && project.name !== demoName)
                     || (project.client && project.client !== demoClient);
