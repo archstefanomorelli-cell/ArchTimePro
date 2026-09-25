@@ -434,6 +434,9 @@
                     cloudTimerTask = selectedTask || 'Generico';
                     cloudTimerNotes = notes;
                     renderRunningCloudTimer();
+                    window.dispatchEvent(new CustomEvent('archtime:timer-started', {
+                        detail: { projectId: projects[Number(selectedProjectIndex)]?.id || null }
+                    }));
                 } finally {
                     cloudTimerMutationBusy = false;
                 }
@@ -542,6 +545,9 @@
                     await trackAcquisitionMilestone('first_time_entry', { source });
                 }
                 await fetchEntries();
+                window.dispatchEvent(new CustomEvent('archtime:entry-created', {
+                    detail: { projectId: proj.id, source }
+                }));
                 if (shouldShowFirstValue) await showFirstValueMoment(proj.id);
             } catch (error) {
                 await appAlert('Registrazione non riuscita', error.message || 'Non è stato possibile salvare l’attività.', 'danger');

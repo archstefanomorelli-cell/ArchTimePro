@@ -51,7 +51,7 @@
     <link rel="stylesheet" href="assets/app.css?v=brand-2026-09-12-01">
     <link rel="stylesheet" href="assets/app-pro.css?v=studio-management-glass-2026-08-13-01">
     <link rel="stylesheet" href="assets/app-flow-prototype.css?v=2026-09-21-01">
-    <link rel="stylesheet" href="assets/guided-hotspots.css?v=2026-09-24-02">
+    <link rel="stylesheet" href="assets/guided-hotspots.css?v=2026-09-25-01">
     <script src="assets/js/12-analytics.js?v=privacy-2026-08-12-01" defer></script>
 </head>
 <body class="text-slate-800 pb-20 lg:pb-0">
@@ -252,6 +252,21 @@
                 <button type="button" class="force-hide pwa-install-action" data-pwa-install-action>Installa</button>
                 <button type="button" class="pwa-install-close" data-pwa-dismiss aria-label="Nascondi suggerimento"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
             </div>
+
+            <section id="activation-checklist" class="activation-checklist admin-only force-hide lg:col-span-12" aria-labelledby="activation-checklist-title">
+                <div class="activation-checklist-copy">
+                    <p>Primo valore</p>
+                    <h2 id="activation-checklist-title">Porta una commessa dal progetto al primo margine</h2>
+                    <span id="activation-checklist-progress">0 di 4 passaggi completati</span>
+                </div>
+                <ol class="activation-checklist-steps" aria-label="Avanzamento iniziale">
+                    <li data-activation-step="project"><i data-lucide="briefcase-business"></i><span>Crea la commessa</span></li>
+                    <li data-activation-step="timer"><i data-lucide="play"></i><span>Avvia il timer</span></li>
+                    <li data-activation-step="entry"><i data-lucide="timer-reset"></i><span>Registra il lavoro</span></li>
+                    <li data-activation-step="value"><i data-lucide="trending-up"></i><span>Leggi il margine</span></li>
+                </ol>
+                <button id="activation-next-action" type="button" class="activation-next-action"><span>Continua</span><i data-lucide="arrow-right"></i></button>
+            </section>
             
             <div class="lg:col-span-4 flex flex-col gap-6 lg:gap-8">
                 
@@ -806,6 +821,20 @@
         </div>
     </div>
 
+    <div id="modal-first-value" class="force-hide fixed inset-0 z-[320] modal flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="first-value-title">
+        <div class="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-xl sm:p-8">
+            <div class="mb-5 flex h-11 w-11 items-center justify-center rounded-xl border border-primary-100 bg-primary-50 text-primary-600"><i data-lucide="trending-up" class="h-5 w-5"></i></div>
+            <p class="text-[10px] font-black uppercase tracking-wider text-primary-600">Il primo dato è entrato</p>
+            <h2 id="first-value-title" class="mt-1 text-xl font-black tracking-tight text-slate-900">Ora il margine reagisce al lavoro reale.</h2>
+            <div class="mt-5 grid grid-cols-3 gap-2">
+                <div class="rounded-xl border border-slate-200 bg-slate-50 p-3"><small class="text-[8px] font-black uppercase tracking-wider text-slate-400">Budget</small><strong id="first-value-budget" class="mt-1 block text-sm text-slate-900">0 €</strong></div>
+                <div class="rounded-xl border border-slate-200 bg-slate-50 p-3"><small class="text-[8px] font-black uppercase tracking-wider text-slate-400">Costi</small><strong id="first-value-cost" class="mt-1 block text-sm text-slate-900">0 €</strong></div>
+                <div class="rounded-xl border border-emerald-100 bg-emerald-50 p-3"><small class="text-[8px] font-black uppercase tracking-wider text-emerald-600">Margine</small><strong id="first-value-margin" class="mt-1 block text-sm text-emerald-700">0 €</strong></div>
+            </div>
+            <button id="btn-close-first-value" type="button" class="mt-5 w-full rounded-xl bg-slate-900 px-4 py-3.5 text-sm font-bold text-white hover:bg-slate-800">Continua</button>
+        </div>
+    </div>
+
     <div id="modal-legal-update" class="force-hide fixed inset-0 z-[600] modal flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="legal-update-title">
         <div class="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-xl sm:p-8">
             <div class="mb-5 flex h-11 w-11 items-center justify-center rounded-xl border border-primary-100 bg-primary-50 text-primary-600">
@@ -1233,15 +1262,16 @@
     <script src="assets/js/00-runtime-config.js?v=stripe-founder-2026-06-29"></script>
     <script src="assets/js/normative-engine.js?v=2026-08-01-01"></script>
     <script src="assets/js/01-core.js?v=trial-start-2026-09-24-01"></script>
-    <script src="assets/js/02-auth-account.js?v=trial-start-2026-09-24-01"></script>
+    <script src="assets/js/02-auth-account.js?v=activation-path-2026-09-25-01"></script>
     <script src="assets/js/03-team.js?v=studio-management-2026-08-12-01"></script>
     <script src="assets/js/04-projects.js?v=quote-handoff-2026-09-01-01"></script>
-    <script src="assets/js/05-time-entries.js?v=timer-sync-2026-08-12-02"></script>
+    <script src="assets/js/05-time-entries.js?v=activation-path-2026-09-25-01"></script>
     <script src="assets/js/06-reports.js?v=quote-format-modal-2026-08-12-01"></script>
-    <script src="assets/js/07-password-bootstrap.js?v=modal-dismiss-2026-09-01-01"></script>
+    <script src="assets/js/07-password-bootstrap.js?v=activation-path-2026-09-25-01"></script>
     <script src="assets/js/09-video-demo.js?v=quote-fiscal-2026-08-03-01"></script>
     <script src="assets/js/10-flow-prototype.js?v=2026-09-21-01"></script>
     <script src="assets/js/11-document-prototype.js?v=2026-08-28-08"></script>
     <script src="assets/js/16-guided-hotspots.js?v=2026-09-24-04"></script>
+    <script src="assets/js/17-activation-checklist.js?v=2026-09-25-01"></script>
 </body>
 </html>

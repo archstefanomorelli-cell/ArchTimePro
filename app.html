@@ -44,7 +44,7 @@
     <script src="assets/vendor/exceljs-4.4.0.js?v=privacy-security-2026-08-12-02"></script>
     <link rel="stylesheet" href="assets/app.css?v=brand-2026-09-12-01">
     <link rel="stylesheet" href="assets/app-pro.css?v=quick-start-2026-09-21-01">
-    <link rel="stylesheet" href="assets/guided-hotspots.css?v=2026-09-24-02">
+    <link rel="stylesheet" href="assets/guided-hotspots.css?v=2026-09-25-01">
     <script src="assets/js/12-analytics.js?v=acquisition-funnel-2026-08-28-01" defer></script>
 </head>
 <body class="text-slate-800 pb-20 lg:pb-0">
@@ -237,6 +237,21 @@
                 <button type="button" class="force-hide pwa-install-action" data-pwa-install-action>Installa</button>
                 <button type="button" class="pwa-install-close" data-pwa-dismiss aria-label="Nascondi suggerimento"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
             </div>
+
+            <section id="activation-checklist" class="activation-checklist admin-only force-hide lg:col-span-12" aria-labelledby="activation-checklist-title">
+                <div class="activation-checklist-copy">
+                    <p>Primo valore</p>
+                    <h2 id="activation-checklist-title">Porta una commessa dal progetto al primo margine</h2>
+                    <span id="activation-checklist-progress">0 di 4 passaggi completati</span>
+                </div>
+                <ol class="activation-checklist-steps" aria-label="Avanzamento iniziale">
+                    <li data-activation-step="project"><i data-lucide="briefcase-business"></i><span>Crea la commessa</span></li>
+                    <li data-activation-step="timer"><i data-lucide="play"></i><span>Avvia il timer</span></li>
+                    <li data-activation-step="entry"><i data-lucide="timer-reset"></i><span>Registra il lavoro</span></li>
+                    <li data-activation-step="value"><i data-lucide="trending-up"></i><span>Leggi il margine</span></li>
+                </ol>
+                <button id="activation-next-action" type="button" class="activation-next-action"><span>Continua</span><i data-lucide="arrow-right"></i></button>
+            </section>
             
             <div class="lg:col-span-4 flex flex-col gap-6 lg:gap-8">
                 
@@ -756,24 +771,6 @@
         </div>
     </div>
 
-    <div id="modal-onboarding-feedback" class="force-hide fixed inset-0 z-[320] modal flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="onboarding-feedback-title">
-        <div class="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-5 shadow-xl sm:p-7">
-            <div class="mb-5 flex h-11 w-11 items-center justify-center rounded-xl border border-amber-100 bg-amber-50 text-amber-600"><i data-lucide="message-circle-question" class="h-5 w-5"></i></div>
-            <h2 id="onboarding-feedback-title" class="text-xl font-black tracking-tight text-slate-900">Cosa ti sta fermando?</h2>
-            <p class="mt-2 text-sm leading-relaxed text-slate-500">Una risposta ci aiuta a rendere il primo utilizzo più semplice.</p>
-            <div class="mt-5 grid gap-2">
-                <button type="button" data-onboarding-reason="missing_data" class="rounded-xl border border-slate-200 px-4 py-3 text-left text-sm font-bold text-slate-700 transition-colors hover:border-primary-300 hover:bg-primary-50">Non ho i dati sottomano</button>
-                <button type="button" data-onboarding-reason="exploring" class="rounded-xl border border-slate-200 px-4 py-3 text-left text-sm font-bold text-slate-700 transition-colors hover:border-primary-300 hover:bg-primary-50">Voglio prima esplorare</button>
-                <button type="button" data-onboarding-reason="unclear" class="rounded-xl border border-slate-200 px-4 py-3 text-left text-sm font-bold text-slate-700 transition-colors hover:border-primary-300 hover:bg-primary-50">Non so cosa inserire</button>
-                <button type="button" data-onboarding-reason="not_relevant" class="rounded-xl border border-slate-200 px-4 py-3 text-left text-sm font-bold text-slate-700 transition-colors hover:border-primary-300 hover:bg-primary-50">Non è quello che cercavo</button>
-            </div>
-            <div class="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-between">
-                <button id="btn-dismiss-onboarding-feedback" type="button" class="px-3 py-2.5 text-xs font-bold text-slate-400 hover:text-slate-700">Chiudi senza rispondere</button>
-                <button id="btn-return-onboarding" type="button" class="rounded-xl bg-slate-900 px-4 py-2.5 text-xs font-bold text-white hover:bg-slate-800">Continua la configurazione</button>
-            </div>
-        </div>
-    </div>
-
     <div id="modal-onboarding-ready" class="force-hide fixed inset-0 z-[320] modal flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="onboarding-ready-project-name">
         <div class="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-xl sm:p-8">
             <div class="mb-5 flex h-11 w-11 items-center justify-center rounded-xl border border-emerald-100 bg-emerald-50 text-emerald-600"><i data-lucide="check" class="h-5 w-5"></i></div>
@@ -1221,13 +1218,14 @@
     <script src="assets/js/00-runtime-config.js?v=stripe-founder-2026-06-29"></script>
     <script src="assets/js/normative-engine.js?v=2026-08-01-01"></script>
     <script src="assets/js/01-core.js?v=trial-start-2026-09-24-01"></script>
-    <script src="assets/js/02-auth-account.js?v=trial-start-2026-09-24-01"></script>
+    <script src="assets/js/02-auth-account.js?v=activation-path-2026-09-25-01"></script>
     <script src="assets/js/03-team.js?v=studio-management-2026-08-12-01"></script>
     <script src="assets/js/04-projects.js?v=quick-start-2026-09-21-01"></script>
-    <script src="assets/js/05-time-entries.js?v=activation-flow-2026-09-18-01"></script>
+    <script src="assets/js/05-time-entries.js?v=activation-path-2026-09-25-01"></script>
     <script src="assets/js/06-reports.js?v=quote-format-modal-2026-08-12-01"></script>
-    <script src="assets/js/07-password-bootstrap.js?v=quick-start-2026-09-21-01"></script>
+    <script src="assets/js/07-password-bootstrap.js?v=activation-path-2026-09-25-01"></script>
     <script src="assets/js/09-video-demo.js?v=quote-fiscal-2026-08-03-01"></script>
     <script src="assets/js/16-guided-hotspots.js?v=2026-09-24-04"></script>
+    <script src="assets/js/17-activation-checklist.js?v=2026-09-25-01"></script>
 </body>
 </html>

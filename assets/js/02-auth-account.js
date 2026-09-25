@@ -892,29 +892,12 @@ function switchAuthTab(mode) {
             return true;
         }
 
-        function openOnboardingFeedback() {
-            document.getElementById('modal-owner-onboarding')?.classList.add('force-hide');
-            document.getElementById('modal-onboarding-feedback')?.classList.remove('force-hide');
-            window.archTimeAnalytics?.track('onboarding_exit_prompt');
-            lucide.createIcons();
-        }
-
-        function returnToOwnerOnboarding() {
-            document.getElementById('modal-onboarding-feedback')?.classList.add('force-hide');
-            document.getElementById('modal-owner-onboarding')?.classList.remove('force-hide');
-        }
-
         async function finishOnboardingWithoutProject(reason = 'no_answer') {
-            document.getElementById('modal-onboarding-feedback')?.classList.add('force-hide');
+            document.getElementById('modal-owner-onboarding')?.classList.add('force-hide');
             markOwnerOnboardingDone();
             await recordOnboardingEvent('onboarding_dismissed', reason);
             window.archTimeAnalytics?.track('onboarding_dismissed', { reason });
             window.dispatchEvent(new CustomEvent('archtime:onboarding-complete', { detail: { hasProject: false } }));
-        }
-
-        async function submitOnboardingReason(reason) {
-            await finishOnboardingWithoutProject(reason);
-            await appAlert('Grazie', 'La risposta è stata registrata. Puoi esplorare liberamente l’app.', 'success');
         }
 
         function closeOnboardingReady(openTimer = false) {
