@@ -28,7 +28,7 @@
             selector: '#btn-toggle-timer',
             tab: 'operate',
             title: 'Timer o inserimento manuale',
-            copy: 'Avvia il timer mentre lavori. Per registrare ore già svolte, apri Manuale: sono due modi alternativi di compilare il registro.'
+            copy: 'Avvia il timer mentre lavori. Per registrare ore già svolte, apri Inserimento ore manuali: sono due modi alternativi di compilare il registro.'
         },
         analytics: {
             selector: '#btn-toggle-analytics',
@@ -164,8 +164,8 @@
         const popRect = popover.getBoundingClientRect();
         const gap = 12;
         const margin = 12;
-        let top = rect.bottom + gap;
-        if (top + popRect.height > window.innerHeight - margin) top = rect.top - popRect.height - gap;
+        let top = activeStep === 'work' ? rect.top - popRect.height - gap : rect.bottom + gap;
+        if (activeStep !== 'work' && top + popRect.height > window.innerHeight - margin) top = rect.top - popRect.height - gap;
         top = Math.max(margin, Math.min(top, window.innerHeight - popRect.height - margin));
         let left = rect.right - popRect.width;
         left = Math.max(margin, Math.min(left, window.innerWidth - popRect.width - margin));

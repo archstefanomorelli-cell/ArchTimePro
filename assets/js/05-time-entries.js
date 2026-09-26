@@ -330,7 +330,7 @@
             timerInterval = null;
             document.getElementById('timer-display').innerText = "00:00:00";
             document.getElementById('timer-notes').value = "";
-            document.getElementById('btn-text').innerText = "Avvia ora";
+            document.getElementById('btn-text').innerText = "Avvia timer";
             document.getElementById('btn-icon').setAttribute("data-lucide", "play-circle");
             setTimerButtonRunning(false);
             lucide.createIcons();

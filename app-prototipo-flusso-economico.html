@@ -48,8 +48,8 @@
     <script src="assets/vendor/jspdf-2.5.1.js?v=privacy-security-2026-08-12-02"></script>
     <script src="assets/vendor/jspdf-autotable-3.5.31.js?v=privacy-security-2026-08-12-02"></script>
     <script src="assets/vendor/exceljs-4.4.0.js?v=privacy-security-2026-08-12-02"></script>
-    <link rel="stylesheet" href="assets/app.css?v=timer-manual-2026-09-26-01">
-    <link rel="stylesheet" href="assets/app-pro.css?v=studio-management-glass-2026-08-13-01">
+    <link rel="stylesheet" href="assets/app.css?v=timer-manual-2026-09-26-02">
+    <link rel="stylesheet" href="assets/app-pro.css?v=timer-manual-2026-09-26-01">
     <link rel="stylesheet" href="assets/app-flow-prototype.css?v=2026-09-21-01">
     <link rel="stylesheet" href="assets/guided-hotspots.css?v=2026-09-25-01">
     <script src="assets/js/12-analytics.js?v=privacy-2026-08-12-01" defer></script>
@@ -273,11 +273,10 @@
                     <div>
                         <div class="flex justify-between items-center mb-6">
                             <h2 class="text-lg font-black text-slate-800 tracking-tight flex items-center gap-2"><i data-lucide="clock" class="text-primary-500 w-5 h-5"></i> Timer</h2>
-                            <button id="btn-open-manual-entry" type="button" class="secondary-action compact">Manuale</button>
                         </div>
                         <div id="prototype-quick-ready" class="prototype-quick-ready force-hide" role="status">
                             <span class="prototype-quick-ready-icon"><i data-lucide="check"></i></span>
-                            <span><strong>Commessa pronta.</strong><small>Puoi avviare il timer oppure inserire le ore già svolte con Manuale.</small></span>
+                            <span><strong>Commessa pronta.</strong><small>Puoi avviare il timer oppure usare Inserimento ore manuali per il lavoro già svolto.</small></span>
                             <button type="button" data-prototype-action="complete-quick-project">Completa</button>
                         </div>
                         <div class="space-y-4">
@@ -286,7 +285,9 @@
                             <div><input type="text" id="timer-notes" placeholder="Aggiungi una nota (opzionale)" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white shadow-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all text-slate-700 placeholder:text-slate-400"></div>
                         </div>
                         <div class="mt-8 mb-8"><div id="timer-display" class="text-5xl lg:text-6xl font-black tracking-tighter text-center text-slate-800 tabular-nums">00:00:00</div></div>
-                        <button id="btn-toggle-timer" class="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold text-base shadow-sm hover:bg-slate-800 transition-all active:scale-[0.98] flex justify-center items-center gap-2"><i data-lucide="play-circle" id="btn-icon" class="w-5 h-5"></i> <span id="btn-text">Avvia ora</span></button>
+                        <button id="btn-toggle-timer" class="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold text-base shadow-sm hover:bg-slate-800 transition-all active:scale-[0.98] flex justify-center items-center gap-2"><i data-lucide="play-circle" id="btn-icon" class="w-5 h-5"></i> <span id="btn-text">Avvia timer</span></button>
+                        <div class="timer-choice-separator">oppure</div>
+                        <button id="btn-open-manual-entry" type="button" class="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold text-base shadow-sm hover:bg-slate-800 transition-all active:scale-[0.98] flex justify-center items-center gap-2"><i data-lucide="pencil-line" class="w-5 h-5"></i> Inserimento ore manuali</button>
                     </div>
                 </section>
 
@@ -936,7 +937,7 @@
     <div id="modal-manual" class="force-hide fixed inset-0 z-[100] modal flex items-center justify-center p-4">
         <div class="w-full max-w-md p-6 lg:p-8 shadow-xl border border-slate-200 rounded-2xl relative bg-white">
             <button id="btn-close-manual-entry" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
-            <h2 class="text-lg font-black text-slate-800 tracking-tight mb-1 pr-10">Inserimento manuale</h2>
+            <h2 class="text-lg font-black text-slate-800 tracking-tight mb-1 pr-10">Inserimento ore manuali</h2>
             <p class="text-xs text-slate-500 font-medium mb-6 pr-10">Registra ore già svolte senza usare il timer.</p>
             <div class="space-y-4">
                 <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Progetto</label><select id="manual-project" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all appearance-none"></select></div>
@@ -1266,13 +1267,13 @@
     <script src="assets/js/02-auth-account.js?v=timer-manual-2026-09-26-01"></script>
     <script src="assets/js/03-team.js?v=studio-management-2026-08-12-01"></script>
     <script src="assets/js/04-projects.js?v=timer-manual-2026-09-26-01"></script>
-    <script src="assets/js/05-time-entries.js?v=timer-manual-2026-09-26-02"></script>
+    <script src="assets/js/05-time-entries.js?v=timer-manual-2026-09-26-03"></script>
     <script src="assets/js/06-reports.js?v=quote-format-modal-2026-08-12-01"></script>
     <script src="assets/js/07-password-bootstrap.js?v=timer-manual-2026-09-26-01"></script>
     <script src="assets/js/09-video-demo.js?v=quote-fiscal-2026-08-03-01"></script>
     <script src="assets/js/10-flow-prototype.js?v=timer-manual-2026-09-26-01"></script>
     <script src="assets/js/11-document-prototype.js?v=2026-08-28-08"></script>
-    <script src="assets/js/16-guided-hotspots.js?v=timer-manual-2026-09-26-02"></script>
+    <script src="assets/js/16-guided-hotspots.js?v=timer-manual-2026-09-26-04"></script>
     <script src="assets/js/17-activation-checklist.js?v=timer-manual-2026-09-26-02"></script>
 </body>
 </html>

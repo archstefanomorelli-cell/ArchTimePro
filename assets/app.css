@@ -113,6 +113,7 @@
         .secondary-action.dark { background: #0f172a; color: #fff; border-color: #0f172a; }
         .secondary-action.dark:hover { background: #1e293b; color: #fff; border-color: #1e293b; }
         .secondary-action.icon-only { width: 2.75rem; padding-left: 0; padding-right: 0; }
+        .timer-choice-separator { margin: 0.75rem 0; color: #94a3b8; font-size: 0.6875rem; font-weight: 700; text-align: center; }
         .manual-entry-details { border-top: 1px solid #e2e8f0; padding-top: 0.875rem; }
         .manual-entry-details summary { cursor: pointer; color: #475569; font-size: 0.75rem; font-weight: 750; }
         .manual-entry-details[open] { display: grid; gap: 0.875rem; }

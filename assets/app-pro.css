@@ -108,6 +108,7 @@ html.theme-pro .shadow-2xl {
 html.theme-pro .secondary-action,
 html.theme-pro .primary-action-compact,
 html.theme-pro #btn-toggle-timer,
+html.theme-pro #btn-open-manual-entry,
 html.theme-pro #btn-auth,
 html.theme-pro #btn-limbo-create,
 html.theme-pro #btn-limbo-join,
@@ -117,6 +118,7 @@ html.theme-pro [data-plan-checkout] {
 }
 
 html.theme-pro #btn-toggle-timer,
+html.theme-pro #btn-open-manual-entry,
 html.theme-pro #btn-auth,
 html.theme-pro .secondary-action.dark,
 html.theme-pro .primary-action-compact,
@@ -127,6 +129,7 @@ html.theme-pro #btn-open-project-modal {
 }
 
 html.theme-pro #btn-toggle-timer:hover,
+html.theme-pro #btn-open-manual-entry:hover,
 html.theme-pro #btn-auth:hover,
 html.theme-pro .secondary-action.dark:hover,
 html.theme-pro .primary-action-compact:hover,
