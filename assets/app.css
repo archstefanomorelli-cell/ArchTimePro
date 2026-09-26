@@ -113,17 +113,6 @@
         .secondary-action.dark { background: #0f172a; color: #fff; border-color: #0f172a; }
         .secondary-action.dark:hover { background: #1e293b; color: #fff; border-color: #1e293b; }
         .secondary-action.icon-only { width: 2.75rem; padding-left: 0; padding-right: 0; }
-        .quick-work-entry { margin-top: 1.25rem; }
-        .quick-work-entry label, .timer-alternative > span { display: block; margin-bottom: 0.5rem; color: #64748b; font-size: 0.6875rem; font-weight: 800; }
-        .quick-work-entry-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.5rem; }
-        .quick-work-entry-row input { min-width: 0; border: 1px solid #cbd5e1; border-radius: 0.75rem; padding: 0.75rem; color: #1e293b; background: #fff; font-size: 0.875rem; font-weight: 700; }
-        .quick-work-entry-row input:focus { outline: 2px solid rgb(var(--color-primary-300)); outline-offset: 1px; }
-        .quick-work-entry-row button { display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; border-radius: 0.75rem; padding: 0.75rem 0.875rem; background: #172033; color: #fff; font-size: 0.8125rem; font-weight: 800; white-space: nowrap; }
-        .quick-work-entry-row button:hover { background: #25324c; }
-        .quick-work-entry-row button:disabled { cursor: wait; opacity: 0.6; }
-        .quick-work-entry small { display: block; margin-top: 0.35rem; color: #64748b; font-size: 0.625rem; line-height: 1.4; }
-        .timer-alternative { margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid #e2e8f0; }
-        .timer-alternative #timer-display { margin: 1.25rem 0; }
         .manual-entry-details { border-top: 1px solid #e2e8f0; padding-top: 0.875rem; }
         .manual-entry-details summary { cursor: pointer; color: #475569; font-size: 0.75rem; font-weight: 750; }
         .manual-entry-details[open] { display: grid; gap: 0.875rem; }

@@ -34,7 +34,6 @@
             bindClick('btn-open-studio-management', openStudioManagementModal);
             bindClick('btn-close-studio-management', closeStudioManagementModal);
             bindClick('btn-open-manual-entry', openManualEntry);
-            bindClick('btn-save-quick-hours', saveQuickHours);
             bindClick('btn-toggle-timer', toggleTimer);
             bindClick('btn-manage-templates', openTemplatesModal);
             bindClick('btn-open-templates-studio', openTemplatesModal);
@@ -65,7 +64,7 @@
             bindClick('btn-explore-without-onboarding', () => finishOnboardingWithoutProject('no_answer'));
             bindClick('btn-prepare-first-project', prepareFirstProjectFromOnboarding);
             bindClick('btn-clear-calculator-handoff', clearMarginCalculatorHandoff);
-            bindClick('btn-onboarding-add-hours', () => closeOnboardingReady(true, 'quick'));
+            bindClick('btn-onboarding-add-hours', () => closeOnboardingReady(true, 'manual'));
             bindClick('btn-onboarding-go-timer', () => closeOnboardingReady(true, 'timer'));
             bindClick('btn-onboarding-open-dashboard', () => closeOnboardingReady(false));
             bindClick('btn-continue-first-value', closeFirstValueMoment);
@@ -104,12 +103,6 @@
             bindClick('btn-send-reset-link', sendResetLink);
             bindClick('btn-save-new-password', saveNewPassword);
             document.getElementById('project-select')?.addEventListener('change', updateTaskDropdown);
-            document.getElementById('quick-hours')?.addEventListener('keydown', event => {
-                if (event.key === 'Enter') {
-                    event.preventDefault();
-                    saveQuickHours();
-                }
-            });
             document.getElementById('new-proj-template')?.addEventListener('change', applyTemplateToNewProject);
             document.getElementById('normative-work-value')?.addEventListener('input', event => handleNormativeWorkValue(event.target.value));
             document.getElementById('normative-work-value')?.addEventListener('blur', event => {

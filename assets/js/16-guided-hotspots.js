@@ -15,6 +15,7 @@
     let hotspot = null;
     let popover = null;
     let startTimer = null;
+    let pausedStep = null;
 
     const steps = {
         project: {
@@ -24,10 +25,10 @@
             copy: 'Da qui scegli una commessa rapida oppure la configurazione completa con attività, budget e dati del cliente.'
         },
         work: {
-            selector: '#btn-save-quick-hours',
+            selector: '#btn-toggle-timer',
             tab: 'operate',
-            title: 'Registra il lavoro',
-            copy: 'Scegli commessa e attività, poi inserisci le ore svolte. Se preferisci, puoi usare il timer.'
+            title: 'Timer o inserimento manuale',
+            copy: 'Avvia il timer mentre lavori. Per registrare ore già svolte, apri Manuale: sono due modi alternativi di compilare il registro.'
         },
         analytics: {
             selector: '#btn-toggle-analytics',
@@ -303,11 +304,23 @@
     }
 
     function pauseForFirstValue() {
-        if (state?.started && !state.finished && activeStep === 'work') {
+        if (state?.started && !state.finished && (activeStep === 'work' || pausedStep === 'work')) {
             if (!state.completed.includes('work')) state.completed.push('work');
             saveState();
         }
+        pausedStep = null;
         removeGuideElements();
+    }
+
+    function pauseForManualEntry() {
+        pausedStep = activeStep;
+        removeGuideElements();
+    }
+
+    function resumeAfterManualEntry() {
+        if (hasBlockingModal()) return;
+        pausedStep = null;
+        resumeAfterFirstValue();
     }
 
     function resumeAfterFirstValue() {
@@ -327,7 +340,9 @@
         restart: () => begin(true),
         stop: () => finishGuide(true),
         pauseForFirstValue,
-        resumeAfterFirstValue
+        resumeAfterFirstValue,
+        pauseForManualEntry,
+        resumeAfterManualEntry
     };
 
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', resumeIfNeeded);

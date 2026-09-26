@@ -102,7 +102,10 @@
         }
         const panel = document.getElementById('timer-panel');
         panel?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        window.setTimeout(() => document.getElementById(running ? 'btn-toggle-timer' : 'quick-hours')?.focus({ preventScroll: true }), 450);
+        window.setTimeout(() => {
+            if (running) document.getElementById('btn-toggle-timer')?.focus({ preventScroll: true });
+            else document.getElementById('btn-open-manual-entry')?.click();
+        }, 450);
     }
 
     async function runNextAction() {

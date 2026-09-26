@@ -599,30 +599,8 @@
             }
         }
 
-        async function saveQuickHours() {
-            const projectIndex = document.getElementById('project-select')?.value;
-            const input = document.getElementById('quick-hours');
-            const button = document.getElementById('btn-save-quick-hours');
-            if (button.disabled) return;
-            const raw = input?.value.trim() || '';
-            const hours = parseDurationInput(raw);
-            if (!projects[projectIndex]) return await appAlert('Scegli una commessa', 'Seleziona la commessa a cui attribuire le ore.', 'danger');
-            if (!/^(?:\d{1,2}(?::[0-5]\d)?|\d{1,2}[.,]\d{1,2})$/.test(raw) || !Number.isFinite(hours) || hours <= 0 || hours > 24) {
-                input?.focus();
-                return await appAlert('Durata non valida', 'Inserisci le ore come 2:30 oppure 2,5, fino a un massimo di 24 ore.', 'danger');
-            }
-            if (timerRunning) return await appAlert('Timer attivo', 'Ferma il timer prima di registrare altre ore sulla giornata.', 'info');
-
-            button.disabled = true;
-            try {
-                const saved = await saveEntry(projects[projectIndex], document.getElementById('task-select')?.value || 'Generico', hours, null, '', 'quick_manual');
-                if (saved) input.value = '';
-            } finally {
-                button.disabled = false;
-            }
-        }
-
         function openManualEntry() { 
+            window.ArchTimeGuide?.pauseForManualEntry();
             document.getElementById('modal-manual').classList.remove('force-hide'); 
             document.getElementById('manual-date').valueAsDate = new Date(); 
             document.getElementById('manual-start').value = '';
@@ -642,7 +620,10 @@
             document.getElementById('manual-hours')?.focus();
         }
         
-        function closeManualEntry() { document.getElementById('modal-manual').classList.add('force-hide'); }
+        function closeManualEntry() {
+            document.getElementById('modal-manual').classList.add('force-hide');
+            window.ArchTimeGuide?.resumeAfterManualEntry();
+        }
         
         function updateManualTaskDropdown() { 
             const p = projects[document.getElementById('manual-project').value]; 

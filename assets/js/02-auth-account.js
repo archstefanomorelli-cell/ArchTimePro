@@ -900,13 +900,14 @@ function switchAuthTab(mode) {
             window.dispatchEvent(new CustomEvent('archtime:onboarding-complete', { detail: { hasProject: false } }));
         }
 
-        function closeOnboardingReady(openWork = false, focusTarget = 'quick') {
+        function closeOnboardingReady(openWork = false, focusTarget = 'timer') {
             document.getElementById('modal-onboarding-ready')?.classList.add('force-hide');
             switchAppTab(openWork ? 'operate' : 'analyze');
             if (!openWork) return;
             const timerPanel = document.getElementById('timer-panel');
             timerPanel?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            setTimeout(() => document.getElementById(focusTarget === 'timer' ? 'btn-toggle-timer' : 'quick-hours')?.focus(), 450);
+            if (focusTarget === 'manual') openManualEntry();
+            else setTimeout(() => document.getElementById('btn-toggle-timer')?.focus(), 450);
         }
 
         async function prepareFirstProjectFromOnboarding() {

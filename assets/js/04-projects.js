@@ -1273,7 +1273,7 @@
             if (taskSelect) taskSelect.value = task;
             document.getElementById('quick-project-ready')?.classList.remove('force-hide');
             document.getElementById('timer-panel')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            setTimeout(() => document.getElementById('quick-hours')?.focus({ preventScroll: true }), 450);
+            setTimeout(() => document.getElementById('btn-toggle-timer')?.focus({ preventScroll: true }), 450);
         }
 
         async function createQuickProjectRecord({ name, task, client = '', budget = 0, source = 'quick_modal' }) {
