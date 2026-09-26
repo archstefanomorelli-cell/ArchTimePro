@@ -42,7 +42,7 @@
     <script src="assets/vendor/jspdf-2.5.1.js?v=privacy-security-2026-08-12-02"></script>
     <script src="assets/vendor/jspdf-autotable-3.5.31.js?v=privacy-security-2026-08-12-02"></script>
     <script src="assets/vendor/exceljs-4.4.0.js?v=privacy-security-2026-08-12-02"></script>
-    <link rel="stylesheet" href="assets/app.css?v=brand-2026-09-12-01">
+    <link rel="stylesheet" href="assets/app.css?v=work-entry-2026-09-26-01">
     <link rel="stylesheet" href="assets/app-pro.css?v=quick-start-2026-09-21-01">
     <link rel="stylesheet" href="assets/guided-hotspots.css?v=2026-09-25-01">
     <script src="assets/js/12-analytics.js?v=acquisition-funnel-2026-08-28-01" defer></script>
@@ -242,13 +242,12 @@
                 <div class="activation-checklist-copy">
                     <p>Primo valore</p>
                     <h2 id="activation-checklist-title">Porta una commessa dal progetto al primo margine</h2>
-                    <span id="activation-checklist-progress">0 di 4 passaggi completati</span>
+                    <span id="activation-checklist-progress">0 di 3 passaggi completati</span>
                 </div>
                 <ol class="activation-checklist-steps" aria-label="Avanzamento iniziale">
                     <li data-activation-step="project"><i data-lucide="briefcase-business"></i><span>Crea la commessa</span></li>
-                    <li data-activation-step="timer"><i data-lucide="play"></i><span>Avvia il timer</span></li>
                     <li data-activation-step="entry"><i data-lucide="timer-reset"></i><span>Registra il lavoro</span></li>
-                    <li data-activation-step="value"><i data-lucide="trending-up"></i><span>Leggi il margine</span></li>
+                    <li data-activation-step="value"><i data-lucide="trending-up"></i><span>Controlla l'andamento</span></li>
                 </ol>
                 <button id="activation-next-action" type="button" class="activation-next-action"><span>Continua</span><i data-lucide="arrow-right"></i></button>
             </section>
@@ -258,21 +257,32 @@
                 <section id="timer-panel" class="app-panel bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mobile-tab active" data-tab="operate">
                     <div>
                         <div class="flex justify-between items-center mb-6">
-                            <h2 class="text-lg font-black text-slate-800 tracking-tight flex items-center gap-2"><i data-lucide="clock" class="text-primary-500 w-5 h-5"></i> Timer</h2>
-                            <button id="btn-open-manual-entry" class="secondary-action compact">Manuale</button>
+                            <h2 class="text-lg font-black text-slate-800 tracking-tight flex items-center gap-2"><i data-lucide="clock" class="text-primary-500 w-5 h-5"></i> Registra lavoro</h2>
+                            <button id="btn-open-manual-entry" type="button" class="secondary-action compact">Altra data</button>
                         </div>
                         <div id="quick-project-ready" class="quick-project-ready force-hide" role="status">
                             <span class="quick-project-ready-icon"><i data-lucide="check"></i></span>
-                            <span><strong>Commessa pronta.</strong><small>Puoi avviare il timer e completare i dati economici in seguito.</small></span>
+                            <span><strong>Commessa pronta.</strong><small>Registra le ore svolte oppure avvia il timer. I dati economici possono aspettare.</small></span>
                             <button id="btn-complete-quick-project" type="button">Completa</button>
                         </div>
                         <div class="space-y-4">
                             <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1" id="lbl-timer-project">Progetto</label><select id="project-select" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white shadow-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all appearance-none cursor-pointer text-slate-700"></select></div>
                             <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Attività</label><select id="task-select" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white shadow-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all appearance-none cursor-pointer text-slate-700"></select></div>
-                            <div><input type="text" id="timer-notes" placeholder="Aggiungi una nota (opzionale)" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white shadow-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all text-slate-700 placeholder:text-slate-400"></div>
                         </div>
-                        <div class="mt-8 mb-8"><div id="timer-display" class="text-5xl lg:text-6xl font-black tracking-tighter text-center text-slate-800 tabular-nums">00:00:00</div></div>
-                        <button id="btn-toggle-timer" class="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold text-base shadow-sm hover:bg-slate-800 transition-all active:scale-[0.98] flex justify-center items-center gap-2"><i data-lucide="play-circle" id="btn-icon" class="w-5 h-5"></i> <span id="btn-text">Avvia ora</span></button>
+                        <div class="quick-work-entry">
+                            <label for="quick-hours">Ore svolte oggi</label>
+                            <div class="quick-work-entry-row">
+                                <input id="quick-hours" type="text" inputmode="decimal" autocomplete="off" placeholder="Es. 2:30" aria-describedby="quick-hours-hint">
+                                <button id="btn-save-quick-hours" type="button"><i data-lucide="check" class="w-4 h-4"></i> Registra ore</button>
+                            </div>
+                            <small id="quick-hours-hint">Puoi usare anche 2,5 per due ore e mezza.</small>
+                        </div>
+                        <div class="timer-alternative">
+                            <span>Timer</span>
+                            <input type="text" id="timer-notes" placeholder="Nota per il timer (opzionale)" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white shadow-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all text-slate-700 placeholder:text-slate-400">
+                            <div id="timer-display" class="text-5xl lg:text-6xl font-black tracking-tighter text-center text-slate-800 tabular-nums">00:00:00</div>
+                            <button id="btn-toggle-timer" class="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold text-base shadow-sm hover:bg-slate-800 transition-all active:scale-[0.98] flex justify-center items-center gap-2"><i data-lucide="play-circle" id="btn-icon" class="w-5 h-5"></i> <span id="btn-text">Avvia ora</span></button>
+                        </div>
                     </div>
                 </section>
 
@@ -764,7 +774,7 @@
                             <div><label for="onboarding-hourly-cost">Costo orario interno</label><div class="quick-project-money"><span data-studio-currency-symbol>€</span><input type="number" min="0" step="0.01" id="onboarding-hourly-cost" placeholder="0"></div></div>
                         </div>
                     </details>
-                    <button id="btn-prepare-first-project" class="w-full bg-slate-900 text-white py-3.5 mt-4 rounded-xl font-bold hover:bg-slate-800 transition-all active:scale-[0.98] shadow-sm flex items-center justify-center gap-2"><i data-lucide="play" class="w-4 h-4"></i> Crea e vai al timer</button>
+                    <button id="btn-prepare-first-project" class="w-full bg-slate-900 text-white py-3.5 mt-4 rounded-xl font-bold hover:bg-slate-800 transition-all active:scale-[0.98] shadow-sm flex items-center justify-center gap-2"><i data-lucide="arrow-right" class="w-4 h-4"></i> Crea e registra il lavoro</button>
                     <button id="btn-explore-without-onboarding" type="button" class="mt-2 w-full py-2.5 text-xs font-bold text-slate-500 transition-colors hover:text-slate-800">Per ora esploro l'app</button>
                 </div>
             </div>
@@ -780,8 +790,11 @@
                 <div class="rounded-xl border border-slate-200 bg-slate-50 p-3"><small class="text-[9px] font-black uppercase tracking-wider text-slate-400">Compenso</small><strong id="onboarding-ready-budget" class="mt-1 block text-base text-slate-900">0 €</strong></div>
                 <div class="rounded-xl border border-slate-200 bg-slate-50 p-3"><small class="text-[9px] font-black uppercase tracking-wider text-slate-400">Costo orario</small><strong id="onboarding-ready-hourly-cost" class="mt-1 block text-base text-slate-900">0 €/h</strong></div>
             </div>
-            <p class="mt-4 text-sm leading-relaxed text-slate-500">Il timer è già impostato sulla commessa. Avvialo durante la prossima attività e vedrai subito il costo incidere sul margine.</p>
-            <button id="btn-onboarding-go-timer" type="button" class="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-3.5 text-sm font-bold text-white hover:bg-slate-800"><i data-lucide="timer" class="h-4 w-4"></i> Vai al timer</button>
+            <p class="mt-4 text-sm leading-relaxed text-slate-500">La commessa è pronta. Puoi registrare le ore già svolte o usare il timer durante il prossimo lavoro.</p>
+            <div class="onboarding-work-actions">
+                <button id="btn-onboarding-add-hours" type="button"><i data-lucide="clock-3" class="h-4 w-4"></i> Registra ore</button>
+                <button id="btn-onboarding-go-timer" type="button"><i data-lucide="timer" class="h-4 w-4"></i> Usa il timer</button>
+            </div>
             <button id="btn-onboarding-open-dashboard" type="button" class="mt-2 w-full py-2.5 text-xs font-bold text-slate-500 hover:text-slate-800">Esplora la dashboard</button>
         </div>
     </div>
@@ -796,7 +809,7 @@
                 <div class="rounded-xl border border-slate-200 bg-slate-50 p-3"><small class="text-[8px] font-black uppercase tracking-wider text-slate-400">Costi</small><strong id="first-value-cost" class="mt-1 block text-sm text-slate-900">0 €</strong></div>
                 <div class="rounded-xl border border-emerald-100 bg-emerald-50 p-3"><small class="text-[8px] font-black uppercase tracking-wider text-emerald-600">Margine</small><strong id="first-value-margin" class="mt-1 block text-sm text-emerald-700">0 €</strong></div>
             </div>
-            <button id="btn-close-first-value" type="button" class="mt-5 w-full rounded-xl bg-slate-900 px-4 py-3.5 text-sm font-bold text-white hover:bg-slate-800">Continua</button>
+            <button id="btn-continue-first-value" type="button" class="mt-5 w-full rounded-xl bg-slate-900 px-4 py-3.5 text-sm font-bold text-white hover:bg-slate-800">Continua</button>
         </div>
     </div>
 
@@ -902,23 +915,25 @@
     <div id="modal-manual" class="force-hide fixed inset-0 z-[100] modal flex items-center justify-center p-4">
         <div class="w-full max-w-md p-6 lg:p-8 shadow-xl border border-slate-200 rounded-2xl relative bg-white">
             <button id="btn-close-manual-entry" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
-            <h2 class="text-lg font-black text-slate-800 tracking-tight mb-1 pr-10">Inserimento manuale</h2>
-            <p class="text-xs text-slate-500 font-medium mb-6 pr-10">Registra ore già svolte senza usare il timer.</p>
+            <h2 class="text-lg font-black text-slate-800 tracking-tight mb-1 pr-10">Registra ore</h2>
+            <p class="text-xs text-slate-500 font-medium mb-6 pr-10">Scegli la data e la durata del lavoro svolto.</p>
             <div class="space-y-4">
                 <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Progetto</label><select id="manual-project" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all appearance-none"></select></div>
                 <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Attività</label><select id="manual-task" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all appearance-none"></select></div>
                 
                 <div class="grid grid-cols-2 gap-4">
-                    <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Da (opzionale)</label><input type="time" id="manual-start" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all"></div>
-                    <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">A (opzionale)</label><input type="time" id="manual-end" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all"></div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
                     <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Data</label><input type="date" id="manual-date" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all"></div>
                     <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Ore totali</label><input type="text" id="manual-hours" placeholder="00:00" inputmode="decimal" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all font-bold font-mono"></div>
                 </div>
 
-                <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Note (opzionali)</label><input type="text" id="manual-notes" placeholder="Aggiungi una nota" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all"></div>
+                <details class="manual-entry-details">
+                    <summary>Orari e note (opzionali)</summary>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><label for="manual-start">Da</label><input type="time" id="manual-start" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all"></div>
+                        <div><label for="manual-end">A</label><input type="time" id="manual-end" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all"></div>
+                    </div>
+                    <div><label for="manual-notes">Note</label><input type="text" id="manual-notes" placeholder="Aggiungi una nota" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all"></div>
+                </details>
                 
                 <button id="btn-save-manual-entry" class="w-full bg-slate-900 text-white py-3.5 mt-4 rounded-xl font-bold shadow-sm hover:bg-slate-800 transition-all active:scale-[0.98]">Salva ore</button>
             </div>
@@ -966,10 +981,10 @@
             <button id="btn-close-project-type" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
             <p class="quick-start-kicker"><i data-lucide="zap"></i> Parti dal lavoro</p>
             <h2 class="text-xl font-black text-slate-800 tracking-tight mt-2 mb-1 flex items-center gap-2 pr-10"><i data-lucide="folder-plus" class="text-primary-500 w-5 h-5"></i> Come vuoi iniziare?</h2>
-            <p class="text-sm text-slate-500 font-medium mb-5 pr-10">Crea subito la commessa per il timer oppure definisci ora tutta la struttura.</p>
+            <p class="text-sm text-slate-500 font-medium mb-5 pr-10">Crea subito la commessa e registra il lavoro, oppure definisci ora tutta la struttura.</p>
             <button id="btn-open-quick-project" type="button" class="quick-start-option">
                 <span class="quick-start-icon"><i data-lucide="play"></i></span>
-                <span class="min-w-0 text-left"><span class="quick-start-label">Consigliato</span><strong>Commessa rapida</strong><small>Nome, prima attività e timer. Il resto può aspettare.</small></span>
+                <span class="min-w-0 text-left"><span class="quick-start-label">Consigliato</span><strong>Commessa rapida</strong><small>Nome, prima attività e registrazione ore. Il resto può aspettare.</small></span>
                 <span class="quick-start-time">30 sec</span>
                 <i data-lucide="chevron-right" class="project-type-chevron"></i>
             </button>
@@ -1011,7 +1026,7 @@
                         <div><label for="quick-project-budget">Compenso</label><div class="quick-project-money"><span data-studio-currency-symbol>€</span><input id="quick-project-budget" type="number" min="0" step="0.01" placeholder="0"></div></div>
                     </div>
                 </details>
-                <button id="btn-create-quick-project" type="submit" class="quick-project-submit"><i data-lucide="play"></i><span>Crea e prepara il timer</span></button>
+                <button id="btn-create-quick-project" type="submit" class="quick-project-submit"><i data-lucide="arrow-right"></i><span>Crea e registra il lavoro</span></button>
                 <button id="btn-open-complete-project" type="button" class="quick-project-complete-link">Preferisco configurare subito budget e attività</button>
             </form>
         </div>
@@ -1218,14 +1233,14 @@
     <script src="assets/js/00-runtime-config.js?v=stripe-founder-2026-06-29"></script>
     <script src="assets/js/normative-engine.js?v=2026-08-01-01"></script>
     <script src="assets/js/01-core.js?v=trial-start-2026-09-24-01"></script>
-    <script src="assets/js/02-auth-account.js?v=activation-path-2026-09-25-01"></script>
+    <script src="assets/js/02-auth-account.js?v=work-entry-2026-09-26-01"></script>
     <script src="assets/js/03-team.js?v=studio-management-2026-08-12-01"></script>
-    <script src="assets/js/04-projects.js?v=quick-start-2026-09-21-01"></script>
-    <script src="assets/js/05-time-entries.js?v=activation-path-2026-09-25-01"></script>
+    <script src="assets/js/04-projects.js?v=work-entry-2026-09-26-01"></script>
+    <script src="assets/js/05-time-entries.js?v=work-entry-2026-09-26-01"></script>
     <script src="assets/js/06-reports.js?v=quote-format-modal-2026-08-12-01"></script>
-    <script src="assets/js/07-password-bootstrap.js?v=activation-path-2026-09-25-01"></script>
+    <script src="assets/js/07-password-bootstrap.js?v=work-entry-2026-09-26-01"></script>
     <script src="assets/js/09-video-demo.js?v=quote-fiscal-2026-08-03-01"></script>
-    <script src="assets/js/16-guided-hotspots.js?v=2026-09-24-04"></script>
-    <script src="assets/js/17-activation-checklist.js?v=2026-09-25-01"></script>
+    <script src="assets/js/16-guided-hotspots.js?v=work-entry-2026-09-26-01"></script>
+    <script src="assets/js/17-activation-checklist.js?v=work-entry-2026-09-26-01"></script>
 </body>
 </html>

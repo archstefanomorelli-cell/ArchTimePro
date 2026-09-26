@@ -272,7 +272,7 @@
         const ready = document.getElementById('prototype-quick-ready');
         ready?.classList.remove('force-hide');
         document.querySelector('[data-tab="operate"] #timer-display')?.closest('section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        setTimeout(() => document.getElementById('btn-toggle-timer')?.focus({ preventScroll: true }), 450);
+        setTimeout(() => document.getElementById('quick-hours')?.focus({ preventScroll: true }), 450);
     }
 
     function commitQuickProject({ name, task, client = '', budget = 0, origin = 'quick_modal' }) {

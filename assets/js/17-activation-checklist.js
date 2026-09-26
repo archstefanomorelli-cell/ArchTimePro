@@ -7,7 +7,6 @@
     const params = new URLSearchParams(window.location.search);
     const isPrototype = params.get('prototypeFlow') === '1' || window.location.pathname.includes('prototipo');
     let lastSignature = '';
-    let timerStartedThisSession = false;
 
     function studioId() {
         try {
@@ -15,10 +14,6 @@
         } catch (_) {
             return isPrototype ? 'prototype' : 'pending';
         }
-    }
-
-    function timerStartedKey() {
-        return `archtime-activation-timer-started:${studioId()}`;
     }
 
     function firstValueKey() {
@@ -76,17 +71,12 @@
         const entryList = realEntries(projectList);
         let running = false;
         try { running = Boolean(timerRunning); } catch (_) {}
-        const timerStarted = running
-            || timerStartedThisSession
-            || localStorage.getItem(timerStartedKey()) === 'done'
-            || entryList.length > 0;
         const valueSeen = localStorage.getItem(firstValueKey()) === 'done';
         return {
             projectList,
             entryList,
             running,
             project: projectList.length > 0,
-            timer: timerStarted,
             entry: entryList.length > 0,
             value: valueSeen
         };
@@ -101,7 +91,7 @@
         })[0];
     }
 
-    function focusProjectTimer(project) {
+    function focusProjectWork(project, running = false) {
         if (!project) return;
         if (typeof switchAppTab === 'function') switchAppTab('operate');
         const projectIndex = projects.findIndex(item => String(item.id) === String(project.id));
@@ -112,7 +102,7 @@
         }
         const panel = document.getElementById('timer-panel');
         panel?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        window.setTimeout(() => document.getElementById('btn-toggle-timer')?.focus({ preventScroll: true }), 450);
+        window.setTimeout(() => document.getElementById(running ? 'btn-toggle-timer' : 'quick-hours')?.focus({ preventScroll: true }), 450);
     }
 
     async function runNextAction() {
@@ -124,7 +114,7 @@
             return;
         }
         if (!progress.entry) {
-            focusProjectTimer(project);
+            focusProjectWork(project, progress.running);
             return;
         }
         if (!progress.value && typeof showFirstValueMoment === 'function') {
@@ -140,18 +130,18 @@
         }
 
         const progress = currentProgress();
-        const completed = ['project', 'timer', 'entry', 'value'].filter(step => progress[step]);
+        const completed = ['project', 'entry', 'value'].filter(step => progress[step]);
         const signature = [completed.join(','), progress.running].join('|');
         if (signature === lastSignature && !container.classList.contains('force-hide')) return;
         lastSignature = signature;
 
-        if (completed.length === 4) {
+        if (completed.length === 3) {
             container.classList.add('force-hide');
             return;
         }
 
         container.classList.remove('force-hide');
-        document.getElementById('activation-checklist-progress').textContent = `${completed.length} di 4 passaggi completati`;
+        document.getElementById('activation-checklist-progress').textContent = `${completed.length} di 3 passaggi completati`;
         container.querySelectorAll('[data-activation-step]').forEach(item => {
             const done = Boolean(progress[item.dataset.activationStep]);
             item.classList.toggle('is-complete', done);
@@ -161,21 +151,16 @@
         const label = actionButton.querySelector('span');
         if (!progress.project) label.textContent = 'Crea la prima commessa';
         else if (!progress.entry && progress.running) label.textContent = 'Torna al timer attivo';
-        else if (!progress.entry && progress.timer) label.textContent = 'Riprendi il timer';
-        else if (!progress.entry) label.textContent = 'Avvia ora la prima attività';
-        else label.textContent = 'Guarda il primo margine';
+        else if (!progress.entry) label.textContent = 'Registra le prime ore';
+        else label.textContent = 'Controlla l’andamento';
         lucide?.createIcons?.();
     }
 
     actionButton.addEventListener('click', runNextAction);
     window.addEventListener('archtime:onboarding-complete', () => window.setTimeout(render, 100));
-    window.addEventListener('archtime:timer-started', () => {
-        timerStartedThisSession = true;
-        localStorage.setItem(timerStartedKey(), 'done');
-        render();
-    });
+    window.addEventListener('archtime:timer-started', render);
     window.addEventListener('archtime:entry-created', () => window.setTimeout(render, 100));
-    document.getElementById('btn-close-first-value')?.addEventListener('click', render);
+    document.getElementById('btn-continue-first-value')?.addEventListener('click', render);
 
     const initialTimer = window.setInterval(() => {
         render();

@@ -23,11 +23,11 @@
             title: 'Aggiungi una nuova commessa',
             copy: 'Da qui scegli una commessa rapida oppure la configurazione completa con attività, budget e dati del cliente.'
         },
-        timer: {
-            selector: '#btn-toggle-timer',
+        work: {
+            selector: '#btn-save-quick-hours',
             tab: 'operate',
-            title: 'Registra il lavoro mentre accade',
-            copy: 'Scegli commessa e attività, poi avvia il timer. Puoi fermarlo anche da un altro dispositivo.'
+            title: 'Registra il lavoro',
+            copy: 'Scegli commessa e attività, poi inserisci le ore svolte. Se preferisci, puoi usare il timer.'
         },
         analytics: {
             selector: '#btn-toggle-analytics',
@@ -44,6 +44,12 @@
             selector: '#btn-header-pdf',
             title: 'Esporta il Report studio',
             copy: 'Raccogli ore, costi e andamento delle commesse in un documento riferito al periodo che scegli.'
+        },
+        management: {
+            selector: '#btn-open-studio-management',
+            tab: 'manage',
+            title: 'Configura studio, attività e team',
+            copy: 'Da qui aggiorni i dati dello studio, organizzi la libreria delle attività e gestisci collaboratori, ruoli e costi orari.'
         }
     };
 
@@ -101,8 +107,8 @@
     }
 
     function buildOrder() {
-        const firstSteps = hasRealProject() ? ['timer', 'project'] : ['project', 'timer'];
-        orderedSteps = [...firstSteps, 'analytics', 'invite', 'report'];
+        const firstSteps = hasRealProject() ? ['work', 'project'] : ['project', 'work'];
+        orderedSteps = [...firstSteps, 'analytics', 'invite', 'report', 'management'];
     }
 
     function isAppReady() {
@@ -207,7 +213,7 @@
             <p class="archtime-guide-copy">${step.copy}</p>
             <div class="archtime-guide-actions">
                 <button type="button" class="archtime-guide-skip">Salta la guida</button>
-                <button type="button" class="archtime-guide-next">${activeStep === 'report' ? 'Ho capito' : 'Avanti'}</button>
+                <button type="button" class="archtime-guide-next">${activeStep === orderedSteps[orderedSteps.length - 1] ? 'Ho capito' : 'Avanti'}</button>
             </div>
         `;
         document.body.appendChild(popover);
@@ -296,6 +302,22 @@
         if (forceGuide || (state.started && !state.finished)) begin(false);
     }
 
+    function pauseForFirstValue() {
+        if (state?.started && !state.finished && activeStep === 'work') {
+            if (!state.completed.includes('work')) state.completed.push('work');
+            saveState();
+        }
+        removeGuideElements();
+    }
+
+    function resumeAfterFirstValue() {
+        if (!state?.started || state.finished) return;
+        buildOrder();
+        const next = nextIncompleteStep();
+        if (next) showStep(next);
+        else finishGuide(false);
+    }
+
     window.addEventListener('archtime:onboarding-complete', () => begin(false));
     window.addEventListener('resize', positionHotspot, { passive: true });
     window.addEventListener('scroll', positionHotspot, { passive: true, capture: true });
@@ -303,7 +325,9 @@
     window.ArchTimeGuide = {
         start: () => begin(false),
         restart: () => begin(true),
-        stop: () => finishGuide(true)
+        stop: () => finishGuide(true),
+        pauseForFirstValue,
+        resumeAfterFirstValue
     };
 
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', resumeIfNeeded);

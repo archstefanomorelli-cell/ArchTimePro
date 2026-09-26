@@ -516,41 +516,109 @@
             const summary = getProjectCostSummary(project);
             const marginElement = document.getElementById('first-value-margin');
             const marginCard = marginElement?.parentElement;
+            const hasEconomicBaseline = summary.budget > 0 && Number(userProfile?.hourly_cost || 0) > 0;
 
-            document.getElementById('first-value-budget').textContent = formatMoney(summary.budget, 0);
+            document.getElementById('first-value-title').textContent = hasEconomicBaseline
+                ? 'Ora il margine reagisce al lavoro reale.'
+                : 'La prima attività è registrata.';
+            document.getElementById('first-value-budget').textContent = summary.budget > 0 ? formatMoney(summary.budget, 0) : 'Da definire';
             document.getElementById('first-value-cost').textContent = formatMoney(summary.totalCost, 2);
             if (marginElement) {
-                marginElement.textContent = formatMoney(summary.margin, 2);
-                marginElement.classList.toggle('text-red-700', summary.margin < 0);
-                marginElement.classList.toggle('text-emerald-700', summary.margin >= 0);
+                marginElement.textContent = hasEconomicBaseline ? formatMoney(summary.margin, 2) : 'Da definire';
+                marginElement.classList.toggle('text-red-700', hasEconomicBaseline && summary.margin < 0);
+                marginElement.classList.toggle('text-emerald-700', hasEconomicBaseline && summary.margin >= 0);
+                marginElement.classList.toggle('text-slate-700', !hasEconomicBaseline);
             }
-            marginCard?.classList.toggle('border-red-100', summary.margin < 0);
-            marginCard?.classList.toggle('bg-red-50', summary.margin < 0);
-            marginCard?.classList.toggle('border-emerald-100', summary.margin >= 0);
-            marginCard?.classList.toggle('bg-emerald-50', summary.margin >= 0);
+            marginCard?.classList.toggle('border-red-100', hasEconomicBaseline && summary.margin < 0);
+            marginCard?.classList.toggle('bg-red-50', hasEconomicBaseline && summary.margin < 0);
+            marginCard?.classList.toggle('border-emerald-100', hasEconomicBaseline && summary.margin >= 0);
+            marginCard?.classList.toggle('bg-emerald-50', hasEconomicBaseline && summary.margin >= 0);
+            marginCard?.classList.toggle('border-slate-200', !hasEconomicBaseline);
+            marginCard?.classList.toggle('bg-slate-50', !hasEconomicBaseline);
 
+            window.ArchTimeGuide?.pauseForFirstValue();
             localStorage.setItem(key, 'done');
             modal.classList.remove('force-hide');
-            await recordOnboardingEvent('first_value_seen');
-            window.archTimeAnalytics?.track('first_value_seen', { source: 'time_entry' });
+            if (!(typeof isVideoDemoMode === 'function' && isVideoDemoMode())) {
+                await recordOnboardingEvent('first_value_seen');
+                window.archTimeAnalytics?.track('first_value_seen', { source: 'time_entry' });
+            }
             lucide.createIcons();
         }
 
+        function closeFirstValueMoment() {
+            document.getElementById('modal-first-value')?.classList.add('force-hide');
+            window.ArchTimeGuide?.resumeAfterFirstValue();
+        }
+
         async function saveEntry(proj, task, hours, customDate = null, notes = "", source = "manual") {
-            const shouldShowFirstValue = !proj.is_demo && !hasRealTimeEntries();
+            const demoMode = typeof isVideoDemoMode === 'function' && isVideoDemoMode();
+            const shouldShowFirstValue = !proj.is_demo && (demoMode
+                ? !entries.some(entry => entry.project_id === proj.id && Number(entry.duration || 0) > 0)
+                : !hasRealTimeEntries());
+            let saved = false;
             try {
-                await createEntryViaRpc(proj, task, hours, customDate, notes);
-                window.archTimeAnalytics?.track('time_entry_created', { source, is_demo_project: Boolean(proj.is_demo) });
-                if (!proj.is_demo) {
-                    await trackAcquisitionMilestone('first_time_entry', { source });
+                if (demoMode) {
+                    entries.unshift({
+                        id: `demo-entry-${Date.now()}`,
+                        studio_id: userProfile.studio_id,
+                        project_id: proj.id,
+                        project_name: proj.name,
+                        task,
+                        duration: hours,
+                        rate: hours * Number(userProfile.hourly_cost || 0),
+                        user_name: userProfile.full_name,
+                        user_email: userProfile.email,
+                        created_at: entryDateToIso(customDate) || new Date().toISOString(),
+                        notes
+                    });
+                    saved = true;
+                    renderEntries();
+                    renderProjects();
+                    renderStrategicCharts();
+                } else {
+                    await createEntryViaRpc(proj, task, hours, customDate, notes);
+                    saved = true;
+                    window.archTimeAnalytics?.track('time_entry_created', { source, is_demo_project: Boolean(proj.is_demo) });
+                    if (!proj.is_demo) await trackAcquisitionMilestone('first_time_entry', { source });
+                    await fetchEntries();
                 }
-                await fetchEntries();
                 window.dispatchEvent(new CustomEvent('archtime:entry-created', {
                     detail: { projectId: proj.id, source }
                 }));
                 if (shouldShowFirstValue) await showFirstValueMoment(proj.id);
+                return true;
             } catch (error) {
+                if (saved) {
+                    console.warn('Ore salvate, aggiornamento della schermata non riuscito:', error);
+                    await appAlert('Ore registrate', 'Le ore sono state salvate, ma la schermata non si è aggiornata. Ricarica la pagina prima di riprovare.', 'info');
+                    return true;
+                }
                 await appAlert('Registrazione non riuscita', error.message || 'Non è stato possibile salvare l’attività.', 'danger');
+                return false;
+            }
+        }
+
+        async function saveQuickHours() {
+            const projectIndex = document.getElementById('project-select')?.value;
+            const input = document.getElementById('quick-hours');
+            const button = document.getElementById('btn-save-quick-hours');
+            if (button.disabled) return;
+            const raw = input?.value.trim() || '';
+            const hours = parseDurationInput(raw);
+            if (!projects[projectIndex]) return await appAlert('Scegli una commessa', 'Seleziona la commessa a cui attribuire le ore.', 'danger');
+            if (!/^(?:\d{1,2}(?::[0-5]\d)?|\d{1,2}[.,]\d{1,2})$/.test(raw) || !Number.isFinite(hours) || hours <= 0 || hours > 24) {
+                input?.focus();
+                return await appAlert('Durata non valida', 'Inserisci le ore come 2:30 oppure 2,5, fino a un massimo di 24 ore.', 'danger');
+            }
+            if (timerRunning) return await appAlert('Timer attivo', 'Ferma il timer prima di registrare altre ore sulla giornata.', 'info');
+
+            button.disabled = true;
+            try {
+                const saved = await saveEntry(projects[projectIndex], document.getElementById('task-select')?.value || 'Generico', hours, null, '', 'quick_manual');
+                if (saved) input.value = '';
+            } finally {
+                button.disabled = false;
             }
         }
 
@@ -561,14 +629,24 @@
             document.getElementById('manual-end').value = '';
             document.getElementById('manual-hours').value = '';
             document.getElementById('manual-notes').value = '';
-            document.getElementById('manual-project').innerHTML = activeProjectIndexOptionsHtml(); 
+            document.querySelector('#modal-manual .manual-entry-details')?.removeAttribute('open');
+            const projectSelect = document.getElementById('manual-project');
+            projectSelect.innerHTML = activeProjectIndexOptionsHtml();
+            const selectedProject = document.getElementById('project-select')?.value;
+            if (selectedProject !== '' && projects[selectedProject] && !projects[selectedProject].is_archived) {
+                projectSelect.value = selectedProject;
+                updateManualTaskDropdown();
+                const selectedTask = document.getElementById('task-select')?.value;
+                if (selectedTask) document.getElementById('manual-task').value = selectedTask;
+            }
+            document.getElementById('manual-hours')?.focus();
         }
         
         function closeManualEntry() { document.getElementById('modal-manual').classList.add('force-hide'); }
         
         function updateManualTaskDropdown() { 
             const p = projects[document.getElementById('manual-project').value]; 
-            document.getElementById('manual-task').innerHTML = taskOptionsHtml(p.tasks || []); 
+            document.getElementById('manual-task').innerHTML = p ? taskOptionsHtml(p.tasks || []) : optionHtml('', 'Scegli prima una commessa', true, true);
         }
 
         function calculateManualHours() {
@@ -594,16 +672,26 @@
             const startTime = document.getElementById('manual-start').value;
             const endTime = document.getElementById('manual-end').value;
 
-            if(!pIdx || !h || !d) return await appAlert("Attenzione", "Completa tutti i dati obbligatori (Progetto, Data e Ore)!", "danger"); 
+            if (!projects[pIdx] || !Number.isFinite(h) || h <= 0 || h > 24 || !d) {
+                return await appAlert('Attenzione', 'Scegli commessa, data e una durata valida entro 24 ore.', 'danger');
+            }
+            if (Boolean(startTime) !== Boolean(endTime)) {
+                return await appAlert('Orari incompleti', 'Inserisci sia l’inizio sia la fine, oppure lascia entrambi vuoti.', 'danger');
+            }
             
             if (startTime && endTime) {
                 const timeString = `[${startTime} - ${endTime}]`;
                 n = n ? `${timeString} ${n}` : timeString;
             }
 
-            await saveEntry(projects[pIdx], t, h, d, n, 'manual');
-            document.getElementById('manual-notes').value = ""; 
-            closeManualEntry(); 
+            const button = document.getElementById('btn-save-manual-entry');
+            button.disabled = true;
+            try {
+                const saved = await saveEntry(projects[pIdx], t, h, d, n, 'manual');
+                if (saved) closeManualEntry();
+            } finally {
+                button.disabled = false;
+            }
         }
 
         function updateEditTaskDropdown(forceTask = null) {

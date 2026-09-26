@@ -83,6 +83,8 @@
         }
 
         async function fetchProjects() { 
+            const selectedProjectIndex = document.getElementById('project-select')?.value;
+            const selectedProjectId = projects[selectedProjectIndex]?.id || null;
             const rpcData = await fetchRpcList('get_projects_for_app');
             if (rpcData) {
                 projects = rpcData.sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
@@ -91,7 +93,7 @@
                 if (error) throw error;
                 projects = data || [];
             }
-            renderProjects(); 
+            renderProjects(selectedProjectId);
             if(isAdminUser()) renderStrategicCharts(); 
         }
         
@@ -368,9 +370,20 @@
             renderProjects();
         }
 
-        function renderProjects() {
+        function renderProjects(selectedProjectId) {
             const container = document.getElementById('projects-list');
-            document.getElementById('project-select').innerHTML = projectSelectOptionsHtml();
+            const projectSelect = document.getElementById('project-select');
+            const taskSelect = document.getElementById('task-select');
+            const currentProject = projects[projectSelect.value];
+            const projectId = selectedProjectId === undefined ? currentProject?.id : selectedProjectId;
+            const selectedTask = taskSelect.value;
+            projectSelect.innerHTML = projectSelectOptionsHtml();
+            const nextProjectIndex = projectId == null ? -1 : projects.findIndex(project => String(project.id) === String(projectId) && !project.is_archived);
+            if (nextProjectIndex >= 0) projectSelect.value = String(nextProjectIndex);
+            updateTaskDropdown();
+            if (selectedTask && [...taskSelect.options].some(option => option.value === selectedTask)) {
+                taskSelect.value = selectedTask;
+            }
             const visibleProjects = getVisibleProjects();
             container.className = projectViewMode === 'list'
                 ? 'projects-list-view'
@@ -1260,7 +1273,7 @@
             if (taskSelect) taskSelect.value = task;
             document.getElementById('quick-project-ready')?.classList.remove('force-hide');
             document.getElementById('timer-panel')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            setTimeout(() => document.getElementById('btn-toggle-timer')?.focus({ preventScroll: true }), 450);
+            setTimeout(() => document.getElementById('quick-hours')?.focus({ preventScroll: true }), 450);
         }
 
         async function createQuickProjectRecord({ name, task, client = '', budget = 0, source = 'quick_modal' }) {
