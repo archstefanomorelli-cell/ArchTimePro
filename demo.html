@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#172033">
+    <meta name="description" content="Esplora Arch Time Pro con commesse e dati dimostrativi, senza registrazione.">
+    <title>Esplora la demo | Arch Time Pro</title>
+    <link rel="icon" type="image/png" href="assets/icons/favicon-32-archtime-bars-20260912.png">
+    <link rel="stylesheet" href="assets/fonts.css">
+    <link rel="stylesheet" href="assets/demo.css">
+    <script src="assets/vendor/lucide-0.468.0.js" defer></script>
+    <script src="assets/js/12-analytics.js" defer></script>
+    <script src="assets/js/18-public-demo.js" defer></script>
+</head>
+<body>
+    <header class="demo-header">
+        <div class="demo-header-inner">
+            <a class="demo-brand" href="index.html" aria-label="Arch Time Pro, torna alla homepage">Arch <span>Time</span> Pro</a>
+            <span class="demo-mode"><i data-lucide="flask-conical"></i> Demo interattiva</span>
+            <a class="demo-header-cta" href="app.html?mode=signup&amp;source=public-demo" data-demo-signup>Usa con il tuo studio <i data-lucide="arrow-up-right"></i></a>
+        </div>
+    </header>
+    <main class="demo-shell">
+        <div class="demo-intro">
+            <div>
+                <p class="demo-eyebrow">Dati di esempio</p>
+                <h1>Esplora Arch Time Pro</h1>
+                <p>Apri una commessa e registra qualche ora: vedrai subito come cambiano costi e margine.</p>
+            </div>
+            <button class="demo-reset" type="button" id="demo-reset"><i data-lucide="rotate-ccw"></i> Ricomincia</button>
+        </div>
+        <div class="demo-notice" role="note"><i data-lucide="shield-check"></i><span>Nessun account richiesto. I dati sono fittizi e le modifiche non vengono salvate.</span></div>
+        <section aria-labelledby="demo-overview-title" class="demo-section">
+            <div class="demo-section-heading"><div><p class="demo-eyebrow">Studio dimostrativo</p><h2 id="demo-overview-title">Analisi finanziaria</h2></div><span id="demo-project-count"></span></div>
+            <div class="demo-kpis">
+                <div class="demo-kpi"><span>Budget lavori attivi</span><strong id="demo-total-budget">-</strong></div>
+                <div class="demo-kpi"><span>Costi lavori attivi</span><strong id="demo-total-cost">-</strong></div>
+                <div class="demo-kpi demo-kpi-margin"><span>Margine attuale</span><strong id="demo-total-margin">-</strong></div>
+            </div>
+        </section>
+        <section aria-labelledby="demo-projects-title" class="demo-section">
+            <div class="demo-section-heading"><div><p class="demo-eyebrow">Commesse</p><h2 id="demo-projects-title">Progetti</h2></div></div>
+            <div id="demo-project-list" class="demo-project-list"></div>
+        </section>
+        <section id="demo-detail" class="demo-detail demo-section" aria-labelledby="demo-detail-title">
+            <div class="demo-section-heading"><div><p class="demo-eyebrow">Dettaglio commessa</p><h2 id="demo-detail-title"></h2><p id="demo-detail-client" class="demo-muted"></p></div><span id="demo-detail-status" class="demo-status"></span></div>
+            <div class="demo-detail-layout">
+                <div class="demo-detail-main">
+                    <div class="demo-detail-metrics">
+                        <div><span>Budget</span><strong id="demo-budget">-</strong></div>
+                        <div><span>Costi consumati</span><strong id="demo-cost">-</strong></div>
+                        <div><span>Margine attuale</span><strong id="demo-margin">-</strong></div>
+                    </div>
+                    <div class="demo-progress-info"><span>Costi consumati</span><strong id="demo-cost-percent">-</strong></div>
+                    <div class="demo-progress"><span id="demo-cost-bar"></span></div>
+                    <div class="demo-progress-info demo-progress-plan"><span>Piano costi alla fase attuale</span><strong id="demo-plan-percent">-</strong></div>
+                    <div class="demo-progress demo-progress-muted"><span id="demo-plan-bar"></span></div>
+                    <p id="demo-state-explanation" class="demo-state-explanation"></p>
+                    <div class="demo-activity-heading"><h3>Ore registrate</h3><strong id="demo-total-hours">-</strong></div>
+                    <ul id="demo-entries" class="demo-entries"></ul>
+                </div>
+                <form id="demo-hours-form" class="demo-entry-form">
+                    <div class="demo-form-title"><i data-lucide="clock-3"></i><div><h3>Registra ore</h3><p>Prova su questa commessa</p></div></div>
+                    <label for="demo-task">Attività</label>
+                    <select id="demo-task" name="task" required></select>
+                    <label for="demo-hours">Ore lavorate</label>
+                    <input id="demo-hours" name="hours" type="number" min="0.25" max="24" step="0.25" value="2" required inputmode="decimal">
+                    <button type="submit"><i data-lucide="plus"></i> Aggiungi ore</button>
+                    <p>In questa demo il costo orario è di 60 €. Nessuna modifica viene salvata.</p>
+                    <div id="demo-feedback" class="demo-feedback" role="status" aria-live="polite"></div>
+                </form>
+            </div>
+        </section>
+        <section class="demo-next"><div><p class="demo-eyebrow">La tua commessa</p><h2>Ora prova con i tuoi dati.</h2><p>15 giorni gratuiti, nessuna carta richiesta. Decidi tu se attivare un piano alla scadenza.</p></div><a href="app.html?mode=signup&amp;source=public-demo" data-demo-signup>Crea il tuo studio <i data-lucide="arrow-right"></i></a></section>
+    </main>
+    <footer class="demo-footer"><a href="index.html">Arch Time Pro</a><span>Demo con dati dimostrativi</span><a href="privacy.html">Privacy</a></footer>
+</body>
+</html>
