@@ -5,6 +5,10 @@
     if (!container || !actionButton) return;
 
     const params = new URLSearchParams(window.location.search);
+    if (params.get('videoDemo') === '1') {
+        container.classList.add('force-hide');
+        return;
+    }
     const isPrototype = params.get('prototypeFlow') === '1' || window.location.pathname.includes('prototipo');
     let lastSignature = '';
 
