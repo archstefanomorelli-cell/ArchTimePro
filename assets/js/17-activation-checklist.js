@@ -21,7 +21,7 @@
     }
 
     function firstValueKey() {
-        return `archtime-first-value:${studioId()}`;
+        return `archtime-economic-value-v2:${studioId()}`;
     }
 
     function isDemoProject(project) {
@@ -76,13 +76,21 @@
         let running = false;
         try { running = Boolean(timerRunning); } catch (_) {}
         const valueSeen = localStorage.getItem(firstValueKey()) === 'done';
+        const economicProject = projectList.find(project => {
+            const summary = getProjectCostSummary(project);
+            return summary.economicReady && summary.totalHours >= 0.25;
+        });
+        const needsOwnCost = Number(userProfile?.hourly_cost || 0) <= 0;
         return {
             projectList,
             entryList,
             running,
             project: projectList.length > 0,
             entry: entryList.length > 0,
-            value: valueSeen
+            value: valueSeen && Boolean(economicProject),
+            economic: projectList.some(project => getProjectCostSummary(project).economicReady) && !needsOwnCost,
+            needsOwnCost,
+            economicProject
         };
     }
 
@@ -120,12 +128,17 @@
             else document.getElementById('btn-open-project-modal')?.click();
             return;
         }
+        if (!progress.economic) {
+            await showFirstValueMoment(project.id, true);
+            return;
+        }
         if (!progress.entry) {
             focusProjectWork(project, progress.running);
             return;
         }
         if (!progress.value && typeof showFirstValueMoment === 'function') {
-            await showFirstValueMoment(project.id);
+            const workedProject = progress.economicProject || progress.projectList.find(item => progress.entryList.some(entry => entry.project_id === item.id)) || project;
+            await showFirstValueMoment(workedProject.id);
             render();
         }
     }
@@ -138,16 +151,19 @@
 
         const progress = currentProgress();
         const completed = ['project', 'entry', 'value'].filter(step => progress[step]);
-        const signature = [completed.join(','), progress.running].join('|');
+        const signature = [completed.join(','), progress.running, progress.economic, progress.needsOwnCost].join('|');
         if (signature === lastSignature && !container.classList.contains('force-hide')) return;
         lastSignature = signature;
 
-        if (completed.length === 3) {
+        if (completed.length === 3 && !progress.needsOwnCost) {
             container.classList.add('force-hide');
             return;
         }
 
         container.classList.remove('force-hide');
+        const heading = container.querySelector('h2, h3');
+        if (heading) heading.textContent = progress.needsOwnCost && progress.project
+            ? 'Completa il costo orario per leggere il margine' : 'Il primo risultato sulla tua commessa';
         document.getElementById('activation-checklist-progress').textContent = `${completed.length} di 3 passaggi completati`;
         container.querySelectorAll('[data-activation-step]').forEach(item => {
             const done = Boolean(progress[item.dataset.activationStep]);
@@ -157,9 +173,10 @@
 
         const label = actionButton.querySelector('span');
         if (!progress.project) label.textContent = 'Crea la prima commessa';
+        else if (!progress.economic) label.textContent = progress.needsOwnCost ? 'Completa il costo orario' : 'Completa i dati economici';
         else if (!progress.entry && progress.running) label.textContent = 'Torna al timer attivo';
         else if (!progress.entry) label.textContent = 'Registra le prime ore';
-        else label.textContent = 'Controlla l’andamento';
+        else label.textContent = 'Controlla il margine';
         lucide?.createIcons?.();
     }
 
@@ -167,6 +184,7 @@
     window.addEventListener('archtime:onboarding-complete', () => window.setTimeout(render, 100));
     window.addEventListener('archtime:timer-started', render);
     window.addEventListener('archtime:entry-created', () => window.setTimeout(render, 100));
+    window.addEventListener('archtime:economic-setup-changed', () => window.setTimeout(render, 100));
     document.getElementById('btn-continue-first-value')?.addEventListener('click', render);
 
     const initialTimer = window.setInterval(() => {

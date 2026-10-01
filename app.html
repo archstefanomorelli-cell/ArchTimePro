@@ -33,7 +33,7 @@
         html.video-demo-boot body { visibility: hidden; }
     </style>
     
-    <link rel="stylesheet" href="assets/tailwind-built.css?v=2026-08-12-01">
+    <link rel="stylesheet" href="assets/tailwind-built.css?v=economic-onboarding-2026-10-01-01">
     <link rel="stylesheet" href="assets/fonts.css?v=2026-08-12-01">
     
     <script src="assets/vendor/supabase-2.39.3.js?v=privacy-security-2026-08-12-02"></script>
@@ -43,7 +43,7 @@
     <script src="assets/vendor/jspdf-autotable-3.5.31.js?v=privacy-security-2026-08-12-02"></script>
     <script src="assets/vendor/exceljs-4.4.0.js?v=privacy-security-2026-08-12-02"></script>
     <link rel="stylesheet" href="assets/app.css?v=timer-manual-2026-09-26-02">
-    <link rel="stylesheet" href="assets/app-pro.css?v=timer-manual-2026-09-26-01">
+    <link rel="stylesheet" href="assets/app-pro.css?v=economic-onboarding-2026-10-01-01">
     <link rel="stylesheet" href="assets/guided-hotspots.css?v=2026-09-25-01">
     <script src="assets/js/12-analytics.js?v=acquisition-funnel-2026-08-28-01" defer></script>
 </head>
@@ -177,6 +177,7 @@
                 <button data-plan-checkout="founder" class="w-full bg-primary-600 text-white py-3.5 rounded-xl font-bold hover:bg-primary-700 transition-all shadow-sm active:scale-[0.98] flex justify-center items-center gap-2">
                     <i data-lucide="zap" class="w-4 h-4"></i> Attiva Tariffa Fondatori (19,90 €/mese)
                 </button>
+                <p class="text-xs leading-relaxed text-slate-500">Disponibile fino al 31 dicembre 2026. L'abbonamento si attiva solo dopo la tua conferma su Stripe.</p>
             </div>
 
             <button id="btn-paywall-export-data" class="mb-4 inline-flex items-center justify-center gap-2 text-xs font-bold text-slate-500 hover:text-primary-600 transition-colors">
@@ -726,9 +727,9 @@
             <button id="btn-skip-onboarding" aria-label="Chiudi configurazione" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
             <div class="mb-6">
                 <div class="w-12 h-12 bg-primary-50 text-primary-600 rounded-2xl flex items-center justify-center mb-4 border border-primary-100"><i data-lucide="sparkles" class="w-6 h-6"></i></div>
-                <p class="mb-2 text-[10px] font-black uppercase tracking-wider text-primary-600">Primo risultato in circa 30 secondi</p>
+                <p class="mb-2 text-[10px] font-black uppercase tracking-wider text-primary-600">Commessa · costo orario · prime ore</p>
                 <h2 id="owner-onboarding-title" class="text-2xl font-black text-slate-900 tracking-tight">Crea la prima commessa</h2>
-                <p class="text-sm text-slate-500 leading-relaxed mt-2">Bastano un nome e un'attività. Compenso, costo orario e cliente possono essere aggiunti in seguito.</p>
+                <p class="text-sm text-slate-500 leading-relaxed mt-2">Parti da un lavoro che stai già seguendo. Compenso, costo interno e prime ore ti permettono di leggere il margine residuo.</p>
             </div>
 
             <div class="space-y-5">
@@ -756,15 +757,22 @@
                         <label for="onboarding-project-task" class="mb-1.5 block text-[10px] font-black uppercase tracking-wider text-slate-500">Prima attività</label>
                         <select id="onboarding-project-task" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all"></select>
                     </div>
-                    <details id="onboarding-optional-data" class="quick-project-optional mt-3">
-                        <summary><span><i data-lucide="plus"></i> Aggiungi dati economici</span><small>Opzionale</small></summary>
-                        <div class="quick-project-optional-grid">
-                            <div><label for="onboarding-project-client">Cliente</label><input type="text" id="onboarding-project-client" placeholder="Nome cliente"></div>
-                            <div><label for="onboarding-project-budget">Compenso previsto</label><div class="quick-project-money"><span data-studio-currency-symbol>€</span><input type="number" min="0" step="0.01" id="onboarding-project-budget" placeholder="0"></div></div>
-                            <div><label for="onboarding-hourly-cost">Costo orario interno</label><div class="quick-project-money"><span data-studio-currency-symbol>€</span><input type="number" min="0" step="0.01" id="onboarding-hourly-cost" placeholder="0"></div></div>
+                    <div class="onboarding-economics">
+                        <div>
+                            <label for="onboarding-project-budget">Compenso previsto della commessa</label>
+                            <div class="quick-project-money"><span data-studio-currency-symbol>€</span><input type="number" min="0" step="0.01" id="onboarding-project-budget" placeholder="Es. 12000" inputmode="decimal"></div>
                         </div>
-                    </details>
-                    <button id="btn-prepare-first-project" class="w-full bg-slate-900 text-white py-3.5 mt-4 rounded-xl font-bold hover:bg-slate-800 transition-all active:scale-[0.98] shadow-sm flex items-center justify-center gap-2"><i data-lucide="arrow-right" class="w-4 h-4"></i> Crea e registra il lavoro</button>
+                        <div>
+                            <label for="onboarding-hourly-cost">Quanto costa allo studio un'ora del tuo lavoro?</label>
+                            <div class="quick-project-money"><span data-studio-currency-symbol>€</span><input type="number" min="0.01" step="0.01" id="onboarding-hourly-cost" placeholder="Il tuo costo interno" inputmode="decimal" aria-describedby="onboarding-cost-help"></div>
+                            <p id="onboarding-cost-help">Va bene una stima. Non è la tariffa che chiedi al cliente; potrai aggiornarla successivamente.</p>
+                            <a href="calcolo-costo-orario-studio-professionale.html" target="_blank" rel="noopener">Hai bisogno di calcolarlo?<i data-lucide="external-link"></i></a>
+                        </div>
+                    </div>
+                    <label for="onboarding-project-client" class="onboarding-client-label">Cliente (opzionale)</label>
+                    <input type="text" id="onboarding-project-client" placeholder="Nome cliente" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white">
+                    <button id="btn-prepare-first-project" type="button" class="w-full bg-slate-900 text-white py-3.5 mt-4 rounded-xl font-bold hover:bg-slate-800 transition-all shadow-sm flex items-center justify-center gap-2"><i data-lucide="arrow-right" class="w-4 h-4"></i> Conferma e registra le prime ore</button>
+                    <button id="btn-onboarding-hours-only" type="button" class="onboarding-secondary-action">Per ora registro solo le ore</button>
                     <button id="btn-explore-without-onboarding" type="button" class="mt-2 w-full py-2.5 text-xs font-bold text-slate-500 transition-colors hover:text-slate-800">Per ora esploro l'app</button>
                 </div>
             </div>
@@ -795,11 +803,17 @@
             <p class="text-[10px] font-black uppercase tracking-wider text-primary-600">Il primo dato è entrato</p>
             <h2 id="first-value-title" class="mt-1 text-xl font-black tracking-tight text-slate-900">Ora il margine reagisce al lavoro reale.</h2>
             <div class="mt-5 grid grid-cols-3 gap-2">
-                <div class="rounded-xl border border-slate-200 bg-slate-50 p-3"><small class="text-[8px] font-black uppercase tracking-wider text-slate-400">Budget</small><strong id="first-value-budget" class="mt-1 block text-sm text-slate-900">0 €</strong></div>
+                <div class="rounded-xl border border-slate-200 bg-slate-50 p-3"><small class="text-[8px] font-black uppercase tracking-wider text-slate-400">Compenso</small><strong id="first-value-budget" class="mt-1 block text-sm text-slate-900">0 €</strong></div>
                 <div class="rounded-xl border border-slate-200 bg-slate-50 p-3"><small class="text-[8px] font-black uppercase tracking-wider text-slate-400">Costi</small><strong id="first-value-cost" class="mt-1 block text-sm text-slate-900">0 €</strong></div>
-                <div class="rounded-xl border border-emerald-100 bg-emerald-50 p-3"><small class="text-[8px] font-black uppercase tracking-wider text-emerald-600">Margine</small><strong id="first-value-margin" class="mt-1 block text-sm text-emerald-700">0 €</strong></div>
+                <div class="rounded-xl border border-slate-200 bg-slate-50 p-3"><small class="text-[8px] font-black uppercase tracking-wider text-slate-500">Margine residuo</small><strong id="first-value-margin" class="mt-1 block text-sm text-slate-700">Da definire</strong></div>
             </div>
-            <button id="btn-continue-first-value" type="button" class="mt-5 w-full rounded-xl bg-slate-900 px-4 py-3.5 text-sm font-bold text-white hover:bg-slate-800">Continua</button>
+            <p id="first-value-note" class="economic-result-note"></p>
+            <div id="first-value-setup" class="force-hide onboarding-economics">
+                <div><label for="first-value-setup-budget">Compenso previsto</label><div class="quick-project-money"><span data-studio-currency-symbol>€</span><input id="first-value-setup-budget" type="number" min="0.01" step="0.01" inputmode="decimal"></div></div>
+                <div><label for="first-value-setup-cost">Il tuo costo orario interno</label><div class="quick-project-money"><span data-studio-currency-symbol>€</span><input id="first-value-setup-cost" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="Inserisci una stima"></div><p>Non è la tariffa al cliente. Si applica alle nuove registrazioni, senza modificare le ore già salvate.</p></div>
+                <button id="btn-save-first-value-setup" type="button" class="onboarding-secondary-action">Salva i dati economici</button>
+            </div>
+            <button id="btn-continue-first-value" type="button" class="mt-5 w-full rounded-xl bg-slate-900 px-4 py-3.5 text-sm font-bold text-white hover:bg-slate-800">Continua a lavorare</button>
         </div>
     </div>
 
@@ -1223,14 +1237,14 @@
     <script src="assets/js/00-runtime-config.js?v=stripe-founder-2026-06-29"></script>
     <script src="assets/js/normative-engine.js?v=2026-08-01-01"></script>
     <script src="assets/js/01-core.js?v=trial-start-2026-09-24-01"></script>
-    <script src="assets/js/02-auth-account.js?v=timer-manual-2026-09-26-01"></script>
-    <script src="assets/js/03-team.js?v=studio-management-2026-08-12-01"></script>
-    <script src="assets/js/04-projects.js?v=timer-manual-2026-09-26-01"></script>
-    <script src="assets/js/05-time-entries.js?v=timer-manual-2026-09-26-03"></script>
+    <script src="assets/js/02-auth-account.js?v=economic-onboarding-2026-10-01-01"></script>
+    <script src="assets/js/03-team.js?v=economic-onboarding-2026-10-01-01"></script>
+    <script src="assets/js/04-projects.js?v=economic-onboarding-2026-10-01-01"></script>
+    <script src="assets/js/05-time-entries.js?v=economic-onboarding-2026-10-01-01"></script>
     <script src="assets/js/06-reports.js?v=quote-format-modal-2026-08-12-01"></script>
-    <script src="assets/js/07-password-bootstrap.js?v=timer-manual-2026-09-26-01"></script>
+    <script src="assets/js/07-password-bootstrap.js?v=economic-onboarding-2026-10-01-01"></script>
     <script src="assets/js/09-video-demo.js?v=quote-fiscal-2026-08-03-01"></script>
-    <script src="assets/js/16-guided-hotspots.js?v=timer-manual-2026-09-26-04"></script>
-    <script src="assets/js/17-activation-checklist.js?v=timer-manual-2026-09-26-02"></script>
+    <script src="assets/js/16-guided-hotspots.js?v=economic-onboarding-2026-10-01-01"></script>
+    <script src="assets/js/17-activation-checklist.js?v=economic-onboarding-2026-10-01-01"></script>
 </body>
 </html>

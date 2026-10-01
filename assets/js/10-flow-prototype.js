@@ -318,20 +318,21 @@
         commitQuickProject({ name, task, client, budget });
     }
 
-    function createQuickProjectFromOnboarding() {
-        const nameInput = document.getElementById('onboarding-project-name');
-        const name = nameInput?.value.trim();
-        if (!name) {
-            nameInput?.focus();
-            return;
-        }
-        const task = document.getElementById('prototype-onboarding-project-task')?.value || quickProjectTasks()[0];
-        const client = document.getElementById('onboarding-project-client')?.value.trim() || '';
-        const budget = Math.max(0, Number(document.getElementById('onboarding-project-budget')?.value || 0));
-        document.getElementById('modal-owner-onboarding')?.classList.add('force-hide');
-        if (typeof markOwnerOnboardingDone === 'function') markOwnerOnboardingDone();
-        commitQuickProject({ name, task, client, budget, origin: 'onboarding' });
-        window.dispatchEvent(new CustomEvent('archtime:onboarding-complete', { detail: { hasProject: true } }));
+    async function createQuickProjectFromOnboarding(hoursOnly = false) {
+        const buttons = ['btn-prepare-first-project', 'btn-onboarding-hours-only'].map(id => document.getElementById(id)).filter(Boolean);
+        if (buttons.some(button => button.disabled)) return;
+        let values;
+        try { values = readOnboardingProject(hoursOnly); }
+        catch (error) { return appAlert('Completa i dati', error.message, 'info'); }
+        buttons.forEach(button => { button.disabled = true; });
+        try {
+            if (values.hourlyCost > 0) await saveOwnHourlyCost(values.hourlyCost);
+            commitQuickProject({ ...values, origin: 'onboarding' });
+            document.getElementById('modal-owner-onboarding')?.classList.add('force-hide');
+            markOwnerOnboardingDone();
+            window.dispatchEvent(new CustomEvent('archtime:onboarding-complete', { detail: { hasProject: true } }));
+        } catch (error) { await appAlert('Creazione non riuscita', error.message, 'danger'); }
+        finally { buttons.forEach(button => { button.disabled = false; }); }
     }
 
     function cashBarHtml(project, compact = false) {
@@ -726,7 +727,7 @@
             metrics.className = `project-detail-metrics grid grid-cols-2 ${withPayments ? 'md:grid-cols-4' : 'md:grid-cols-3'} gap-2 mb-4 bg-slate-50 border border-slate-200 rounded-2xl p-2`;
             metrics.innerHTML = cardHtml('Spese totali', `${formatMoney(detail.totalSpent, 0)} <span class="text-[10px] text-slate-400">/ ${formatMoney(project.budget, 0)}</span>`, 'text-primary-600')
                 + cardHtml('Resa oraria', `${formatMoney(detail.effectiveRate, 2)} <span class="text-[10px] text-slate-400">/h</span>`, 'text-primary-600')
-                + cardHtml('Margine', currency(summary.margin), summary.margin < 0 ? 'text-red-600' : 'text-emerald-700', withPayments ? '' : 'col-span-2 md:col-span-1')
+                + cardHtml('Margine', summary.economicReady ? currency(summary.margin) : 'Da completare', summary.marginClass, withPayments ? '' : 'col-span-2 md:col-span-1')
                 + (withPayments ? cardHtml('Incassato', `${currency(totals.collected)} <span class="text-[10px]">(${Math.round(totals.collectedPercent)}%)</span>`, 'text-blue-700', 'prototype-collected-metric') : '');
         }
         if (!hasPaymentPlan(project)) { compactProjectDetail(project, content); lucide?.createIcons?.(); return; }
@@ -810,7 +811,7 @@
         const cashValue = document.getElementById('kpi-active-costs');
         if (costLabel) costLabel.textContent = 'Costi lavori attivi';
         if (costValue) { costValue.textContent = currency(costs); costValue.className = 'analytics-kpi-value text-slate-800'; }
-        if (marginValue) marginValue.className = 'analytics-kpi-value text-emerald-700';
+        if (marginValue) marginValue.className = `analytics-kpi-value ${active.some(project => !getProjectCostSummary(project).economicReady) ? 'text-slate-500' : (activeBudget - costs < 0 ? 'text-red-600' : 'text-emerald-700')}`;
         if (costCard) { costCard.classList.remove('analytics-kpi-danger'); costCard.querySelector('p')?.replaceChildren(document.createTextNode('Ore e spese registrate')); }
         if (cashLabel) cashLabel.textContent = 'Incasso lavori attivi';
         if (cashValue) { cashValue.textContent = currency(collected); cashValue.className = 'analytics-kpi-value text-blue-700'; }
@@ -1002,10 +1003,10 @@
     };
 
     document.addEventListener('click', event => {
-        if (event.target.closest('#btn-prepare-first-project')) {
+        if (event.target.closest('#btn-prepare-first-project, #btn-onboarding-hours-only')) {
             event.preventDefault();
             event.stopImmediatePropagation();
-            createQuickProjectFromOnboarding();
+            createQuickProjectFromOnboarding(Boolean(event.target.closest('#btn-onboarding-hours-only')));
             return;
         }
         const prototypeAction = event.target.closest('[data-prototype-action]')?.dataset.prototypeAction;

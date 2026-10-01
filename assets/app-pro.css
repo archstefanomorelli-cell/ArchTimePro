@@ -469,6 +469,23 @@ html.theme-pro .quick-project-form input:focus,
 html.theme-pro .quick-project-form select:focus,
 html.theme-pro .quick-project-optional-grid input:focus { border-color: #818cf8; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
 
+html.theme-pro .onboarding-economics { display: grid; gap: 1rem; margin: 1rem 0; padding: 1rem 0; border-top: 1px solid #e2e8f0; }
+html.theme-pro .onboarding-economics > div { display: grid; gap: 0.45rem; min-width: 0; }
+html.theme-pro .onboarding-economics label,
+html.theme-pro .onboarding-client-label { display: block; font-size: 0.8rem; font-weight: 650; color: #334155; line-height: 1.5; }
+html.theme-pro .onboarding-client-label { margin-bottom: 0.4rem; }
+html.theme-pro .onboarding-economics input { width: 100%; min-width: 0; padding: 0.7rem; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; color: #0f172a; font: inherit; font-size: 0.9rem; }
+html.theme-pro .onboarding-economics input:focus { outline: 2px solid #818cf8; outline-offset: 2px; }
+html.theme-pro .onboarding-economics p,
+html.theme-pro .economic-result-note { font-size: 0.8rem; line-height: 1.6; color: #475569; font-weight: 400; }
+html.theme-pro .economic-result-note { margin-top: 1rem; }
+html.theme-pro .onboarding-economics a { display: inline-flex; align-items: center; gap: 0.4rem; width: fit-content; font-size: 0.8rem; color: #4f46e5; }
+html.theme-pro .onboarding-economics a svg { width: 0.85rem; height: 0.85rem; }
+html.theme-pro .onboarding-secondary-action { width: 100%; padding: 0.8rem 0.7rem; margin-top: 0.5rem; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; color: #334155; font-size: 0.875rem; font-weight: 650; }
+html.theme-pro .onboarding-secondary-action:hover { background: #f8fafc; }
+html.theme-pro #modal-first-value > div { max-height: 92dvh; overflow-y: auto; }
+html.theme-pro #modal-first-value strong { overflow-wrap: anywhere; }
+html.theme-pro #modal-first-value small { font-size: 0.65rem; line-height: 1.4; }
 html.theme-pro .quick-project-optional { border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; }
 html.theme-pro .quick-project-optional summary { display: flex; align-items: center; justify-content: space-between; padding: 0.78rem 0.12rem; cursor: pointer; list-style: none; }
 html.theme-pro .quick-project-optional summary::-webkit-details-marker { display: none; }
@@ -1526,6 +1543,11 @@ html.theme-pro #projects-list [data-project-tone="warning"] .project-life-dot {
     background: #f59e0b;
     box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.28);
     animation-name: projectBreathWarning;
+}
+html.theme-pro #projects-list [data-project-tone="pending"] .project-life-dot {
+    background: #94a3b8;
+    box-shadow: none;
+    animation: none;
 }
 
 html.theme-pro .project-view-switch {

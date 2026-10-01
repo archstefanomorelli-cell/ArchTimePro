@@ -63,11 +63,13 @@
             bindClick('btn-skip-onboarding', () => finishOnboardingWithoutProject('no_answer'));
             bindClick('btn-explore-without-onboarding', () => finishOnboardingWithoutProject('no_answer'));
             bindClick('btn-prepare-first-project', prepareFirstProjectFromOnboarding);
+            bindClick('btn-onboarding-hours-only', event => prepareFirstProjectFromOnboarding(event, true));
             bindClick('btn-clear-calculator-handoff', clearMarginCalculatorHandoff);
             bindClick('btn-onboarding-add-hours', () => closeOnboardingReady(true, 'manual'));
             bindClick('btn-onboarding-go-timer', () => closeOnboardingReady(true, 'timer'));
             bindClick('btn-onboarding-open-dashboard', () => closeOnboardingReady(false));
             bindClick('btn-continue-first-value', closeFirstValueMoment);
+            bindClick('btn-save-first-value-setup', saveFirstValueSetup);
             bindClick('btn-open-catalog-account', openCatalogModal);
             bindClick('btn-open-quote-settings', openQuoteSettingsModal);
             bindClick('btn-close-quote-settings', closeQuoteSettingsModal);
@@ -287,6 +289,9 @@
                         return exportProjectPDF(projectId);
                     case 'edit-project':
                         return openEditProjectModal(projectId);
+                    case 'complete-economic-setup':
+                        closeDetail();
+                        return showFirstValueMoment(projectId, true);
                     case 'add-expense':
                         return addExpense(projectId);
                     case 'edit-expense':

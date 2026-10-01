@@ -145,6 +145,7 @@
         }
 
         function getProjectCostSummary(project) {
+            const projectEntries = entries.filter(e => e.project_id === project.id && Number(e.duration || 0) > 0);
             const costHrs = entries.filter(e => e.project_id === project.id).reduce((sum, entry) => sum + Number(entry.rate || 0), 0);
             const costExp = expenses.filter(expense => expense.project_id === project.id).reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
             const totalCost = costHrs + costExp;
@@ -154,17 +155,28 @@
             const isOverBudget = margin < 0;
             const isCritical = !isOverBudget && percent > 90;
             const isWarning = !isOverBudget && percent > 75;
+            const uncostedHours = projectEntries.filter(entry => !(Number(entry.rate) > 0))
+                .reduce((sum, entry) => sum + Number(entry.duration), 0);
+            const hasHourlyCost = projectEntries.length > 0
+                ? uncostedHours === 0
+                : Number(userProfile?.hourly_cost || 0) > 0;
+            const economicReady = budget > 0 && hasHourlyCost;
+            const economicIssue = budget <= 0 ? 'Compenso da completare' : 'Costi da completare';
 
             return {
                 totalCost,
                 budget,
                 percent,
                 margin,
+                economicReady,
+                economicIssue,
+                uncostedHours,
+                totalHours: projectEntries.reduce((sum, entry) => sum + Number(entry.duration), 0),
                 barClass: isOverBudget || isCritical ? 'bg-red-500' : (isWarning ? 'bg-amber-400' : 'bg-emerald-500'),
                 statusLabel: isOverBudget ? 'Fuori budget' : (isCritical ? 'Critico' : (isWarning ? 'Da monitorare' : 'In controllo')),
                 statusIcon: isOverBudget ? 'octagon-alert' : (isCritical ? 'alert-triangle' : (isWarning ? 'circle-alert' : 'check-circle-2')),
                 statusClass: isOverBudget || isCritical ? 'bg-red-50 text-red-700 border-red-200' : (isWarning ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200'),
-                marginClass: margin < 0 ? 'text-red-600' : 'text-emerald-600',
+                marginClass: !economicReady ? 'text-slate-500' : (margin < 0 ? 'text-red-600' : 'text-emerald-600'),
                 statusTone: isOverBudget || isCritical ? 'danger' : (isWarning ? 'warning' : 'healthy')
             };
         }
@@ -239,6 +251,15 @@
         }
 
         function getProjectVisualStatus(project, costSummary = getProjectCostSummary(project)) {
+            if (!costSummary.economicReady) return {
+                label: costSummary.economicIssue,
+                icon: 'circle-help',
+                className: 'bg-slate-50 text-slate-600 border-slate-200',
+                tone: 'pending',
+                barClass: 'bg-slate-300',
+                title: costSummary.economicIssue,
+                rhythm: null
+            };
             const rhythm = getProjectRhythmSummary(project, costSummary);
             if (!rhythm) {
                 return {
@@ -302,7 +323,7 @@
                         </div>
                         <div>
                             <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Margine</p>
-                            <p class="text-xs font-black ${summary.marginClass} mt-0.5">${formatMoney(summary.margin, 0)}</p>
+                            <p class="text-xs font-black ${summary.marginClass} mt-0.5">${summary.economicReady ? formatMoney(summary.margin, 0) : 'Da completare'}</p>
                         </div>
                     </div>
                     <div class="pt-2 border-t border-slate-100">
@@ -311,7 +332,7 @@
                             ${rhythm ? `<span class="normal-case tracking-normal font-black ${rhythm.gap > 25 || rhythm.costPercent > 100 ? 'text-red-600' : (rhythm.gap > 10 ? 'text-amber-600' : 'text-emerald-600')}">${rhythm.label}</span>` : `<span>${Math.round(summary.percent)}%</span>`}
                         </div>
                         <div class="relative w-full bg-slate-100 h-2.5 rounded-full overflow-visible">
-                            <div class="${rhythm ? rhythm.barClass : summary.barClass} h-full transition-all duration-1000 rounded-full" style="width: ${Math.min(rhythm ? rhythm.costPercent : summary.percent, 100)}%"></div>
+                            <div class="${cardStatus.barClass} h-full transition-all duration-1000 rounded-full" style="width: ${Math.min(rhythm ? rhythm.costPercent : summary.percent, 100)}%"></div>
                             ${rhythm ? `<span class="absolute top-1/2 -translate-y-1/2 w-1 h-4 rounded-full ${rhythm.markerClass} shadow-sm" style="left: calc(${Math.min(rhythm.operationalPercent, 100)}% - 2px)"></span>` : ''}
                         </div>
                         <div class="flex justify-between text-[10px] lg:text-[11px] font-black text-slate-500 mt-2">
@@ -345,14 +366,14 @@
                     </div>
                     <div class="project-list-metric"><small>${economicValueLabel}</small><strong>${formatMoney(summary.budget, 0)}</strong></div>
                     <div class="project-list-metric"><small>Costi</small><strong>${formatMoney(summary.totalCost, 0)}</strong></div>
-                    <div class="project-list-metric"><small>Margine</small><strong class="${summary.marginClass}">${formatMoney(summary.margin, 0)}</strong></div>
+                    <div class="project-list-metric"><small>Margine</small><strong class="${summary.marginClass}">${summary.economicReady ? formatMoney(summary.margin, 0) : 'Da completare'}</strong></div>
                     <div class="project-list-progress">
                         <div>
                             <span>${escapeHtml(visualStatus.label)}</span>
                             <small>Costi ${costPercent}%${rhythm ? ` · Piano ${progressPercent}%` : ''}</small>
                         </div>
                         <div class="project-list-progress-track">
-                            <span class="${rhythm ? rhythm.barClass : summary.barClass}" style="width:${Math.min(costPercent, 100)}%"></span>
+                            <span class="${visualStatus.barClass}" style="width:${Math.min(costPercent, 100)}%"></span>
                             ${rhythm ? `<i class="${rhythm.markerClass}" style="left:calc(${Math.min(progressPercent, 100)}% - 2px)"></i>` : ''}
                         </div>
                     </div>
@@ -1768,6 +1789,9 @@
                 if (!taskStats[taskName]) taskStats[taskName] = { h: 0, c: 0 };
                 taskStats[taskName].h += Number(entry.duration || 0);
                 taskStats[taskName].c += Number(entry.rate || 0);
+                if (Number(entry.duration) > 0 && !(Number(entry.rate) > 0)) {
+                    taskStats[taskName].uncostedHours = Number(taskStats[taskName].uncostedHours || 0) + Number(entry.duration);
+                }
 
                 if (!teamStats[member]) teamStats[member] = { h: 0, c: 0 };
                 teamStats[member].h += Number(entry.duration || 0);
@@ -1804,6 +1828,7 @@
                     <span class="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-wider border px-2 py-0.5 rounded-full mb-1.5 ${visualStatus.className}"><i data-lucide="${visualStatus.icon}" class="w-3 h-3"></i>${visualStatus.label}</span>
                     <h2 class="text-lg lg:text-xl font-black text-slate-800 mb-0.5 leading-tight tracking-tight">${escapeHtml(project.name)}</h2>
                     <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">${escapeHtml(project.client || 'Interno')}</p>
+                    ${isAdminUser() && !summary.economicReady ? `<p class="mt-2 text-xs text-slate-600">${summary.uncostedHours > 0 ? 'Ore senza costo valorizzato: il margine non è ancora completo.' : 'Completa i dati economici per leggere il margine.'} <button type="button" data-ui-action="complete-economic-setup" data-project-id="${escapeAttr(project.id)}" class="font-bold text-primary-600 underline">Completa i dati</button></p>` : ''}
                 </div>
                 ${renderProjectDetailActions(project)}
             </div>
@@ -1847,6 +1872,9 @@
         }
 
         function compactTaskBudgetHtml(stat, taskBudget) {
+            if (stat.uncostedHours > 0) {
+                return `<span class="text-[9px] font-bold text-slate-500">Costi da completare · ${formatTime(stat.h)}</span>`;
+            }
             if (!taskBudget || taskBudget <= 0) {
                 return `<span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Eff. ${formatMoney(stat.c, 0)} · ${formatTime(stat.h)}</span>`;
             }
@@ -2551,7 +2579,7 @@
                 const analyticsStatus = budget <= 0 && spent > 0
                     ? { ...visualStatus, tone: 'warning', label: 'Budget da impostare' }
                     : visualStatus;
-                return { project, budget, spent, margin, percent, hoursCost, expenseCost, visualStatus: analyticsStatus };
+                return { project, budget, spent, margin, percent, hoursCost, expenseCost, economicReady: costSummary.economicReady, visualStatus: analyticsStatus };
             });
 
             const totalBudget = projectRows.reduce((sum, row) => sum + row.budget, 0);
@@ -2569,14 +2597,17 @@
                     .reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
             const profit = archivedBudget - archivedCosts;
             const margin = totalBudget - totalSpent;
+            const incompleteProjects = projectRows.filter(row => !getProjectCostSummary(row.project).economicReady);
+            const hasIncompleteCosts = incompleteProjects.length > 0;
             const utilization = totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0;
             const alignedProjects = projectRows.filter(row => row.budget > 0 && row.visualStatus.tone === 'healthy');
             const attentionProjects = projectRows.filter(row => (
                 row.budget > 0
                 && row.margin >= 0
+                && row.visualStatus.tone !== 'pending'
                 && row.visualStatus.tone !== 'healthy'
             ));
-            const overBudgetProjects = projectRows.filter(row => row.budget > 0 && row.margin < 0);
+            const overBudgetProjects = projectRows.filter(row => row.budget > 0 && row.margin < 0 && row.visualStatus.tone !== 'pending');
             const criticalAttentionProjects = attentionProjects.filter(row => row.visualStatus.tone === 'danger');
             const alertCount = attentionProjects.length;
             const taskStats = {};
@@ -2612,10 +2643,13 @@
             profitCard?.classList.toggle('analytics-kpi-danger', profit < 0);
 
             const marginEl = document.getElementById('kpi-margin'); 
-            marginEl.innerText = formatMoney(margin);
-            marginEl.classList.toggle('text-red-600', margin < 0);
-            marginEl.classList.toggle('text-primary-600', margin >= 0);
-            document.getElementById('kpi-margin-note').innerText = activeProjects.length === 1
+            marginEl.innerText = hasIncompleteCosts ? 'Da completare' : formatMoney(margin);
+            marginEl.classList.toggle('text-red-600', !hasIncompleteCosts && margin < 0);
+            marginEl.classList.toggle('text-primary-600', !hasIncompleteCosts && margin >= 0);
+            marginEl.classList.toggle('text-slate-500', hasIncompleteCosts);
+            document.getElementById('kpi-margin-note').innerText = hasIncompleteCosts
+                ? `${incompleteProjects.length} ${incompleteProjects.length === 1 ? 'commessa con dati economici incompleti' : 'commesse con dati economici incompleti'}`
+                : activeProjects.length === 1
                 ? 'Su 1 lavoro attivo'
                 : `Su ${activeProjects.length} lavori attivi`;
             document.getElementById('kpi-active-costs').innerText = formatMoney(totalSpent);
@@ -2630,20 +2664,20 @@
             const roundedUtilization = Math.round(utilization);
             const markerPosition = hasGlobalBudget ? Math.max(1, Math.min(utilization, 99)) : 1;
 
-            studioHealthStrip?.classList.toggle('is-empty', !hasGlobalBudget);
+            studioHealthStrip?.classList.toggle('is-empty', !hasGlobalBudget || hasIncompleteCosts);
             if (studioHealthMarker) studioHealthMarker.style.left = `${markerPosition}%`;
             if (studioHealthValue) {
-                studioHealthValue.innerText = hasGlobalBudget ? `${roundedUtilization}%` : '-';
-                studioHealthValue.classList.toggle('is-over-budget', hasGlobalBudget && utilization > 100);
+                studioHealthValue.innerText = hasGlobalBudget && !hasIncompleteCosts ? `${roundedUtilization}%` : '-';
+                studioHealthValue.classList.toggle('is-over-budget', hasGlobalBudget && !hasIncompleteCosts && utilization > 100);
             }
             if (studioHealthBudget) studioHealthBudget.innerText = hasGlobalBudget
                 ? `Budget complessivo ${formatMoney(totalBudget, 0)}`
                 : 'Budget complessivo da impostare';
             if (studioHealthResidual) {
-                studioHealthResidual.innerText = !hasGlobalBudget
+                studioHealthResidual.innerText = hasIncompleteCosts ? 'Dati economici da completare' : !hasGlobalBudget
                     ? 'Budget da impostare'
                     : (margin < 0 ? `Budget superato di ${formatMoney(Math.abs(margin), 0)}` : `Margine residuo ${formatMoney(margin, 0)}`);
-                studioHealthResidual.classList.toggle('is-negative', hasGlobalBudget && margin < 0);
+                studioHealthResidual.classList.toggle('is-negative', hasGlobalBudget && !hasIncompleteCosts && margin < 0);
             }
             if (studioHealthTrack) {
                 studioHealthTrack.setAttribute('aria-valuenow', String(hasGlobalBudget ? Math.min(roundedUtilization, 100) : 0));
@@ -2690,7 +2724,7 @@
             const tickFont = { size: 10, weight: '600' };
             const sortedRiskRows = [...projectRows]
                 .sort((a, b) => {
-                    const tones = { danger: 2, warning: 1, healthy: 0 };
+                    const tones = { danger: 3, warning: 2, pending: 1, healthy: 0 };
                     const aGap = Number(a.visualStatus.rhythm?.gap || a.percent);
                     const bGap = Number(b.visualStatus.rhythm?.gap || b.percent);
                     return tones[b.visualStatus.tone] - tones[a.visualStatus.tone] || bGap - aGap || b.spent - a.spent;
@@ -2713,7 +2747,7 @@
                                     <strong>${escapeHtml(row.project.name)}</strong>
                                     <small>${escapeHtml(state)} · ${escapeHtml(progressText)}</small>
                                 </span>
-                                <span class="analytics-priority-value ${tone === 'danger' ? 'is-danger' : ''}">${formatMoney(row.margin, 0)}</span>
+                                <span class="analytics-priority-value ${tone === 'danger' ? 'is-danger' : ''}">${row.economicReady ? formatMoney(row.margin, 0) : 'Da completare'}</span>
                                 <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
                             </button>`;
                     }).join('')
@@ -2827,7 +2861,7 @@
                                 label: context => `${context.dataset.label}: ${formatMoney(context.raw, 0)}`,
                                 footer: items => {
                                     const row = sortedRiskRows[items[0].dataIndex];
-                                    return `Margine: ${formatMoney(row.margin, 0)} · ${Math.round(row.percent)}% assorbito`;
+                                    return row.economicReady ? `Margine: ${formatMoney(row.margin, 0)} · ${Math.round(row.percent)}% assorbito` : 'Dati economici da completare';
                                 }
                             }
                         }

@@ -177,6 +177,9 @@
 
             closeEditTeamMemberModal();
             await fetchProfiles(); 
+            const updatedSelf = profiles.find(profile => profile.id === userProfile.id);
+            if (updatedSelf) userProfile.hourly_cost = updatedSelf.hourly_cost;
+            window.dispatchEvent(new CustomEvent('archtime:economic-setup-changed'));
             await fetchEntries(); 
             if (document.body.classList.contains('is-admin')) { 
                 await fetchProjects(); 

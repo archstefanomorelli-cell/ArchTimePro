@@ -200,7 +200,7 @@
     }
 
     function showPopover() {
-        if (!activeStep || popover) return;
+        if (!activeStep || popover || hasBlockingModal()) return;
         const step = steps[activeStep];
         popover = document.createElement('aside');
         popover.className = 'archtime-guide-popover';
@@ -228,6 +228,11 @@
     }
 
     function attachStep(stepId, attempt = 0) {
+        if (!state?.started || state.finished) return;
+        if (hasBlockingModal()) {
+            showStep(stepId);
+            return;
+        }
         const target = targetFor(stepId);
         if (!isVisible(target)) {
             if (attempt < 12) window.setTimeout(() => attachStep(stepId, attempt + 1), 120);

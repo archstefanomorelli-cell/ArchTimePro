@@ -83,7 +83,9 @@
             };
         }
 
-        function entryDateToIso(dateValue) {
+        function entryDateToIso(dateValue, newEntry = false) {
+            // Today's new manual entries use the current cost, not an artificial noon timestamp.
+            if (newEntry && dateValue === formatDateInputValue(new Date())) return new Date().toISOString();
             return dateValue ? new Date(`${dateValue}T12:00:00Z`).toISOString() : null;
         }
 
@@ -487,7 +489,7 @@
                 entry_task: task,
                 entry_duration: hours,
                 entry_notes: notes,
-                entry_created_at: entryDateToIso(customDate)
+                entry_created_at: entryDateToIso(customDate, true)
             };
             const { error } = await supabaseClient.rpc('create_entry_for_app', payload);
             if (error) throw error;
@@ -495,7 +497,7 @@
         }
 
         function firstValueStorageKey() {
-            return userProfile?.studio_id ? `archtime-first-value:${userProfile.studio_id}` : '';
+            return userProfile?.studio_id ? `archtime-economic-value-v2:${userProfile.studio_id}` : '';
         }
 
         function hasRealTimeEntries() {
@@ -505,24 +507,36 @@
             });
         }
 
-        async function showFirstValueMoment(projectId) {
+        async function showFirstValueMoment(projectId, configure = false) {
             const key = firstValueStorageKey();
-            if (!key || localStorage.getItem(key) === 'done') return;
+            if (!key || !isAdminUser() || (!configure && localStorage.getItem(key) === 'done')) return;
 
             const project = projects.find(item => item.id === projectId);
             const modal = document.getElementById('modal-first-value');
-            if (!project || !modal) return;
+            if (!project || project.is_demo || !modal) return;
+            modal.dataset.projectId = projectId;
 
             const summary = getProjectCostSummary(project);
             const marginElement = document.getElementById('first-value-margin');
             const marginCard = marginElement?.parentElement;
-            const hasEconomicBaseline = summary.budget > 0 && Number(userProfile?.hourly_cost || 0) > 0;
+            const hasEconomicBaseline = summary.economicReady;
 
             document.getElementById('first-value-title').textContent = hasEconomicBaseline
                 ? 'Ora il margine reagisce al lavoro reale.'
                 : 'La prima attività è registrata.';
             document.getElementById('first-value-budget').textContent = summary.budget > 0 ? formatMoney(summary.budget, 0) : 'Da definire';
-            document.getElementById('first-value-cost').textContent = formatMoney(summary.totalCost, 2);
+            document.getElementById('first-value-cost').textContent = summary.uncostedHours > 0
+                ? 'Da completare' : formatMoney(summary.totalCost, 2);
+            const setup = document.getElementById('first-value-setup');
+            setup?.classList.toggle('force-hide', hasEconomicBaseline && Number(userProfile?.hourly_cost || 0) > 0);
+            document.getElementById('first-value-setup-budget').value = summary.budget || '';
+            document.getElementById('first-value-setup-budget').readOnly = project.project_setup_type === 'normative';
+            document.getElementById('first-value-setup-cost').value = userProfile?.hourly_cost || '';
+            document.getElementById('first-value-note').textContent = hasEconomicBaseline
+                ? 'Il margine residuo è il compenso meno i costi già registrati, non l’utile finale previsto: manca ancora il lavoro futuro.'
+                : (summary.uncostedHours > 0
+                    ? 'Ci sono ore senza costo valorizzato. Impostare il costo vale per le nuove ore: quelle già salvate non saranno ricalcolate. Puoi verificarle nel registro attività.'
+                    : 'Completa compenso e costo orario per vedere il margine. Puoi continuare a registrare le ore anche senza questi dati.');
             if (marginElement) {
                 marginElement.textContent = hasEconomicBaseline ? formatMoney(summary.margin, 2) : 'Da definire';
                 marginElement.classList.toggle('text-red-700', hasEconomicBaseline && summary.margin < 0);
@@ -537,13 +551,44 @@
             marginCard?.classList.toggle('bg-slate-50', !hasEconomicBaseline);
 
             window.ArchTimeGuide?.pauseForFirstValue();
-            localStorage.setItem(key, 'done');
             modal.classList.remove('force-hide');
-            if (!(typeof isVideoDemoMode === 'function' && isVideoDemoMode())) {
-                await recordOnboardingEvent('first_value_seen');
-                window.archTimeAnalytics?.track('first_value_seen', { source: 'time_entry' });
+            if (hasEconomicBaseline && summary.totalHours >= 0.25) {
+                if (typeof isVideoDemoMode === 'function' && isVideoDemoMode()) localStorage.setItem(key, 'done');
+                else {
+                    await recordEconomicActivation('first_economic_value_seen');
+                    localStorage.setItem(key, 'done');
+                }
             }
             lucide.createIcons();
+        }
+
+        async function saveFirstValueSetup() {
+            const modal = document.getElementById('modal-first-value');
+            const project = projects.find(item => item.id === modal?.dataset.projectId);
+            const button = document.getElementById('btn-save-first-value-setup');
+            if (!project || !isAdminUser() || button.disabled) return;
+            const budget = Number(document.getElementById('first-value-setup-budget').value);
+            const cost = Number(document.getElementById('first-value-setup-cost').value);
+            if (!Number.isFinite(budget) || budget <= 0 || !Number.isFinite(cost) || cost <= 0) {
+                return appAlert('Completa i dati', 'Inserisci compenso e costo orario maggiori di zero. Puoi anche continuare senza completarli.', 'info');
+            }
+            button.disabled = true;
+            try {
+                await saveOwnHourlyCost(cost);
+                if (budget !== Number(project.budget || 0) && !(typeof isVideoDemoMode === 'function' && isVideoDemoMode())) {
+                    const { error } = await supabaseClient.from('projects').update({ budget })
+                        .eq('id', project.id).eq('studio_id', userProfile.studio_id).select('id').single();
+                    if (error) throw error;
+                }
+                project.budget = budget;
+                renderProjects();
+                renderStrategicCharts();
+                await recordEconomicActivation('economic_setup_completed');
+                await showFirstValueMoment(project.id, true);
+                window.dispatchEvent(new CustomEvent('archtime:economic-setup-changed'));
+            } catch (error) {
+                await appAlert('Dati non completati', error.message || 'Riprova tra poco.', 'danger');
+            } finally { button.disabled = false; }
         }
 
         function closeFirstValueMoment() {
@@ -569,7 +614,7 @@
                         rate: hours * Number(userProfile.hourly_cost || 0),
                         user_name: userProfile.full_name,
                         user_email: userProfile.email,
-                        created_at: entryDateToIso(customDate) || new Date().toISOString(),
+                        created_at: entryDateToIso(customDate, true) || new Date().toISOString(),
                         notes
                     });
                     saved = true;
@@ -586,7 +631,8 @@
                 window.dispatchEvent(new CustomEvent('archtime:entry-created', {
                     detail: { projectId: proj.id, source }
                 }));
-                if (shouldShowFirstValue) await showFirstValueMoment(proj.id);
+                if (shouldShowFirstValue || (isAdminUser() && getProjectCostSummary(proj).economicReady
+                    && localStorage.getItem(firstValueStorageKey()) !== 'done')) await showFirstValueMoment(proj.id);
                 return true;
             } catch (error) {
                 if (saved) {
