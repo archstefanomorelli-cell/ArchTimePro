@@ -4,6 +4,7 @@
     checkUser = async function () {
         try {
             const { data, error } = await supabaseClient.auth.getUser();
+            if (!data?.user && (!error || error.name === 'AuthSessionMissingError')) return;
             if (error) throw error;
             if (!data?.user) return;
             const access = await supabaseClient.rpc('has_archtime_next_access');
