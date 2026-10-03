@@ -127,6 +127,10 @@
             document.getElementById('edit-entry-hours')?.addEventListener('input', updateEditCost);
             document.getElementById('edit-entry-hours')?.addEventListener('blur', () => normalizeDurationField('edit-entry-hours'));
             document.getElementById('edit-entry-project')?.addEventListener('change', updateEditTaskDropdown);
+            document.getElementById('edit-entry-project')?.addEventListener('change', updateEditCost);
+            document.querySelectorAll('select[data-cost-mode]').forEach(select => select.addEventListener('change', () => {
+                refreshProjectCostModeUI(select.closest('.project-cost-choice'));
+            }));
             const dismissibleModals = [
                 ['modal-upgrade', closeUpgradeModal],
                 ['modal-edit-team', closeEditTeamMemberModal],

@@ -48,8 +48,8 @@
     <script src="assets/vendor/jspdf-2.5.1.js?v=privacy-security-2026-08-12-02"></script>
     <script src="assets/vendor/jspdf-autotable-3.5.31.js?v=privacy-security-2026-08-12-02"></script>
     <script src="assets/vendor/exceljs-4.4.0.js?v=privacy-security-2026-08-12-02"></script>
-    <link rel="stylesheet" href="assets/app.css?v=timer-manual-2026-09-26-02">
-    <link rel="stylesheet" href="assets/app-pro.css?v=economic-onboarding-2026-10-01-01">
+    <link rel="stylesheet" href="assets/app.css?v=project-cost-mode-2026-10-03-01">
+    <link rel="stylesheet" href="assets/app-pro.css?v=project-cost-mode-2026-10-03-01">
     <link rel="stylesheet" href="assets/app-flow-prototype.css?v=2026-09-21-01">
     <link rel="stylesheet" href="assets/guided-hotspots.css?v=2026-09-25-01">
     <script src="assets/js/12-analytics.js?v=privacy-2026-08-12-01" defer></script>
@@ -800,12 +800,15 @@
                             <label for="onboarding-project-budget">Compenso previsto della commessa</label>
                             <div class="quick-project-money"><span data-studio-currency-symbol>€</span><input type="number" min="0" step="0.01" id="onboarding-project-budget" placeholder="Es. 12000" inputmode="decimal"></div>
                         </div>
-                        <div>
-                            <label for="onboarding-hourly-cost">Quanto costa allo studio un'ora del tuo lavoro?</label>
-                            <div class="quick-project-money"><span data-studio-currency-symbol>€</span><input type="number" min="0.01" step="0.01" id="onboarding-hourly-cost" placeholder="Il tuo costo interno" inputmode="decimal" aria-describedby="onboarding-cost-help"></div>
-                            <p id="onboarding-cost-help">Va bene una stima. Non è la tariffa che chiedi al cliente; potrai aggiornarla successivamente.</p>
-                            <a href="calcolo-costo-orario-studio-professionale.html" target="_blank" rel="noopener">Hai bisogno di calcolarlo?<i data-lucide="external-link"></i></a>
-                        </div>
+                        <fieldset class="project-cost-choice" id="onboarding-cost-choice">
+                            <legend>Costo delle ore</legend>
+                            <select data-cost-mode aria-label="Costo delle ore"><option value="project">Unico per commessa</option><option value="team">Per membro del team</option></select>
+                            <div data-project-cost-amount>
+                                <label for="onboarding-hourly-cost">Costo orario interno</label>
+                                <div class="quick-project-money"><span data-studio-currency-symbol>€</span><input type="number" min="0.01" step="0.01" id="onboarding-hourly-cost" data-project-cost-input placeholder="Es. 45" inputmode="decimal"></div>
+                            </div>
+                            <p data-project-team-cost-note class="force-hide">Usa i costi impostati in Team.</p>
+                        </fieldset>
                     </div>
                     <label for="onboarding-project-client" class="onboarding-client-label">Cliente (opzionale)</label>
                     <input type="text" id="onboarding-project-client" placeholder="Nome cliente" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white">
@@ -844,7 +847,7 @@
             <p id="first-value-note" class="economic-result-note"></p>
             <div id="first-value-setup" class="force-hide onboarding-economics">
                 <div><label for="first-value-setup-budget">Compenso previsto</label><div class="quick-project-money"><span data-studio-currency-symbol>€</span><input id="first-value-setup-budget" type="number" min="0.01" step="0.01" inputmode="decimal"></div></div>
-                <div><label for="first-value-setup-cost">Il tuo costo orario interno</label><div class="quick-project-money"><span data-studio-currency-symbol>€</span><input id="first-value-setup-cost" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="Inserisci una stima"></div><p>Non è la tariffa al cliente. Si applica alle nuove registrazioni, senza modificare le ore già salvate.</p></div>
+                <div><label for="first-value-setup-cost">Costo orario interno</label><div class="quick-project-money"><span data-studio-currency-symbol>€</span><input id="first-value-setup-cost" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="Es. 45"></div><p>Vale per le nuove ore; lo storico non cambia.</p></div>
                 <button id="btn-save-first-value-setup" type="button" class="onboarding-secondary-action">Salva i dati economici</button>
             </div>
             <button id="btn-continue-first-value" type="button" class="mt-5 w-full rounded-xl bg-slate-900 px-4 py-3.5 text-sm font-bold text-white hover:bg-slate-800">Continua a lavorare</button>
@@ -1066,6 +1069,12 @@
             <form id="prototype-quick-project-form" class="prototype-quick-form">
                 <label><span>Nome commessa</span><input id="prototype-quick-project-name" type="text" maxlength="100" placeholder="Es. Casa Rossi" required autocomplete="off"></label>
                 <label><span>Prima attività</span><select id="prototype-quick-project-task"></select></label>
+                <fieldset class="project-cost-choice">
+                    <legend>Costo delle ore</legend>
+                    <select data-cost-mode aria-label="Costo delle ore"><option value="project">Unico per commessa</option><option value="team">Per membro del team</option></select>
+                    <div data-project-cost-amount><label for="prototype-quick-project-hourly-cost">Costo orario interno</label><div class="quick-project-money"><span data-studio-currency-symbol>€</span><input id="prototype-quick-project-hourly-cost" data-project-cost-input type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="Da completare"></div></div>
+                    <p data-project-team-cost-note class="force-hide">Usa i costi impostati in Team.</p>
+                </fieldset>
                 <details class="prototype-quick-optional">
                     <summary><span><i data-lucide="plus"></i> Aggiungi cliente e compenso</span><small>Opzionale</small></summary>
                     <div class="prototype-quick-optional-grid">
@@ -1101,6 +1110,13 @@
                         <div class="flex gap-2 bg-white p-3 rounded-xl border border-slate-200 focus-within:border-primary-500 focus-within:ring-4 focus-within:ring-primary-500/10 transition-all"><span data-studio-currency-symbol class="text-slate-400 font-bold text-sm">€</span><input type="number" id="edit-modal-budget" placeholder="0.00" class="bg-transparent w-full outline-none text-sm font-bold text-slate-800"></div>
                         <p id="project-budget-mode-note" class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-2 leading-relaxed">Inserisci una cifra unica oppure usa la somma delle attività.</p>
                     </div>
+                    <fieldset class="project-cost-choice">
+                        <legend>Costo delle ore</legend>
+                        <select data-cost-mode aria-label="Costo delle ore"><option value="project">Unico per commessa</option><option value="team">Per membro del team</option></select>
+                        <div data-project-cost-amount><label for="edit-modal-project-hourly-cost">Costo orario interno</label><div class="quick-project-money"><span data-studio-currency-symbol>€</span><input id="edit-modal-project-hourly-cost" data-project-cost-input type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="Da completare"></div></div>
+                        <p data-project-team-cost-note class="force-hide">Usa i costi impostati in Team.</p>
+                        <p>La scelta vale per le nuove ore. I costi già registrati restano invariati.</p>
+                    </fieldset>
                 </div>
                 <div id="project-modal-workflow" class="bg-slate-50 border border-slate-200 rounded-2xl p-4">
                     <div class="flex items-center gap-2 text-[11px] font-black text-slate-600 uppercase tracking-wider mb-3"><span class="w-5 h-5 rounded-md bg-primary-600 text-white flex items-center justify-center text-[10px]">2</span><span id="project-task-section-title">Template e attività</span></div>
@@ -1280,14 +1296,14 @@
     <script src="assets/js/00-runtime-config.js?v=stripe-founder-2026-06-29"></script>
     <script src="assets/js/normative-engine.js?v=2026-08-01-01"></script>
     <script src="assets/js/01-core.js?v=trial-start-2026-09-24-01"></script>
-    <script src="assets/js/02-auth-account.js?v=economic-onboarding-2026-10-01-01"></script>
+    <script src="assets/js/02-auth-account.js?v=project-cost-mode-2026-10-03-01"></script>
     <script src="assets/js/03-team.js?v=economic-onboarding-2026-10-01-01"></script>
-    <script src="assets/js/04-projects.js?v=economic-onboarding-2026-10-01-01"></script>
-    <script src="assets/js/05-time-entries.js?v=economic-onboarding-2026-10-01-01"></script>
+    <script src="assets/js/04-projects.js?v=project-cost-mode-2026-10-03-01"></script>
+    <script src="assets/js/05-time-entries.js?v=project-cost-mode-2026-10-03-01"></script>
     <script src="assets/js/06-reports.js?v=quote-format-modal-2026-08-12-01"></script>
-    <script src="assets/js/07-password-bootstrap.js?v=economic-onboarding-2026-10-01-01"></script>
+    <script src="assets/js/07-password-bootstrap.js?v=project-cost-mode-2026-10-03-01"></script>
     <script src="assets/js/09-video-demo.js?v=quote-fiscal-2026-08-03-01"></script>
-    <script src="assets/js/10-flow-prototype.js?v=economic-onboarding-2026-10-01-01"></script>
+    <script src="assets/js/10-flow-prototype.js?v=project-cost-mode-2026-10-03-01"></script>
     <script src="assets/js/11-document-prototype.js?v=2026-08-28-08"></script>
     <script src="assets/js/16-guided-hotspots.js?v=economic-onboarding-2026-10-01-01"></script>
     <script src="assets/js/17-activation-checklist.js?v=economic-onboarding-2026-10-01-01"></script>

@@ -70,7 +70,8 @@ async function checkLayout(page, selector, name) {
                 await page.locator('#onboarding-hourly-cost').fill('40');
                 await page.locator('#btn-prepare-first-project').click();
                 await page.waitForFunction(() => projects.length === 1);
-                assert.equal(await page.evaluate(() => userProfile.hourly_cost), 40, 'Confirmed cost applies in both versions');
+                assert.deepEqual(await page.evaluate(() => ({ mode: projects[0].cost_mode, projectCost: projects[0].project_hourly_cost, teamCost: userProfile.hourly_cost })),
+                    { mode: 'project', projectCost: 40, teamCost: 0 }, 'The default cost belongs to the project, not the owner');
                 const projectId = await page.evaluate(() => projects[0].id);
                 await page.evaluate(async id => {
                     await saveEntry(projects.find(project => project.id === id), projects[0].tasks[0], 2, null, '', 'manual');
@@ -91,7 +92,7 @@ async function checkLayout(page, selector, name) {
                 assert.equal(await page.locator('#first-value-margin').textContent(), 'Da definire');
                 await page.locator('#first-value-setup-cost').fill('50');
                 await page.locator('#btn-save-first-value-setup').click();
-                await page.waitForFunction(() => userProfile.hourly_cost === 50);
+                await page.waitForFunction(() => projects[0].project_hourly_cost === 50);
                 assert.equal(await page.evaluate(() => entries[0].rate), 0, 'Existing entries are never repriced');
                 assert.equal(await page.evaluate(() => getProjectCostSummary(projects[0]).economicReady), false);
                 assert.equal(await page.evaluate(() => localStorage.getItem(firstValueStorageKey())), null, 'Missing costs are not a valid activation');

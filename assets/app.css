@@ -194,3 +194,42 @@
     height: 1.7rem;
     flex: 0 0 auto;
 }
+
+.project-cost-choice {
+    display: grid;
+    gap: .7rem;
+    min-width: 0;
+    margin: 0;
+    padding: .9rem 1rem 1rem;
+    border: 1px solid #dbe2ea;
+    border-radius: .9rem;
+    background: linear-gradient(180deg, #fff 0%, #f8fafc 100%);
+    box-shadow: 0 1px 2px rgb(15 23 42 / .04);
+}
+.project-cost-choice legend {
+    padding: 0 .4rem;
+    color: #475569;
+    font-size: .66rem;
+    font-weight: 800;
+    letter-spacing: .065em;
+    text-transform: uppercase;
+}
+.project-cost-choice select[data-cost-mode] {
+    display: block;
+    width: 100%;
+    min-height: 2.7rem;
+    padding: .65rem .8rem;
+    border: 1px solid #cbd5e1;
+    border-radius: .7rem;
+    background: #fff;
+    color: #172033;
+    font-size: .8rem;
+    font-weight: 750;
+    cursor: pointer;
+}
+.project-cost-choice select[data-cost-mode]:focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
+.project-cost-choice [data-project-cost-amount] { display: grid; gap: .4rem; padding: .1rem .05rem 0; }
+.project-cost-choice [data-project-cost-amount] > label { color: #475569; font-size: .7rem; font-weight: 750; }
+.project-cost-choice p { margin: 0; color: #64748b; font-size: .68rem; line-height: 1.45; }
+.project-cost-choice .force-hide { display: none !important; }
+.project-cost-mode-tag { display: inline-flex; align-items: center; padding: .12rem .45rem; border-radius: 999px; background: #eef2ff; color: #4338ca; font-size: .6rem; font-weight: 750; letter-spacing: 0; text-transform: none; white-space: nowrap; }

@@ -469,6 +469,8 @@ html.theme-pro .quick-project-form input:focus,
 html.theme-pro .quick-project-form select:focus,
 html.theme-pro .quick-project-optional-grid input:focus { border-color: #818cf8; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
 
+html.theme-pro .project-cost-choice select[data-cost-mode] { width: 100%; min-height: 2.75rem; padding: .7rem .75rem; border-color: #cbd5e1; border-radius: .7rem; background: #fff; color: #172033; font-size: .82rem; font-weight: 750; }
+
 html.theme-pro .onboarding-economics { display: grid; gap: 1rem; margin: 1rem 0; padding: 1rem 0; border-top: 1px solid #e2e8f0; }
 html.theme-pro .onboarding-economics > div { display: grid; gap: 0.45rem; min-width: 0; }
 html.theme-pro .onboarding-economics label,

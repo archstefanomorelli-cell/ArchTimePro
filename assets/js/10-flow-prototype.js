@@ -234,6 +234,7 @@
     function resetQuickProjectForm() {
         const form = document.getElementById('prototype-quick-project-form');
         form?.reset();
+        refreshProjectCostModeUI(form);
         renderQuickProjectTaskOptions();
         const optional = form?.querySelector('.prototype-quick-optional');
         if (optional) optional.open = false;
@@ -275,13 +276,15 @@
         setTimeout(() => document.getElementById('btn-toggle-timer')?.focus({ preventScroll: true }), 450);
     }
 
-    function commitQuickProject({ name, task, client = '', budget = 0, origin = 'quick_modal' }) {
+    function commitQuickProject({ name, task, client = '', budget = 0, cost_mode = 'project', project_hourly_cost = null, origin = 'quick_modal' }) {
         const id = `prototype-quick-${Date.now()}`;
         const project = {
             id,
             name,
             client,
             budget,
+            cost_mode,
+            project_hourly_cost: cost_mode === 'team' ? null : project_hourly_cost,
             tasks: [task],
             task_budgets: budget > 0 ? { [task]: budget } : {},
             task_statuses: { [task]: 'todo' },
@@ -311,11 +314,14 @@
         const task = document.getElementById('prototype-quick-project-task')?.value || quickProjectTasks()[0];
         const client = document.getElementById('prototype-quick-project-client')?.value.trim() || '';
         const budget = Math.max(0, Number(document.getElementById('prototype-quick-project-budget')?.value || 0));
+        let costSettings;
+        try { costSettings = readProjectCostControls(document.getElementById('prototype-quick-project-form')); }
+        catch (error) { return appAlert('Costo orario', error.message, 'danger'); }
         if (!name) {
             document.getElementById('prototype-quick-project-name')?.focus();
             return;
         }
-        commitQuickProject({ name, task, client, budget });
+        commitQuickProject({ name, task, client, budget, ...costSettings });
     }
 
     async function createQuickProjectFromOnboarding(hoursOnly = false) {
@@ -326,7 +332,6 @@
         catch (error) { return appAlert('Completa i dati', error.message, 'info'); }
         buttons.forEach(button => { button.disabled = true; });
         try {
-            if (values.hourlyCost > 0) await saveOwnHourlyCost(values.hourlyCost);
             commitQuickProject({ ...values, origin: 'onboarding' });
             document.getElementById('modal-owner-onboarding')?.classList.add('force-hide');
             markOwnerOnboardingDone();

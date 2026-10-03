@@ -528,10 +528,14 @@
             document.getElementById('first-value-cost').textContent = summary.uncostedHours > 0
                 ? 'Da completare' : formatMoney(summary.totalCost, 2);
             const setup = document.getElementById('first-value-setup');
-            setup?.classList.toggle('force-hide', hasEconomicBaseline && Number(userProfile?.hourly_cost || 0) > 0);
+            setup?.classList.toggle('force-hide', hasEconomicBaseline);
             document.getElementById('first-value-setup-budget').value = summary.budget || '';
             document.getElementById('first-value-setup-budget').readOnly = project.project_setup_type === 'normative';
-            document.getElementById('first-value-setup-cost').value = userProfile?.hourly_cost || '';
+            const projectMode = projectCostMode(project) === 'project';
+            document.getElementById('first-value-setup-cost').value = projectMode
+                ? (project.project_hourly_cost || '') : (userProfile?.hourly_cost || '');
+            const costLabel = document.querySelector('label[for="first-value-setup-cost"]');
+            if (costLabel) costLabel.textContent = 'Costo orario interno';
             document.getElementById('first-value-note').textContent = hasEconomicBaseline
                 ? 'Il margine residuo è il compenso meno i costi già registrati, non l’utile finale previsto: manca ancora il lavoro futuro.'
                 : (summary.uncostedHours > 0
@@ -574,13 +578,17 @@
             }
             button.disabled = true;
             try {
-                await saveOwnHourlyCost(cost);
-                if (budget !== Number(project.budget || 0) && !(typeof isVideoDemoMode === 'function' && isVideoDemoMode())) {
-                    const { error } = await supabaseClient.from('projects').update({ budget })
+                const projectMode = projectCostMode(project) === 'project';
+                if (!projectMode) await saveOwnHourlyCost(cost);
+                const projectUpdate = { budget };
+                if (projectMode) projectUpdate.project_hourly_cost = cost;
+                if (!(typeof isVideoDemoMode === 'function' && isVideoDemoMode())) {
+                    const { error } = await supabaseClient.from('projects').update(projectUpdate)
                         .eq('id', project.id).eq('studio_id', userProfile.studio_id).select('id').single();
                     if (error) throw error;
                 }
                 project.budget = budget;
+                if (projectMode) project.project_hourly_cost = cost;
                 renderProjects();
                 renderStrategicCharts();
                 await recordEconomicActivation('economic_setup_completed');
@@ -611,7 +619,8 @@
                         project_name: proj.name,
                         task,
                         duration: hours,
-                        rate: hours * Number(userProfile.hourly_cost || 0),
+                        rate: hours * Number(projectCostMode(proj) === 'project'
+                            ? proj.project_hourly_cost : userProfile.hourly_cost || 0),
                         user_name: userProfile.full_name,
                         user_email: userProfile.email,
                         created_at: entryDateToIso(customDate, true) || new Date().toISOString(),
@@ -740,7 +749,17 @@
             const userVal = document.getElementById('edit-entry-user').value; 
             const hoursVal = parseDurationInput(document.getElementById('edit-entry-hours').value) || 0; 
             const selectedProfile = profiles.find(pr => pr.full_name === userVal); 
-            document.getElementById('edit-entry-cost').value = ((selectedProfile ? (selectedProfile.hourly_cost || 0) : 0) * hoursVal).toFixed(2); 
+            const selectedProject = projects.find(project => project.id === document.getElementById('edit-entry-project').value);
+            const originalEntry = entries.find(entry => String(entry.id) === String(document.getElementById('edit-entry-id').value));
+            const sameAssignment = originalEntry
+                && String(originalEntry.project_id) === String(selectedProject?.id)
+                && String(originalEntry.user_name || '') === String(userVal || '');
+            const rate = sameAssignment && Number(originalEntry.duration) > 0
+                ? Number(originalEntry.rate || 0) / Number(originalEntry.duration)
+                : projectCostMode(selectedProject) === 'project'
+                    ? Number(selectedProject?.project_hourly_cost || 0)
+                    : Number(selectedProfile?.hourly_cost || 0);
+            document.getElementById('edit-entry-cost').value = (rate * hoursVal).toFixed(2);
         }
 
         function canManageEntry(entry) {

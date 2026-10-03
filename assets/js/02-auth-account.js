@@ -828,6 +828,9 @@ function switchAuthTab(mode) {
             document.getElementById('onboarding-project-client').value = '';
             document.getElementById('onboarding-project-budget').value = calculatorHandoff?.values?.fee || '';
             document.getElementById('onboarding-hourly-cost').value = calculatorHandoff?.values?.hourlyCost || userProfile?.hourly_cost || '';
+            const projectCostSelect = document.querySelector('#onboarding-cost-choice select[data-cost-mode]');
+            if (projectCostSelect) projectCostSelect.value = 'project';
+            refreshProjectCostModeUI(document.getElementById('onboarding-cost-choice'));
             if (typeof renderQuickProjectTaskOptions === 'function') renderQuickProjectTaskOptions();
 
             const summary = document.getElementById('onboarding-calculator-summary');
@@ -933,15 +936,18 @@ function switchAuthTab(mode) {
             const client = document.getElementById('onboarding-project-client').value.trim();
             const budget = Number(document.getElementById('onboarding-project-budget').value);
             const hourlyCost = Number(document.getElementById('onboarding-hourly-cost').value);
+            const costSettings = readProjectCostControls(document.getElementById('onboarding-cost-choice'));
             const task = document.getElementById('onboarding-project-task')?.value
                 || document.getElementById('prototype-onboarding-project-task')?.value || activityCatalog[0] || 'Attività generale';
             if (!name) throw new Error('Inserisci il nome della prima commessa.');
             if (!Number.isFinite(budget) || budget < 0) throw new Error('Inserisci un compenso valido.');
             if (!hoursOnly && budget <= 0) throw new Error('Inserisci il compenso previsto, oppure scegli di registrare solo le ore.');
-            if (!hoursOnly && (!Number.isFinite(hourlyCost) || hourlyCost <= 0)) {
-                throw new Error('Inserisci una stima del costo orario, oppure scegli di registrare solo le ore.');
+            if (!hoursOnly && costSettings.cost_mode === 'project' && (!Number.isFinite(hourlyCost) || hourlyCost <= 0)) {
+                throw new Error('Inserisci il costo orario interno, oppure scegli di registrare solo le ore.');
             }
-            return { name, client, budget, hourlyCost: hoursOnly ? 0 : hourlyCost, task };
+            return { name, client, budget, hourlyCost: costSettings.cost_mode === 'team' ? 0 : hourlyCost, task,
+                cost_mode: costSettings.cost_mode,
+                project_hourly_cost: hoursOnly ? null : costSettings.project_hourly_cost };
         }
 
         async function prepareFirstProjectFromOnboarding(event, hoursOnly = false) {
@@ -953,14 +959,13 @@ function switchAuthTab(mode) {
             const calculatorHandoff = getMarginCalculatorHandoff();
             buttons.forEach(button => { button.disabled = true; button.classList.add('opacity-60', 'cursor-wait'); });
             try {
-                if (values.hourlyCost > 0) await saveOwnHourlyCost(values.hourlyCost);
                 await createQuickProjectRecord({ ...values, source: 'onboarding' });
                 markOwnerOnboardingDone();
                 closeOwnerOnboarding(false);
                 await recordOnboardingEvent('onboarding_project_created');
                 window.archTimeAnalytics?.track('onboarding_project_created', {
                     has_budget: values.budget > 0,
-                    has_hourly_cost: Number(userProfile?.hourly_cost || 0) > 0,
+                    has_hourly_cost: Number(values.project_hourly_cost || userProfile?.hourly_cost || 0) > 0,
                     task_count: 1,
                     from_calculator: Boolean(calculatorHandoff)
                 });

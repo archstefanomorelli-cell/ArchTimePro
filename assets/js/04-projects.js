@@ -65,6 +65,41 @@
             return document.body.classList.contains('is-admin');
         }
 
+        function projectCostMode(project) {
+            return project?.cost_mode === 'project' ? 'project' : 'team';
+        }
+
+        function refreshProjectCostModeUI(scope) {
+            const root = scope || document;
+            const selected = root.querySelector('select[data-cost-mode]');
+            const mode = selected?.value === 'team' ? 'team' : 'project';
+            const amount = root.querySelector('[data-project-cost-amount]');
+            const teamNote = root.querySelector('[data-project-team-cost-note]');
+            amount?.classList.toggle('force-hide', mode !== 'project');
+            teamNote?.classList.toggle('force-hide', mode !== 'team');
+            return mode;
+        }
+
+        function setProjectCostControls(mode = 'project', hourlyCost = null) {
+            const modal = document.getElementById('modal-edit-project');
+            if (!modal) return;
+            const select = modal.querySelector('select[data-cost-mode]');
+            if (select) select.value = mode === 'team' ? 'team' : 'project';
+            const input = modal.querySelector('#edit-modal-project-hourly-cost');
+            if (input) input.value = Number(hourlyCost) > 0 ? Number(hourlyCost) : '';
+            refreshProjectCostModeUI(modal);
+        }
+
+        function readProjectCostControls(scope = document.getElementById('modal-edit-project')) {
+            const costMode = refreshProjectCostModeUI(scope);
+            const raw = scope?.querySelector('[data-project-cost-input]')?.value?.trim() || '';
+            const projectHourlyCost = raw === '' ? null : Number(raw);
+            if (costMode === 'project' && raw !== '' && (!Number.isFinite(projectHourlyCost) || projectHourlyCost <= 0)) {
+                throw new Error('Inserisci un costo orario della commessa maggiore di zero, oppure lascia il campo vuoto per completarlo più tardi.');
+            }
+            return { cost_mode: costMode, project_hourly_cost: Number(projectHourlyCost) > 0 ? projectHourlyCost : null };
+        }
+
         function projectSelectColumns() {
             return isAdminUser() ? '*' : 'id,studio_id,name,client,tasks,is_archived,project_setup_type,normative_data';
         }
@@ -92,6 +127,20 @@
                 const { data, error } = await supabaseClient.from('projects').select(projectSelectColumns()).order('name');
                 if (error) throw error;
                 projects = data || [];
+            }
+            if (isAdminUser() && projects.length && !(typeof isVideoDemoMode === 'function' && isVideoDemoMode())) {
+                let { data: settings, error: settingsError } = await supabaseClient.rpc('get_project_cost_settings_for_app');
+                if (settingsError) {
+                    const fallback = await supabaseClient.from('projects').select('id,cost_mode,project_hourly_cost');
+                    if (fallback.error) throw new Error('Impossibile caricare le impostazioni del costo delle commesse. Ricarica la pagina.');
+                    settings = fallback.data;
+                }
+                if (!Array.isArray(settings)) throw new Error('Impostazioni del costo delle commesse non disponibili.');
+                const byId = new Map(settings.map(item => [String(item.id), item]));
+                if (projects.some(project => !byId.has(String(project.id)))) {
+                    throw new Error('Impostazioni del costo incomplete. Ricarica la pagina.');
+                }
+                projects = projects.map(project => ({ ...project, ...byId.get(String(project.id)) }));
             }
             renderProjects(selectedProjectId);
             if(isAdminUser()) renderStrategicCharts(); 
@@ -157,9 +206,9 @@
             const isWarning = !isOverBudget && percent > 75;
             const uncostedHours = projectEntries.filter(entry => !(Number(entry.rate) > 0))
                 .reduce((sum, entry) => sum + Number(entry.duration), 0);
-            const hasHourlyCost = projectEntries.length > 0
-                ? uncostedHours === 0
-                : Number(userProfile?.hourly_cost || 0) > 0;
+            const hasHourlyCost = projectCostMode(project) === 'project'
+                ? Number(project.project_hourly_cost || 0) > 0 && uncostedHours === 0
+                : (projectEntries.length > 0 ? uncostedHours === 0 : Number(userProfile?.hourly_cost || 0) > 0);
             const economicReady = budget > 0 && hasHourlyCost;
             const economicIssue = budget <= 0 ? 'Compenso da completare' : 'Costi da completare';
 
@@ -305,6 +354,7 @@
                             <div class="flex flex-wrap items-center gap-2">
                                 ${project.is_archived ? '<span class="text-[9px] font-black uppercase tracking-wider border px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border-slate-200">Archiviato</span>' : ''}
                                 <p class="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-widest">${escapeHtml(project.client || 'Interno')}</p>
+                                ${isAdminUser() ? `<span class="project-cost-mode-tag">${projectCostMode(project) === 'project' ? `Unico per commessa${Number(project.project_hourly_cost) > 0 ? ` · ${formatMoney(project.project_hourly_cost, 0)}/h` : ' · da completare'}` : 'Per membro del team'}</span>` : ''}
                             </div>
                         </div>
                         <div class="admin-only opacity-100 lg:opacity-0 group-hover:opacity-100 flex gap-1 bg-white lg:bg-transparent rounded-lg shadow-sm lg:shadow-none p-1 lg:p-0">
@@ -361,7 +411,7 @@
                                 <h3>${escapeHtml(project.name)}</h3>
                                 ${project.is_archived ? '<span class="project-list-archived">Archiviato</span>' : ''}
                             </div>
-                            <p>${escapeHtml(project.client || 'Interno')}</p>
+                            <p>${escapeHtml(project.client || 'Interno')}${isAdminUser() ? ` · ${projectCostMode(project) === 'project' ? 'Unico per commessa' : 'Per membro del team'}` : ''}</p>
                         </div>
                     </div>
                     <div class="project-list-metric"><small>${economicValueLabel}</small><strong>${formatMoney(summary.budget, 0)}</strong></div>
@@ -1272,6 +1322,7 @@
             }
             closeProjectTypeModal();
             document.getElementById('quick-project-form')?.reset();
+            refreshProjectCostModeUI(document.getElementById('quick-project-form'));
             document.querySelector('#quick-project-form .quick-project-optional')?.removeAttribute('open');
             renderQuickProjectTaskOptions();
             document.getElementById('modal-quick-project')?.classList.remove('force-hide');
@@ -1297,7 +1348,7 @@
             setTimeout(() => document.getElementById('btn-toggle-timer')?.focus({ preventScroll: true }), 450);
         }
 
-        async function createQuickProjectRecord({ name, task, client = '', budget = 0, source = 'quick_modal' }) {
+        async function createQuickProjectRecord({ name, task, client = '', budget = 0, cost_mode = 'project', project_hourly_cost = null, source = 'quick_modal' }) {
             const safeName = String(name || '').trim();
             const safeTask = String(task || getQuickProjectTasks()[0]).trim();
             const safeClient = String(client || '').trim();
@@ -1311,6 +1362,8 @@
                 name: safeName,
                 client: safeClient,
                 budget: safeBudget,
+                cost_mode: cost_mode === 'team' ? 'team' : 'project',
+                project_hourly_cost: cost_mode === 'team' ? null : (Number(project_hourly_cost) > 0 ? Number(project_hourly_cost) : null),
                 tasks: [safeTask],
                 is_demo: false,
                 project_setup_type: 'studio'
@@ -1357,6 +1410,7 @@
                     task: document.getElementById('quick-project-task')?.value,
                     client: document.getElementById('quick-project-client')?.value,
                     budget: document.getElementById('quick-project-budget')?.value,
+                    ...readProjectCostControls(document.getElementById('quick-project-form')),
                     source: 'quick_modal'
                 });
                 closeQuickProjectModal();
@@ -1446,6 +1500,7 @@
             document.getElementById('edit-modal-name').value = '';
             document.getElementById('edit-modal-client').value = '';
             document.getElementById('edit-modal-budget').value = '';
+            setProjectCostControls('project');
             newProjectTasks = [];
             newProjectTaskBudgets = {};
             normativeSelectedServices = new Set();
@@ -1659,6 +1714,9 @@
             const name = document.getElementById('edit-modal-name').value.trim();
             const client = document.getElementById('edit-modal-client').value.trim();
             const budget = normativeCalculation ? normativeCalculation.total : (parseFloat(document.getElementById('edit-modal-budget').value) || 0);
+            let costSettings;
+            try { costSettings = readProjectCostControls(); }
+            catch (error) { return await appAlert('Costo orario', error.message, 'danger'); }
             if(!name) return await appAlert("Attenzione", "Inserisci il nome del lavoro", "danger"); 
             if (isNormativeProjectMode() && normativeCalculation.workValue <= 0) {
                 return await appAlert("Attenzione", "Inserisci il valore dell’opera", "danger");
@@ -1677,7 +1735,7 @@
                 ? { ...normativeCalculation.taskBudgets }
                 : collectVisibleTaskBudgets('new');
             
-            const payload = { name: name, client: client, budget: budget, tasks: [...newProjectTasks], studio_id: userProfile.studio_id };
+            const payload = { name: name, client: client, budget: budget, tasks: [...newProjectTasks], studio_id: userProfile.studio_id, ...costSettings };
             if (Object.keys(newProjectTaskBudgets).length > 0) payload.task_budgets = newProjectTaskBudgets;
             if (isNormativeProjectMode()) {
                 payload.project_setup_type = 'normative';
@@ -1725,10 +1783,13 @@
             const { error } = await supabaseClient.from('projects').insert([payload]);
             if (error) {
                 const needsNormativeSetup = isNormativeProjectMode() && /project_setup_type|normative_data/i.test(error.message || '');
+                const needsCostModeSetup = /cost_mode|project_hourly_cost/i.test(error.message || '');
                 return await appAlert(
                     "Configurazione richiesta",
                     needsNormativeSetup
                         ? "Per creare progetti parametrici esegui prima lo script SQL dedicato in Supabase."
+                        : needsCostModeSetup
+                            ? "Per salvare il costo orario della commessa serve prima l’aggiornamento del database."
                         : "Per salvare il Piano costi va prima aggiunta la colonna task_budgets in Supabase. Puoi lasciare vuoti i campi Piano costi oppure eseguire lo script SQL dedicato.",
                     "danger"
                 );
@@ -1828,6 +1889,7 @@
                     <span class="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-wider border px-2 py-0.5 rounded-full mb-1.5 ${visualStatus.className}"><i data-lucide="${visualStatus.icon}" class="w-3 h-3"></i>${visualStatus.label}</span>
                     <h2 class="text-lg lg:text-xl font-black text-slate-800 mb-0.5 leading-tight tracking-tight">${escapeHtml(project.name)}</h2>
                     <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">${escapeHtml(project.client || 'Interno')}</p>
+                    ${isAdminUser() ? `<p class="text-[10px] font-bold text-slate-500 mt-1">${projectCostMode(project) === 'project' ? `Costo delle ore: unico per commessa${Number(project.project_hourly_cost) > 0 ? ` · ${formatMoney(project.project_hourly_cost, 2)}/h` : ' · da completare'}` : 'Costo delle ore: per membro del team'}</p>` : ''}
                     ${isAdminUser() && !summary.economicReady ? `<p class="mt-2 text-xs text-slate-600">${summary.uncostedHours > 0 ? 'Ore senza costo valorizzato: il margine non è ancora completo.' : 'Completa i dati economici per leggere il margine.'} <button type="button" data-ui-action="complete-economic-setup" data-project-id="${escapeAttr(project.id)}" class="font-bold text-primary-600 underline">Completa i dati</button></p>` : ''}
                 </div>
                 ${renderProjectDetailActions(project)}
@@ -1851,7 +1913,7 @@
             return `
             <div class="project-detail-metrics grid grid-cols-2 md:grid-cols-4 gap-2 mb-4 bg-slate-50 border border-slate-200 rounded-2xl p-2">
                 ${metricCardHtml('Spesa totale', `${formatMoney(data.totalSpent, 0)} ${budgetHint}`, 'text-primary-600')}
-                ${metricCardHtml('Costo team', `${formatMoney(data.totalHoursCost, 0)} ${hoursHint}`)}
+                ${metricCardHtml('Costo ore', `${formatMoney(data.totalHoursCost, 0)} ${hoursHint}`)}
                 ${metricCardHtml('Spese extra', formatMoney(data.totalExpenses, 0), 'text-amber-600')}
                 ${metricCardHtml('Resa oraria', `${formatMoney(data.effectiveRate, 2)} <span class="text-[10px] text-slate-400">/h</span>`, rateClass)}
             </div>`;
@@ -2356,6 +2418,7 @@
             document.getElementById('edit-modal-name').value = p.name; 
             document.getElementById('edit-modal-client').value = p.client || ''; 
             document.getElementById('edit-modal-budget').value = p.budget;
+            setProjectCostControls(projectCostMode(p), p.project_hourly_cost);
             const templateSelect = document.getElementById('new-proj-template');
             if (templateSelect) templateSelect.value = '';
             editProjectTasks = p.tasks && p.tasks.length > 0 ? [...p.tasks] : [];
@@ -2419,6 +2482,9 @@
             const name = document.getElementById('edit-modal-name').value.trim(); 
             const client = document.getElementById('edit-modal-client').value.trim(); 
             const budget = normativeCalculation ? normativeCalculation.total : (parseFloat(document.getElementById('edit-modal-budget').value) || 0);
+            let costSettings;
+            try { costSettings = readProjectCostControls(); }
+            catch (error) { return await appAlert('Costo orario', error.message, 'danger'); }
             if(!name) return await appAlert("Attenzione", "Inserisci il nome", "danger"); 
             if (isNormativeProjectMode() && normativeCalculation.workValue <= 0) {
                 return await appAlert("Attenzione", "Inserisci il valore dell’opera", "danger");
@@ -2438,7 +2504,7 @@
                 : collectVisibleTaskBudgets('edit');
             const originalProject = projects.find(project => project.id === id);
             const hadTaskBudgets = originalProject && Object.keys(getProjectTaskBudgets(originalProject)).length > 0;
-            const updatePayload = { name, client, budget, tasks: editProjectTasks };
+            const updatePayload = { name, client, budget, tasks: editProjectTasks, ...costSettings };
             if (hadTaskBudgets || Object.keys(editProjectTaskBudgets).length > 0) updatePayload.task_budgets = editProjectTaskBudgets;
             if (isNormativeProjectMode()) {
                 updatePayload.project_setup_type = 'normative';
@@ -2471,10 +2537,13 @@
             const { error } = await supabaseClient.from('projects').update(updatePayload).eq('id', id); 
             if (error) {
                 const needsNormativeSetup = isNormativeProjectMode() && /project_setup_type|normative_data/i.test(error.message || '');
+                const needsCostModeSetup = /cost_mode|project_hourly_cost/i.test(error.message || '');
                 return await appAlert(
                     "Configurazione richiesta",
                     needsNormativeSetup
                         ? "Per modificare progetti parametrici esegui prima lo script SQL dedicato in Supabase."
+                        : needsCostModeSetup
+                            ? "Per salvare il costo orario della commessa serve prima l’aggiornamento del database."
                         : "Per salvare il Piano costi va prima aggiunta la colonna task_budgets in Supabase. Puoi eseguire lo script SQL dedicato e riprovare.",
                     "danger"
                 );
