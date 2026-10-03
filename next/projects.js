@@ -117,7 +117,7 @@
             return data || [];
         }
 
-        async function fetchProjects() { 
+        async function fetchProjects() {
             const selectedProjectIndex = document.getElementById('project-select')?.value;
             const selectedProjectId = projects[selectedProjectIndex]?.id || null;
             const rpcData = await fetchRpcList('get_projects_for_app');
@@ -143,10 +143,10 @@
                 projects = projects.map(project => ({ ...project, ...byId.get(String(project.id)) }));
             }
             renderProjects(selectedProjectId);
-            if(isAdminUser()) renderStrategicCharts(); 
+            if(isAdminUser()) renderStrategicCharts();
         }
-        
-        async function fetchEntries() { 
+
+        async function fetchEntries() {
             const rpcData = await fetchRpcList('get_entries_for_app');
             if (rpcData) {
                 entries = rpcData.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 2000);
@@ -155,12 +155,12 @@
                 if (error) throw error;
                 entries = data || [];
             }
-            renderEntries(); 
-            renderProjects(); 
-            if(isAdminUser()) renderStrategicCharts(); 
+            renderEntries();
+            renderProjects();
+            if(isAdminUser()) renderStrategicCharts();
         }
-        
-        async function fetchExpenses() { 
+
+        async function fetchExpenses() {
             if (!isAdminUser()) {
                 expenses = [];
                 return;
@@ -173,8 +173,8 @@
                 if (error) throw error;
                 expenses = data || [];
             }
-            renderProjects(); 
-            if(userProfile && isAdminUser()) renderStrategicCharts(); 
+            renderProjects();
+            if(userProfile && isAdminUser()) renderStrategicCharts();
         }
 
 
@@ -476,32 +476,32 @@
             lucide.createIcons();
         }
 
-        async function toggleArchive(id, status) { 
-            await supabaseClient.from('projects').update({ is_archived: !status }).eq('id', id); 
-            fetchProjects(); 
+        async function toggleArchive(id, status) {
+            await supabaseClient.from('projects').update({ is_archived: !status }).eq('id', id);
+            fetchProjects();
         }
 
-        async function deleteProject(id) { 
-            if(await appConfirm("Eliminazione Definitiva", "ATTENZIONE: Eliminando questo progetto verranno cancellate anche TUTTE le ore e le spese registrate al suo interno!\n\nSe vuoi conservare lo storico finanziario, chiudi questo avviso e usa il tasto 'Archivia' (icona a forma di scatola).\n\nSei sicuro di volerlo ELIMINARE PER SEMPRE?", "danger")) { 
-                await supabaseClient.from('projects').delete().eq('id', id); 
-                fetchProjects(); 
-            } 
+        async function deleteProject(id) {
+            if(await appConfirm("Eliminazione Definitiva", "ATTENZIONE: Eliminando questo progetto verranno cancellate anche TUTTE le ore e le spese registrate al suo interno!\n\nSe vuoi conservare lo storico finanziario, chiudi questo avviso e usa il tasto 'Archivia' (icona a forma di scatola).\n\nSei sicuro di volerlo ELIMINARE PER SEMPRE?", "danger")) {
+                await supabaseClient.from('projects').delete().eq('id', id);
+                fetchProjects();
+            }
         }
 
-        function toggleViewArchived() { 
-            showArchived = !showArchived; 
-            document.getElementById('toggle-archived-btn').innerText = showArchived ? "Nascondi Archiviati" : "Archivio"; 
-            renderProjects(); 
+        function toggleViewArchived() {
+            showArchived = !showArchived;
+            document.getElementById('toggle-archived-btn').innerText = showArchived ? "Nascondi Archiviati" : "Archivio";
+            renderProjects();
         }
 
         // ================= TASK BUILDER E TEMPLATE =================
 
 
-        function openTaskBuilder(mode) { 
-            taskBuilderMode = mode; 
-            tempBuilderTasks = mode === 'new' ? [...newProjectTasks] : [...editProjectTasks]; 
-            renderTaskBuilder(); 
-            document.getElementById('modal-task-builder').classList.remove('force-hide'); 
+        function openTaskBuilder(mode) {
+            taskBuilderMode = mode;
+            tempBuilderTasks = mode === 'new' ? [...newProjectTasks] : [...editProjectTasks];
+            renderTaskBuilder();
+            document.getElementById('modal-task-builder').classList.remove('force-hide');
         }
         function closeTaskBuilder() { document.getElementById('modal-task-builder').classList.add('force-hide'); }
 
@@ -543,35 +543,35 @@
         function moveTaskBuilder(idx, dir) { const temp = tempBuilderTasks[idx]; tempBuilderTasks[idx] = tempBuilderTasks[idx + dir]; tempBuilderTasks[idx + dir] = temp; renderTaskBuilder(); }
         function removeTaskBuilder(idx) { tempBuilderTasks.splice(idx, 1); renderTaskBuilder(); }
         function addTaskBuilder(task) { tempBuilderTasks.push(task); renderTaskBuilder(); }
-        
-        function confirmTaskBuilder() { 
-            if(taskBuilderMode === 'new') { 
+
+        function confirmTaskBuilder() {
+            if(taskBuilderMode === 'new') {
                 newProjectTaskBudgets = collectVisibleTaskBudgets('new');
-                newProjectTasks = [...tempBuilderTasks]; 
+                newProjectTasks = [...tempBuilderTasks];
                 newProjectTaskBudgets = Object.fromEntries(Object.entries(newProjectTaskBudgets).filter(([task]) => newProjectTasks.includes(task)));
-                renderNewProjectUI(); 
-            } else { 
+                renderNewProjectUI();
+            } else {
                 editProjectTaskBudgets = collectVisibleTaskBudgets('edit');
-                editProjectTasks = [...tempBuilderTasks]; 
+                editProjectTasks = [...tempBuilderTasks];
                 editProjectTaskBudgets = Object.fromEntries(Object.entries(editProjectTaskBudgets).filter(([task]) => editProjectTasks.includes(task)));
-                renderEditProjectTasks(); 
-            } 
-            closeTaskBuilder(); 
+                renderEditProjectTasks();
+            }
+            closeTaskBuilder();
         }
-        
+
         async function addNewTaskFromBuilder() {
-            const input = document.getElementById('builder-new-task-input'); 
-            const val = input.value.trim(); 
+            const input = document.getElementById('builder-new-task-input');
+            const val = input.value.trim();
             if(!val) return;
-            
-            if(!activityCatalog.includes(val)) { 
-                activityCatalog.push(val); 
-                syncCatalogAndTemplatesToDB(); 
+
+            if(!activityCatalog.includes(val)) {
+                activityCatalog.push(val);
+                syncCatalogAndTemplatesToDB();
             }
-            if(!tempBuilderTasks.includes(val)) { 
-                tempBuilderTasks.push(val); 
+            if(!tempBuilderTasks.includes(val)) {
+                tempBuilderTasks.push(val);
             }
-            input.value = ''; 
+            input.value = '';
             renderTaskBuilder();
         }
 
@@ -580,16 +580,16 @@
         function openTemplatesModal() { if(activePlan === 'starter') return openUpgradeModal('Gestione Template'); document.getElementById('modal-templates').classList.remove('force-hide'); }
         function closeTemplatesModal() { document.getElementById('modal-templates').classList.add('force-hide'); cancelEditTemplate(); }
 
-        async function syncCatalogAndTemplatesToDB() { 
-            if(!studioData) return; 
-            await supabaseClient.from('studios').update({ activity_catalog: activityCatalog, project_templates: projectTemplates }).eq('id', userProfile.studio_id); 
+        async function syncCatalogAndTemplatesToDB() {
+            if(!studioData) return;
+            await supabaseClient.from('studios').update({ activity_catalog: activityCatalog, project_templates: projectTemplates }).eq('id', userProfile.studio_id);
         }
 
 
         function catalogManageItemHtml(task) {
             return `
                 <div class="flex items-center gap-1.5 bg-slate-50 text-slate-700 px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold tracking-wide tag-enter shadow-sm">
-                    ${escapeHtml(task)} 
+                    ${escapeHtml(task)}
                     <div class="flex items-center gap-1 border-l border-slate-200 pl-1.5 ml-1">
                         <button data-ui-action="edit-catalog-task" data-task="${escapeAttr(task)}" class="text-slate-400 hover:text-primary-600 focus:outline-none transition-colors"><i data-lucide="edit-2" class="w-3.5 h-3.5"></i></button>
                         <button data-ui-action="remove-catalog-task" data-task="${escapeAttr(task)}" class="text-slate-400 hover:text-red-500 focus:outline-none transition-colors"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
@@ -602,7 +602,7 @@
         }
 
         function newTemplateCatalogTaskHtml(task) {
-            const isSelected = newTemplateTasks.includes(task); 
+            const isSelected = newTemplateTasks.includes(task);
             return `<button data-ui-action="toggle-template-task" data-task="${escapeAttr(task)}" class="px-3 py-1.5 rounded-lg border text-xs font-bold transition-all shadow-sm tag-enter ${isSelected ? 'bg-primary-50 border-primary-200 text-primary-700' : 'bg-white border-slate-200 text-slate-600 hover:border-primary-300 hover:text-primary-600'}">${escapeHtml(task)}</button>`;
         }
 
@@ -1140,11 +1140,11 @@
 
         function renderCatalogAndTemplatesUI() {
             document.getElementById('catalog-manage-list').innerHTML = activityCatalog.map(catalogManageItemHtml).join('');
-            
+
             const isEditCat = editingCatalogTask !== null;
             const btnAddCat = document.getElementById('btn-add-catalog');
             const btnCancelCat = document.getElementById('btn-cancel-catalog');
-            if(btnAddCat) btnAddCat.innerText = isEditCat ? "Aggiorna" : "Aggiungi"; 
+            if(btnAddCat) btnAddCat.innerText = isEditCat ? "Aggiorna" : "Aggiungi";
             if(btnCancelCat) isEditCat ? btnCancelCat.classList.remove('hidden') : btnCancelCat.classList.add('hidden');
 
             const legacyTemplateCatalog = document.getElementById('new-template-catalog-tasks');
@@ -1164,25 +1164,25 @@
             }
             renderInlineTemplatePicker();
             document.getElementById('templates-manage-list').innerHTML = projectTemplates.map(templateManageItemHtml).join('');
-            
+
             const isEditTpl = editingTemplateIndex !== null;
             const btnSaveTpl = document.getElementById('btn-save-template');
             const btnCancelTpl = document.getElementById('btn-cancel-edit-template');
             if(btnSaveTpl) btnSaveTpl.innerText = isEditTpl ? "Aggiorna" : "Salva Nuovo";
             if(btnCancelTpl) isEditTpl ? btnCancelTpl.classList.remove('hidden') : btnCancelTpl.classList.add('hidden');
-            
+
             renderStudioManagementSummary();
-            lucide.createIcons(); 
+            lucide.createIcons();
             renderNewProjectUI();
         }
 
         function editCatalogTask(task) { editingCatalogTask = task; document.getElementById('new-catalog-item').value = task; renderCatalogAndTemplatesUI(); }
         function cancelCatalogEdit() { editingCatalogTask = null; document.getElementById('new-catalog-item').value = ''; renderCatalogAndTemplatesUI(); }
 
-        async function addActivityToCatalog() { 
-            const val = document.getElementById('new-catalog-item').value.trim(); 
-            if(!val) return; 
-            
+        async function addActivityToCatalog() {
+            const val = document.getElementById('new-catalog-item').value.trim();
+            if(!val) return;
+
             if (editingCatalogTask !== null) {
                 if (val !== editingCatalogTask && !activityCatalog.includes(val)) {
                     const idx = activityCatalog.indexOf(editingCatalogTask);
@@ -1195,19 +1195,19 @@
                     editingCatalogTask = null; document.getElementById('new-catalog-item').value = ''; renderCatalogAndTemplatesUI();
                     if(!document.getElementById('modal-task-builder').classList.contains('force-hide')) renderTaskBuilder();
                     await syncCatalogAndTemplatesToDB();
-                } else if (val === editingCatalogTask) { cancelCatalogEdit(); } 
+                } else if (val === editingCatalogTask) { cancelCatalogEdit(); }
                 else { await appAlert("Attenzione", "Questa voce esiste già nel catalogo.", "danger"); }
             } else {
-                if(activityCatalog.includes(val)) return await appAlert("Attenzione", "Voce già presente.", "danger"); 
-                activityCatalog.push(val); document.getElementById('new-catalog-item').value = ''; renderCatalogAndTemplatesUI(); await syncCatalogAndTemplatesToDB(); 
+                if(activityCatalog.includes(val)) return await appAlert("Attenzione", "Voce già presente.", "danger");
+                activityCatalog.push(val); document.getElementById('new-catalog-item').value = ''; renderCatalogAndTemplatesUI(); await syncCatalogAndTemplatesToDB();
             }
         }
 
-        async function removeActivityFromCatalog(task) { 
+        async function removeActivityFromCatalog(task) {
             if(await appConfirm("Elimina Voce", `Sei sicuro di voler eliminare "${task}" dal catalogo?\n(Verrà rimossa automaticamente anche dai Template che la utilizzano).`, "danger")) {
                 if (editingCatalogTask === task) cancelCatalogEdit();
                 activityCatalog = activityCatalog.filter(t => t !== task); newTemplateTasks = newTemplateTasks.filter(t => t !== task); newProjectTasks = newProjectTasks.filter(t => t !== task); editProjectTasks = editProjectTasks.filter(t => t !== task); tempBuilderTasks = tempBuilderTasks.filter(t => t !== task); delete newProjectTaskBudgets[task]; delete editProjectTaskBudgets[task]; projectTemplates.forEach(tpl => { tpl.tasks = tpl.tasks.filter(t => t !== task); });
-                renderCatalogAndTemplatesUI(); if(!document.getElementById('modal-task-builder').classList.contains('force-hide')) renderTaskBuilder(); await syncCatalogAndTemplatesToDB(); 
+                renderCatalogAndTemplatesUI(); if(!document.getElementById('modal-task-builder').classList.contains('force-hide')) renderTaskBuilder(); await syncCatalogAndTemplatesToDB();
             }
         }
 
@@ -1250,13 +1250,13 @@
         function editTemplate(index) { editingTemplateIndex = index; document.getElementById('new-template-name').value = projectTemplates[index].name; newTemplateTasks = [...projectTemplates[index].tasks]; renderCatalogAndTemplatesUI(); }
         function cancelEditTemplate() { editingTemplateIndex = null; document.getElementById('new-template-name').value = ''; newTemplateTasks = []; renderCatalogAndTemplatesUI(); }
 
-        async function saveNewTemplate() { 
-            const name = document.getElementById('new-template-name').value.trim(); 
-            if(!name || newTemplateTasks.length === 0) return await appAlert("Attenzione", "Inserisci un nome e seleziona almeno un'attività.", "danger"); 
+        async function saveNewTemplate() {
+            const name = document.getElementById('new-template-name').value.trim();
+            if(!name || newTemplateTasks.length === 0) return await appAlert("Attenzione", "Inserisci un nome e seleziona almeno un'attività.", "danger");
             if(editingTemplateIndex !== null) { projectTemplates[editingTemplateIndex] = { name: name, tasks: [...newTemplateTasks] }; editingTemplateIndex = null; } else { projectTemplates.push({ name: name, tasks: [...newTemplateTasks] }); }
-            document.getElementById('new-template-name').value = ''; newTemplateTasks = []; renderCatalogAndTemplatesUI(); await syncCatalogAndTemplatesToDB(); 
+            document.getElementById('new-template-name').value = ''; newTemplateTasks = []; renderCatalogAndTemplatesUI(); await syncCatalogAndTemplatesToDB();
         }
-        
+
         async function removeTemplate(index) { if(await appConfirm("Elimina Template", "Sei sicuro di voler eliminare questo template? L'operazione non può essere annullata.", "danger")) { if(editingTemplateIndex === index) cancelEditTemplate(); projectTemplates.splice(index, 1); renderCatalogAndTemplatesUI(); await syncCatalogAndTemplatesToDB(); } }
 
         function isProjectModalCreateMode() {
@@ -1555,7 +1555,7 @@
             if (orderHint) orderHint.textContent = isNormative ? 'Generate dalla selezione' : 'Trascina per ordinare';
 
             if (selectTpl) {
-                if(activePlan === 'starter') { selectTpl.innerHTML = optionHtml('', 'I Template sono nel piano PREMIUM', true, true); selectTpl.disabled = true; selectTpl.classList.add('locked-feature'); } 
+                if(activePlan === 'starter') { selectTpl.innerHTML = optionHtml('', 'I Template sono nel piano PREMIUM', true, true); selectTpl.disabled = true; selectTpl.classList.add('locked-feature'); }
                 else { selectTpl.innerHTML = optionHtml('', '-- Scegli da un Template --', true, true) + projectTemplates.map((t, i) => optionHtml(i, t.name)).join(''); selectTpl.disabled = false; selectTpl.classList.remove('locked-feature'); }
             }
             if (isNormative) {
@@ -1717,7 +1717,7 @@
             let costSettings;
             try { costSettings = readProjectCostControls(); }
             catch (error) { return await appAlert('Costo orario', error.message, 'danger'); }
-            if(!name) return await appAlert("Attenzione", "Inserisci il nome del lavoro", "danger"); 
+            if(!name) return await appAlert("Attenzione", "Inserisci il nome del lavoro", "danger");
             if (isNormativeProjectMode() && normativeCalculation.workValue <= 0) {
                 return await appAlert("Attenzione", "Inserisci il valore dell’opera", "danger");
             }
@@ -1734,7 +1734,7 @@
             newProjectTaskBudgets = isNormativeProjectMode()
                 ? { ...normativeCalculation.taskBudgets }
                 : collectVisibleTaskBudgets('new');
-            
+
             const payload = { name: name, client: client, budget: budget, tasks: [...newProjectTasks], studio_id: userProfile.studio_id, ...costSettings };
             if (Object.keys(newProjectTaskBudgets).length > 0) payload.task_budgets = newProjectTaskBudgets;
             if (isNormativeProjectMode()) {
@@ -1806,21 +1806,21 @@
                 has_budget: budget > 0,
                 setup_type: projectSetupType
             });
-            
-            document.getElementById('edit-modal-name').value = ""; 
-            document.getElementById('edit-modal-client').value = ""; 
-            document.getElementById('edit-modal-budget').value = ""; 
-            document.getElementById('new-proj-template').value = ""; 
+
+            document.getElementById('edit-modal-name').value = "";
+            document.getElementById('edit-modal-client').value = "";
+            document.getElementById('edit-modal-budget').value = "";
+            document.getElementById('new-proj-template').value = "";
             newProjectTasks = [];
             newProjectTaskBudgets = {};
             normativeSelectedServices = new Set();
             normativeCalculationState = { workValue: 0, inhabitants: 0, categoryId: '1', destinationId: '', complexityId: '' };
             setProjectBudgetMode('manual');
-            
-            renderNewProjectUI(); 
-            await fetchProjects(); 
+
+            renderNewProjectUI();
+            await fetchProjects();
             await closeEditProjectModal(true);
-            await appAlert("Fatto", "Lavoro Creato!", "success"); 
+            await appAlert("Fatto", "Lavoro Creato!", "success");
             switchAppTab('operate');
         }
 
@@ -2414,9 +2414,9 @@
                 }
             }
             setProjectModalMode('edit');
-            document.getElementById('edit-modal-proj-id').value = id; 
-            document.getElementById('edit-modal-name').value = p.name; 
-            document.getElementById('edit-modal-client').value = p.client || ''; 
+            document.getElementById('edit-modal-proj-id').value = id;
+            document.getElementById('edit-modal-name').value = p.name;
+            document.getElementById('edit-modal-client').value = p.client || '';
             document.getElementById('edit-modal-budget').value = p.budget;
             setProjectCostControls(projectCostMode(p), p.project_hourly_cost);
             const templateSelect = document.getElementById('new-proj-template');
@@ -2443,8 +2443,8 @@
             refreshProjectBudgetModeUI();
             renderNewProjectUI();
             renderEditProjectTasks();
-            document.getElementById('modal-detail').classList.add('force-hide'); 
-            document.getElementById('modal-edit-project').classList.remove('force-hide'); 
+            document.getElementById('modal-detail').classList.add('force-hide');
+            document.getElementById('modal-edit-project').classList.remove('force-hide');
             resetProjectModalScroll();
             lucide.createIcons();
             projectModalUsesNormativeHandoff = false;
@@ -2472,20 +2472,20 @@
             hideEditProjectModal();
             return true;
         }
-        
+
         async function saveModalProjectEdit() {
-            const id = document.getElementById('edit-modal-proj-id').value; 
+            const id = document.getElementById('edit-modal-proj-id').value;
             if (!id) return createNewProject();
             if (isNormativeProjectMode()) syncNormativeTasksFromSelection();
             else if (projectBudgetMode === 'auto') fillProjectBudgetFromTaskBudgets(false);
             const normativeCalculation = isNormativeProjectMode() ? getNormativeCalculation() : null;
-            const name = document.getElementById('edit-modal-name').value.trim(); 
-            const client = document.getElementById('edit-modal-client').value.trim(); 
+            const name = document.getElementById('edit-modal-name').value.trim();
+            const client = document.getElementById('edit-modal-client').value.trim();
             const budget = normativeCalculation ? normativeCalculation.total : (parseFloat(document.getElementById('edit-modal-budget').value) || 0);
             let costSettings;
             try { costSettings = readProjectCostControls(); }
             catch (error) { return await appAlert('Costo orario', error.message, 'danger'); }
-            if(!name) return await appAlert("Attenzione", "Inserisci il nome", "danger"); 
+            if(!name) return await appAlert("Attenzione", "Inserisci il nome", "danger");
             if (isNormativeProjectMode() && normativeCalculation.workValue <= 0) {
                 return await appAlert("Attenzione", "Inserisci il valore dell’opera", "danger");
             }
@@ -2534,7 +2534,7 @@
                     selected_services: getSelectedNormativeServicesSnapshot()
                 };
             }
-            const { error } = await supabaseClient.from('projects').update(updatePayload).eq('id', id); 
+            const { error } = await supabaseClient.from('projects').update(updatePayload).eq('id', id);
             if (error) {
                 const needsNormativeSetup = isNormativeProjectMode() && /project_setup_type|normative_data/i.test(error.message || '');
                 const needsCostModeSetup = /cost_mode|project_hourly_cost/i.test(error.message || '');
@@ -2556,9 +2556,9 @@
         async function addExpense(projectId) {
             const desc = document.getElementById('exp-desc').value.trim();
             const amount = parseFloat(document.getElementById('exp-amount').value);
-            
+
             if(!desc || !amount || amount <= 0) return await appAlert("Attenzione", "Inserisci una descrizione e un importo valido.", "danger");
-            
+
             await supabaseClient.from('expenses').insert([{
                 studio_id: userProfile.studio_id,
                 project_id: projectId,
@@ -2567,7 +2567,7 @@
                 user_name: userProfile.full_name,
                 created_at: new Date().toISOString()
             }]);
-            
+
             await fetchExpenses();
             showProjectDetail(projectId);
         }
@@ -2701,7 +2701,7 @@
                     .filter(expense => new Date(expense.created_at) >= summaryWeekStart)
                     .reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
 
-            const profitCard = document.getElementById('card-profit'); 
+            const profitCard = document.getElementById('card-profit');
             const profitLabel = document.getElementById('label-profit');
             const profitValue = document.getElementById('kpi-profit');
 
@@ -2711,7 +2711,7 @@
             profitValue.classList.toggle('text-emerald-700', profit >= 0);
             profitCard?.classList.toggle('analytics-kpi-danger', profit < 0);
 
-            const marginEl = document.getElementById('kpi-margin'); 
+            const marginEl = document.getElementById('kpi-margin');
             marginEl.innerText = hasIncompleteCosts ? 'Da completare' : formatMoney(margin);
             marginEl.classList.toggle('text-red-600', !hasIncompleteCosts && margin < 0);
             marginEl.classList.toggle('text-primary-600', !hasIncompleteCosts && margin >= 0);
@@ -2883,13 +2883,13 @@
             if(charts.marginTrend) charts.marginTrend.destroy();
             if (toggleChartEmpty('marginTrend', 'chart-margin-trend', 'empty-margin-trend', hasWeeklyCosts)) charts.marginTrend = new Chart(document.getElementById('chart-margin-trend'), {
                 type: 'bar',
-                data: { 
+                data: {
                     labels: weeklyCosts.map(item => item.label),
                     datasets: [
                         { label: 'Lavoro', data: weeklyCosts.map(item => item.labor), backgroundColor: theme.chartMainColor, borderRadius: 4, borderSkipped: false },
                         { label: 'Spese extra', data: weeklyCosts.map(item => item.extras), backgroundColor: '#f59e0b', borderRadius: 4, borderSkipped: false }
                     ]
-                }, 
+                },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
@@ -2901,19 +2901,19 @@
                         legend: { position: 'bottom', align: 'start', labels: { usePointStyle: true, pointStyle: 'rectRounded', boxWidth: 7, boxHeight: 7, padding: 16, font: tickFont } },
                         tooltip: { ...chartTooltip, callbacks: { label: context => `${context.dataset.label}: ${formatMoney(context.raw, 0)}`, footer: items => `Totale: ${formatMoney(weeklyCosts[items[0].dataIndex].total, 0)}` } }
                     }
-                } 
+                }
             });
 
             if(charts.risk) charts.risk.destroy();
             if (toggleChartEmpty('risk', 'chart-risk', 'empty-risk', hasRiskRows)) charts.risk = new Chart(document.getElementById('chart-risk'), {
-                type: 'bar', 
-                data: { 
-                    labels: sortedRiskRows.map(row => row.project.name), 
+                type: 'bar',
+                data: {
+                    labels: sortedRiskRows.map(row => row.project.name),
                     datasets: [
                         { label: 'Budget', data: sortedRiskRows.map(row => row.budget), backgroundColor: '#dbe2ea', borderRadius: 4, barThickness: 9 },
                         { label: 'Costi', data: sortedRiskRows.map(row => row.spent), backgroundColor: sortedRiskRows.map(row => row.margin < 0 ? '#dc2626' : (row.percent >= 75 ? '#d97706' : theme.chartMainColor)), borderRadius: 4, barThickness: 9 }
                     ]
-                }, 
+                },
                 options: {
                     indexAxis: 'y',
                     responsive: true,
@@ -2935,13 +2935,13 @@
                             }
                         }
                     }
-                } 
+                }
             });
 
             if(charts.tasks) charts.tasks.destroy();
             if (toggleChartEmpty('tasks', 'chart-tasks-dist', 'empty-tasks', hasTasks)) charts.tasks = new Chart(document.getElementById('chart-tasks-dist'), {
-                type: 'bar', 
-                data: { 
+                type: 'bar',
+                data: {
                     labels: topTasks.map(task => task[0].length > 22 ? `${task[0].slice(0, 21)}…` : task[0]),
                     datasets: [{
                         label: 'Ore registrate',
@@ -2950,8 +2950,8 @@
                         borderRadius: 4,
                         barThickness: 12
                     }]
-                }, 
-                options: { 
+                },
+                options: {
                     indexAxis: 'y',
                     responsive: true,
                     maintainAspectRatio: false,
@@ -2972,9 +2972,8 @@
                                 }
                             }
                         }
-                    } 
-                } 
+                    }
+                }
             });
             lucide.createIcons();
         }
-

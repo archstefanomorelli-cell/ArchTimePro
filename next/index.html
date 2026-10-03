@@ -26,10 +26,10 @@
     <style>
         html.video-demo-boot body { visibility: hidden; }
     </style>
-    
+
     <link rel="stylesheet" href="assets/tailwind-built.css?v=economic-onboarding-2026-10-01-01">
     <link rel="stylesheet" href="assets/fonts.css?v=2026-08-12-01">
-    
+
     <script src="assets/vendor/supabase-2.39.3.js"></script><script src="next/session.js?v=1"></script>
     <script src="assets/vendor/lucide-0.468.0.js?v=privacy-security-2026-08-12-02"></script>
     <script src="assets/vendor/chart-4.4.7.js?v=privacy-security-2026-08-12-02"></script>
@@ -103,15 +103,15 @@
                         </div>
                         <input type="text" id="full-name" placeholder="Nome e cognome" class="w-full border border-slate-200 rounded-xl p-3.5 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all bg-white">
                     </div>
-                    
+
                     <input type="email" id="email" placeholder="Email professionale" class="w-full border border-slate-200 rounded-xl p-3.5 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all bg-white">
-                    
+
                     <input type="password" id="password" placeholder="Password" class="w-full border border-slate-200 rounded-xl p-3.5 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all bg-white">
-                    
+
                     <div id="forgot-link-container" class="text-right mt-1 mb-2">
                         <button id="btn-forgot-password" class="text-[10px] font-bold text-slate-400 hover:text-primary-600 transition-colors uppercase tracking-wider">Password dimenticata?</button>
                     </div>
-                    
+
                     <div id="signup-legal" class="force-hide mt-4 mb-2 bg-slate-50 border border-slate-200 rounded-xl p-3.5">
                         <label class="flex items-start gap-2.5 cursor-pointer group">
                             <input type="checkbox" id="accept-terms" class="mt-0.5 w-4 h-4 text-primary-600 border-slate-300 rounded focus:ring-primary-500 transition-all cursor-pointer">
@@ -136,7 +136,7 @@
             <div class="w-16 h-16 bg-slate-100 text-slate-500 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-slate-200"><i data-lucide="door-open" class="w-8 h-8"></i></div>
             <h2 class="text-2xl font-black text-slate-900 mb-2 tracking-tight text-center" id="limbo-user-name">Bentornato!</h2>
             <p class="text-slate-500 text-sm mb-8 leading-relaxed text-center font-medium">Al momento non fai più parte di alcun team aziendale. <br>Scegli come vuoi continuare:</p>
-            
+
             <div class="space-y-6">
                 <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200">
                     <h3 class="text-sm font-black text-slate-800 mb-3 flex items-center gap-2"><i data-lucide="link" class="w-4 h-4 text-primary-500"></i> Unisciti a uno Studio</h3>
@@ -159,7 +159,7 @@
                     <button id="btn-limbo-create" class="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold hover:bg-slate-800 transition-all active:scale-[0.98] shadow-sm flex justify-center items-center gap-2">Diventa manager</button>
                 </div>
             </div>
-            
+
             <div class="text-center mt-6">
                 <button data-action="logout" class="text-[11px] font-bold text-slate-400 hover:text-slate-600 transition-colors uppercase tracking-wider">Esci dall'account</button>
             </div>
@@ -171,7 +171,7 @@
             <div class="w-16 h-16 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-red-100"><i data-lucide="lock" class="w-8 h-8"></i></div>
             <h2 class="text-2xl font-black text-slate-900 mb-2 tracking-tight">Abbonamento scaduto</h2>
             <p class="text-slate-500 text-sm mb-8 leading-relaxed">L'abbonamento per questo Spazio di Lavoro è scaduto. Attiva un piano per continuare a lavorare.</p>
-            
+
             <div class="flex flex-col gap-3 mb-6">
                 <button data-plan-checkout="starter" class="w-full bg-white border border-slate-300 text-slate-800 py-3.5 rounded-xl font-bold hover:bg-slate-50 transition-all shadow-sm active:scale-[0.98] flex justify-center items-center gap-2">
                     <i data-lucide="timer" class="w-4 h-4"></i> Basic · 19,90 €/mese
@@ -184,7 +184,7 @@
             <button id="btn-paywall-export-data" class="mb-4 inline-flex items-center justify-center gap-2 text-xs font-bold text-slate-500 hover:text-primary-600 transition-colors">
                 <i data-lucide="download" class="w-4 h-4"></i> Esporta i dati dello studio
             </button>
-            
+
             <button data-action="logout" class="text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors">Esci dall'account</button>
         </div>
     </div>
@@ -223,7 +223,7 @@
                     <button id="btn-header-pdf" class="secondary-action admin-only"><i data-lucide="file-text" class="w-4 h-4"></i> <span class="hidden lg:inline">Report studio</span></button>
                     <button id="btn-header-invite" class="secondary-action admin-only"><i data-lucide="user-plus" class="w-4 h-4"></i> <span class="hidden xl:inline">Invita collaboratore</span></button>
                     <div class="hidden lg:block h-6 w-[1px] bg-slate-200 admin-only mx-2"></div>
-                    
+
                     <button id="btn-open-account" class="flex items-center gap-2 border border-slate-200 bg-white hover:border-primary-200 hover:bg-primary-50 p-1.5 lg:px-3 lg:py-2 rounded-xl transition-all group shadow-sm">
                         <span class="w-7 h-7 rounded-lg bg-slate-100 text-slate-500 group-hover:bg-primary-100 group-hover:text-primary-600 flex items-center justify-center"><i data-lucide="user" class="w-4 h-4"></i></span>
                         <span id="user-display" class="hidden lg:inline text-xs font-bold text-slate-600 uppercase truncate max-w-[120px] group-hover:text-primary-600 tracking-wide"></span>
@@ -256,9 +256,9 @@
                 </ol>
                 <button id="activation-next-action" type="button" class="activation-next-action"><span>Continua</span><i data-lucide="arrow-right"></i></button>
             </section>
-            
+
             <div class="lg:col-span-4 flex flex-col gap-6 lg:gap-8">
-                
+
                 <section id="timer-panel" class="app-panel bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mobile-tab active" data-tab="operate">
                     <div>
                         <div class="flex justify-between items-center mb-6">
@@ -308,7 +308,7 @@
             </div>
 
             <div class="lg:col-span-8 flex flex-col gap-6 lg:gap-8">
-                
+
                 <section class="admin-only mobile-tab" data-tab="analyze">
                     <div class="analytics-section-heading">
                         <h2>Analisi finanziaria</h2>
@@ -513,7 +513,7 @@
                 <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-1" id="account-email">email@studio.it</p>
                 <div class="mt-2 inline-block px-2.5 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold uppercase rounded-md border border-slate-200 tracking-wider" id="account-role">RUOLO</div>
             </div>
-            
+
             <div id="billing-section" class="border-t border-slate-100 pt-4 force-hide">
                 <h3 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2.5 flex items-center gap-1.5"><i data-lucide="credit-card" class="w-3.5 h-3.5"></i> Abbonamento</h3>
                 <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl flex justify-between items-center mb-3">
@@ -942,7 +942,7 @@
             <div id="detail-content" class="mt-2 lg:mt-1"></div>
         </div>
     </div>
-    
+
     <div id="modal-manual" class="force-hide fixed inset-0 z-[100] modal flex items-center justify-center p-4">
         <div class="w-full max-w-md p-6 lg:p-8 shadow-xl border border-slate-200 rounded-2xl relative bg-white">
             <button id="btn-close-manual-entry" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
@@ -951,7 +951,7 @@
             <div class="space-y-4">
                 <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Commessa</label><select id="manual-project" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all appearance-none"></select></div>
                 <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Attività</label><select id="manual-task" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all appearance-none"></select></div>
-                
+
                 <div class="grid grid-cols-2 gap-4">
                     <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Data</label><input type="date" id="manual-date" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all"></div>
                     <div><label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Ore totali</label><input type="text" id="manual-hours" placeholder="00:00" inputmode="decimal" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all font-bold font-mono"></div>
@@ -965,12 +965,12 @@
                     </div>
                     <div><label for="manual-notes">Note</label><input type="text" id="manual-notes" placeholder="Aggiungi una nota" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all"></div>
                 </details>
-                
+
                 <button id="btn-save-manual-entry" class="w-full bg-slate-900 text-white py-3.5 mt-4 rounded-xl font-bold shadow-sm hover:bg-slate-800 transition-all active:scale-[0.98]">Salva ore</button>
             </div>
         </div>
     </div>
-    
+
     <div id="modal-edit-entry" class="force-hide fixed inset-0 z-[100] modal flex items-center justify-center p-4">
         <div class="w-full max-w-md p-6 lg:p-8 shadow-xl border border-slate-200 rounded-2xl relative bg-white">
             <button id="btn-close-edit-entry" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
@@ -1006,7 +1006,7 @@
             </div>
         </div>
     </div>
-    
+
     <div id="modal-project-type" class="force-hide fixed inset-0 z-[120] modal flex items-center justify-center p-4">
         <div class="prototype-start-dialog w-full max-w-2xl p-6 lg:p-8 shadow-xl border border-slate-200 rounded-2xl relative bg-white">
             <button id="btn-close-project-type" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
