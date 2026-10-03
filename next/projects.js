@@ -1,0 +1,2980 @@
+﻿// Arch Time Pro - 04-projects.js
+// ================= GESTIONE PROGETTI =================
+
+        const NORMATIVE_QUOTE_HANDOFF_KEY = 'archtime_normative_quote_handoff_v1';
+        const NORMATIVE_QUOTE_ACCOUNT_KEY = 'pending_normative_quote';
+        let quickProjectId = '';
+
+        function isValidNormativeQuoteHandoff(payload) {
+            if (!payload || payload.version !== 1 || Number(payload.expiresAt || 0) < Date.now()) return false;
+            const quote = payload.quote || {};
+            return Number(quote.workValue || 0) > 0
+                && Array.isArray(quote.selectedCodes)
+                && quote.selectedCodes.length > 0;
+        }
+
+        function getNormativeQuoteHandoff() {
+            try {
+                const payload = JSON.parse(localStorage.getItem(NORMATIVE_QUOTE_HANDOFF_KEY) || 'null');
+                if (!isValidNormativeQuoteHandoff(payload)) {
+                    localStorage.removeItem(NORMATIVE_QUOTE_HANDOFF_KEY);
+                    return null;
+                }
+                return payload;
+            } catch (error) {
+                localStorage.removeItem(NORMATIVE_QUOTE_HANDOFF_KEY);
+                return null;
+            }
+        }
+
+        async function clearNormativeQuoteAccountHandoff() {
+            try {
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                if (!user?.user_metadata?.[NORMATIVE_QUOTE_ACCOUNT_KEY]) return;
+                const { error } = await supabaseClient.auth.updateUser({
+                    data: { [NORMATIVE_QUOTE_ACCOUNT_KEY]: null }
+                });
+                if (error) throw error;
+            } catch (error) {
+                console.warn('Pulizia del preventivo temporaneo nell’account non riuscita:', error?.message || error);
+            }
+        }
+
+        async function hydrateNormativeQuoteHandoffFromAccount(user) {
+            const accountPayload = user?.user_metadata?.[NORMATIVE_QUOTE_ACCOUNT_KEY];
+            if (!accountPayload) return getNormativeQuoteHandoff();
+            if (!isValidNormativeQuoteHandoff(accountPayload)) {
+                await clearNormativeQuoteAccountHandoff();
+                return getNormativeQuoteHandoff();
+            }
+
+            const localPayload = getNormativeQuoteHandoff();
+            if (!localPayload || Number(accountPayload.createdAt || 0) >= Number(localPayload.createdAt || 0)) {
+                localStorage.setItem(NORMATIVE_QUOTE_HANDOFF_KEY, JSON.stringify(accountPayload));
+                return accountPayload;
+            }
+            return localPayload;
+        }
+
+        async function clearNormativeQuoteHandoff() {
+            localStorage.removeItem(NORMATIVE_QUOTE_HANDOFF_KEY);
+            await clearNormativeQuoteAccountHandoff();
+        }
+
+        function isAdminUser() {
+            return document.body.classList.contains('is-admin');
+        }
+
+        function projectCostMode(project) {
+            return project?.cost_mode === 'project' ? 'project' : 'team';
+        }
+
+        function refreshProjectCostModeUI(scope) {
+            const root = scope || document;
+            const selected = root.querySelector('select[data-cost-mode]');
+            const mode = selected?.value === 'team' ? 'team' : 'project';
+            const amount = root.querySelector('[data-project-cost-amount]');
+            const teamNote = root.querySelector('[data-project-team-cost-note]');
+            amount?.classList.toggle('force-hide', mode !== 'project');
+            teamNote?.classList.toggle('force-hide', mode !== 'team');
+            return mode;
+        }
+
+        function setProjectCostControls(mode = 'project', hourlyCost = null) {
+            const modal = document.getElementById('modal-edit-project');
+            if (!modal) return;
+            const select = modal.querySelector('select[data-cost-mode]');
+            if (select) select.value = mode === 'team' ? 'team' : 'project';
+            const input = modal.querySelector('#edit-modal-project-hourly-cost');
+            if (input) input.value = Number(hourlyCost) > 0 ? Number(hourlyCost) : '';
+            refreshProjectCostModeUI(modal);
+        }
+
+        function readProjectCostControls(scope = document.getElementById('modal-edit-project')) {
+            const costMode = refreshProjectCostModeUI(scope);
+            const raw = scope?.querySelector('[data-project-cost-input]')?.value?.trim() || '';
+            const projectHourlyCost = raw === '' ? null : Number(raw);
+            if (costMode === 'project' && raw !== '' && (!Number.isFinite(projectHourlyCost) || projectHourlyCost <= 0)) {
+                throw new Error('Inserisci un costo orario della commessa maggiore di zero, oppure lascia il campo vuoto per completarlo più tardi.');
+            }
+            return { cost_mode: costMode, project_hourly_cost: Number(projectHourlyCost) > 0 ? projectHourlyCost : null };
+        }
+
+        function projectSelectColumns() {
+            return isAdminUser() ? '*' : 'id,studio_id,name,client,tasks,is_archived,project_setup_type,normative_data';
+        }
+
+        function entrySelectColumns() {
+            return isAdminUser() ? '*' : 'id,studio_id,project_id,project_name,task,duration,user_email,user_name,notes,created_at';
+        }
+
+        async function fetchRpcList(fnName) {
+            const { data, error } = await supabaseClient.rpc(fnName);
+            if (error) {
+                console.warn(`RPC ${fnName} non disponibile, uso fallback client.`, error.message);
+                return null;
+            }
+            return data || [];
+        }
+
+        async function fetchProjects() { 
+            const selectedProjectIndex = document.getElementById('project-select')?.value;
+            const selectedProjectId = projects[selectedProjectIndex]?.id || null;
+            const rpcData = await fetchRpcList('get_projects_for_app');
+            if (rpcData) {
+                projects = rpcData.sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
+            } else {
+                const { data, error } = await supabaseClient.from('projects').select(projectSelectColumns()).order('name');
+                if (error) throw error;
+                projects = data || [];
+            }
+            if (isAdminUser() && projects.length && !(typeof isVideoDemoMode === 'function' && isVideoDemoMode())) {
+                let { data: settings, error: settingsError } = await supabaseClient.rpc('get_project_cost_settings_for_app');
+                if (settingsError) {
+                    const fallback = await supabaseClient.from('projects').select('id,cost_mode,project_hourly_cost');
+                    if (fallback.error) throw new Error('Impossibile caricare le impostazioni del costo delle commesse. Ricarica la pagina.');
+                    settings = fallback.data;
+                }
+                if (!Array.isArray(settings)) throw new Error('Impostazioni del costo delle commesse non disponibili.');
+                const byId = new Map(settings.map(item => [String(item.id), item]));
+                if (projects.some(project => !byId.has(String(project.id)))) {
+                    throw new Error('Impostazioni del costo incomplete. Ricarica la pagina.');
+                }
+                projects = projects.map(project => ({ ...project, ...byId.get(String(project.id)) }));
+            }
+            renderProjects(selectedProjectId);
+            if(isAdminUser()) renderStrategicCharts(); 
+        }
+        
+        async function fetchEntries() { 
+            const rpcData = await fetchRpcList('get_entries_for_app');
+            if (rpcData) {
+                entries = rpcData.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 2000);
+            } else {
+                const { data, error } = await supabaseClient.from('entries').select(entrySelectColumns()).order('created_at', { ascending: false }).limit(2000);
+                if (error) throw error;
+                entries = data || [];
+            }
+            renderEntries(); 
+            renderProjects(); 
+            if(isAdminUser()) renderStrategicCharts(); 
+        }
+        
+        async function fetchExpenses() { 
+            if (!isAdminUser()) {
+                expenses = [];
+                return;
+            }
+            const rpcData = await fetchRpcList('get_expenses_for_app');
+            if (rpcData) {
+                expenses = rpcData.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            } else {
+                const { data, error } = await supabaseClient.from('expenses').select('*').order('created_at', { ascending: false });
+                if (error) throw error;
+                expenses = data || [];
+            }
+            renderProjects(); 
+            if(userProfile && isAdminUser()) renderStrategicCharts(); 
+        }
+
+
+        function projectSelectOptionsHtml() {
+            return optionHtml('', '-- Seleziona Lavoro --', true, true)
+                + projects.filter(p => !p.is_archived).map(p => optionHtml(projects.indexOf(p), p.name)).join('');
+        }
+
+        function getVisibleProjects() {
+            return projects
+                .filter(p => showArchived ? true : p.is_archived !== true)
+                .sort((a, b) => {
+                    if (a.is_archived && !b.is_archived) return 1;
+                    if (!a.is_archived && b.is_archived) return -1;
+                    return 0;
+                });
+        }
+
+        function getProjectCostSummary(project) {
+            const projectEntries = entries.filter(e => e.project_id === project.id && Number(e.duration || 0) > 0);
+            const costHrs = entries.filter(e => e.project_id === project.id).reduce((sum, entry) => sum + Number(entry.rate || 0), 0);
+            const costExp = expenses.filter(expense => expense.project_id === project.id).reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
+            const totalCost = costHrs + costExp;
+            const budget = Number(project.budget || 0);
+            const margin = budget - totalCost;
+            const percent = budget > 0 ? (totalCost / budget * 100) : (totalCost > 0 ? 100 : 0);
+            const isOverBudget = margin < 0;
+            const isCritical = !isOverBudget && percent > 90;
+            const isWarning = !isOverBudget && percent > 75;
+            const uncostedHours = projectEntries.filter(entry => !(Number(entry.rate) > 0))
+                .reduce((sum, entry) => sum + Number(entry.duration), 0);
+            const hasHourlyCost = projectCostMode(project) === 'project'
+                ? Number(project.project_hourly_cost || 0) > 0 && uncostedHours === 0
+                : (projectEntries.length > 0 ? uncostedHours === 0 : Number(userProfile?.hourly_cost || 0) > 0);
+            const economicReady = budget > 0 && hasHourlyCost;
+            const economicIssue = budget <= 0 ? 'Compenso da completare' : 'Costi da completare';
+
+            return {
+                totalCost,
+                budget,
+                percent,
+                margin,
+                economicReady,
+                economicIssue,
+                uncostedHours,
+                totalHours: projectEntries.reduce((sum, entry) => sum + Number(entry.duration), 0),
+                barClass: isOverBudget || isCritical ? 'bg-red-500' : (isWarning ? 'bg-amber-400' : 'bg-emerald-500'),
+                statusLabel: isOverBudget ? 'Fuori budget' : (isCritical ? 'Critico' : (isWarning ? 'Da monitorare' : 'In controllo')),
+                statusIcon: isOverBudget ? 'octagon-alert' : (isCritical ? 'alert-triangle' : (isWarning ? 'circle-alert' : 'check-circle-2')),
+                statusClass: isOverBudget || isCritical ? 'bg-red-50 text-red-700 border-red-200' : (isWarning ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200'),
+                marginClass: !economicReady ? 'text-slate-500' : (margin < 0 ? 'text-red-600' : 'text-emerald-600'),
+                statusTone: isOverBudget || isCritical ? 'danger' : (isWarning ? 'warning' : 'healthy')
+            };
+        }
+
+        function getProjectTaskStatuses(project) {
+            const rawStatuses = project.task_statuses && typeof project.task_statuses === 'object' ? project.task_statuses : {};
+            const statuses = {};
+            (project.tasks || []).forEach(task => {
+                const savedStatus = rawStatuses[task];
+                const hasTrackedTime = entries.some(entry => entry.project_id === project.id && entry.task === task && Number(entry.duration || 0) > 0);
+                statuses[task] = ['todo', 'doing', 'done'].includes(savedStatus) ? savedStatus : (hasTrackedTime ? 'doing' : 'todo');
+            });
+            return statuses;
+        }
+
+        function getProjectTaskBudgets(project) {
+            const rawBudgets = project.task_budgets && typeof project.task_budgets === 'object' ? project.task_budgets : {};
+            const budgets = {};
+            (project.tasks || []).forEach(task => {
+                const budgetValue = Number(rawBudgets[task] || 0);
+                if (budgetValue > 0) budgets[task] = budgetValue;
+            });
+            return budgets;
+        }
+
+        function hasUsableTaskBudgets(project) {
+            const tasks = project.tasks || [];
+            const budgets = getProjectTaskBudgets(project);
+            const budgetValuedTotal = tasks.reduce((sum, task) => sum + Number(budgets[task] || 0), 0);
+            return budgetValuedTotal > 0;
+        }
+
+        function getProjectRhythmSummary(project, costSummary = getProjectCostSummary(project)) {
+            const tasks = project.tasks || [];
+            if (!isAdminUser() || tasks.length === 0 || costSummary.budget <= 0) return null;
+
+            const statuses = getProjectTaskStatuses(project);
+            const budgets = getProjectTaskBudgets(project);
+            const usesTaskBudgets = hasUsableTaskBudgets(project);
+            const weights = { todo: 0, doing: 0.5, done: 1 };
+            const budgetValuedTotal = tasks.reduce((sum, task) => sum + (usesTaskBudgets ? Number(budgets[task] || 0) : 1), 0);
+            const completedWeight = tasks.reduce((sum, task) => {
+                const taskWeight = usesTaskBudgets ? Number(budgets[task] || 0) : 1;
+                return sum + (taskWeight * (weights[statuses[task]] || 0));
+            }, 0);
+            const operationalPercent = budgetValuedTotal > 0 ? completedWeight / budgetValuedTotal * 100 : 0;
+            const costPercent = costSummary.percent;
+            const gap = costPercent - operationalPercent;
+            const isOverBudget = costPercent > 100;
+            const isOffPace = !isOverBudget && gap > 25;
+            const isWarning = !isOverBudget && !isOffPace && gap > 10;
+
+            return {
+                statuses,
+                budgets,
+                usesTaskBudgets,
+                budgetValuedTotal,
+                costPercent,
+                operationalPercent,
+                gap,
+                label: isOverBudget ? 'Fuori budget' : (isOffPace ? 'Fuori ritmo' : (isWarning ? 'Da monitorare' : 'Allineato')),
+                description: isOverBudget
+                    ? 'I costi hanno superato il budget disponibile.'
+                    : (isOffPace
+                        ? `I costi stanno correndo più dell’avanzamento ${usesTaskBudgets ? 'del piano costi' : 'attività'}.`
+                        : (isWarning ? `I costi sono leggermente avanti rispetto ${usesTaskBudgets ? 'al piano costi' : 'alle attività'}.` : `Costi e ${usesTaskBudgets ? 'piano costi' : 'attività'} risultano coerenti.`)),
+                barClass: isOverBudget || isOffPace ? 'bg-red-500' : (isWarning ? 'bg-amber-400' : 'bg-emerald-500'),
+                markerClass: isOverBudget || isOffPace ? 'bg-red-700' : (isWarning ? 'bg-amber-700' : 'bg-emerald-700'),
+                statusClass: isOverBudget || isOffPace ? 'bg-red-50 text-red-700 border-red-200' : (isWarning ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200'),
+                statusTone: isOverBudget || isOffPace ? 'danger' : (isWarning ? 'warning' : 'healthy')
+            };
+        }
+
+        function getProjectVisualStatus(project, costSummary = getProjectCostSummary(project)) {
+            if (!costSummary.economicReady) return {
+                label: costSummary.economicIssue,
+                icon: 'circle-help',
+                className: 'bg-slate-50 text-slate-600 border-slate-200',
+                tone: 'pending',
+                barClass: 'bg-slate-300',
+                title: costSummary.economicIssue,
+                rhythm: null
+            };
+            const rhythm = getProjectRhythmSummary(project, costSummary);
+            if (!rhythm) {
+                return {
+                    label: costSummary.statusLabel,
+                    icon: costSummary.statusIcon,
+                    className: costSummary.statusClass,
+                    tone: costSummary.statusTone,
+                    barClass: costSummary.barClass,
+                    title: costSummary.statusLabel,
+                    rhythm: null
+                };
+            }
+
+            const isDanger = rhythm.statusTone === 'danger';
+            const isWarning = rhythm.statusTone === 'warning';
+            return {
+                label: rhythm.label,
+                icon: isDanger ? 'activity' : (isWarning ? 'circle-alert' : 'check-circle-2'),
+                className: rhythm.statusClass,
+                tone: rhythm.statusTone,
+                barClass: rhythm.barClass,
+                title: rhythm.label,
+                rhythm
+            };
+        }
+
+        function projectCardHtml(project) {
+            const summary = getProjectCostSummary(project);
+            const cardStatus = getProjectVisualStatus(project, summary);
+            const rhythm = cardStatus.rhythm;
+            const projectId = escapeAttr(project.id);
+            const economicValueLabel = project.project_setup_type === 'normative' ? 'Compenso' : 'Budget';
+
+            return `
+                <div data-ui-action="show-project-detail" data-project-id="${projectId}" data-project-tone="${cardStatus.tone}" class="bg-white border border-slate-200 p-5 lg:p-6 shadow-sm hover:shadow-md hover:border-primary-200 rounded-2xl cursor-pointer relative group transition-all ${project.is_archived ? 'is-archived' : ''}">
+                    <div class="absolute top-0 left-0 right-0 h-1 ${cardStatus.barClass} rounded-t-2xl"></div>
+                    <div class="flex justify-between items-start gap-3 mb-5">
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-2 mb-1.5">
+                                <span class="project-life-dot shrink-0" aria-hidden="true" title="${escapeAttr(cardStatus.title)}"></span>
+                                <h3 class="font-black text-slate-900 text-base lg:text-lg tracking-tight truncate">${escapeHtml(project.name)}</h3>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-2">
+                                ${project.is_archived ? '<span class="text-[9px] font-black uppercase tracking-wider border px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border-slate-200">Archiviato</span>' : ''}
+                                <p class="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-widest">${escapeHtml(project.client || 'Interno')}</p>
+                                ${isAdminUser() ? `<span class="project-cost-mode-tag">${projectCostMode(project) === 'project' ? `Unico per commessa${Number(project.project_hourly_cost) > 0 ? ` · ${formatMoney(project.project_hourly_cost, 0)}/h` : ' · da completare'}` : 'Per membro del team'}</span>` : ''}
+                            </div>
+                        </div>
+                        <div class="admin-only opacity-100 lg:opacity-0 group-hover:opacity-100 flex gap-1 bg-white lg:bg-transparent rounded-lg shadow-sm lg:shadow-none p-1 lg:p-0">
+                            <button data-ui-action="toggle-project-archive" data-project-id="${projectId}" data-archived="${project.is_archived ? 'true' : 'false'}" class="p-1.5 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors"><i data-lucide="archive" class="w-4 h-4"></i></button>
+                            <button data-ui-action="delete-project" data-project-id="${projectId}" class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 mb-4">
+                        <div>
+                            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">${economicValueLabel}</p>
+                            <p class="text-xs font-black text-slate-800 mt-0.5">${formatMoney(summary.budget, 0)}</p>
+                        </div>
+                        <div>
+                            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Costi rilevati</p>
+                            <p class="text-xs font-black text-slate-800 mt-0.5">${formatMoney(summary.totalCost, 0)}</p>
+                        </div>
+                        <div>
+                            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Margine</p>
+                            <p class="text-xs font-black ${summary.marginClass} mt-0.5">${summary.economicReady ? formatMoney(summary.margin, 0) : 'Da completare'}</p>
+                        </div>
+                    </div>
+                    <div class="pt-2 border-t border-slate-100">
+                        <div class="flex justify-between items-center gap-2 text-[10px] uppercase font-bold tracking-wider text-slate-500 mb-2">
+                            <span>Avanzamento</span>
+                            ${rhythm ? `<span class="normal-case tracking-normal font-black ${rhythm.gap > 25 || rhythm.costPercent > 100 ? 'text-red-600' : (rhythm.gap > 10 ? 'text-amber-600' : 'text-emerald-600')}">${rhythm.label}</span>` : `<span>${Math.round(summary.percent)}%</span>`}
+                        </div>
+                        <div class="relative w-full bg-slate-100 h-2.5 rounded-full overflow-visible">
+                            <div class="${cardStatus.barClass} h-full transition-all duration-1000 rounded-full" style="width: ${Math.min(rhythm ? rhythm.costPercent : summary.percent, 100)}%"></div>
+                            ${rhythm ? `<span class="absolute top-1/2 -translate-y-1/2 w-1 h-4 rounded-full ${rhythm.markerClass} shadow-sm" style="left: calc(${Math.min(rhythm.operationalPercent, 100)}% - 2px)"></span>` : ''}
+                        </div>
+                        <div class="flex justify-between text-[10px] lg:text-[11px] font-black text-slate-500 mt-2">
+                            <span>Costi ${Math.round(rhythm ? rhythm.costPercent : summary.percent)}%</span>
+                            ${rhythm ? `<span>${rhythm.usesTaskBudgets ? 'Piano costi' : 'Avanz. attività'} ${Math.round(rhythm.operationalPercent)}%</span>` : `<span>${economicValueLabel} ${Math.round(summary.percent)}%</span>`}
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        function projectListRowHtml(project) {
+            const summary = getProjectCostSummary(project);
+            const visualStatus = getProjectVisualStatus(project, summary);
+            const rhythm = visualStatus.rhythm;
+            const projectId = escapeAttr(project.id);
+            const costPercent = Math.round(rhythm ? rhythm.costPercent : summary.percent);
+            const progressPercent = Math.round(rhythm ? rhythm.operationalPercent : summary.percent);
+            const economicValueLabel = project.project_setup_type === 'normative' ? 'Compenso' : 'Budget';
+
+            return `
+                <div data-ui-action="show-project-detail" data-project-id="${projectId}" data-project-tone="${visualStatus.tone}" class="project-list-row ${project.is_archived ? 'is-archived' : ''}">
+                    <div class="project-list-identity">
+                        <span class="project-life-dot" aria-hidden="true" title="${escapeAttr(visualStatus.title)}"></span>
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <h3>${escapeHtml(project.name)}</h3>
+                                ${project.is_archived ? '<span class="project-list-archived">Archiviato</span>' : ''}
+                            </div>
+                            <p>${escapeHtml(project.client || 'Interno')}${isAdminUser() ? ` · ${projectCostMode(project) === 'project' ? 'Unico per commessa' : 'Per membro del team'}` : ''}</p>
+                        </div>
+                    </div>
+                    <div class="project-list-metric"><small>${economicValueLabel}</small><strong>${formatMoney(summary.budget, 0)}</strong></div>
+                    <div class="project-list-metric"><small>Costi</small><strong>${formatMoney(summary.totalCost, 0)}</strong></div>
+                    <div class="project-list-metric"><small>Margine</small><strong class="${summary.marginClass}">${summary.economicReady ? formatMoney(summary.margin, 0) : 'Da completare'}</strong></div>
+                    <div class="project-list-progress">
+                        <div>
+                            <span>${escapeHtml(visualStatus.label)}</span>
+                            <small>Costi ${costPercent}%${rhythm ? ` · Piano ${progressPercent}%` : ''}</small>
+                        </div>
+                        <div class="project-list-progress-track">
+                            <span class="${visualStatus.barClass}" style="width:${Math.min(costPercent, 100)}%"></span>
+                            ${rhythm ? `<i class="${rhythm.markerClass}" style="left:calc(${Math.min(progressPercent, 100)}% - 2px)"></i>` : ''}
+                        </div>
+                    </div>
+                    <div class="project-list-actions admin-only">
+                        <button data-ui-action="toggle-project-archive" data-project-id="${projectId}" data-archived="${project.is_archived ? 'true' : 'false'}" title="${project.is_archived ? 'Ripristina progetto' : 'Archivia progetto'}" aria-label="${project.is_archived ? 'Ripristina progetto' : 'Archivia progetto'}"><i data-lucide="archive"></i></button>
+                        <button data-ui-action="delete-project" data-project-id="${projectId}" title="Elimina progetto" aria-label="Elimina progetto"><i data-lucide="trash-2"></i></button>
+                    </div>
+                </div>`;
+        }
+
+        function setProjectViewMode(mode) {
+            if (!['grid', 'list'].includes(mode)) return;
+            projectViewMode = mode;
+            localStorage.setItem('archtime_project_view', mode);
+            renderProjects();
+        }
+
+        function renderProjects(selectedProjectId) {
+            const container = document.getElementById('projects-list');
+            const projectSelect = document.getElementById('project-select');
+            const taskSelect = document.getElementById('task-select');
+            const currentProject = projects[projectSelect.value];
+            const projectId = selectedProjectId === undefined ? currentProject?.id : selectedProjectId;
+            const selectedTask = taskSelect.value;
+            projectSelect.innerHTML = projectSelectOptionsHtml();
+            const nextProjectIndex = projectId == null ? -1 : projects.findIndex(project => String(project.id) === String(projectId) && !project.is_archived);
+            if (nextProjectIndex >= 0) projectSelect.value = String(nextProjectIndex);
+            updateTaskDropdown();
+            if (selectedTask && [...taskSelect.options].some(option => option.value === selectedTask)) {
+                taskSelect.value = selectedTask;
+            }
+            const visibleProjects = getVisibleProjects();
+            container.className = projectViewMode === 'list'
+                ? 'projects-list-view'
+                : 'grid grid-cols-1 sm:grid-cols-2 gap-4';
+            document.querySelectorAll('[data-ui-action="set-project-view"]').forEach(button => {
+                const isActive = button.dataset.projectView === projectViewMode;
+                button.classList.toggle('is-active', isActive);
+                button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+            });
+            container.innerHTML = visibleProjects.length > 0
+                ? visibleProjects.map(projectViewMode === 'list' ? projectListRowHtml : projectCardHtml).join('')
+                : richEmptyStateHtml(
+                    showArchived ? 'archive' : 'folder-plus',
+                    showArchived ? 'Nessun progetto archiviato' : 'Nessun progetto attivo',
+                    showArchived ? 'Quando archivierai lavori o cantieri, li ritroverai qui.' : 'Crea il primo lavoro per iniziare a registrare ore, costi e margini.',
+                    showArchived ? '' : 'Crea progetto',
+                    'data-tab="manage" data-ui-action="switch-tab"'
+                );
+            lucide.createIcons();
+        }
+
+        async function toggleArchive(id, status) { 
+            await supabaseClient.from('projects').update({ is_archived: !status }).eq('id', id); 
+            fetchProjects(); 
+        }
+
+        async function deleteProject(id) { 
+            if(await appConfirm("Eliminazione Definitiva", "ATTENZIONE: Eliminando questo progetto verranno cancellate anche TUTTE le ore e le spese registrate al suo interno!\n\nSe vuoi conservare lo storico finanziario, chiudi questo avviso e usa il tasto 'Archivia' (icona a forma di scatola).\n\nSei sicuro di volerlo ELIMINARE PER SEMPRE?", "danger")) { 
+                await supabaseClient.from('projects').delete().eq('id', id); 
+                fetchProjects(); 
+            } 
+        }
+
+        function toggleViewArchived() { 
+            showArchived = !showArchived; 
+            document.getElementById('toggle-archived-btn').innerText = showArchived ? "Nascondi Archiviati" : "Archivio"; 
+            renderProjects(); 
+        }
+
+        // ================= TASK BUILDER E TEMPLATE =================
+
+
+        function openTaskBuilder(mode) { 
+            taskBuilderMode = mode; 
+            tempBuilderTasks = mode === 'new' ? [...newProjectTasks] : [...editProjectTasks]; 
+            renderTaskBuilder(); 
+            document.getElementById('modal-task-builder').classList.remove('force-hide'); 
+        }
+        function closeTaskBuilder() { document.getElementById('modal-task-builder').classList.add('force-hide'); }
+
+        function taskBuilderEmptyHtml() {
+            return '<div class="text-[11px] font-bold text-center text-slate-400 uppercase tracking-wider py-4">Nessuna attività selezionata.</div>';
+        }
+
+        function taskBuilderMoveButtonHtml(index, direction, iconName) {
+            return `<button data-ui-action="move-builder-task" data-task-index="${index}" data-direction="${direction}" class="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-slate-50 rounded-lg transition-colors"><i data-lucide="${iconName}" class="w-4 h-4"></i></button>`;
+        }
+
+        function selectedBuilderTaskHtml(task, index) {
+            return `
+                    <div class="flex justify-between items-center bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm tag-enter">
+                        <span class="text-xs font-bold text-slate-700 flex items-center gap-2.5"><span class="text-[10px] text-primary-600 bg-primary-50 px-2 py-0.5 rounded-md border border-primary-100 font-black">${index + 1}</span> ${escapeHtml(task)}</span>
+                        <div class="flex items-center gap-0.5">
+                            ${index > 0 ? taskBuilderMoveButtonHtml(index, -1, 'chevron-up') : '<div class="w-7"></div>'}
+                            ${index < tempBuilderTasks.length - 1 ? taskBuilderMoveButtonHtml(index, 1, 'chevron-down') : '<div class="w-7"></div>'}
+                            <div class="w-[1px] h-4 bg-slate-200 mx-1.5"></div>
+                            <button data-ui-action="remove-builder-task" data-task-index="${index}" class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </div>
+                    </div>`;
+        }
+
+        function availableBuilderTaskHtml(task) {
+            if(tempBuilderTasks.includes(task)) return '';
+            return `<button data-ui-action="add-builder-task" data-task="${escapeAttr(task)}" class="bg-white border border-slate-200 text-slate-600 hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 px-3 py-2 rounded-xl text-[11px] font-bold tracking-wide transition-all shadow-sm tag-enter"><i data-lucide="plus" class="w-3 h-3 inline-block mr-1"></i>${escapeHtml(task)}</button>`;
+        }
+
+        function renderTaskBuilder() {
+            const selectedContainer = document.getElementById('builder-selected-tasks');
+            selectedContainer.innerHTML = tempBuilderTasks.length === 0
+                ? taskBuilderEmptyHtml()
+                : tempBuilderTasks.map(selectedBuilderTaskHtml).join('');
+            document.getElementById('builder-catalog-tasks').innerHTML = activityCatalog.map(availableBuilderTaskHtml).join('');
+            lucide.createIcons();
+        }
+
+        function moveTaskBuilder(idx, dir) { const temp = tempBuilderTasks[idx]; tempBuilderTasks[idx] = tempBuilderTasks[idx + dir]; tempBuilderTasks[idx + dir] = temp; renderTaskBuilder(); }
+        function removeTaskBuilder(idx) { tempBuilderTasks.splice(idx, 1); renderTaskBuilder(); }
+        function addTaskBuilder(task) { tempBuilderTasks.push(task); renderTaskBuilder(); }
+        
+        function confirmTaskBuilder() { 
+            if(taskBuilderMode === 'new') { 
+                newProjectTaskBudgets = collectVisibleTaskBudgets('new');
+                newProjectTasks = [...tempBuilderTasks]; 
+                newProjectTaskBudgets = Object.fromEntries(Object.entries(newProjectTaskBudgets).filter(([task]) => newProjectTasks.includes(task)));
+                renderNewProjectUI(); 
+            } else { 
+                editProjectTaskBudgets = collectVisibleTaskBudgets('edit');
+                editProjectTasks = [...tempBuilderTasks]; 
+                editProjectTaskBudgets = Object.fromEntries(Object.entries(editProjectTaskBudgets).filter(([task]) => editProjectTasks.includes(task)));
+                renderEditProjectTasks(); 
+            } 
+            closeTaskBuilder(); 
+        }
+        
+        async function addNewTaskFromBuilder() {
+            const input = document.getElementById('builder-new-task-input'); 
+            const val = input.value.trim(); 
+            if(!val) return;
+            
+            if(!activityCatalog.includes(val)) { 
+                activityCatalog.push(val); 
+                syncCatalogAndTemplatesToDB(); 
+            }
+            if(!tempBuilderTasks.includes(val)) { 
+                tempBuilderTasks.push(val); 
+            }
+            input.value = ''; 
+            renderTaskBuilder();
+        }
+
+        function openCatalogModal() { document.getElementById('modal-catalog').classList.remove('force-hide'); }
+        function closeCatalogModal() { document.getElementById('modal-catalog').classList.add('force-hide'); cancelCatalogEdit(); }
+        function openTemplatesModal() { if(activePlan === 'starter') return openUpgradeModal('Gestione Template'); document.getElementById('modal-templates').classList.remove('force-hide'); }
+        function closeTemplatesModal() { document.getElementById('modal-templates').classList.add('force-hide'); cancelEditTemplate(); }
+
+        async function syncCatalogAndTemplatesToDB() { 
+            if(!studioData) return; 
+            await supabaseClient.from('studios').update({ activity_catalog: activityCatalog, project_templates: projectTemplates }).eq('id', userProfile.studio_id); 
+        }
+
+
+        function catalogManageItemHtml(task) {
+            return `
+                <div class="flex items-center gap-1.5 bg-slate-50 text-slate-700 px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold tracking-wide tag-enter shadow-sm">
+                    ${escapeHtml(task)} 
+                    <div class="flex items-center gap-1 border-l border-slate-200 pl-1.5 ml-1">
+                        <button data-ui-action="edit-catalog-task" data-task="${escapeAttr(task)}" class="text-slate-400 hover:text-primary-600 focus:outline-none transition-colors"><i data-lucide="edit-2" class="w-3.5 h-3.5"></i></button>
+                        <button data-ui-action="remove-catalog-task" data-task="${escapeAttr(task)}" class="text-slate-400 hover:text-red-500 focus:outline-none transition-colors"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
+                    </div>
+                </div>`;
+        }
+
+        function catalogPreviewItemHtml(task) {
+            return `<span class="text-[10px] bg-slate-50 text-slate-500 font-bold px-2 py-0.5 rounded-md border border-slate-200 uppercase tracking-wider">${escapeHtml(task)}</span>`;
+        }
+
+        function newTemplateCatalogTaskHtml(task) {
+            const isSelected = newTemplateTasks.includes(task); 
+            return `<button data-ui-action="toggle-template-task" data-task="${escapeAttr(task)}" class="px-3 py-1.5 rounded-lg border text-xs font-bold transition-all shadow-sm tag-enter ${isSelected ? 'bg-primary-50 border-primary-200 text-primary-700' : 'bg-white border-slate-200 text-slate-600 hover:border-primary-300 hover:text-primary-600'}">${escapeHtml(task)}</button>`;
+        }
+
+        function inlineTemplateTaskHtml(task, index) {
+            return `
+                <div draggable="true" data-ui-action="template-task-drag" data-task-index="${index}" class="template-task-row grid grid-cols-[auto_minmax(0,1fr)_auto] gap-2 items-center bg-white border border-slate-200 rounded-xl px-2.5 py-2 shadow-sm cursor-grab active:cursor-grabbing touch-none">
+                    <span class="text-slate-300"><i data-lucide="grip-vertical" class="w-4 h-4"></i></span>
+                    <span class="min-w-0 text-[11px] font-bold text-slate-700 truncate"><span class="text-primary-600 font-black">${index + 1}.</span> ${escapeHtml(task)}</span>
+                    <button type="button" data-ui-action="remove-inline-template-task" data-task-index="${index}" class="p-1.5 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
+                </div>`;
+        }
+
+        function templateTaskPillHtml(task) {
+            return `<span class="text-[10px] bg-slate-50 text-slate-500 font-bold px-2 py-0.5 rounded-md border border-slate-200 uppercase tracking-wider">${escapeHtml(task)}</span>`;
+        }
+
+        function getTaskBudgetInputValue(budgets, task) {
+            const value = Number(budgets?.[task] || 0);
+            return value > 0 ? String(value).replace('.', ',') : '';
+        }
+
+        function collectVisibleTaskBudgets(mode) {
+            const selector = mode === 'edit' ? '[data-budget-mode="edit"]' : '[data-budget-mode="new"]';
+            const budgets = {};
+            document.querySelectorAll(selector).forEach(input => {
+                const amount = parseMoneyInput(input.value);
+                if (!isNaN(amount) && amount > 0) budgets[input.dataset.task] = amount;
+            });
+            return budgets;
+        }
+
+        function taskBudgetRowsHtml(tasks, budgets, mode) {
+            if (!tasks || tasks.length === 0) return '';
+
+            return `
+                <div class="mt-3 pt-3 border-t border-slate-100 space-y-2">
+                    <div class="flex items-center justify-between gap-3">
+                        <span class="text-[10px] font-black uppercase tracking-wider text-slate-500">Piano costi</span>
+                        <span class="text-[9px] font-bold text-slate-400">Opzionale</span>
+                    </div>
+                    <div class="space-y-1.5">
+                        ${tasks.map((task, index) => `
+                            <div class="grid grid-cols-[minmax(0,1fr)_110px] gap-2 items-center">
+                                <span class="text-[10px] font-bold text-slate-500 truncate"><span class="text-primary-600 font-black">${index + 1}.</span> ${escapeHtml(task)}</span>
+                                <div class="flex items-center gap-1 border border-slate-200 rounded-lg px-2 py-1.5 bg-white focus-within:border-primary-400 focus-within:ring-2 focus-within:ring-primary-500/10">
+                                    <span class="text-[10px] font-black text-slate-400">${getStudioCurrency().symbol}</span>
+                                    <input type="text" data-budget-mode="${mode}" data-task="${escapeAttr(task)}" value="${escapeAttr(getTaskBudgetInputValue(budgets, task))}" placeholder="0" inputmode="decimal" class="task-budget-input w-full bg-transparent outline-none text-[11px] font-mono font-bold text-slate-700">
+                                </div>
+                            </div>`).join('')}
+                    </div>
+                </div>`;
+        }
+
+        function getCurrentProjectModalTasks() {
+            return isProjectModalCreateMode() ? newProjectTasks : editProjectTasks;
+        }
+
+        function getCurrentProjectModalBudgets() {
+            return isProjectModalCreateMode() ? newProjectTaskBudgets : editProjectTaskBudgets;
+        }
+
+        function setCurrentProjectModalTasks(tasks) {
+            if (isProjectModalCreateMode()) newProjectTasks = tasks;
+            else editProjectTasks = tasks;
+        }
+
+        function setCurrentProjectModalBudgets(budgets) {
+            if (isProjectModalCreateMode()) newProjectTaskBudgets = budgets;
+            else editProjectTaskBudgets = budgets;
+        }
+
+        function isNormativeProjectMode() {
+            return projectSetupType === 'normative';
+        }
+
+        async function loadNormativeLibrary() {
+            if (normativeLibrary.length > 0 && normativeCalculationLibrary?.categories?.length > 0) return normativeLibrary;
+            const [servicesResponse, calculationResponse] = await Promise.all([
+                fetch('assets/data/normative-services-dlgs36.json?v=2026-07-27-02'),
+                fetch('assets/data/normative-calculation-dlgs36.json?v=2026-07-27-01')
+            ]);
+            if (!servicesResponse.ok || !calculationResponse.ok) throw new Error('Libreria delle prestazioni non disponibile');
+            const [servicesData, calculationData] = await Promise.all([
+                servicesResponse.json(),
+                calculationResponse.json()
+            ]);
+            if (!Array.isArray(servicesData) || servicesData.length === 0) throw new Error('Libreria delle prestazioni non valida');
+            if (!Array.isArray(calculationData?.categories) || calculationData.categories.length === 0) throw new Error('Parametri di calcolo non validi');
+            normativeLibrary = servicesData;
+            normativeCalculationLibrary = calculationData;
+            return normativeLibrary;
+        }
+
+        function getNormativeCategory() {
+            return normativeCalculationLibrary?.categories?.find(category => category.id === normativeCalculationState.categoryId)
+                || normativeCalculationLibrary?.categories?.[0]
+                || null;
+        }
+
+        function getNormativeDestination() {
+            const category = getNormativeCategory();
+            return category?.destinations?.find(destination => destination.id === normativeCalculationState.destinationId)
+                || category?.destinations?.[0]
+                || null;
+        }
+
+        function getNormativeComplexity() {
+            const destination = getNormativeDestination();
+            return destination?.levels?.find(level => level.id === normativeCalculationState.complexityId)
+                || destination?.levels?.[0]
+                || null;
+        }
+
+        function normativeParameterP(value) {
+            return ArchTimeNormativeEngine.parameterP(value);
+        }
+
+        function parseNormativeQ(value) {
+            return ArchTimeNormativeEngine.parseQ(value);
+        }
+
+        function calculateNormativeServiceFee(workValue, complexity, qValue, options = {}) {
+            return ArchTimeNormativeEngine.calculateServiceFee(workValue, complexity, qValue, options);
+        }
+
+        function getSupportedNormativeServices(phase) {
+            const qMap = getNormativeCategory()?.q || {};
+            return phase.services.filter(service => Object.prototype.hasOwnProperty.call(qMap, service.code));
+        }
+
+        function normativeAccessoryRate(workValue) {
+            return ArchTimeNormativeEngine.accessoryRate(workValue);
+        }
+
+        function getNormativeCalculation() {
+            const category = getNormativeCategory();
+            const destination = getNormativeDestination();
+            const complexity = getNormativeComplexity();
+            const workValue = Number(normativeCalculationState.workValue || 0);
+            const inhabitants = Number(normativeCalculationState.inhabitants || 0);
+            const g = Number(complexity?.g || 0);
+            const serviceAmounts = {};
+            const taskCompensations = {};
+            let compensation = 0;
+
+            normativeLibrary.forEach(phase => {
+                getSupportedNormativeServices(phase).forEach(service => {
+                    if (!normativeSelectedServices.has(service.code)) return;
+                    const amount = calculateNormativeServiceFee(workValue, g, category?.q?.[service.code], {
+                        inhabitants,
+                        usePopulation: service.code === 'Qa.0.01' || service.code === 'Qa.0.02'
+                    });
+                    serviceAmounts[service.code] = amount;
+                    taskCompensations[phase.name] = Number(taskCompensations[phase.name] || 0) + amount;
+                    compensation += amount;
+                });
+            });
+
+            const accessoryRate = normativeAccessoryRate(workValue);
+            const accessoryExpenses = compensation * accessoryRate;
+            const quoteTotal = compensation + accessoryExpenses;
+            const taskBudgets = Object.fromEntries(
+                Object.entries(taskCompensations).map(([taskName, amount]) => [
+                    taskName,
+                    Number(amount || 0) * (1 + accessoryRate)
+                ])
+            );
+
+            return {
+                workValue,
+                inhabitants,
+                category,
+                destination,
+                complexity,
+                parameterP: normativeParameterP(workValue),
+                serviceAmounts,
+                taskCompensations,
+                taskBudgets,
+                compensation,
+                accessoryRate,
+                accessoryExpenses,
+                quoteTotal,
+                total: quoteTotal
+            };
+        }
+
+        function getSelectedNormativeServicesSnapshot() {
+            const calculation = getNormativeCalculation();
+            const qMap = calculation.category?.q || {};
+            const selected = [];
+            normativeLibrary.forEach(phase => {
+                getSupportedNormativeServices(phase).forEach(service => {
+                    if (!normativeSelectedServices.has(service.code)) return;
+                    selected.push({
+                        code: service.code,
+                        label: service.label,
+                        phase_id: phase.id,
+                        phase_name: phase.name,
+                        q: qMap[service.code],
+                        fee: Number(calculation.serviceAmounts[service.code] || 0)
+                    });
+                });
+            });
+            return selected;
+        }
+
+        function getNormativePhaseTasks() {
+            return normativeLibrary
+                .filter(phase => getSupportedNormativeServices(phase).some(service => normativeSelectedServices.has(service.code)))
+                .map(phase => phase.name);
+        }
+
+        function syncNormativeTasksFromSelection() {
+            const tasks = getNormativePhaseTasks();
+            const calculation = getNormativeCalculation();
+            const nextBudgets = Object.fromEntries(
+                tasks.map(task => [task, Number(calculation.taskBudgets[task] || 0)])
+                    .filter(([, amount]) => amount > 0)
+            );
+            setCurrentProjectModalTasks(tasks);
+            setCurrentProjectModalBudgets(nextBudgets);
+            projectBudgetMode = 'auto';
+            const budgetInput = document.getElementById('edit-modal-budget');
+            if (budgetInput) budgetInput.value = calculation.total > 0 ? calculation.total.toFixed(2) : '';
+            renderProjectModalTasks();
+            refreshNormativeCalculationSummary();
+        }
+
+        function renderNormativeCalculationControls() {
+            if (!isNormativeProjectMode() || !normativeCalculationLibrary) return;
+            const category = getNormativeCategory();
+            if (category && category.id !== normativeCalculationState.categoryId) normativeCalculationState.categoryId = category.id;
+            const destination = getNormativeDestination();
+            if (destination && destination.id !== normativeCalculationState.destinationId) normativeCalculationState.destinationId = destination.id;
+            const complexity = getNormativeComplexity();
+            if (complexity && complexity.id !== normativeCalculationState.complexityId) normativeCalculationState.complexityId = complexity.id;
+
+            const workValueInput = document.getElementById('normative-work-value');
+            const inhabitantsInput = document.getElementById('normative-inhabitants');
+            const inhabitantsField = document.getElementById('normative-inhabitants-field');
+            const categorySelect = document.getElementById('normative-category');
+            const destinationSelect = document.getElementById('normative-destination');
+            const complexitySelect = document.getElementById('normative-complexity');
+            const destinationDescription = document.getElementById('normative-destination-description');
+            const complexityDescription = document.getElementById('normative-complexity-description');
+            if (workValueInput) workValueInput.value = normativeCalculationState.workValue > 0 ? String(normativeCalculationState.workValue).replace('.', ',') : '';
+            if (inhabitantsInput) inhabitantsInput.value = normativeCalculationState.inhabitants > 0 ? String(normativeCalculationState.inhabitants) : '';
+            const supportsPopulationServices = ['Qa.0.01', 'Qa.0.02'].some(code => Object.prototype.hasOwnProperty.call(category?.q || {}, code));
+            inhabitantsField?.classList.toggle('force-hide', !supportsPopulationServices);
+            if (categorySelect) {
+                categorySelect.innerHTML = normativeCalculationLibrary.categories.map(item => optionHtml(item.id, item.name, item.id === category?.id)).join('');
+                categorySelect.value = category?.id || '';
+            }
+            if (destinationSelect) {
+                destinationSelect.innerHTML = (category?.destinations || []).map(item => optionHtml(item.id, item.name, item.id === destination?.id)).join('');
+                destinationSelect.value = destination?.id || '';
+            }
+            if (complexitySelect) {
+                complexitySelect.innerHTML = (destination?.levels || []).map(item => optionHtml(item.id, `${item.label} · G ${Number(item.g).toFixed(2).replace('.', ',')}`, item.id === complexity?.id)).join('');
+                complexitySelect.value = complexity?.id || '';
+            }
+            if (destinationDescription) {
+                destinationDescription.textContent = destination?.name || '';
+                destinationDescription.classList.toggle('force-hide', !destination?.name);
+            }
+            if (complexityDescription) {
+                const complexityText = complexity ? `${complexity.label} · G ${Number(complexity.g).toFixed(2).replace('.', ',')}` : '';
+                complexityDescription.textContent = complexityText;
+                complexityDescription.classList.toggle('force-hide', !complexityText);
+            }
+            refreshNormativeCalculationSummary();
+        }
+
+        function refreshNormativeCalculationSummary() {
+            if (!isNormativeProjectMode()) return;
+            const calculation = getNormativeCalculation();
+            const pElement = document.getElementById('normative-parameter-p');
+            const gElement = document.getElementById('normative-complexity-g');
+            const compensationElement = document.getElementById('normative-fee-total');
+            const accessoryRateElement = document.getElementById('normative-expenses-rate');
+            const accessoryAmountElement = document.getElementById('normative-expenses-amount');
+            const quoteTotalElement = document.getElementById('normative-quote-total');
+            if (pElement) pElement.textContent = `${(calculation.parameterP * 100).toLocaleString('it-IT', { minimumFractionDigits: 4, maximumFractionDigits: 8 })}%`;
+            if (gElement) gElement.textContent = calculation.complexity ? Number(calculation.complexity.g).toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-';
+            if (compensationElement) compensationElement.textContent = formatMoney(calculation.compensation, 2);
+            if (accessoryRateElement) accessoryRateElement.textContent = `${(calculation.accessoryRate * 100).toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
+            if (accessoryAmountElement) accessoryAmountElement.textContent = formatMoney(calculation.accessoryExpenses, 2);
+            if (quoteTotalElement) quoteTotalElement.textContent = formatMoney(calculation.quoteTotal, 2);
+        }
+
+        function handleNormativeWorkValue(value) {
+            normativeCalculationState.workValue = Math.max(parseMoneyInput(value) || 0, 0);
+            syncNormativeTasksFromSelection();
+            renderNormativeProjectBuilder();
+        }
+
+        function handleNormativeInhabitants(value) {
+            normativeCalculationState.inhabitants = Math.max(parseInt(String(value || '').replace(/\D/g, ''), 10) || 0, 0);
+            syncNormativeTasksFromSelection();
+            renderNormativeProjectBuilder();
+        }
+
+        function handleNormativeCategory(categoryId) {
+            normativeCalculationState.categoryId = categoryId;
+            normativeCalculationState.destinationId = '';
+            normativeCalculationState.complexityId = '';
+            normativeCalculationState.inhabitants = 0;
+            const supportedCodes = new Set(Object.keys(getNormativeCategory()?.q || {}));
+            normativeSelectedServices = new Set([...normativeSelectedServices].filter(code => supportedCodes.has(code)));
+            renderNormativeCalculationControls();
+            syncNormativeTasksFromSelection();
+            renderNormativeProjectBuilder();
+        }
+
+        function handleNormativeDestination(destinationId) {
+            normativeCalculationState.destinationId = destinationId;
+            normativeCalculationState.complexityId = '';
+            renderNormativeCalculationControls();
+            syncNormativeTasksFromSelection();
+            renderNormativeProjectBuilder();
+        }
+
+        function handleNormativeComplexity(complexityId) {
+            normativeCalculationState.complexityId = complexityId;
+            syncNormativeTasksFromSelection();
+            renderNormativeProjectBuilder();
+        }
+
+        function captureOpenNormativePhases() {
+            document.querySelectorAll('#project-normative-phases details[data-phase-id]').forEach(detail => {
+                if (detail.open) normativeOpenPhaseIds.add(detail.dataset.phaseId);
+                else normativeOpenPhaseIds.delete(detail.dataset.phaseId);
+            });
+        }
+
+        function renderNormativeProjectBuilder() {
+            const container = document.getElementById('project-normative-phases');
+            if (!container || !isNormativeProjectMode()) return;
+            captureOpenNormativePhases();
+            const calculation = getNormativeCalculation();
+            const visiblePhases = normativeLibrary.filter(phase => getSupportedNormativeServices(phase).length > 0);
+            container.innerHTML = visiblePhases.map((phase, phaseIndex) => {
+                const supportedServices = getSupportedNormativeServices(phase);
+                const selectedCount = supportedServices.filter(service => normativeSelectedServices.has(service.code)).length;
+                const isOpen = normativeOpenPhaseIds.has(phase.id) || (phaseIndex === 0 && normativeOpenPhaseIds.size === 0);
+                const services = supportedServices.map(service => `
+                    <label class="normative-service-row">
+                        <input type="checkbox" data-ui-action="toggle-normative-service" data-service-code="${escapeAttr(service.code)}" ${normativeSelectedServices.has(service.code) ? 'checked' : ''}>
+                        <span class="normative-service-code">${escapeHtml(service.code)}</span>
+                        <span class="normative-service-label">${escapeHtml(service.label)}</span>
+                        <span class="normative-service-amount">${normativeCalculationState.workValue > 0 ? formatMoney(calculation.serviceAmounts[service.code] || calculateNormativeServiceFee(calculation.workValue, calculation.complexity?.g, calculation.category?.q?.[service.code], {
+                            inhabitants: calculation.inhabitants,
+                            usePopulation: service.code === 'Qa.0.01' || service.code === 'Qa.0.02'
+                        }), 0) : '—'}</span>
+                    </label>`).join('');
+                return `
+                    <details data-phase-id="${escapeAttr(phase.id)}" class="normative-phase" ${isOpen ? 'open' : ''}>
+                        <summary>
+                            <span class="normative-phase-index">${phaseIndex + 1}</span>
+                            <span class="min-w-0">
+                                <strong>${escapeHtml(phase.name)}</strong>
+                                <small>${selectedCount} di ${supportedServices.length} selezionate</small>
+                            </span>
+                            <i data-lucide="chevron-down" class="normative-phase-chevron"></i>
+                        </summary>
+                        <div class="normative-phase-body">
+                            ${supportedServices.length > 0 ? `<button type="button" data-ui-action="toggle-normative-phase" data-phase-id="${escapeAttr(phase.id)}" class="normative-phase-toggle">${selectedCount === supportedServices.length ? 'Deseleziona tutte' : 'Seleziona tutte'}</button>` : ''}
+                            <div class="normative-services-list">${services}</div>
+                        </div>
+                    </details>`;
+            }).join('');
+            refreshNormativeCalculationSummary();
+            lucide.createIcons();
+        }
+
+        function phaseHasTrackedEntries(phaseName) {
+            const projectId = document.getElementById('edit-modal-proj-id')?.value;
+            return Boolean(projectId && entries.some(entry => entry.project_id === projectId && entry.task === phaseName));
+        }
+
+        async function toggleNormativeService(checkbox) {
+            const code = checkbox?.dataset.serviceCode;
+            if (!code) return;
+            const phase = normativeLibrary.find(item => item.services.some(service => service.code === code));
+            if (!phase) return;
+
+            if (checkbox.checked) {
+                normativeSelectedServices.add(code);
+            } else {
+                const remainingInPhase = phase.services.filter(service => service.code !== code && normativeSelectedServices.has(service.code));
+                if (remainingInPhase.length === 0 && phaseHasTrackedEntries(phase.name)) {
+                    checkbox.checked = true;
+                    return await appAlert('Attività già utilizzata', `Non puoi rimuovere ${phase.name} perché contiene ore registrate.`, 'danger');
+                }
+                normativeSelectedServices.delete(code);
+            }
+
+            captureOpenNormativePhases();
+            syncNormativeTasksFromSelection();
+            renderNormativeProjectBuilder();
+        }
+
+        async function toggleNormativePhase(phaseId) {
+            const phase = normativeLibrary.find(item => item.id === phaseId);
+            if (!phase) return;
+            const supportedServices = getSupportedNormativeServices(phase);
+            if (supportedServices.length === 0) return;
+            const allSelected = supportedServices.every(service => normativeSelectedServices.has(service.code));
+            if (allSelected && phaseHasTrackedEntries(phase.name)) {
+                return await appAlert('Attività già utilizzata', `Non puoi rimuovere ${phase.name} perché contiene ore registrate.`, 'danger');
+            }
+            supportedServices.forEach(service => {
+                if (allSelected) normativeSelectedServices.delete(service.code);
+                else normativeSelectedServices.add(service.code);
+            });
+            normativeOpenPhaseIds.add(phase.id);
+            syncNormativeTasksFromSelection();
+            renderNormativeProjectBuilder();
+        }
+
+        function currentProjectBudgetMode() {
+            return isProjectModalCreateMode() ? 'new' : 'edit';
+        }
+
+        function collectCurrentProjectTaskBudgets() {
+            if (isNormativeProjectMode()) return { ...getCurrentProjectModalBudgets() };
+            const mode = currentProjectBudgetMode();
+            const selector = mode === 'edit' ? '[data-budget-mode="edit"]' : '[data-budget-mode="new"]';
+            return document.querySelectorAll(selector).length > 0
+                ? collectVisibleTaskBudgets(mode)
+                : { ...getCurrentProjectModalBudgets() };
+        }
+
+        function getTaskBudgetsTotal(tasks = getCurrentProjectModalTasks(), budgets = collectCurrentProjectTaskBudgets()) {
+            return tasks.reduce((sum, task) => sum + Number(budgets[task] || 0), 0);
+        }
+
+        function refreshProjectBudgetModeUI() {
+            const isAuto = projectBudgetMode === 'auto';
+            const manualButton = document.getElementById('budget-mode-manual');
+            const autoButton = document.getElementById('budget-mode-auto');
+            const budgetInput = document.getElementById('edit-modal-budget');
+            const note = document.getElementById('project-budget-mode-note');
+
+            if (manualButton) manualButton.className = isAuto
+                ? 'px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-wider transition-all text-slate-400 hover:text-slate-600'
+                : 'px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-wider transition-all bg-slate-900 text-white shadow-sm';
+            if (autoButton) autoButton.className = isAuto
+                ? 'px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-wider transition-all bg-primary-600 text-white shadow-sm'
+                : 'px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-wider transition-all text-slate-400 hover:text-primary-600';
+            if (budgetInput) {
+                budgetInput.readOnly = isAuto;
+                budgetInput.classList.toggle('text-slate-500', isAuto);
+            }
+            if (note) note.textContent = isAuto
+                ? 'Budget calcolato dalla somma delle attività con importo. Le voci fuori piano non pesano sul ritmo.'
+                : 'Budget libero: il ritmo considera le attività con lo stesso peso. Per pesi economici usa Somma attività.';
+        }
+
+        function setProjectBudgetMode(mode) {
+            setCurrentProjectModalBudgets(collectCurrentProjectTaskBudgets());
+            projectBudgetMode = mode === 'auto' ? 'auto' : 'manual';
+            if (projectBudgetMode === 'auto') fillProjectBudgetFromTaskBudgets(false);
+            refreshProjectBudgetModeUI();
+            renderProjectModalTasks();
+        }
+
+        function syncProjectBudgetFromTaskBudgetsIfNeeded() {
+            if (projectBudgetMode !== 'auto') return;
+            const total = getTaskBudgetsTotal();
+            const budgetInput = document.getElementById('edit-modal-budget');
+            if (budgetInput) budgetInput.value = total > 0 ? total.toFixed(2) : '';
+        }
+
+        function inlineProjectTaskHtml(task, index, budgets, mode) {
+            const budgetValue = Number(budgets?.[task] || 0);
+            const isAutoBudget = projectBudgetMode === 'auto';
+            const isLocked = isNormativeProjectMode();
+            return `
+                <div ${isLocked ? '' : 'draggable="true" data-ui-action="project-task-drag"'} data-task-index="${index}" class="project-task-row grid ${isAutoBudget ? 'grid-cols-[auto_minmax(0,1fr)_104px_auto]' : 'grid-cols-[auto_minmax(0,1fr)_auto]'} gap-2 items-center bg-white border border-slate-200 rounded-xl px-2.5 py-2 shadow-sm ${isLocked ? '' : 'cursor-grab active:cursor-grabbing touch-none'}">
+                    <span class="${isLocked ? 'text-primary-400' : 'text-slate-300'}"><i data-lucide="${isLocked ? 'lock-keyhole' : 'grip-vertical'}" class="w-4 h-4"></i></span>
+                    <div class="min-w-0">
+                        <span class="block text-[11px] font-bold text-slate-700 truncate"><span class="text-primary-600 font-black">${index + 1}.</span> ${escapeHtml(task)}</span>
+                        ${isAutoBudget ? `<span class="block text-[8px] font-black uppercase tracking-wider ${budgetValue > 0 ? 'text-primary-500' : 'text-slate-400'}">${budgetValue > 0 ? 'Pesa sul ritmo' : 'Fuori piano'}</span>` : ''}
+                    </div>
+                    ${isAutoBudget && isLocked ? `
+                    <div class="flex items-center justify-end min-w-[104px] rounded-lg px-2 py-1.5 bg-primary-50 border border-primary-100">
+                        <span class="text-[10px] font-black text-primary-700">${formatMoney(budgetValue, 0)}</span>
+                    </div>` : isAutoBudget ? `
+                    <div class="flex items-center gap-1 border border-slate-200 rounded-lg px-2 py-1.5 bg-slate-50 focus-within:bg-white focus-within:border-primary-400 focus-within:ring-2 focus-within:ring-primary-500/10" title="${budgetValue > 0 ? 'Importo usato come peso nel ritmo progetto' : 'Lascia vuoto se questa attività non deve pesare sul ritmo'}">
+                        <span class="text-[10px] font-black text-slate-400">${getStudioCurrency().symbol}</span>
+                        <input type="text" data-budget-mode="${mode}" data-task="${escapeAttr(task)}" value="${escapeAttr(getTaskBudgetInputValue(budgets, task))}" placeholder="Fuori piano" inputmode="decimal" class="task-budget-input w-full bg-transparent outline-none text-[11px] font-mono font-bold text-slate-700 placeholder:text-[8px] placeholder:font-sans placeholder:uppercase placeholder:tracking-wider">
+                    </div>` : ''}
+                    ${isLocked
+                        ? '<span class="p-1.5 text-primary-400" title="Macrofase generata dalle prestazioni selezionate"><i data-lucide="shield-check" class="w-3.5 h-3.5"></i></span>'
+                        : `<button type="button" data-ui-action="remove-inline-project-task" data-task-index="${index}" class="p-1.5 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>`}
+                </div>`;
+        }
+
+        function renderInlineTaskPicker(tasks) {
+            const select = document.getElementById('project-inline-task-select');
+            if (!select) return;
+            const availableTasks = activityCatalog.filter(task => !tasks.includes(task));
+            select.innerHTML = availableTasks.length
+                ? optionHtml('', 'Aggiungi attività dal catalogo', true, true) + availableTasks.map(task => optionHtml(task, task)).join('')
+                : optionHtml('', 'Tutte le attività sono già incluse', true, true);
+            select.disabled = availableTasks.length === 0;
+        }
+
+        function renderInlineTemplatePicker() {
+            const select = document.getElementById('new-template-task-select');
+            if (!select) return;
+            const availableTasks = activityCatalog.filter(task => !newTemplateTasks.includes(task));
+            select.innerHTML = availableTasks.length
+                ? optionHtml('', 'Aggiungi attività dal catalogo', true, true) + availableTasks.map(task => optionHtml(task, task)).join('')
+                : optionHtml('', 'Tutte le attività sono già incluse', true, true);
+            select.disabled = availableTasks.length === 0;
+        }
+
+        function templateManageItemHtml(template, index) {
+            return `
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex justify-between items-start group tag-enter">
+                    <div>
+                        <h4 class="font-black text-sm text-slate-800 mb-2 tracking-tight">${escapeHtml(template.name)}</h4>
+                        <div class="flex flex-wrap gap-1.5">
+                            ${template.tasks.map(templateTaskPillHtml).join('')}
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button data-ui-action="edit-template" data-template-index="${index}" class="text-slate-400 hover:text-primary-600 p-1.5 hover:bg-slate-50 rounded-lg transition-colors"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+                        <button data-ui-action="remove-template" data-template-index="${index}" class="text-slate-400 hover:text-red-600 p-1.5 hover:bg-slate-50 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </div>
+                </div>`;
+        }
+
+        function renderCatalogAndTemplatesUI() {
+            document.getElementById('catalog-manage-list').innerHTML = activityCatalog.map(catalogManageItemHtml).join('');
+            
+            const isEditCat = editingCatalogTask !== null;
+            const btnAddCat = document.getElementById('btn-add-catalog');
+            const btnCancelCat = document.getElementById('btn-cancel-catalog');
+            if(btnAddCat) btnAddCat.innerText = isEditCat ? "Aggiorna" : "Aggiungi"; 
+            if(btnCancelCat) isEditCat ? btnCancelCat.classList.remove('hidden') : btnCancelCat.classList.add('hidden');
+
+            const legacyTemplateCatalog = document.getElementById('new-template-catalog-tasks');
+            if (legacyTemplateCatalog) legacyTemplateCatalog.innerHTML = activityCatalog.map(newTemplateCatalogTaskHtml).join('');
+            const catalogPreview = document.getElementById('studio-catalog-preview');
+            if (catalogPreview) {
+                const previewTasks = activityCatalog.slice(0, 8);
+                catalogPreview.innerHTML = previewTasks.length
+                    ? previewTasks.map(catalogPreviewItemHtml).join('') + (activityCatalog.length > previewTasks.length ? `<span class="text-[10px] bg-white text-slate-400 font-bold px-2 py-0.5 rounded-md border border-slate-200">+${activityCatalog.length - previewTasks.length}</span>` : '')
+                    : '<span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Nessuna attività nel catalogo.</span>';
+            }
+            const selectedTemplateTasks = document.getElementById('new-template-selected-tasks');
+            if (selectedTemplateTasks) {
+                selectedTemplateTasks.innerHTML = newTemplateTasks.length === 0
+                    ? '<div class="text-[11px] font-bold text-center text-slate-400 uppercase tracking-wider py-4 bg-white border border-dashed border-slate-200 rounded-xl">Nessuna attività selezionata.</div>'
+                    : newTemplateTasks.map(inlineTemplateTaskHtml).join('');
+            }
+            renderInlineTemplatePicker();
+            document.getElementById('templates-manage-list').innerHTML = projectTemplates.map(templateManageItemHtml).join('');
+            
+            const isEditTpl = editingTemplateIndex !== null;
+            const btnSaveTpl = document.getElementById('btn-save-template');
+            const btnCancelTpl = document.getElementById('btn-cancel-edit-template');
+            if(btnSaveTpl) btnSaveTpl.innerText = isEditTpl ? "Aggiorna" : "Salva Nuovo";
+            if(btnCancelTpl) isEditTpl ? btnCancelTpl.classList.remove('hidden') : btnCancelTpl.classList.add('hidden');
+            
+            renderStudioManagementSummary();
+            lucide.createIcons(); 
+            renderNewProjectUI();
+        }
+
+        function editCatalogTask(task) { editingCatalogTask = task; document.getElementById('new-catalog-item').value = task; renderCatalogAndTemplatesUI(); }
+        function cancelCatalogEdit() { editingCatalogTask = null; document.getElementById('new-catalog-item').value = ''; renderCatalogAndTemplatesUI(); }
+
+        async function addActivityToCatalog() { 
+            const val = document.getElementById('new-catalog-item').value.trim(); 
+            if(!val) return; 
+            
+            if (editingCatalogTask !== null) {
+                if (val !== editingCatalogTask && !activityCatalog.includes(val)) {
+                    const idx = activityCatalog.indexOf(editingCatalogTask);
+                    if (idx !== -1) activityCatalog[idx] = val;
+                    projectTemplates.forEach(tpl => { const tIdx = tpl.tasks.indexOf(editingCatalogTask); if(tIdx !== -1) tpl.tasks[tIdx] = val; });
+                    let ntIdx = newTemplateTasks.indexOf(editingCatalogTask); if(ntIdx !== -1) newTemplateTasks[ntIdx] = val;
+                    let npIdx = newProjectTasks.indexOf(editingCatalogTask); if(npIdx !== -1) { newProjectTasks[npIdx] = val; if (newProjectTaskBudgets[editingCatalogTask]) { newProjectTaskBudgets[val] = newProjectTaskBudgets[editingCatalogTask]; delete newProjectTaskBudgets[editingCatalogTask]; } }
+                    let epIdx = editProjectTasks.indexOf(editingCatalogTask); if(epIdx !== -1) { editProjectTasks[epIdx] = val; if (editProjectTaskBudgets[editingCatalogTask]) { editProjectTaskBudgets[val] = editProjectTaskBudgets[editingCatalogTask]; delete editProjectTaskBudgets[editingCatalogTask]; } }
+                    let tbIdx = tempBuilderTasks.indexOf(editingCatalogTask); if(tbIdx !== -1) tempBuilderTasks[tbIdx] = val;
+                    editingCatalogTask = null; document.getElementById('new-catalog-item').value = ''; renderCatalogAndTemplatesUI();
+                    if(!document.getElementById('modal-task-builder').classList.contains('force-hide')) renderTaskBuilder();
+                    await syncCatalogAndTemplatesToDB();
+                } else if (val === editingCatalogTask) { cancelCatalogEdit(); } 
+                else { await appAlert("Attenzione", "Questa voce esiste già nel catalogo.", "danger"); }
+            } else {
+                if(activityCatalog.includes(val)) return await appAlert("Attenzione", "Voce già presente.", "danger"); 
+                activityCatalog.push(val); document.getElementById('new-catalog-item').value = ''; renderCatalogAndTemplatesUI(); await syncCatalogAndTemplatesToDB(); 
+            }
+        }
+
+        async function removeActivityFromCatalog(task) { 
+            if(await appConfirm("Elimina Voce", `Sei sicuro di voler eliminare "${task}" dal catalogo?\n(Verrà rimossa automaticamente anche dai Template che la utilizzano).`, "danger")) {
+                if (editingCatalogTask === task) cancelCatalogEdit();
+                activityCatalog = activityCatalog.filter(t => t !== task); newTemplateTasks = newTemplateTasks.filter(t => t !== task); newProjectTasks = newProjectTasks.filter(t => t !== task); editProjectTasks = editProjectTasks.filter(t => t !== task); tempBuilderTasks = tempBuilderTasks.filter(t => t !== task); delete newProjectTaskBudgets[task]; delete editProjectTaskBudgets[task]; projectTemplates.forEach(tpl => { tpl.tasks = tpl.tasks.filter(t => t !== task); });
+                renderCatalogAndTemplatesUI(); if(!document.getElementById('modal-task-builder').classList.contains('force-hide')) renderTaskBuilder(); await syncCatalogAndTemplatesToDB(); 
+            }
+        }
+
+        function toggleTaskInNewTemplate(task) { if(newTemplateTasks.includes(task)) newTemplateTasks = newTemplateTasks.filter(t => t !== task); else newTemplateTasks.push(task); renderCatalogAndTemplatesUI(); }
+        function addInlineTemplateTask() {
+            const select = document.getElementById('new-template-task-select');
+            const task = select?.value;
+            if (!task) return;
+            if (!newTemplateTasks.includes(task)) newTemplateTasks.push(task);
+            renderCatalogAndTemplatesUI();
+        }
+
+        async function createInlineTemplateTask() {
+            const input = document.getElementById('new-template-inline-task');
+            const val = input?.value.trim();
+            if (!val) return;
+            if (!activityCatalog.includes(val)) {
+                activityCatalog.push(val);
+                await syncCatalogAndTemplatesToDB();
+            }
+            if (!newTemplateTasks.includes(val)) newTemplateTasks.push(val);
+            input.value = '';
+            renderCatalogAndTemplatesUI();
+        }
+
+        function removeInlineTemplateTask(index) {
+            newTemplateTasks = newTemplateTasks.filter((_, idx) => idx !== index);
+            renderCatalogAndTemplatesUI();
+        }
+
+        function reorderInlineTemplateTasks(fromIndex, toIndex) {
+            if (fromIndex === toIndex || fromIndex < 0 || toIndex < 0 || fromIndex >= newTemplateTasks.length || toIndex >= newTemplateTasks.length) return;
+            const tasks = [...newTemplateTasks];
+            const [movedTask] = tasks.splice(fromIndex, 1);
+            tasks.splice(toIndex, 0, movedTask);
+            newTemplateTasks = tasks;
+            renderCatalogAndTemplatesUI();
+        }
+
+        function editTemplate(index) { editingTemplateIndex = index; document.getElementById('new-template-name').value = projectTemplates[index].name; newTemplateTasks = [...projectTemplates[index].tasks]; renderCatalogAndTemplatesUI(); }
+        function cancelEditTemplate() { editingTemplateIndex = null; document.getElementById('new-template-name').value = ''; newTemplateTasks = []; renderCatalogAndTemplatesUI(); }
+
+        async function saveNewTemplate() { 
+            const name = document.getElementById('new-template-name').value.trim(); 
+            if(!name || newTemplateTasks.length === 0) return await appAlert("Attenzione", "Inserisci un nome e seleziona almeno un'attività.", "danger"); 
+            if(editingTemplateIndex !== null) { projectTemplates[editingTemplateIndex] = { name: name, tasks: [...newTemplateTasks] }; editingTemplateIndex = null; } else { projectTemplates.push({ name: name, tasks: [...newTemplateTasks] }); }
+            document.getElementById('new-template-name').value = ''; newTemplateTasks = []; renderCatalogAndTemplatesUI(); await syncCatalogAndTemplatesToDB(); 
+        }
+        
+        async function removeTemplate(index) { if(await appConfirm("Elimina Template", "Sei sicuro di voler eliminare questo template? L'operazione non può essere annullata.", "danger")) { if(editingTemplateIndex === index) cancelEditTemplate(); projectTemplates.splice(index, 1); renderCatalogAndTemplatesUI(); await syncCatalogAndTemplatesToDB(); } }
+
+        function isProjectModalCreateMode() {
+            return !document.getElementById('edit-modal-proj-id')?.value;
+        }
+
+        function setProjectModalMode(mode) {
+            const isCreate = mode === 'create';
+            const title = document.getElementById('project-modal-title');
+            const desc = document.getElementById('project-modal-desc');
+            const saveButton = document.getElementById('btn-save-project-edit');
+            if (title) {
+                const icon = document.createElement('i');
+                icon.setAttribute('data-lucide', isCreate ? 'folder-plus' : 'edit-3');
+                icon.className = 'text-primary-500 w-5 h-5';
+                title.replaceChildren(icon, document.createTextNode(isCreate ? ' Nuovo progetto' : ' Modifica progetto'));
+            }
+            if (desc) {
+                desc.textContent = isCreate
+                    ? (isNormativeProjectMode()
+                        ? 'Definisci l’opera e scegli le prestazioni: il compenso viene calcolato automaticamente.'
+                        : 'Imposta anagrafica, budget e flusso di lavoro in un unico passaggio.')
+                    : (isNormativeProjectMode()
+                        ? 'Aggiorna i parametri dell’opera e le prestazioni. Il compenso viene ricalcolato automaticamente.'
+                        : 'Aggiorna anagrafica, budget e attività incluse.');
+            }
+            if (saveButton) saveButton.textContent = isCreate ? 'Crea progetto' : 'Salva modifiche';
+        }
+
+        function openProjectTypeModal() {
+            if (activePlan === 'starter') {
+                const activeCount = projects.filter(p => p.is_archived !== true).length;
+                if (activeCount >= 5) return openUpgradeModal('Lavori Illimitati');
+            }
+            document.getElementById('modal-project-type')?.classList.remove('force-hide');
+            lucide.createIcons();
+        }
+
+        function closeProjectTypeModal() {
+            document.getElementById('modal-project-type')?.classList.add('force-hide');
+        }
+
+        function getQuickProjectTasks() {
+            const tasks = [...new Set((activityCatalog || []).map(task => String(task || '').trim()).filter(Boolean))];
+            return tasks.length > 0 ? tasks : ['Attività generale'];
+        }
+
+        function renderQuickProjectTaskOptions() {
+            const tasks = getQuickProjectTasks();
+            ['quick-project-task', 'onboarding-project-task'].forEach(id => {
+                const select = document.getElementById(id);
+                if (!select) return;
+                const selected = tasks.includes(select.value) ? select.value : tasks[0];
+                select.innerHTML = tasks.map(task => optionHtml(task, task, task === selected)).join('');
+                select.value = selected;
+            });
+        }
+
+        function openQuickProjectModal() {
+            if (activePlan === 'starter') {
+                const activeCount = projects.filter(project => project.is_archived !== true).length;
+                if (activeCount >= 5) return openUpgradeModal('Lavori Illimitati');
+            }
+            closeProjectTypeModal();
+            document.getElementById('quick-project-form')?.reset();
+            refreshProjectCostModeUI(document.getElementById('quick-project-form'));
+            document.querySelector('#quick-project-form .quick-project-optional')?.removeAttribute('open');
+            renderQuickProjectTaskOptions();
+            document.getElementById('modal-quick-project')?.classList.remove('force-hide');
+            setTimeout(() => document.getElementById('quick-project-name')?.focus(), 30);
+            lucide.createIcons();
+        }
+
+        function closeQuickProjectModal() {
+            document.getElementById('modal-quick-project')?.classList.add('force-hide');
+        }
+
+        function focusQuickProjectTimer(projectId, task) {
+            const projectIndex = projects.findIndex(project => String(project.id) === String(projectId));
+            if (projectIndex < 0) return;
+            switchAppTab('operate');
+            const projectSelect = document.getElementById('project-select');
+            if (projectSelect) projectSelect.value = String(projectIndex);
+            updateTaskDropdown();
+            const taskSelect = document.getElementById('task-select');
+            if (taskSelect) taskSelect.value = task;
+            document.getElementById('quick-project-ready')?.classList.remove('force-hide');
+            document.getElementById('timer-panel')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => document.getElementById('btn-toggle-timer')?.focus({ preventScroll: true }), 450);
+        }
+
+        async function createQuickProjectRecord({ name, task, client = '', budget = 0, cost_mode = 'project', project_hourly_cost = null, source = 'quick_modal' }) {
+            const safeName = String(name || '').trim();
+            const safeTask = String(task || getQuickProjectTasks()[0]).trim();
+            const safeClient = String(client || '').trim();
+            const safeBudget = Math.max(0, Number(budget || 0));
+            if (!safeName) throw new Error('Inserisci il nome della commessa.');
+
+            const projectId = crypto.randomUUID();
+            const payload = {
+                id: projectId,
+                studio_id: userProfile.studio_id,
+                name: safeName,
+                client: safeClient,
+                budget: safeBudget,
+                cost_mode: cost_mode === 'team' ? 'team' : 'project',
+                project_hourly_cost: cost_mode === 'team' ? null : (Number(project_hourly_cost) > 0 ? Number(project_hourly_cost) : null),
+                tasks: [safeTask],
+                is_demo: false,
+                project_setup_type: 'studio'
+            };
+
+            if (typeof isVideoDemoMode === 'function' && isVideoDemoMode()) {
+                projects.unshift({ ...payload, is_archived: false, task_statuses: {} });
+                renderProjects();
+            } else {
+                const { error } = await supabaseClient.from('projects').insert([payload]).select().single();
+                if (error) throw error;
+                await fetchProjects();
+            }
+
+            quickProjectId = projectId;
+            if (typeof clearMarginCalculatorHandoff === 'function') clearMarginCalculatorHandoff();
+            window.archTimeAnalytics?.track('quick_project_created', {
+                source,
+                has_budget: safeBudget > 0,
+                has_client: Boolean(safeClient)
+            });
+            await trackAcquisitionMilestone('first_project_created', {
+                has_budget: safeBudget > 0,
+                setup_type: 'quick'
+            });
+            focusQuickProjectTimer(projectId, safeTask);
+            return projectId;
+        }
+
+        async function createQuickProject(event) {
+            event?.preventDefault();
+            const button = document.getElementById('btn-create-quick-project');
+            const nameInput = document.getElementById('quick-project-name');
+            const name = nameInput?.value.trim();
+            if (!name) {
+                nameInput?.focus();
+                return;
+            }
+            button.disabled = true;
+            button.classList.add('opacity-60', 'cursor-wait');
+            try {
+                await createQuickProjectRecord({
+                    name,
+                    task: document.getElementById('quick-project-task')?.value,
+                    client: document.getElementById('quick-project-client')?.value,
+                    budget: document.getElementById('quick-project-budget')?.value,
+                    ...readProjectCostControls(document.getElementById('quick-project-form')),
+                    source: 'quick_modal'
+                });
+                closeQuickProjectModal();
+            } catch (error) {
+                await appAlert('Creazione non riuscita', error.message || 'Non è stato possibile creare la commessa.', 'danger');
+            } finally {
+                button.disabled = false;
+                button.classList.remove('opacity-60', 'cursor-wait');
+            }
+        }
+
+        function openCompleteProjectFromQuickStart() {
+            closeQuickProjectModal();
+            openCreateProjectModal('studio');
+        }
+
+        async function completeLastQuickProject() {
+            if (!quickProjectId) return;
+            await openEditProjectModal(quickProjectId);
+        }
+
+        function resetProjectModalScroll() {
+            const modalCard = document.querySelector('#modal-edit-project > div');
+            const phases = document.getElementById('project-normative-phases');
+            if (modalCard) modalCard.scrollTop = 0;
+            if (phases) phases.scrollTop = 0;
+        }
+
+        let projectModalInitialFingerprint = null;
+        let projectModalUsesNormativeHandoff = false;
+        let projectModalCloseInProgress = false;
+
+        function getProjectModalFingerprint() {
+            const modal = document.getElementById('modal-edit-project');
+            if (!modal) return '';
+            const fields = [...modal.querySelectorAll('input, select, textarea')].map((field, index) => ({
+                key: field.id || field.name || field.dataset?.serviceCode || field.dataset?.task || String(index),
+                value: field.type === 'checkbox' || field.type === 'radio' ? field.checked : field.value
+            }));
+            return JSON.stringify({
+                fields,
+                projectSetupType,
+                projectBudgetMode,
+                tasks: [...getCurrentProjectModalTasks()],
+                taskBudgets: { ...getCurrentProjectModalBudgets() },
+                normativeServices: [...normativeSelectedServices].sort()
+            });
+        }
+
+        function markProjectModalClean() {
+            projectModalInitialFingerprint = getProjectModalFingerprint();
+        }
+
+        function projectModalHasUnsavedChanges() {
+            const modal = document.getElementById('modal-edit-project');
+            return Boolean(
+                modal
+                && !modal.classList.contains('force-hide')
+                && projectModalInitialFingerprint !== null
+                && getProjectModalFingerprint() !== projectModalInitialFingerprint
+            );
+        }
+
+        function hideEditProjectModal() {
+            document.getElementById('modal-edit-project')?.classList.add('force-hide');
+            projectModalInitialFingerprint = null;
+            projectModalUsesNormativeHandoff = false;
+        }
+
+        async function selectProjectSetupType(type) {
+            projectSetupType = type === 'normative' ? 'normative' : 'studio';
+            if (isNormativeProjectMode()) {
+                try {
+                    await loadNormativeLibrary();
+                } catch (error) {
+                    return await appAlert('Libreria non disponibile', 'Non è stato possibile caricare le prestazioni parametriche. Riprova tra poco.', 'danger');
+                }
+            }
+            closeProjectTypeModal();
+            openCreateProjectModal(projectSetupType);
+        }
+
+        function openCreateProjectModal(type = 'studio') {
+            projectSetupType = type === 'normative' ? 'normative' : 'studio';
+            projectModalUsesNormativeHandoff = false;
+            document.getElementById('edit-modal-proj-id').value = '';
+            document.getElementById('edit-modal-name').value = '';
+            document.getElementById('edit-modal-client').value = '';
+            document.getElementById('edit-modal-budget').value = '';
+            setProjectCostControls('project');
+            newProjectTasks = [];
+            newProjectTaskBudgets = {};
+            normativeSelectedServices = new Set();
+            normativeOpenPhaseIds = new Set();
+            normativeCalculationState = {
+                workValue: 0,
+                inhabitants: 0,
+                categoryId: normativeCalculationLibrary?.categories?.[0]?.id || '1',
+                destinationId: '',
+                complexityId: ''
+            };
+            setProjectBudgetMode('manual');
+            setProjectModalMode('create');
+            renderNewProjectUI();
+            document.getElementById('modal-edit-project').classList.remove('force-hide');
+            resetProjectModalScroll();
+            lucide.createIcons();
+            markProjectModalClean();
+        }
+
+        function renderProjectModalTasks() {
+            const selectedContainer = document.getElementById('edit-proj-selected-tasks');
+            if (!selectedContainer) return;
+            const tasks = getCurrentProjectModalTasks();
+            const budgets = getCurrentProjectModalBudgets();
+            const mode = currentProjectBudgetMode();
+            if (tasks.length === 0) selectedContainer.innerHTML = '<div class="text-[11px] font-bold text-center text-slate-400 uppercase tracking-wider py-4">Nessuna attività configurata.</div>';
+            else selectedContainer.innerHTML = tasks.map((task, idx) => inlineProjectTaskHtml(task, idx, budgets, mode)).join('');
+            renderInlineTaskPicker(tasks);
+            syncProjectBudgetFromTaskBudgetsIfNeeded();
+        }
+
+        function renderNewProjectUI() {
+            const selectTpl = document.getElementById('new-proj-template');
+            const studioControls = document.getElementById('project-studio-task-controls');
+            const customControls = document.getElementById('project-custom-task-controls');
+            const normativeBuilder = document.getElementById('project-normative-builder');
+            const budgetControl = document.getElementById('project-budget-control');
+            const sectionTitle = document.getElementById('project-task-section-title');
+            const timerLabel = document.getElementById('project-timer-activities-label');
+            const orderHint = document.getElementById('project-task-order-hint');
+            const projectModal = document.getElementById('modal-edit-project');
+            const isNormative = isNormativeProjectMode();
+
+            projectModal?.classList.toggle('is-normative-project', isNormative);
+            studioControls?.classList.toggle('force-hide', isNormative);
+            customControls?.classList.toggle('force-hide', isNormative);
+            normativeBuilder?.classList.toggle('force-hide', !isNormative);
+            budgetControl?.classList.toggle('force-hide', isNormative);
+            if (sectionTitle) sectionTitle.textContent = isNormative ? 'Prestazioni parametriche' : 'Template e attività';
+            if (timerLabel) timerLabel.textContent = isNormative ? 'Macrofasi disponibili nel timer' : 'Attività incluse';
+            if (orderHint) orderHint.textContent = isNormative ? 'Generate dalla selezione' : 'Trascina per ordinare';
+
+            if (selectTpl) {
+                if(activePlan === 'starter') { selectTpl.innerHTML = optionHtml('', 'I Template sono nel piano PREMIUM', true, true); selectTpl.disabled = true; selectTpl.classList.add('locked-feature'); } 
+                else { selectTpl.innerHTML = optionHtml('', '-- Scegli da un Template --', true, true) + projectTemplates.map((t, i) => optionHtml(i, t.name)).join(''); selectTpl.disabled = false; selectTpl.classList.remove('locked-feature'); }
+            }
+            if (isNormative) {
+                renderNormativeCalculationControls();
+                syncNormativeTasksFromSelection();
+                renderNormativeProjectBuilder();
+            }
+            renderProjectModalTasks();
+            lucide.createIcons();
+        }
+
+        async function openNormativeQuoteHandoff() {
+            const payload = getNormativeQuoteHandoff();
+            if (!payload || !isAdminUser()) return false;
+            try {
+                await loadNormativeLibrary();
+            } catch (error) {
+                await appAlert('Preventivo non disponibile', 'Non è stato possibile caricare i parametri normativi. Riprova tra poco.', 'danger');
+                return false;
+            }
+
+            const quote = payload.quote;
+            const category = normativeCalculationLibrary.categories.find(item => item.id === String(quote.categoryId))
+                || normativeCalculationLibrary.categories[0];
+            const destination = category?.destinations?.find(item => item.id === String(quote.destinationId))
+                || category?.destinations?.[0];
+            const complexity = destination?.levels?.find(item => item.id === String(quote.complexityId))
+                || destination?.levels?.[0];
+            if (!category || !destination || !complexity) return false;
+
+            openCreateProjectModal('normative');
+            normativeCalculationState = {
+                workValue: Number(quote.workValue || 0),
+                inhabitants: Number(quote.inhabitants || 0),
+                categoryId: category.id,
+                destinationId: destination.id,
+                complexityId: complexity.id
+            };
+            const supportedCodes = new Set(
+                normativeLibrary.flatMap(phase => phase.services
+                    .filter(service => Object.prototype.hasOwnProperty.call(category.q || {}, service.code))
+                    .map(service => service.code))
+            );
+            normativeSelectedServices = new Set(quote.selectedCodes.map(String).filter(code => supportedCodes.has(code)));
+            if (normativeSelectedServices.size === 0) {
+                await clearNormativeQuoteHandoff();
+                await closeEditProjectModal(true);
+                await appAlert('Preventivo non valido', 'Le prestazioni salvate non sono più disponibili nella libreria corrente.', 'danger');
+                return false;
+            }
+            normativeOpenPhaseIds = new Set(
+                normativeLibrary
+                    .filter(phase => phase.services.some(service => normativeSelectedServices.has(service.code)))
+                    .map(phase => phase.id)
+            );
+            document.getElementById('edit-modal-name').value = String(payload.project?.name || 'Preventivo parametrico').slice(0, 100);
+            document.getElementById('edit-modal-client').value = String(payload.project?.client || '').slice(0, 100);
+            syncNormativeTasksFromSelection();
+            renderNewProjectUI();
+            resetProjectModalScroll();
+            projectModalUsesNormativeHandoff = true;
+            window.archTimeAnalytics?.track('normative_quote_import_opened', {
+                selected_service_count: normativeSelectedServices.size
+            });
+            lucide.createIcons();
+            return true;
+        }
+
+        function applyTemplateToNewProject() {
+            if(activePlan==='starter' || isNormativeProjectMode()) return;
+            const val = document.getElementById('new-proj-template').value;
+            const templateTasks = val !== "" ? [...projectTemplates[val].tasks] : [];
+            if (isProjectModalCreateMode()) {
+                newProjectTasks = templateTasks;
+                newProjectTaskBudgets = {};
+            } else {
+                editProjectTasks = templateTasks;
+                editProjectTaskBudgets = {};
+            }
+            renderProjectModalTasks();
+            lucide.createIcons();
+        }
+
+        function addInlineProjectTask() {
+            if (isNormativeProjectMode()) return;
+            const select = document.getElementById('project-inline-task-select');
+            const task = select?.value;
+            if (!task) return;
+            const tasks = getCurrentProjectModalTasks();
+            if (!tasks.includes(task)) setCurrentProjectModalTasks([...tasks, task]);
+            renderProjectModalTasks();
+            lucide.createIcons();
+        }
+
+        async function createInlineProjectTask() {
+            if (isNormativeProjectMode()) return;
+            const input = document.getElementById('project-inline-new-task');
+            const val = input?.value.trim();
+            if (!val) return;
+            if (!activityCatalog.includes(val)) {
+                activityCatalog.push(val);
+                await syncCatalogAndTemplatesToDB();
+            }
+            const tasks = getCurrentProjectModalTasks();
+            if (!tasks.includes(val)) setCurrentProjectModalTasks([...tasks, val]);
+            input.value = '';
+            renderCatalogAndTemplatesUI();
+            renderProjectModalTasks();
+            lucide.createIcons();
+        }
+
+        function removeInlineProjectTask(index) {
+            if (isNormativeProjectMode()) return;
+            const tasks = getCurrentProjectModalTasks();
+            const budgets = collectCurrentProjectTaskBudgets();
+            const removedTask = tasks[index];
+            const nextTasks = tasks.filter((_, idx) => idx !== index);
+            delete budgets[removedTask];
+            setCurrentProjectModalTasks(nextTasks);
+            setCurrentProjectModalBudgets(budgets);
+            renderProjectModalTasks();
+            lucide.createIcons();
+        }
+
+        function reorderInlineProjectTasks(fromIndex, toIndex) {
+            if (isNormativeProjectMode()) return;
+            if (fromIndex === toIndex || fromIndex < 0 || toIndex < 0) return;
+            const tasks = [...getCurrentProjectModalTasks()];
+            if (fromIndex >= tasks.length || toIndex >= tasks.length) return;
+            const budgets = collectCurrentProjectTaskBudgets();
+            const [movedTask] = tasks.splice(fromIndex, 1);
+            tasks.splice(toIndex, 0, movedTask);
+            setCurrentProjectModalTasks(tasks);
+            setCurrentProjectModalBudgets(budgets);
+            renderProjectModalTasks();
+            lucide.createIcons();
+        }
+
+        function fillProjectBudgetFromTaskBudgets(switchMode = true) {
+            const budgets = collectCurrentProjectTaskBudgets();
+            setCurrentProjectModalBudgets(budgets);
+            const total = getTaskBudgetsTotal(getCurrentProjectModalTasks(), budgets);
+            const budgetInput = document.getElementById('edit-modal-budget');
+            if (budgetInput) budgetInput.value = total > 0 ? total.toFixed(2) : '';
+            if (switchMode) setProjectBudgetMode('auto');
+        }
+
+        async function createNewProject() {
+            if (activePlan === 'starter') {
+                const activeCount = projects.filter(p => p.is_archived !== true).length;
+                if (activeCount >= 5) return openUpgradeModal('Lavori Illimitati');
+            }
+            if (isNormativeProjectMode()) syncNormativeTasksFromSelection();
+            else if (projectBudgetMode === 'auto') fillProjectBudgetFromTaskBudgets(false);
+            const normativeCalculation = isNormativeProjectMode() ? getNormativeCalculation() : null;
+            const name = document.getElementById('edit-modal-name').value.trim();
+            const client = document.getElementById('edit-modal-client').value.trim();
+            const budget = normativeCalculation ? normativeCalculation.total : (parseFloat(document.getElementById('edit-modal-budget').value) || 0);
+            let costSettings;
+            try { costSettings = readProjectCostControls(); }
+            catch (error) { return await appAlert('Costo orario', error.message, 'danger'); }
+            if(!name) return await appAlert("Attenzione", "Inserisci il nome del lavoro", "danger"); 
+            if (isNormativeProjectMode() && normativeCalculation.workValue <= 0) {
+                return await appAlert("Attenzione", "Inserisci il valore dell’opera", "danger");
+            }
+            if (isNormativeProjectMode() && ['Qa.0.01', 'Qa.0.02'].some(code => normativeSelectedServices.has(code)) && normativeCalculation.inhabitants <= 0) {
+                return await appAlert("Attenzione", "Inserisci il numero di abitanti richiesto dalla prestazione urbanistica selezionata", "danger");
+            }
+            if(newProjectTasks.length === 0) {
+                return await appAlert(
+                    "Attenzione",
+                    isNormativeProjectMode() ? "Seleziona almeno una prestazione parametrica" : "Configura almeno un'attività",
+                    "danger"
+                );
+            }
+            newProjectTaskBudgets = isNormativeProjectMode()
+                ? { ...normativeCalculation.taskBudgets }
+                : collectVisibleTaskBudgets('new');
+            
+            const payload = { name: name, client: client, budget: budget, tasks: [...newProjectTasks], studio_id: userProfile.studio_id, ...costSettings };
+            if (Object.keys(newProjectTaskBudgets).length > 0) payload.task_budgets = newProjectTaskBudgets;
+            if (isNormativeProjectMode()) {
+                payload.project_setup_type = 'normative';
+                payload.normative_data = {
+                    reference: NORMATIVE_PROJECT_REFERENCE,
+                    library_version: NORMATIVE_PROJECT_LIBRARY_VERSION,
+                    work_value: normativeCalculation.workValue,
+                    inhabitants: normativeCalculation.inhabitants,
+                    category: {
+                        id: normativeCalculation.category?.id,
+                        name: normativeCalculation.category?.name
+                    },
+                    destination: {
+                        id: normativeCalculation.destination?.id,
+                        name: normativeCalculation.destination?.name
+                    },
+                    complexity: {
+                        id: normativeCalculation.complexity?.id,
+                        name: normativeCalculation.complexity?.label,
+                        g: normativeCalculation.complexity?.g
+                    },
+                    parameter_p: normativeCalculation.parameterP,
+                    compensation: normativeCalculation.compensation,
+                    accessory_rate: normativeCalculation.accessoryRate,
+                    accessory_expenses: normativeCalculation.accessoryExpenses,
+                    quote_total: normativeCalculation.quoteTotal,
+                    selected_services: getSelectedNormativeServicesSnapshot()
+                };
+            }
+
+            if (typeof isVideoDemoMode === 'function' && isVideoDemoMode()) {
+                projects.unshift({
+                    id: `video-demo-${Date.now()}`,
+                    ...payload,
+                    is_archived: false,
+                    task_statuses: {}
+                });
+                await closeEditProjectModal(true);
+                renderProjects();
+                await clearNormativeQuoteHandoff();
+                await appAlert("Fatto", "Lavoro creato nella dimostrazione", "success");
+                return;
+            }
+
+            const { error } = await supabaseClient.from('projects').insert([payload]);
+            if (error) {
+                const needsNormativeSetup = isNormativeProjectMode() && /project_setup_type|normative_data/i.test(error.message || '');
+                const needsCostModeSetup = /cost_mode|project_hourly_cost/i.test(error.message || '');
+                return await appAlert(
+                    "Configurazione richiesta",
+                    needsNormativeSetup
+                        ? "Per creare progetti parametrici esegui prima lo script SQL dedicato in Supabase."
+                        : needsCostModeSetup
+                            ? "Per salvare il costo orario della commessa serve prima l’aggiornamento del database."
+                        : "Per salvare il Piano costi va prima aggiunta la colonna task_budgets in Supabase. Puoi lasciare vuoti i campi Piano costi oppure eseguire lo script SQL dedicato.",
+                    "danger"
+                );
+            }
+            if (typeof clearMarginCalculatorHandoff === 'function') clearMarginCalculatorHandoff();
+            if (isNormativeProjectMode()) await clearNormativeQuoteHandoff();
+            window.archTimeAnalytics?.track('project_created', {
+                has_budget: budget > 0,
+                task_count: newProjectTasks.length,
+                setup_type: projectSetupType,
+                normative_service_count: isNormativeProjectMode() ? normativeSelectedServices.size : 0
+            });
+            await trackAcquisitionMilestone('first_project_created', {
+                has_budget: budget > 0,
+                setup_type: projectSetupType
+            });
+            
+            document.getElementById('edit-modal-name').value = ""; 
+            document.getElementById('edit-modal-client').value = ""; 
+            document.getElementById('edit-modal-budget').value = ""; 
+            document.getElementById('new-proj-template').value = ""; 
+            newProjectTasks = [];
+            newProjectTaskBudgets = {};
+            normativeSelectedServices = new Set();
+            normativeCalculationState = { workValue: 0, inhabitants: 0, categoryId: '1', destinationId: '', complexityId: '' };
+            setProjectBudgetMode('manual');
+            
+            renderNewProjectUI(); 
+            await fetchProjects(); 
+            await closeEditProjectModal(true);
+            await appAlert("Fatto", "Lavoro Creato!", "success"); 
+            switchAppTab('operate');
+        }
+
+
+        function getProjectDetailData(id) {
+            const project = projects.find(x => x.id === id);
+            if (!project) return null;
+
+            const projectEntries = entries.filter(e => e.project_id === id);
+            const projectExpenses = expenses.filter(ex => ex.project_id === id);
+            const totalHours = projectEntries.reduce((sum, entry) => sum + Number(entry.duration || 0), 0);
+            const totalHoursCost = projectEntries.reduce((sum, entry) => sum + Number(entry.rate || 0), 0);
+            const totalExpenses = projectExpenses.reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
+            const totalSpent = totalHoursCost + totalExpenses;
+            const effectiveRate = totalHours > 0 ? (project.budget - totalExpenses) / totalHours : 0;
+            const taskStats = {};
+            const teamStats = {};
+
+            if (project.tasks && project.tasks.length > 0) {
+                project.tasks.forEach(task => { taskStats[task] = { h: 0, c: 0 }; });
+            }
+
+            projectEntries.forEach(entry => {
+                const taskName = entry.task || 'Altro';
+                const member = entry.user_name || (entry.user_email ? entry.user_email.split('@')[0] : 'Sconosciuto');
+
+                if (!taskStats[taskName]) taskStats[taskName] = { h: 0, c: 0 };
+                taskStats[taskName].h += Number(entry.duration || 0);
+                taskStats[taskName].c += Number(entry.rate || 0);
+                if (Number(entry.duration) > 0 && !(Number(entry.rate) > 0)) {
+                    taskStats[taskName].uncostedHours = Number(taskStats[taskName].uncostedHours || 0) + Number(entry.duration);
+                }
+
+                if (!teamStats[member]) teamStats[member] = { h: 0, c: 0 };
+                teamStats[member].h += Number(entry.duration || 0);
+                teamStats[member].c += Number(entry.rate || 0);
+            });
+
+            return { project, projectExpenses, totalHours, totalHoursCost, totalExpenses, totalSpent, effectiveRate, taskStats, teamStats };
+        }
+
+        function renderProjectDetailActions(project) {
+            const projectId = escapeAttr(project.id);
+            const quoteButton = activePlan === 'starter'
+                ? `<button data-ui-action="upgrade-project-quote" class="w-full sm:w-auto text-xs font-bold bg-white text-slate-400 border border-slate-200 px-3.5 py-2.5 rounded-xl flex items-center justify-center gap-2 transition opacity-60 shadow-sm"><i data-lucide="lock" class="w-4 h-4"></i> Preventivo</button>`
+                : `<button data-ui-action="open-project-quote-format" data-project-id="${projectId}" class="w-full sm:w-auto text-xs font-bold bg-white text-primary-600 border border-primary-200 px-3.5 py-2.5 rounded-xl hover:bg-primary-50 flex items-center justify-center gap-2 shadow-sm transition-all"><i data-lucide="receipt-text" class="w-4 h-4"></i> Preventivo</button>`;
+            const reportButton = activePlan === 'starter'
+                ? `<button data-ui-action="upgrade-project-pdf" class="w-full sm:w-auto text-xs font-bold bg-white text-slate-400 border border-slate-200 px-3.5 py-2.5 rounded-xl flex items-center justify-center gap-2 transition opacity-60 shadow-sm"><i data-lucide="lock" class="w-4 h-4"></i> Consuntivo</button>`
+                : `<button data-ui-action="export-project-pdf" data-project-id="${projectId}" class="w-full sm:w-auto text-xs font-bold bg-white text-slate-600 border border-slate-200 px-3.5 py-2.5 rounded-xl hover:bg-slate-50 flex items-center justify-center gap-2 shadow-sm transition-all"><i data-lucide="file-text" class="w-4 h-4"></i> Consuntivo</button>`;
+
+            return `
+                <div class="admin-only w-full max-w-sm mx-auto lg:mx-0 lg:max-w-none lg:w-auto flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2">
+                    <button data-ui-action="edit-project" data-project-id="${projectId}" class="w-full sm:w-auto text-xs font-bold bg-white text-slate-600 border border-slate-200 px-3.5 py-2.5 rounded-xl hover:bg-slate-50 flex items-center justify-center gap-2 shadow-sm transition-all"><i data-lucide="edit" class="w-4 h-4"></i> Modifica</button>
+                    ${quoteButton}
+                    ${reportButton}
+                </div>`;
+        }
+
+        function renderProjectDetailHeader(project) {
+            const summary = getProjectCostSummary(project);
+            const visualStatus = getProjectVisualStatus(project, summary);
+            return `
+            <div class="project-detail-header bg-slate-50 border border-slate-200 rounded-2xl p-3 lg:p-4 mb-4">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-2">
+                <div class="min-w-0">
+                    <span class="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-wider border px-2 py-0.5 rounded-full mb-1.5 ${visualStatus.className}"><i data-lucide="${visualStatus.icon}" class="w-3 h-3"></i>${visualStatus.label}</span>
+                    <h2 class="text-lg lg:text-xl font-black text-slate-800 mb-0.5 leading-tight tracking-tight">${escapeHtml(project.name)}</h2>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">${escapeHtml(project.client || 'Interno')}</p>
+                    ${isAdminUser() ? `<p class="text-[10px] font-bold text-slate-500 mt-1">${projectCostMode(project) === 'project' ? `Costo delle ore: unico per commessa${Number(project.project_hourly_cost) > 0 ? ` · ${formatMoney(project.project_hourly_cost, 2)}/h` : ' · da completare'}` : 'Costo delle ore: per membro del team'}</p>` : ''}
+                    ${isAdminUser() && !summary.economicReady ? `<p class="mt-2 text-xs text-slate-600">${summary.uncostedHours > 0 ? 'Ore senza costo valorizzato: il margine non è ancora completo.' : 'Completa i dati economici per leggere il margine.'} <button type="button" data-ui-action="complete-economic-setup" data-project-id="${escapeAttr(project.id)}" class="font-bold text-primary-600 underline">Completa i dati</button></p>` : ''}
+                </div>
+                ${renderProjectDetailActions(project)}
+            </div>
+            </div>`;
+        }
+
+        function metricCardHtml(label, valueHtml, colorClass = 'text-slate-800') {
+            return `
+                <div class="project-metric-card bg-white p-2.5 rounded-xl border border-slate-200 flex flex-col justify-center shadow-sm min-h-[58px]">
+                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">${escapeHtml(label)}</p>
+                    <p class="text-base lg:text-lg font-black ${colorClass} mt-1 tracking-tight">${valueHtml}</p>
+                </div>`;
+        }
+
+        function renderProjectMetrics(data) {
+            const budgetHint = `<span class="text-[10px] text-slate-400">/ ${formatMoney(data.project.budget, 0)}</span>`;
+            const hoursHint = `<span class="text-[10px] text-slate-400">(${formatTime(data.totalHours)})</span>`;
+            const rateClass = data.effectiveRate > 0 ? 'text-emerald-500' : 'text-red-500';
+
+            return `
+            <div class="project-detail-metrics grid grid-cols-2 md:grid-cols-4 gap-2 mb-4 bg-slate-50 border border-slate-200 rounded-2xl p-2">
+                ${metricCardHtml('Spesa totale', `${formatMoney(data.totalSpent, 0)} ${budgetHint}`, 'text-primary-600')}
+                ${metricCardHtml('Costo ore', `${formatMoney(data.totalHoursCost, 0)} ${hoursHint}`)}
+                ${metricCardHtml('Spese extra', formatMoney(data.totalExpenses, 0), 'text-amber-600')}
+                ${metricCardHtml('Resa oraria', `${formatMoney(data.effectiveRate, 2)} <span class="text-[10px] text-slate-400">/h</span>`, rateClass)}
+            </div>`;
+        }
+
+        function compactTaskCostBarHtml(stat, budget, isZero) {
+            const percent = budget > 0 ? Math.min((stat.c / budget) * 100, 100).toFixed(1) : 0;
+            return `
+                <div class="project-task-progress w-full lg:max-w-[122px] lg:justify-self-start">
+                    <div class="flex justify-between items-center gap-2 mb-1">
+                        <span class="text-[10px] font-mono font-black text-slate-600">${formatMoney(stat.c, 0)}</span>
+                        <span class="text-[9px] font-bold text-slate-400">${formatTime(stat.h)}</span>
+                    </div>
+                    <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                        <div class="${isZero ? 'bg-slate-200' : 'bg-primary-500'} h-full" style="width: ${percent}%"></div>
+                    </div>
+                </div>`;
+        }
+
+        function compactTaskBudgetHtml(stat, taskBudget) {
+            if (stat.uncostedHours > 0) {
+                return `<span class="text-[9px] font-bold text-slate-500">Costi da completare · ${formatTime(stat.h)}</span>`;
+            }
+            if (!taskBudget || taskBudget <= 0) {
+                return `<span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Eff. ${formatMoney(stat.c, 0)} · ${formatTime(stat.h)}</span>`;
+            }
+
+            const taskMargin = Number(taskBudget || 0) - Number(stat.c || 0);
+            const marginClass = taskMargin < -0.01 ? 'text-red-600' : (taskMargin > 0.01 ? 'text-emerald-600' : 'text-slate-400');
+            const marginLabel = Math.abs(taskMargin) < 0.01 ? 'in linea' : `${taskMargin > 0 ? '+' : '-'}${formatMoney(Math.abs(taskMargin), 0)}`;
+
+            return `
+                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Prev. ${formatMoney(taskBudget, 0)} · Eff. ${formatMoney(stat.c, 0)}</span>
+                <span class="text-[9px] font-black ${marginClass} mt-0.5">${marginLabel}</span>`;
+        }
+
+        function taskStatusButtonHtml(projectId, taskName, value, label, activeValue) {
+            const isActive = activeValue === value;
+            const activeClass = value === 'done'
+                ? 'bg-emerald-600 text-white border-emerald-600'
+                : (value === 'doing' ? 'bg-primary-600 text-white border-primary-600' : 'bg-slate-200 text-slate-700 border-slate-200');
+            const idleClass = 'bg-white text-slate-500 border-slate-200 hover:border-primary-200 hover:text-primary-600';
+
+            return `<button data-ui-action="set-task-status" data-project-id="${escapeAttr(projectId)}" data-task="${escapeAttr(taskName)}" data-status="${value}" class="px-2 py-1 rounded-md border text-[9px] font-black uppercase tracking-wider transition-all whitespace-nowrap ${isActive ? activeClass : idleClass}">${label}</button>`;
+        }
+
+        function normativeServicesForTask(project, taskName) {
+            if (project?.project_setup_type !== 'normative' || !Array.isArray(project.normative_data?.selected_services)) return [];
+            return project.normative_data.selected_services.filter(service => service.phase_name === taskName);
+        }
+
+        function normativeTaskServicesHtml(project, taskName) {
+            const services = normativeServicesForTask(project, taskName);
+            if (services.length === 0) return '';
+            return `
+                <div class="normative-task-services">
+                    ${services.map(service => `
+                        <span>
+                            <span><b>${escapeHtml(service.code)}</b> ${escapeHtml(service.label)}</span>
+                            ${Number(service.fee || 0) > 0 ? `<em>${formatMoney(service.fee, 0)}</em>` : ''}
+                        </span>`).join('')}
+                </div>`;
+        }
+
+        function renderNormativeScopePanel(data) {
+            const project = data?.project;
+            if (project?.project_setup_type !== 'normative') return '';
+            const rhythm = getProjectRhythmSummary(project);
+            const tasks = project.tasks || [];
+            const compensation = Number(project.normative_data?.compensation || project.budget || 0);
+            const accessoryExpenses = Number(project.normative_data?.accessory_expenses || 0);
+            const accessoryRate = Number(project.normative_data?.accessory_rate || 0);
+            const quoteTotal = Number(project.normative_data?.quote_total || project.budget || compensation);
+            const rows = tasks.map((taskName, index) => {
+                const stat = data.taskStats?.[taskName] || { h: 0, c: 0 };
+                const status = rhythm?.statuses?.[taskName] || 'todo';
+                const taskBudget = Number(rhythm?.budgets?.[taskName] || 0);
+                return `
+                    <div class="normative-scope-row">
+                        <div class="normative-scope-heading">
+                            <span>${index + 1}</span>
+                            <div class="normative-scope-main">
+                                <strong>${escapeHtml(taskName)}</strong>
+                                <div class="admin-only normative-scope-cost">${compactTaskBudgetHtml(stat, taskBudget)}</div>
+                            </div>
+                            <div class="admin-only normative-inline-status">
+                                ${taskStatusButtonHtml(project.id, taskName, 'todo', 'Da fare', status)}
+                                ${taskStatusButtonHtml(project.id, taskName, 'doing', 'In corso', status)}
+                                ${taskStatusButtonHtml(project.id, taskName, 'done', 'Completata', status)}
+                            </div>
+                        </div>
+                        ${normativeTaskServicesHtml(project, taskName)}
+                    </div>`;
+            }).join('');
+            return `
+                <div class="normative-scope-panel bg-white border border-slate-200 rounded-2xl p-3 shadow-sm mb-4">
+                    <div class="flex items-start gap-2 border-b border-slate-100 pb-2 mb-2">
+                        <i data-lucide="landmark" class="w-3.5 h-3.5 text-primary-500 mt-0.5"></i>
+                        <div>
+                            <h3 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Prestazioni parametriche</h3>
+                            <p class="text-[10px] text-slate-400 font-medium mt-1">${escapeHtml(project.normative_data?.reference || NORMATIVE_PROJECT_REFERENCE)}</p>
+                        </div>
+                    </div>
+                    ${Number(project.normative_data?.work_value || 0) > 0 ? `
+                        <div class="normative-scope-summary">
+                            <span><small>Valore opera</small><strong>${formatMoney(project.normative_data.work_value, 0)}</strong></span>
+                            <span><small>Categoria</small><strong>${escapeHtml(project.normative_data?.category?.name || '-')}</strong></span>
+                            <span><small>Complessità</small><strong>G ${Number(project.normative_data?.complexity?.g || 0).toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong></span>
+                            <span><small>Compenso CP</small><strong>${formatMoney(compensation, 0)}</strong></span>
+                            <span><small>Spese e oneri ${accessoryRate > 0 ? `${(accessoryRate * 100).toLocaleString('it-IT', { maximumFractionDigits: 2 })}%` : ''}</small><strong>${formatMoney(accessoryExpenses, 0)}</strong></span>
+                            <span class="is-total"><small>Totale preventivo</small><strong>${formatMoney(quoteTotal, 0)}</strong></span>
+                        </div>` : ''}
+                    ${rhythm ? `
+                        <div class="admin-only normative-rhythm-strip">
+                            <span><small>Costi consumati</small><strong>${Math.round(rhythm.costPercent)}%</strong></span>
+                            <span><small>${rhythm.usesTaskBudgets ? 'Piano costi avanzato' : 'Attività avanzate'}</small><strong>${Math.round(rhythm.operationalPercent)}%</strong></span>
+                            <p>${escapeHtml(rhythm.description)}</p>
+                        </div>` : ''}
+                    <div class="normative-scope-list">${rows}</div>
+                </div>`;
+        }
+
+        function renderProjectRhythmPanel(data) {
+            if (data.project?.project_setup_type === 'normative') return '';
+            const rhythm = getProjectRhythmSummary(data.project);
+            if (!rhythm) return '';
+
+            const tasks = data.project.tasks || [];
+            const rows = tasks.map(taskName => {
+                const stat = data.taskStats[taskName] || { h: 0, c: 0 };
+                const status = rhythm.statuses[taskName] || 'todo';
+                const taskBudget = Number(rhythm.budgets[taskName] || 0);
+                const isZero = Number(stat.h || 0) === 0 && Number(stat.c || 0) === 0;
+                return `
+                    <div class="project-rhythm-row grid grid-cols-1 lg:grid-cols-[minmax(0,0.85fr)_170px_282px] gap-3 items-center bg-white border border-slate-200 rounded-xl px-2.5 py-2 shadow-sm">
+                        <div class="min-w-0">
+                            <p class="text-xs font-black ${isZero ? 'text-slate-400' : 'text-slate-800'} truncate">${escapeHtml(taskName)}</p>
+                            <div class="flex flex-col mt-0.5">${compactTaskBudgetHtml(stat, taskBudget)}</div>
+                        </div>
+                        ${compactTaskCostBarHtml(stat, data.project.budget, isZero)}
+                        <div class="project-task-status-grid grid grid-cols-3 gap-1.5 lg:justify-self-end w-full lg:max-w-[282px]">
+                            ${taskStatusButtonHtml(data.project.id, taskName, 'todo', 'Da fare', status)}
+                            ${taskStatusButtonHtml(data.project.id, taskName, 'doing', 'In corso', status)}
+                            ${taskStatusButtonHtml(data.project.id, taskName, 'done', 'Completata', status)}
+                        </div>
+                    </div>`;
+            }).join('');
+
+            return `
+                <div class="project-rhythm-panel admin-only bg-white border border-slate-200 rounded-2xl p-3 shadow-sm mb-4">
+                    <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-2 border-b border-slate-100 pb-2 mb-2">
+                        <div>
+                            <h3 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="activity" class="w-3.5 h-3.5"></i> Ritmo progetto</h3>
+                            <p class="text-xs text-slate-500 font-medium mt-1">${rhythm.description}</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 mb-2">
+                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-2">
+                            <p class="text-[9px] font-black uppercase tracking-wider text-slate-400">Costi consumati</p>
+                            <p class="text-lg font-black text-slate-800 mt-1">${Math.round(rhythm.costPercent)}%</p>
+                        </div>
+                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-2">
+                            <p class="text-[9px] font-black uppercase tracking-wider text-slate-400">${rhythm.usesTaskBudgets ? 'Piano costi avanzato' : 'Attività avanzate'}</p>
+                            <p class="text-lg font-black text-slate-800 mt-1">${Math.round(rhythm.operationalPercent)}%</p>
+                        </div>
+                    </div>
+                    <div class="relative w-full bg-slate-100 h-2 rounded-full mb-3">
+                        <div class="${rhythm.barClass} h-full rounded-full" style="width: ${Math.min(rhythm.costPercent, 100)}%"></div>
+                        <span class="absolute top-1/2 -translate-y-1/2 w-1.5 h-5 rounded-full ${rhythm.markerClass} shadow-sm" style="left: calc(${Math.min(rhythm.operationalPercent, 100)}% - 3px)"></span>
+                    </div>
+                    <div class="flex justify-between items-center mb-2">
+                        <p class="text-[10px] font-black uppercase tracking-wider text-slate-400">Attività</p>
+                        <p class="text-[10px] font-bold text-slate-400 hidden lg:block">Costo / ore / stato</p>
+                    </div>
+                    <div class="space-y-2">${rows}</div>
+                    <p class="text-[10px] text-slate-400 font-medium mt-4 leading-relaxed">Indicatore sperimentale: confronta i costi già consumati con ${rhythm.usesTaskBudgets ? 'il piano costi e lo stato delle attività' : 'lo stato dichiarato delle attività'}. Serve come allarme operativo, non come percentuale contabile del progetto.</p>
+                </div>`;
+        }
+
+        function renderTeamStats(teamStats) {
+            const rows = Object.keys(teamStats).map(member => `
+                            <div class="flex justify-between items-center bg-white px-2.5 py-2 rounded-xl border border-slate-200 shadow-sm">
+                                <span class="font-bold text-slate-700 text-xs uppercase tracking-wide">${escapeHtml(member)}</span>
+                                <div class="text-right">
+                                    <p class="text-[11px] font-mono font-bold text-primary-600">${formatTime(teamStats[member].h)}</p>
+                                    <p class="text-[10px] font-mono font-black text-slate-400 admin-only">${formatMoney(teamStats[member].c, 2)}</p>
+                                </div>
+                            </div>`).join('');
+
+            return `
+                    <div class="project-side-panel bg-white border border-slate-200 rounded-2xl p-3 shadow-sm">
+                        <h3 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200 pb-2 mb-2 flex items-center gap-1.5"><i data-lucide="users" class="w-3.5 h-3.5"></i> Per membro team</h3>
+                        <div class="space-y-1.5">${rows}</div>
+                    </div>`;
+        }
+
+        function renderExpenseRows(expensesList, projectId) {
+            if (expensesList.length === 0) {
+                return richEmptyStateHtml('receipt', 'Nessuna spesa registrata', 'Aggiungi le spese vive per leggere il margine reale del lavoro.');
+            }
+
+            return expensesList.map(expense => `
+                        <div class="bg-white px-2.5 py-2 rounded-xl border border-slate-200 flex justify-between items-center shadow-sm group">
+                            <div class="min-w-0 pr-3">
+                                <p class="text-xs font-bold text-slate-700">${escapeHtml(expense.description)}</p>
+                                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-1">${new Date(expense.created_at).toLocaleDateString()} • ${escapeHtml(expense.user_name)}</p>
+                            </div>
+                            <div class="flex items-center gap-2 shrink-0">
+                                <span class="font-black text-amber-600 text-sm tracking-tight">${formatMoney(expense.amount, 2)}</span>
+                                <button data-ui-action="edit-expense" data-expense-id="${escapeAttr(expense.id)}" data-project-id="${projectId}" class="text-slate-300 hover:text-amber-600 p-1.5 hover:bg-amber-50 rounded-lg transition-colors"><i data-lucide="edit-2" class="w-3.5 h-3.5"></i></button>
+                                <button data-ui-action="delete-expense" data-expense-id="${escapeAttr(expense.id)}" data-project-id="${projectId}" class="text-slate-300 hover:text-red-500 p-1.5 hover:bg-red-50 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                            </div>
+                        </div>`).join('');
+        }
+
+        function renderExpensesPanel(expensesList, projectId) {
+            return `
+                <div class="project-side-panel admin-only bg-slate-50 rounded-2xl p-3 border border-slate-200 shadow-sm">
+                    <h3 class="text-[11px] font-bold text-slate-600 uppercase tracking-wider border-b border-slate-200 pb-2 mb-2 flex items-center gap-2"><i data-lucide="receipt" class="w-4 h-4 text-amber-500"></i> Spese vive</h3>
+                    <div class="flex gap-2 mb-3">
+                        <input type="text" id="exp-desc" placeholder="Es. Oneri o Materiali" class="flex-1 border border-slate-200 rounded-xl p-3 text-xs outline-none focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 transition-all bg-white">
+                        <div class="w-24 relative flex items-center">
+                            <span class="absolute left-3 text-slate-400 font-bold text-xs">${getStudioCurrency().symbol}</span>
+                            <input type="number" step="0.01" id="exp-amount" placeholder="0.00" class="w-full border border-slate-200 rounded-xl p-3 pl-10 text-xs outline-none focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 transition-all font-bold bg-white">
+                        </div>
+                        <button data-ui-action="add-expense" data-project-id="${projectId}" class="bg-amber-500 text-white px-3.5 rounded-xl hover:bg-amber-600 transition-all shadow-sm active:scale-95"><i data-lucide="plus" class="w-4 h-4"></i></button>
+                    </div>
+                    <div class="space-y-1.5 max-h-[260px] overflow-y-auto pr-1">${renderExpenseRows(expensesList, projectId)}</div>
+                </div>`;
+        }
+
+        function renderProjectAnalyticsPanel(data) {
+            const projectId = escapeAttr(data.project.id);
+            return `
+                <div class="project-analytics-shell admin-only mb-4">
+                    <button type="button" class="project-analytics-toggle" data-ui-action="toggle-project-analytics" data-project-id="${projectId}" aria-expanded="false" aria-controls="project-analytics-content">
+                        <span class="project-analytics-icon"><i data-lucide="chart-no-axes-combined"></i></span>
+                        <span class="project-analytics-heading">
+                            <strong>Grafici commessa</strong>
+                            <small>${formatTime(data.totalHours)} registrate · ${formatMoney(data.totalSpent, 0)} rilevati</small>
+                        </span>
+                        <span class="project-analytics-action">
+                            <span id="project-analytics-toggle-label">Apri grafici</span>
+                            <i data-lucide="chevron-down"></i>
+                        </span>
+                    </button>
+                    <div id="project-analytics-content" class="project-analytics-content force-hide">
+                        <div class="project-analytics-chart-panel">
+                            <div class="project-analytics-chart-heading">
+                                <h3>Costi per settimana</h3>
+                                <p>Ore valorizzate e spese extra nelle ultime 8 settimane.</p>
+                            </div>
+                            <div class="project-analytics-chart-wrap"><canvas id="project-chart-costs"></canvas></div>
+                            <div id="project-chart-costs-empty" class="project-analytics-empty force-hide"><i data-lucide="bar-chart-3"></i><span>I costi compariranno dopo le prime registrazioni.</span></div>
+                        </div>
+                        <div class="project-analytics-chart-panel">
+                            <div class="project-analytics-chart-heading">
+                                <h3>Ore per attività</h3>
+                                <p>Distribuzione del tempo impiegato nella commessa.</p>
+                            </div>
+                            <div class="project-analytics-chart-wrap"><canvas id="project-chart-tasks"></canvas></div>
+                            <div id="project-chart-tasks-empty" class="project-analytics-empty force-hide"><i data-lucide="timer-reset"></i><span>Registra delle ore per visualizzare le attività.</span></div>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        function destroyProjectAnalyticsCharts() {
+            ['projectCosts', 'projectTasks'].forEach(chartKey => {
+                if (!charts[chartKey]) return;
+                charts[chartKey].destroy();
+                charts[chartKey] = null;
+            });
+        }
+
+        function toggleProjectAnalytics(projectId) {
+            const content = document.getElementById('project-analytics-content');
+            const button = document.querySelector('[data-ui-action="toggle-project-analytics"]');
+            const label = document.getElementById('project-analytics-toggle-label');
+            if (!content || !button) return;
+
+            const shouldOpen = content.classList.contains('force-hide');
+            content.classList.toggle('force-hide', !shouldOpen);
+            button.classList.toggle('is-open', shouldOpen);
+            button.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+            if (label) label.innerText = shouldOpen ? 'Chiudi grafici' : 'Apri grafici';
+
+            if (shouldOpen) setTimeout(() => renderProjectAnalytics(projectId), 30);
+            else destroyProjectAnalyticsCharts();
+        }
+
+        function renderProjectAnalytics(projectId) {
+            const data = getProjectDetailData(projectId);
+            if (!data || document.getElementById('project-analytics-content')?.classList.contains('force-hide')) return;
+
+            const projectEntries = entries.filter(entry => entry.project_id === projectId);
+            const projectExpenses = expenses.filter(expense => expense.project_id === projectId);
+            const theme = THEMES[currentBusinessType];
+            const gridColor = '#e8edf2';
+            const tickFont = { size: 9, weight: '600' };
+            const tooltip = {
+                backgroundColor: '#0f172a',
+                titleFont: { weight: 'bold', size: 11 },
+                bodyFont: { weight: '600', size: 10 },
+                padding: 9,
+                cornerRadius: 7
+            };
+
+            const currentWeekStart = new Date();
+            currentWeekStart.setHours(0, 0, 0, 0);
+            const currentDay = currentWeekStart.getDay() || 7;
+            currentWeekStart.setDate(currentWeekStart.getDate() - currentDay + 1);
+            const firstWeek = new Date(currentWeekStart);
+            firstWeek.setDate(firstWeek.getDate() - 7 * 7);
+            const weeklyCosts = Array.from({ length: 8 }, (_, index) => {
+                const weekStart = new Date(firstWeek);
+                weekStart.setDate(firstWeek.getDate() + index * 7);
+                const nextWeek = new Date(weekStart);
+                nextWeek.setDate(weekStart.getDate() + 7);
+                const labor = projectEntries
+                    .filter(entry => {
+                        const date = new Date(entry.created_at);
+                        return date >= weekStart && date < nextWeek;
+                    })
+                    .reduce((sum, entry) => sum + Number(entry.rate || 0), 0);
+                const extras = projectExpenses
+                    .filter(expense => {
+                        const date = new Date(expense.created_at);
+                        return date >= weekStart && date < nextWeek;
+                    })
+                    .reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
+                return {
+                    label: index === 7 ? 'Questa' : weekStart.toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit' }),
+                    labor,
+                    extras
+                };
+            });
+            const taskRows = Object.entries(data.taskStats)
+                .filter(([, stat]) => Number(stat.h || 0) > 0)
+                .sort((a, b) => Number(b[1].h || 0) - Number(a[1].h || 0))
+                .slice(0, 6);
+
+            const toggleEmpty = (chartKey, canvasId, emptyId, hasData) => {
+                const canvas = document.getElementById(canvasId);
+                const empty = document.getElementById(emptyId);
+                canvas?.parentElement?.classList.toggle('force-hide', !hasData);
+                empty?.classList.toggle('force-hide', hasData);
+                if (!hasData && charts[chartKey]) {
+                    charts[chartKey].destroy();
+                    charts[chartKey] = null;
+                }
+                return hasData && canvas;
+            };
+
+            const hasCosts = weeklyCosts.some(week => week.labor > 0 || week.extras > 0);
+            if (charts.projectCosts) charts.projectCosts.destroy();
+            if (toggleEmpty('projectCosts', 'project-chart-costs', 'project-chart-costs-empty', hasCosts)) {
+                charts.projectCosts = new Chart(document.getElementById('project-chart-costs'), {
+                    type: 'bar',
+                    data: {
+                        labels: weeklyCosts.map(week => week.label),
+                        datasets: [
+                            { label: 'Lavoro', data: weeklyCosts.map(week => week.labor), backgroundColor: theme.chartMainColor, borderRadius: 3, borderSkipped: false },
+                            { label: 'Spese extra', data: weeklyCosts.map(week => week.extras), backgroundColor: '#f59e0b', borderRadius: 3, borderSkipped: false }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { stacked: true, grid: { display: false }, ticks: { font: tickFont, maxRotation: 0 } },
+                            y: { stacked: true, beginAtZero: true, grid: { color: gridColor }, ticks: { callback: value => formatMoney(value, 0), font: tickFont } }
+                        },
+                        plugins: {
+                            legend: { position: 'bottom', align: 'start', labels: { usePointStyle: true, pointStyle: 'rectRounded', boxWidth: 7, boxHeight: 7, padding: 12, font: tickFont } },
+                            tooltip: { ...tooltip, callbacks: { label: context => `${context.dataset.label}: ${formatMoney(context.raw, 0)}` } }
+                        }
+                    }
+                });
+            }
+
+            const hasTasks = taskRows.length > 0;
+            if (charts.projectTasks) charts.projectTasks.destroy();
+            if (toggleEmpty('projectTasks', 'project-chart-tasks', 'project-chart-tasks-empty', hasTasks)) {
+                charts.projectTasks = new Chart(document.getElementById('project-chart-tasks'), {
+                    type: 'bar',
+                    data: {
+                        labels: taskRows.map(([task]) => task.length > 20 ? `${task.slice(0, 19)}…` : task),
+                        datasets: [{ label: 'Ore', data: taskRows.map(([, stat]) => stat.h), backgroundColor: theme.chartMainColor, borderRadius: 4, barThickness: 11 }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { beginAtZero: true, grid: { color: gridColor }, ticks: { callback: value => `${value}h`, font: tickFont } },
+                            y: { grid: { display: false }, ticks: { font: tickFont } }
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                ...tooltip,
+                                callbacks: {
+                                    title: items => taskRows[items[0].dataIndex][0],
+                                    label: context => {
+                                        const stat = taskRows[context.dataIndex][1];
+                                        return `${formatTime(stat.h)} · ${formatMoney(stat.c, 0)}`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            lucide.createIcons();
+        }
+
+        function renderProjectDetail(data) {
+            const projectId = escapeAttr(data.project.id);
+            return `
+            ${renderProjectDetailHeader(data.project)}
+            ${renderProjectMetrics(data)}
+            ${renderProjectAnalyticsPanel(data)}
+            ${renderNormativeScopePanel(data)}
+            ${renderProjectRhythmPanel(data)}
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-5 pb-5 lg:pb-0">
+                <div class="space-y-4">
+                    ${renderTeamStats(data.teamStats)}
+                </div>
+                ${renderExpensesPanel(data.projectExpenses, projectId)}
+            </div>`;
+        }
+
+        function showProjectDetail(id) {
+            const data = getProjectDetailData(id);
+            if (!data) return;
+            destroyProjectAnalyticsCharts();
+            document.getElementById('detail-content').innerHTML = renderProjectDetail(data);
+            document.getElementById('modal-detail').classList.remove('force-hide');
+            lucide.createIcons();
+        }
+
+        function closeDetail() {
+            destroyProjectAnalyticsCharts();
+            document.getElementById('modal-detail').classList.add('force-hide');
+        }
+
+        async function setTaskStatus(projectId, taskName, status) {
+            const project = projects.find(item => item.id === projectId);
+            if (!project || !['todo', 'doing', 'done'].includes(status)) return;
+
+            const currentStatuses = getProjectTaskStatuses(project);
+            currentStatuses[taskName] = status;
+
+            const { error } = await supabaseClient
+                .from('projects')
+                .update({ task_statuses: currentStatuses })
+                .eq('id', projectId)
+                .eq('studio_id', userProfile.studio_id);
+
+            if (error) {
+                return await appAlert(
+                    'Configurazione richiesta',
+                    'Per salvare lo stato delle attività va prima aggiunta la colonna task_statuses nella tabella projects. Ti preparo lo SQL da eseguire su Supabase.',
+                    'danger'
+                );
+            }
+
+            project.task_statuses = currentStatuses;
+            renderProjects();
+            showProjectDetail(projectId);
+        }
+
+        function openEditExpenseModal(expenseId, projectId) {
+            const expense = expenses.find(item => item.id === expenseId);
+            if (!expense) return;
+
+            document.getElementById('edit-expense-id').value = expense.id;
+            document.getElementById('edit-expense-project-id').value = projectId || expense.project_id;
+            document.getElementById('edit-expense-desc').value = expense.description || '';
+            document.getElementById('edit-expense-amount').value = Number(expense.amount || 0).toFixed(2);
+            document.getElementById('modal-edit-expense').classList.remove('force-hide');
+            lucide.createIcons();
+        }
+
+        function closeEditExpenseModal() {
+            document.getElementById('modal-edit-expense').classList.add('force-hide');
+        }
+
+        async function openEditProjectModal(id) {
+            const p = projects.find(x => x.id === id); if(!p) return;
+            projectSetupType = p.project_setup_type === 'normative' ? 'normative' : 'studio';
+            if (isNormativeProjectMode()) {
+                try {
+                    await loadNormativeLibrary();
+                } catch (error) {
+                    return await appAlert('Libreria non disponibile', 'Non è stato possibile caricare le prestazioni parametriche. Riprova tra poco.', 'danger');
+                }
+            }
+            setProjectModalMode('edit');
+            document.getElementById('edit-modal-proj-id').value = id; 
+            document.getElementById('edit-modal-name').value = p.name; 
+            document.getElementById('edit-modal-client').value = p.client || ''; 
+            document.getElementById('edit-modal-budget').value = p.budget;
+            setProjectCostControls(projectCostMode(p), p.project_hourly_cost);
+            const templateSelect = document.getElementById('new-proj-template');
+            if (templateSelect) templateSelect.value = '';
+            editProjectTasks = p.tasks && p.tasks.length > 0 ? [...p.tasks] : [];
+            editProjectTaskBudgets = getProjectTaskBudgets(p);
+            normativeSelectedServices = new Set(
+                isNormativeProjectMode() && Array.isArray(p.normative_data?.selected_services)
+                    ? p.normative_data.selected_services.map(service => service.code).filter(Boolean)
+                    : []
+            );
+            normativeCalculationState = isNormativeProjectMode()
+                ? {
+                    workValue: Number(p.normative_data?.work_value || 0),
+                    inhabitants: Number(p.normative_data?.inhabitants || 0),
+                    categoryId: p.normative_data?.category?.id || '1',
+                    destinationId: p.normative_data?.destination?.id || '',
+                    complexityId: p.normative_data?.complexity?.id || ''
+                }
+                : { workValue: 0, inhabitants: 0, categoryId: '1', destinationId: '', complexityId: '' };
+            normativeOpenPhaseIds = new Set();
+            const taskBudgetTotal = getTaskBudgetsTotal(editProjectTasks, editProjectTaskBudgets);
+            projectBudgetMode = isNormativeProjectMode() || taskBudgetTotal > 0 ? 'auto' : 'manual';
+            refreshProjectBudgetModeUI();
+            renderNewProjectUI();
+            renderEditProjectTasks();
+            document.getElementById('modal-detail').classList.add('force-hide'); 
+            document.getElementById('modal-edit-project').classList.remove('force-hide'); 
+            resetProjectModalScroll();
+            lucide.createIcons();
+            projectModalUsesNormativeHandoff = false;
+            markProjectModalClean();
+        }
+
+        function renderEditProjectTasks() {
+            renderProjectModalTasks();
+            lucide.createIcons();
+        }
+
+        async function closeEditProjectModal(force = false) {
+            if (projectModalCloseInProgress) return false;
+            if (!force && projectModalHasUnsavedChanges()) {
+                projectModalCloseInProgress = true;
+                const confirmed = await appConfirm(
+                    'Chiudere senza salvare?',
+                    'Sei sicuro di voler chiudere? Perderai tutti i dati inseriti o le modifiche non salvate.',
+                    'danger'
+                );
+                projectModalCloseInProgress = false;
+                if (!confirmed) return false;
+            }
+            if (projectModalUsesNormativeHandoff) await clearNormativeQuoteHandoff();
+            hideEditProjectModal();
+            return true;
+        }
+        
+        async function saveModalProjectEdit() {
+            const id = document.getElementById('edit-modal-proj-id').value; 
+            if (!id) return createNewProject();
+            if (isNormativeProjectMode()) syncNormativeTasksFromSelection();
+            else if (projectBudgetMode === 'auto') fillProjectBudgetFromTaskBudgets(false);
+            const normativeCalculation = isNormativeProjectMode() ? getNormativeCalculation() : null;
+            const name = document.getElementById('edit-modal-name').value.trim(); 
+            const client = document.getElementById('edit-modal-client').value.trim(); 
+            const budget = normativeCalculation ? normativeCalculation.total : (parseFloat(document.getElementById('edit-modal-budget').value) || 0);
+            let costSettings;
+            try { costSettings = readProjectCostControls(); }
+            catch (error) { return await appAlert('Costo orario', error.message, 'danger'); }
+            if(!name) return await appAlert("Attenzione", "Inserisci il nome", "danger"); 
+            if (isNormativeProjectMode() && normativeCalculation.workValue <= 0) {
+                return await appAlert("Attenzione", "Inserisci il valore dell’opera", "danger");
+            }
+            if (isNormativeProjectMode() && ['Qa.0.01', 'Qa.0.02'].some(code => normativeSelectedServices.has(code)) && normativeCalculation.inhabitants <= 0) {
+                return await appAlert("Attenzione", "Inserisci il numero di abitanti richiesto dalla prestazione urbanistica selezionata", "danger");
+            }
+            if(editProjectTasks.length === 0) {
+                return await appAlert(
+                    "Attenzione",
+                    isNormativeProjectMode() ? "Seleziona almeno una prestazione parametrica" : "Configura almeno un'attività",
+                    "danger"
+                );
+            }
+            editProjectTaskBudgets = isNormativeProjectMode()
+                ? { ...normativeCalculation.taskBudgets }
+                : collectVisibleTaskBudgets('edit');
+            const originalProject = projects.find(project => project.id === id);
+            const hadTaskBudgets = originalProject && Object.keys(getProjectTaskBudgets(originalProject)).length > 0;
+            const updatePayload = { name, client, budget, tasks: editProjectTasks, ...costSettings };
+            if (hadTaskBudgets || Object.keys(editProjectTaskBudgets).length > 0) updatePayload.task_budgets = editProjectTaskBudgets;
+            if (isNormativeProjectMode()) {
+                updatePayload.project_setup_type = 'normative';
+                updatePayload.normative_data = {
+                    reference: NORMATIVE_PROJECT_REFERENCE,
+                    library_version: NORMATIVE_PROJECT_LIBRARY_VERSION,
+                    work_value: normativeCalculation.workValue,
+                    inhabitants: normativeCalculation.inhabitants,
+                    category: {
+                        id: normativeCalculation.category?.id,
+                        name: normativeCalculation.category?.name
+                    },
+                    destination: {
+                        id: normativeCalculation.destination?.id,
+                        name: normativeCalculation.destination?.name
+                    },
+                    complexity: {
+                        id: normativeCalculation.complexity?.id,
+                        name: normativeCalculation.complexity?.label,
+                        g: normativeCalculation.complexity?.g
+                    },
+                    parameter_p: normativeCalculation.parameterP,
+                    compensation: normativeCalculation.compensation,
+                    accessory_rate: normativeCalculation.accessoryRate,
+                    accessory_expenses: normativeCalculation.accessoryExpenses,
+                    quote_total: normativeCalculation.quoteTotal,
+                    selected_services: getSelectedNormativeServicesSnapshot()
+                };
+            }
+            const { error } = await supabaseClient.from('projects').update(updatePayload).eq('id', id); 
+            if (error) {
+                const needsNormativeSetup = isNormativeProjectMode() && /project_setup_type|normative_data/i.test(error.message || '');
+                const needsCostModeSetup = /cost_mode|project_hourly_cost/i.test(error.message || '');
+                return await appAlert(
+                    "Configurazione richiesta",
+                    needsNormativeSetup
+                        ? "Per modificare progetti parametrici esegui prima lo script SQL dedicato in Supabase."
+                        : needsCostModeSetup
+                            ? "Per salvare il costo orario della commessa serve prima l’aggiornamento del database."
+                        : "Per salvare il Piano costi va prima aggiunta la colonna task_budgets in Supabase. Puoi eseguire lo script SQL dedicato e riprovare.",
+                    "danger"
+                );
+            }
+            await supabaseClient.from('entries').update({ project_name: name }).eq('project_id', id);
+            await fetchProjects(); await fetchEntries();
+            await closeEditProjectModal(true); showProjectDetail(id);
+        }
+
+        async function addExpense(projectId) {
+            const desc = document.getElementById('exp-desc').value.trim();
+            const amount = parseFloat(document.getElementById('exp-amount').value);
+            
+            if(!desc || !amount || amount <= 0) return await appAlert("Attenzione", "Inserisci una descrizione e un importo valido.", "danger");
+            
+            await supabaseClient.from('expenses').insert([{
+                studio_id: userProfile.studio_id,
+                project_id: projectId,
+                description: desc,
+                amount: amount,
+                user_name: userProfile.full_name,
+                created_at: new Date().toISOString()
+            }]);
+            
+            await fetchExpenses();
+            showProjectDetail(projectId);
+        }
+
+        async function deleteExpense(expId, projectId) {
+            if(await appConfirm("Elimina Spesa", "Vuoi davvero eliminare questa spesa?", "danger")) {
+                await supabaseClient.from('expenses').delete().eq('id', expId);
+                await fetchExpenses();
+                showProjectDetail(projectId);
+            }
+        }
+
+        async function saveExpenseEdit() {
+            const expenseId = document.getElementById('edit-expense-id').value;
+            const projectId = document.getElementById('edit-expense-project-id').value;
+            const description = document.getElementById('edit-expense-desc').value.trim();
+            const amount = parseFloat(document.getElementById('edit-expense-amount').value);
+
+            if (!description || !amount || amount <= 0) {
+                return await appAlert("Attenzione", "Inserisci una descrizione e un importo valido.", "danger");
+            }
+
+            const { error } = await supabaseClient
+                .from('expenses')
+                .update({ description, amount })
+                .eq('id', expenseId)
+                .eq('studio_id', userProfile.studio_id);
+
+            if (error) return await appAlert("Errore", error.message, "danger");
+
+            closeEditExpenseModal();
+            await fetchExpenses();
+            showProjectDetail(projectId);
+            await appAlert("Fatto", "Spesa aggiornata correttamente.", "success");
+        }
+
+        function toggleAnalyticsPanel() {
+            const panel = document.getElementById('analytics-details');
+            const button = document.getElementById('btn-toggle-analytics');
+            const label = document.getElementById('analytics-toggle-label');
+            const icon = document.getElementById('analytics-toggle-icon');
+            if (!panel || !button) return;
+
+            const shouldOpen = panel.classList.contains('force-hide');
+            panel.classList.toggle('force-hide', !shouldOpen);
+            button.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+            button.classList.toggle('is-open', shouldOpen);
+            if (label) label.innerText = shouldOpen ? 'Chiudi grafici' : 'Apri grafici';
+            icon?.classList.toggle('rotate-180', shouldOpen);
+
+            if (shouldOpen) {
+                window.archTimeAnalytics?.track('financial_analysis_opened', {
+                    active_project_count: projects.filter(project => !project.is_archived && !project.is_demo).length
+                });
+                setTimeout(renderStrategicCharts, 30);
+            } else {
+                ['marginTrend', 'risk', 'tasks'].forEach(chartKey => {
+                    if (!charts[chartKey]) return;
+                    charts[chartKey].destroy();
+                    charts[chartKey] = null;
+                });
+            }
+        }
+
+        function renderStrategicCharts() {
+            if(!document.body.classList.contains('is-admin')) return;
+            const activeProjects = projects.filter(p => !p.is_archived);
+            const activeProjectIds = new Set(activeProjects.map(project => project.id));
+            const projectRows = activeProjects.map(project => {
+                const hoursCost = entries.filter(entry => entry.project_id === project.id).reduce((sum, entry) => sum + Number(entry.rate || 0), 0);
+                const expenseCost = expenses.filter(expense => expense.project_id === project.id).reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
+                const spent = hoursCost + expenseCost;
+                const budget = Number(project.budget || 0);
+                const margin = budget - spent;
+                const percent = budget > 0 ? (spent / budget) * 100 : (spent > 0 ? 100 : 0);
+                const costSummary = getProjectCostSummary(project);
+                const visualStatus = getProjectVisualStatus(project, costSummary);
+                const analyticsStatus = budget <= 0 && spent > 0
+                    ? { ...visualStatus, tone: 'warning', label: 'Budget da impostare' }
+                    : visualStatus;
+                return { project, budget, spent, margin, percent, hoursCost, expenseCost, economicReady: costSummary.economicReady, visualStatus: analyticsStatus };
+            });
+
+            const totalBudget = projectRows.reduce((sum, row) => sum + row.budget, 0);
+            const totalSpent = projectRows.reduce((sum, row) => sum + row.spent, 0);
+            const activeEntries = entries.filter(entry => activeProjectIds.has(entry.project_id));
+            const activeExpenses = expenses.filter(expense => activeProjectIds.has(expense.project_id));
+            const archivedProjects = projects.filter(project => project.is_archived);
+            const archivedProjectIds = new Set(archivedProjects.map(project => project.id));
+            const archivedBudget = archivedProjects.reduce((sum, project) => sum + Number(project.budget || 0), 0);
+            const archivedCosts = entries
+                .filter(entry => archivedProjectIds.has(entry.project_id))
+                .reduce((sum, entry) => sum + Number(entry.rate || 0), 0)
+                + expenses
+                    .filter(expense => archivedProjectIds.has(expense.project_id))
+                    .reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
+            const profit = archivedBudget - archivedCosts;
+            const margin = totalBudget - totalSpent;
+            const incompleteProjects = projectRows.filter(row => !getProjectCostSummary(row.project).economicReady);
+            const hasIncompleteCosts = incompleteProjects.length > 0;
+            const utilization = totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0;
+            const alignedProjects = projectRows.filter(row => row.budget > 0 && row.visualStatus.tone === 'healthy');
+            const attentionProjects = projectRows.filter(row => (
+                row.budget > 0
+                && row.margin >= 0
+                && row.visualStatus.tone !== 'pending'
+                && row.visualStatus.tone !== 'healthy'
+            ));
+            const overBudgetProjects = projectRows.filter(row => row.budget > 0 && row.margin < 0 && row.visualStatus.tone !== 'pending');
+            const criticalAttentionProjects = attentionProjects.filter(row => row.visualStatus.tone === 'danger');
+            const alertCount = attentionProjects.length;
+            const taskStats = {};
+            let totalTaskHours = 0;
+            activeEntries.forEach(entry => {
+                const hrs = Number(entry.duration || 0);
+                const taskName = entry.task || 'Altro';
+                if (!taskStats[taskName]) taskStats[taskName] = { hours: 0, cost: 0 };
+                taskStats[taskName].hours += hrs;
+                taskStats[taskName].cost += Number(entry.rate || 0);
+                totalTaskHours += hrs;
+            });
+            const topTasks = Object.entries(taskStats).sort((a,b) => b[1].hours - a[1].hours).slice(0, 6);
+            const summaryWeekStart = new Date();
+            summaryWeekStart.setHours(0, 0, 0, 0);
+            const summaryDay = summaryWeekStart.getDay() || 7;
+            summaryWeekStart.setDate(summaryWeekStart.getDate() - summaryDay + 1);
+            const summaryWeekCost = activeEntries
+                .filter(entry => new Date(entry.created_at) >= summaryWeekStart)
+                .reduce((sum, entry) => sum + Number(entry.rate || 0), 0)
+                + activeExpenses
+                    .filter(expense => new Date(expense.created_at) >= summaryWeekStart)
+                    .reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
+
+            const profitCard = document.getElementById('card-profit'); 
+            const profitLabel = document.getElementById('label-profit');
+            const profitValue = document.getElementById('kpi-profit');
+
+            profitValue.innerText = formatMoney(profit);
+            profitLabel.innerText = profit < 0 ? 'Perdita lavori chiusi' : 'Utile lavori chiusi';
+            profitValue.classList.toggle('text-red-600', profit < 0);
+            profitValue.classList.toggle('text-emerald-700', profit >= 0);
+            profitCard?.classList.toggle('analytics-kpi-danger', profit < 0);
+
+            const marginEl = document.getElementById('kpi-margin'); 
+            marginEl.innerText = hasIncompleteCosts ? 'Da completare' : formatMoney(margin);
+            marginEl.classList.toggle('text-red-600', !hasIncompleteCosts && margin < 0);
+            marginEl.classList.toggle('text-primary-600', !hasIncompleteCosts && margin >= 0);
+            marginEl.classList.toggle('text-slate-500', hasIncompleteCosts);
+            document.getElementById('kpi-margin-note').innerText = hasIncompleteCosts
+                ? `${incompleteProjects.length} ${incompleteProjects.length === 1 ? 'commessa con dati economici incompleti' : 'commesse con dati economici incompleti'}`
+                : activeProjects.length === 1
+                ? 'Su 1 lavoro attivo'
+                : `Su ${activeProjects.length} lavori attivi`;
+            document.getElementById('kpi-active-costs').innerText = formatMoney(totalSpent);
+
+            const studioHealthStrip = document.getElementById('studio-health-strip');
+            const studioHealthTrack = document.getElementById('studio-health-track');
+            const studioHealthMarker = document.getElementById('studio-health-marker');
+            const studioHealthValue = document.getElementById('studio-health-value');
+            const studioHealthBudget = document.getElementById('studio-health-budget');
+            const studioHealthResidual = document.getElementById('studio-health-residual');
+            const hasGlobalBudget = totalBudget > 0;
+            const roundedUtilization = Math.round(utilization);
+            const markerPosition = hasGlobalBudget ? Math.max(1, Math.min(utilization, 99)) : 1;
+
+            studioHealthStrip?.classList.toggle('is-empty', !hasGlobalBudget || hasIncompleteCosts);
+            if (studioHealthMarker) studioHealthMarker.style.left = `${markerPosition}%`;
+            if (studioHealthValue) {
+                studioHealthValue.innerText = hasGlobalBudget && !hasIncompleteCosts ? `${roundedUtilization}%` : '-';
+                studioHealthValue.classList.toggle('is-over-budget', hasGlobalBudget && !hasIncompleteCosts && utilization > 100);
+            }
+            if (studioHealthBudget) studioHealthBudget.innerText = hasGlobalBudget
+                ? `Budget complessivo ${formatMoney(totalBudget, 0)}`
+                : 'Budget complessivo da impostare';
+            if (studioHealthResidual) {
+                studioHealthResidual.innerText = hasIncompleteCosts ? 'Dati economici da completare' : !hasGlobalBudget
+                    ? 'Budget da impostare'
+                    : (margin < 0 ? `Budget superato di ${formatMoney(Math.abs(margin), 0)}` : `Margine residuo ${formatMoney(margin, 0)}`);
+                studioHealthResidual.classList.toggle('is-negative', hasGlobalBudget && !hasIncompleteCosts && margin < 0);
+            }
+            if (studioHealthTrack) {
+                studioHealthTrack.setAttribute('aria-valuenow', String(hasGlobalBudget ? Math.min(roundedUtilization, 100) : 0));
+                studioHealthTrack.setAttribute('aria-valuetext', hasGlobalBudget
+                    ? `${roundedUtilization}% del budget complessivo assorbito`
+                    : 'Budget dei progetti attivi non disponibile');
+            }
+
+            document.getElementById('analytics-inline-aligned').innerText = String(alignedProjects.length);
+            document.getElementById('analytics-inline-alerts').innerText = String(alertCount);
+            document.getElementById('analytics-inline-over-budget').innerText = String(overBudgetProjects.length);
+            document.getElementById('analytics-inline-week-cost').innerText = formatMoney(summaryWeekCost, 0);
+            const topTaskSummary = document.getElementById('analytics-inline-top-task');
+            topTaskSummary.innerText = topTasks[0]?.[0] || '-';
+            topTaskSummary.title = topTasks[0]?.[0] || 'Nessuna attività registrata';
+
+            const inlineAlerts = document.getElementById('analytics-inline-alerts');
+            inlineAlerts.classList.toggle('is-danger', criticalAttentionProjects.length > 0);
+            inlineAlerts.classList.toggle('is-warning', criticalAttentionProjects.length === 0 && alertCount > 0);
+            document.getElementById('analytics-inline-over-budget')?.classList.toggle('is-danger', overBudgetProjects.length > 0);
+            const analyticsDetails = document.getElementById('analytics-details');
+            if (!analyticsDetails || analyticsDetails.classList.contains('force-hide')) {
+                ['marginTrend', 'risk', 'tasks'].forEach(chartKey => {
+                    if (!charts[chartKey]) return;
+                    charts[chartKey].destroy();
+                    charts[chartKey] = null;
+                });
+                lucide.createIcons();
+                return;
+            }
+
+            const theme = THEMES[currentBusinessType];
+            Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+            Chart.defaults.color = '#64748b';
+            const chartTooltip = {
+                backgroundColor: '#0f172a',
+                titleFont: { weight: 'bold', size: 12 },
+                bodyFont: { weight: '600', size: 11 },
+                padding: 10,
+                cornerRadius: 7
+            };
+
+            const gridColor = '#e8edf2';
+            const tickFont = { size: 10, weight: '600' };
+            const sortedRiskRows = [...projectRows]
+                .sort((a, b) => {
+                    const tones = { danger: 3, warning: 2, pending: 1, healthy: 0 };
+                    const aGap = Number(a.visualStatus.rhythm?.gap || a.percent);
+                    const bGap = Number(b.visualStatus.rhythm?.gap || b.percent);
+                    return tones[b.visualStatus.tone] - tones[a.visualStatus.tone] || bGap - aGap || b.spent - a.spent;
+                })
+                .slice(0, 6);
+
+            const priorityList = document.getElementById('analytics-priority-list');
+            if (priorityList) {
+                priorityList.innerHTML = sortedRiskRows.length > 0
+                    ? sortedRiskRows.map(row => {
+                        const tone = row.visualStatus.tone;
+                        const state = row.visualStatus.label;
+                        const progressText = row.visualStatus.rhythm
+                            ? `costi ${Math.round(row.percent)}% · avanzamento ${Math.round(row.visualStatus.rhythm.operationalPercent)}%`
+                            : `${Math.round(row.percent)}% assorbito`;
+                        return `
+                            <button type="button" class="analytics-priority-row" data-ui-action="show-project-detail" data-project-id="${escapeAttr(row.project.id)}">
+                                <span class="analytics-priority-dot is-${tone}" aria-hidden="true"></span>
+                                <span class="analytics-priority-main">
+                                    <strong>${escapeHtml(row.project.name)}</strong>
+                                    <small>${escapeHtml(state)} · ${escapeHtml(progressText)}</small>
+                                </span>
+                                <span class="analytics-priority-value ${tone === 'danger' ? 'is-danger' : ''}">${row.economicReady ? formatMoney(row.margin, 0) : 'Da completare'}</span>
+                                <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                            </button>`;
+                    }).join('')
+                    : `<div class="analytics-priority-empty"><i data-lucide="folder-kanban"></i><span>Le priorità compariranno quando creerai il primo lavoro.</span></div>`;
+            }
+
+            const weekStarts = [];
+            const currentWeekStart = new Date();
+            currentWeekStart.setHours(0, 0, 0, 0);
+            const currentDay = currentWeekStart.getDay() || 7;
+            currentWeekStart.setDate(currentWeekStart.getDate() - currentDay + 1);
+            const start = new Date(currentWeekStart);
+            start.setDate(start.getDate() - 7 * 7);
+            for (let i = 0; i < 8; i++) {
+                const week = new Date(start);
+                week.setDate(start.getDate() + i * 7);
+                weekStarts.push(week);
+            }
+
+            const weeklyCosts = weekStarts.map((weekStart, index) => {
+                const nextWeek = new Date(weekStart);
+                nextWeek.setDate(weekStart.getDate() + 7);
+                const labor = activeEntries
+                    .filter(entry => {
+                        const date = new Date(entry.created_at);
+                        return date >= weekStart && date < nextWeek;
+                    })
+                    .reduce((sum, entry) => sum + Number(entry.rate || 0), 0);
+                const extras = activeExpenses
+                    .filter(expense => {
+                        const date = new Date(expense.created_at);
+                        return date >= weekStart && date < nextWeek;
+                    })
+                    .reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
+                return {
+                    label: index === weekStarts.length - 1 ? 'Questa settimana' : weekStart.toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit' }),
+                    labor,
+                    extras,
+                    total: labor + extras
+                };
+            });
+
+            const currentWeekCost = weeklyCosts[weeklyCosts.length - 1]?.total || 0;
+            const trendLabel = document.getElementById('analytics-trend-label');
+            trendLabel.innerText = currentWeekCost > 0 ? `Settimana ${formatMoney(currentWeekCost, 0)}` : 'Settimana senza costi';
+            trendLabel.classList.toggle('is-active', currentWeekCost > 0);
+
+            const toggleChartEmpty = (chartKey, canvasId, emptyId, hasData) => {
+                const canvas = document.getElementById(canvasId);
+                const empty = document.getElementById(emptyId);
+                canvas?.parentElement?.classList.toggle('force-hide', !hasData);
+                empty?.classList.toggle('force-hide', hasData);
+                if (!hasData && charts[chartKey]) {
+                    charts[chartKey].destroy();
+                    charts[chartKey] = null;
+                }
+                return hasData && canvas;
+            };
+
+            const hasWeeklyCosts = weeklyCosts.some(week => week.total > 0);
+            const hasRiskRows = sortedRiskRows.some(row => row.budget > 0 || row.spent > 0);
+            const hasTasks = topTasks.some(task => task[1].hours > 0);
+
+            if(charts.marginTrend) charts.marginTrend.destroy();
+            if (toggleChartEmpty('marginTrend', 'chart-margin-trend', 'empty-margin-trend', hasWeeklyCosts)) charts.marginTrend = new Chart(document.getElementById('chart-margin-trend'), {
+                type: 'bar',
+                data: { 
+                    labels: weeklyCosts.map(item => item.label),
+                    datasets: [
+                        { label: 'Lavoro', data: weeklyCosts.map(item => item.labor), backgroundColor: theme.chartMainColor, borderRadius: 4, borderSkipped: false },
+                        { label: 'Spese extra', data: weeklyCosts.map(item => item.extras), backgroundColor: '#f59e0b', borderRadius: 4, borderSkipped: false }
+                    ]
+                }, 
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { stacked: true, grid: { display: false }, ticks: { font: tickFont, maxRotation: 0, autoSkip: true } },
+                        y: { stacked: true, beginAtZero: true, grid: { color: gridColor }, ticks: { callback: value => formatMoney(value, 0), font: { size: 10 } } }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom', align: 'start', labels: { usePointStyle: true, pointStyle: 'rectRounded', boxWidth: 7, boxHeight: 7, padding: 16, font: tickFont } },
+                        tooltip: { ...chartTooltip, callbacks: { label: context => `${context.dataset.label}: ${formatMoney(context.raw, 0)}`, footer: items => `Totale: ${formatMoney(weeklyCosts[items[0].dataIndex].total, 0)}` } }
+                    }
+                } 
+            });
+
+            if(charts.risk) charts.risk.destroy();
+            if (toggleChartEmpty('risk', 'chart-risk', 'empty-risk', hasRiskRows)) charts.risk = new Chart(document.getElementById('chart-risk'), {
+                type: 'bar', 
+                data: { 
+                    labels: sortedRiskRows.map(row => row.project.name), 
+                    datasets: [
+                        { label: 'Budget', data: sortedRiskRows.map(row => row.budget), backgroundColor: '#dbe2ea', borderRadius: 4, barThickness: 9 },
+                        { label: 'Costi', data: sortedRiskRows.map(row => row.spent), backgroundColor: sortedRiskRows.map(row => row.margin < 0 ? '#dc2626' : (row.percent >= 75 ? '#d97706' : theme.chartMainColor)), borderRadius: 4, barThickness: 9 }
+                    ]
+                }, 
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { beginAtZero: true, grid: { color: gridColor }, ticks: { callback: value => formatMoney(value, 0), font: { size: 10 } } },
+                        y: { grid: { display: false }, ticks: { font: tickFont } }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom', align: 'start', labels: { usePointStyle: true, pointStyle: 'rectRounded', boxWidth: 7, boxHeight: 7, padding: 14, font: tickFont } },
+                        tooltip: {
+                            ...chartTooltip,
+                            callbacks: {
+                                label: context => `${context.dataset.label}: ${formatMoney(context.raw, 0)}`,
+                                footer: items => {
+                                    const row = sortedRiskRows[items[0].dataIndex];
+                                    return row.economicReady ? `Margine: ${formatMoney(row.margin, 0)} · ${Math.round(row.percent)}% assorbito` : 'Dati economici da completare';
+                                }
+                            }
+                        }
+                    }
+                } 
+            });
+
+            if(charts.tasks) charts.tasks.destroy();
+            if (toggleChartEmpty('tasks', 'chart-tasks-dist', 'empty-tasks', hasTasks)) charts.tasks = new Chart(document.getElementById('chart-tasks-dist'), {
+                type: 'bar', 
+                data: { 
+                    labels: topTasks.map(task => task[0].length > 22 ? `${task[0].slice(0, 21)}…` : task[0]),
+                    datasets: [{
+                        label: 'Ore registrate',
+                        data: topTasks.map(task => task[1].hours),
+                        backgroundColor: theme.chartMainColor,
+                        borderRadius: 4,
+                        barThickness: 12
+                    }]
+                }, 
+                options: { 
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { grid: { color: gridColor }, ticks: { callback: value => `${value}h`, font: { size: 10 } } },
+                        y: { grid: { display: false }, ticks: { font: tickFont } }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            ...chartTooltip,
+                            callbacks: {
+                                title: items => topTasks[items[0].dataIndex][0],
+                                label: context => {
+                                    const task = topTasks[context.dataIndex];
+                                    const percent = totalTaskHours > 0 ? Math.round((task[1].hours / totalTaskHours) * 100) : 0;
+                                    return `${formatTime(task[1].hours)} · ${percent}% del tempo · ${formatMoney(task[1].cost, 0)}`;
+                                }
+                            }
+                        }
+                    } 
+                } 
+            });
+            lucide.createIcons();
+        }
+

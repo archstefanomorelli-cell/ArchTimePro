@@ -61,6 +61,9 @@ jobs:
           cp -R assets/js dist/assets/js
           cp -R assets/public-screens dist/assets/public-screens
           cp -R assets/vendor dist/assets/vendor
+          # Isolated Next beta; no links or changes to the public app entry point.
+          mkdir -p dist/next
+          cp next/*.html next/*.js next/*.css dist/next/
           cp -R downloads dist/downloads
           cp -R tutorial dist/tutorial
           mkdir -p dist/docs/video-guide

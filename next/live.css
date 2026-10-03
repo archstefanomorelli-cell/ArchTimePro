@@ -1,0 +1,4 @@
+/* Real project names and cost labels may be longer than the demo fixtures. */
+body.workflow-contextual #projects-list > .prototype-project-card { min-width: 0; max-width: 100%; }
+body.workflow-contextual .prototype-project-card .project-cost-mode-tag { white-space: normal; overflow-wrap: anywhere; }
+body.workflow-contextual .prototype-project-card p { overflow-wrap: anywhere; }
