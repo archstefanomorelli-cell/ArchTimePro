@@ -3,6 +3,9 @@
     const baseCheckUser = checkUser;
     checkUser = async function () {
         try {
+            const session = await supabaseClient.auth.getSession();
+            if (session.error) throw session.error;
+            if (!session.data?.session?.access_token) return;
             const { data, error } = await supabaseClient.auth.getUser();
             if (!data?.user && (!error || error.name === 'AuthSessionMissingError')) return;
             if (error) throw error;
