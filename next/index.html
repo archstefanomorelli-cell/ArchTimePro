@@ -22,6 +22,7 @@
         params.delete('videoDemo'); params.delete('onboarding'); params.delete('guide'); params.set('prototypeFlow','1');
         history.replaceState(null,'',location.pathname + '?' + params + location.hash);
         document.documentElement.classList.add('theme-pro');
+        if (params.get('typography') !== 'classic') document.documentElement.classList.add('next-type-refined');
     </script>
     <style>
         html.video-demo-boot body { visibility: hidden; }
@@ -43,6 +44,7 @@
     <link rel="stylesheet" href="next/workflow.css">
     <link rel="stylesheet" href="next/contextual-workspace.css?v=2026-10-03-17">
     <link rel="stylesheet" href="next/live.css?v=2026-10-04-01">
+    <link rel="stylesheet" href="next/typography.css?v=2026-10-04-01">
 </head>
 <body class="text-slate-800 pb-20 lg:pb-0">
 

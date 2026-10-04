@@ -1,0 +1,78 @@
+/* Optional Next-only layer. ?typography=classic restores the previous styles. */
+html.next-type-refined body.workflow-contextual {
+    --next-type-ink: #172033;
+    --next-type-muted: #64748b;
+}
+html.next-type-refined body.workflow-contextual :is(h2, h3, h4) {
+    font-weight: 700 !important;
+    letter-spacing: -.015em !important;
+}
+html.next-type-refined body.workflow-contextual :is(label, .prototype-client-label, .prototype-quick-form label > span) {
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    line-height: 1.4;
+}
+html.next-type-refined body.workflow-contextual :is(button, select, input, textarea) {
+    letter-spacing: normal !important;
+}
+html.next-type-refined body.workflow-contextual button {
+    font-weight: 600 !important;
+}
+html.next-type-refined body.workflow-contextual :is(.analytics-kpi h3, .analytics-panel-heading h3) {
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    line-height: 1.4;
+}
+html.next-type-refined body.workflow-contextual :is(.analytics-kpi > p, .analytics-panel-heading p, .context-description, .context-scope-note, .context-results-heading p, .prototype-library-head p) {
+    font-size: 12px !important;
+    font-weight: 400 !important;
+    line-height: 1.5 !important;
+    color: var(--next-type-muted) !important;
+}
+html.next-type-refined body.workflow-contextual .analytics-kpi > p {
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    overflow-wrap: anywhere;
+}
+html.next-type-refined body.workflow-contextual :is(.analytics-kpi-value, .context-hours-metrics strong) {
+    font-weight: 700 !important;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -.025em;
+}
+html.next-type-refined body.workflow-contextual :is(.analytics-summary-metrics small, .context-eyebrow, .prototype-option-kicker, .prototype-full-setup-label) {
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    line-height: 1.4;
+}
+html.next-type-refined body.workflow-contextual :is(.analytics-priority-main strong, .prototype-cash-exposure-row strong, .prototype-library-row strong) {
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    line-height: 1.4;
+}
+html.next-type-refined body.workflow-contextual :is(.analytics-priority-main small, .prototype-cash-exposure-row small, .prototype-library-row p, .prototype-client-row p, #team-list > div > div > p:not(.context-team-hourly-cost)) {
+    font-size: 11px !important;
+    font-weight: 400 !important;
+    line-height: 1.5 !important;
+    color: var(--next-type-muted) !important;
+}
+html.next-type-refined body.workflow-contextual :is(.prototype-cash-filters button, .prototype-cash-expand, .prototype-list-toggle, .prototype-library-create, .context-secondary) {
+    font-size: 12px !important;
+}
+html.next-type-refined body.workflow-contextual :is(.workflow-log table th, .prototype-rhythm-alert > p) {
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+}
+@media (max-width: 639px) {
+    html.next-type-refined body.workflow-contextual .analytics-summary-metrics small { font-size: 10px !important; }
+    html.next-type-refined body.workflow-contextual .prototype-library-create { font-size: 0 !important; }
+    html.next-type-refined body.workflow-contextual .prototype-cash-filters button { font-size: 11px !important; white-space: normal; }
+}
