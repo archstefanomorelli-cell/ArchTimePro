@@ -791,116 +791,103 @@
             : `<div class="analytics-priority-empty"><i data-lucide="circle-check-big"></i><span>Nessun avviso di fatturazione.</span></div>`;
     }
 
-    function decorateFinancialAnalytics() {
-        const active = projects.filter(project => !project.is_archived);
-        const activeIds = new Set(active.map(project => project.id));
-        const costs = entries.filter(entry => activeIds.has(entry.project_id)).reduce((sum, entry) => sum + Number(entry.rate || 0), 0)
-            + expenses.filter(expense => activeIds.has(expense.project_id)).reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
-        const collected = totalCollected(active);
-        const activeBudget = active.reduce((sum, project) => sum + Number(project.budget || 0), 0);
-
-        const costCard = document.getElementById('card-profit');
-        const costLabel = document.getElementById('label-profit');
-        const costValue = document.getElementById('kpi-profit');
-        const marginValue = document.getElementById('kpi-margin');
-        const cashCard = document.querySelector('.analytics-primary-grid .analytics-kpi-costs');
-        const cashLabel = cashCard?.querySelector('h3');
-        const cashValue = document.getElementById('kpi-active-costs');
-        if (costLabel) costLabel.textContent = 'Costi lavori attivi';
-        if (costValue) { costValue.textContent = currency(costs); costValue.className = 'analytics-kpi-value text-slate-800'; }
-        if (marginValue) marginValue.className = `analytics-kpi-value ${active.some(project => !getProjectCostSummary(project).economicReady) ? 'text-slate-500' : (activeBudget - costs < 0 ? 'text-red-600' : 'text-emerald-700')}`;
-        if (costCard) { costCard.classList.remove('analytics-kpi-danger'); costCard.querySelector('p')?.replaceChildren(document.createTextNode('Ore e spese registrate')); }
-        if (cashLabel) cashLabel.textContent = 'Incasso lavori attivi';
-        if (cashValue) { cashValue.textContent = currency(collected); cashValue.className = 'analytics-kpi-value text-blue-700'; }
-        const cashNote = cashCard?.querySelector('p');
-        if (cashNote) cashNote.textContent = activeBudget > 0 ? `${Math.round(collected / activeBudget * 100)}% del valore attivo` : 'Nessun incasso registrato';
-
-        const cashRows = active.map(project => {
-            const labor = entries.filter(entry => entry.project_id === project.id).reduce((sum, entry) => sum + Number(entry.rate || 0), 0);
-            const extras = expenses.filter(expense => expense.project_id === project.id).reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
-            const projectCosts = labor + extras;
-            const projectCollected = paymentTotals(project).collected;
-            return { project, costs: projectCosts, collected: projectCollected, balance: projectCollected - projectCosts };
-        }).sort((a, b) => a.balance - b.balance || a.project.name.localeCompare(b.project.name, 'it'));
-        const hasCashData = cashRows.some(row => row.costs > 0 || row.collected > 0);
-        const filteredCashRows = cashRows.filter(row => cashAnalyticsFilter === 'exposed'
-            ? row.balance < -0.5
-            : cashAnalyticsFilter === 'ahead'
-                ? row.balance > 0.5
-                : true);
-        const chartCashRows = filteredCashRows.slice(0, 6);
-        const visibleCashRows = cashAnalyticsExpanded ? filteredCashRows : chartCashRows;
-        const hasFilteredCashData = chartCashRows.some(row => row.costs > 0 || row.collected > 0);
-        const cashList = document.getElementById('analytics-cash-exposure-list');
-        const cashControls = document.getElementById('analytics-cash-controls');
-        const cashPosition = document.getElementById('analytics-cash-position');
-        const cashNet = cashRows.reduce((sum, row) => sum + row.balance, 0);
-        const inlineCashPosition = document.getElementById('analytics-inline-week-cost');
-        if (inlineCashPosition) {
-            const isExposed = cashNet < -0.5;
-            const isNeutral = Math.abs(cashNet) < 0.5;
-            inlineCashPosition.className = isNeutral ? 'is-cash-neutral' : isExposed ? 'is-cash-exposed' : 'is-cash-ahead';
-            inlineCashPosition.textContent = isNeutral
-                ? 'Costi coperti'
-                : `${cashNet > 0 ? '+' : '-'}${currency(Math.abs(cashNet))} ${isExposed ? 'esposizione' : 'anticipo'}`;
-            inlineCashPosition.title = isNeutral
-                ? 'Gli incassi coprono i costi sostenuti'
-                : isExposed
-                    ? `Esposizione finanziaria di ${currency(Math.abs(cashNet))}`
-                    : `Anticipo di cassa di ${currency(cashNet)}`;
-        }
-        if (cashPosition) {
-            cashPosition.className = `analytics-status-chip ${cashNet < 0 ? 'is-cash-exposed' : 'is-cash-ahead'}`;
-            cashPosition.textContent = cashNet < 0 ? `${currency(Math.abs(cashNet))} esposti` : `${currency(cashNet)} in anticipo`;
-        }
-        if (cashControls) {
-            const filters = [
-                ['all', 'Tutte'],
-                ['exposed', 'In esposizione'],
-                ['ahead', 'In anticipo']
-            ];
-            cashControls.innerHTML = `<div class="prototype-cash-filters">${filters.map(([value, label]) => `<button type="button" data-prototype-cash-filter="${value}" class="${cashAnalyticsFilter === value ? 'is-active' : ''}" aria-pressed="${cashAnalyticsFilter === value}">${label}</button>`).join('')}</div>`
-                + (filteredCashRows.length > 6 ? `<button type="button" class="prototype-cash-expand" data-prototype-toggle-cash>${cashAnalyticsExpanded ? 'Riduci' : `Mostra tutte (${filteredCashRows.length})`}<i data-lucide="${cashAnalyticsExpanded ? 'chevron-up' : 'chevron-down'}"></i></button>` : '');
-        }
-        if (cashList) {
-            cashList.classList.toggle('force-hide', !hasFilteredCashData);
-            cashList.classList.toggle('is-expanded', cashAnalyticsExpanded && filteredCashRows.length > 6);
-            cashList.innerHTML = hasFilteredCashData ? visibleCashRows.map(row => {
-                const exposed = row.balance < 0;
-                const quiet = Math.abs(row.balance) < 0.5;
-                const state = quiet ? 'Costi coperti' : exposed ? 'Esposizione finanziaria' : 'Anticipo di cassa';
-                return `<button type="button" class="prototype-cash-exposure-row" data-ui-action="show-project-detail" data-project-id="${escapeAttr(row.project.id)}"><span><strong>${escapeHtml(row.project.name)}</strong><small>Costi ${escapeHtml(currency(row.costs))} · Incassato ${escapeHtml(currency(row.collected))}</small></span><span class="${quiet ? 'is-neutral' : exposed ? 'is-exposed' : 'is-ahead'}"><strong>${quiet ? currency(0) : `${row.balance > 0 ? '+' : '-'}${currency(Math.abs(row.balance))}`}</strong><small>${state}</small></span><i data-lucide="chevron-right"></i></button>`;
-            }).join('') : '';
-        }
-        if (charts.risk) {
-            const chartWrap = document.getElementById('chart-risk')?.parentElement;
-            const empty = document.getElementById('empty-risk');
-            const emptyText = empty?.querySelector('span');
-            if (emptyText) emptyText.textContent = hasCashData ? 'Nessuna commessa corrisponde al filtro selezionato.' : 'Registra costi o incassi per confrontare le commesse.';
-            chartWrap?.classList.toggle('force-hide', !hasFilteredCashData);
-            empty?.classList.toggle('force-hide', hasFilteredCashData);
-            if (!hasCashData) {
-                charts.risk.destroy();
-                charts.risk = null;
-            } else if (hasFilteredCashData) {
-                charts.risk.data.labels = chartCashRows.map(row => row.project.name);
-                charts.risk.data.datasets = [
-                    { label: 'Costi sostenuti', data: chartCashRows.map(row => row.costs), backgroundColor: '#64748b', borderRadius: 4, barThickness: 10 },
-                    { label: 'Incassato', data: chartCashRows.map(row => row.collected), backgroundColor: '#2563eb', borderRadius: 4, barThickness: 10 }
-                ];
-                charts.risk.options.plugins.tooltip.callbacks.footer = items => {
-                    const row = chartCashRows[items[0].dataIndex];
-                    if (Math.abs(row.balance) < 0.5) return 'Costi interamente coperti';
-                    return row.balance < 0
-                        ? `Esposizione: ${currency(Math.abs(row.balance))}`
-                        : `Anticipo di cassa: ${currency(row.balance)}`;
-                };
-                charts.risk.update('none');
-            }
-        }
-        decorateStudioBillingAlerts();
-        lucide.createIcons();
+function decorateFinancialAnalytics() {
+    const active = projects.filter(project => !project.is_archived);
+    const activeIds = new Set(active.map(project => project.id));
+    const configured = active.filter(hasPaymentPlan);
+    const missing = active.filter(project => !hasPaymentPlan(project));
+    const available = configured.length > 0;
+    const partial = available && missing.length > 0;
+    const coverage = `${configured.length} ${configured.length === 1 ? 'commessa' : 'commesse'} su ${active.length}`;
+    const coverageNote = !active.length ? 'Nessuna commessa attiva' : !available ? 'Incassi non configurati' : partial ? `Dati parziali · ${coverage}` : `Incassi configurati · ${coverage}`;
+    const costs = entries.filter(entry => activeIds.has(entry.project_id)).reduce((sum, entry) => sum + Number(entry.rate || 0), 0)
+        + expenses.filter(expense => activeIds.has(expense.project_id)).reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
+    const collected = totalCollected(configured);
+    const activeBudget = active.reduce((sum, project) => sum + Number(project.budget || 0), 0);
+    const costCard = document.getElementById('card-profit');
+    const costValue = document.getElementById('kpi-profit');
+    const marginValue = document.getElementById('kpi-margin');
+    const cashCard = document.querySelector('.analytics-primary-grid .analytics-kpi-costs');
+    const cashValue = document.getElementById('kpi-active-costs');
+    document.getElementById('label-profit').textContent = 'Costi lavori attivi';
+    if (costValue) { costValue.textContent = currency(costs); costValue.className = 'analytics-kpi-value text-slate-800'; }
+    if (marginValue) marginValue.className = `analytics-kpi-value ${active.some(project => !getProjectCostSummary(project).economicReady) ? 'text-slate-500' : (activeBudget - costs < 0 ? 'text-red-600' : 'text-emerald-700')}`;
+    if (costCard) { costCard.classList.remove('analytics-kpi-danger'); costCard.querySelector('p')?.replaceChildren(document.createTextNode('Ore e spese registrate')); }
+    if (cashCard) {
+        cashCard.querySelector('h3').textContent = 'Incasso lavori attivi';
+        cashCard.querySelector('p').textContent = coverageNote;
     }
+    if (cashValue) { cashValue.textContent = available ? currency(collected) : '—'; cashValue.className = `analytics-kpi-value ${available ? 'text-blue-700' : 'text-slate-500'}`; }
+    const costsFor = project => entries.filter(entry => entry.project_id === project.id).reduce((sum, entry) => sum + Number(entry.rate || 0), 0)
+        + expenses.filter(expense => expense.project_id === project.id).reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
+    const cashRows = configured.map(project => {
+        const projectCosts = costsFor(project), projectCollected = paymentTotals(project).collected;
+        return { project, costs: projectCosts, collected: projectCollected, balance: projectCollected - projectCosts };
+    }).sort((a, b) => a.balance - b.balance || a.project.name.localeCompare(b.project.name, 'it'));
+    const filtered = cashRows.filter(row => cashAnalyticsFilter === 'exposed' ? row.balance < -0.5 : cashAnalyticsFilter === 'ahead' ? row.balance > 0.5 : true);
+    const unknownRows = cashAnalyticsFilter === 'all' ? missing.map(project => ({ project, costs: costsFor(project), balance: null, collected: null })) : [];
+    const listRows = filtered.concat(unknownRows);
+    const chartRows = filtered.slice(0, 6);
+    const visibleRows = cashAnalyticsExpanded ? listRows : listRows.slice(0, 6);
+    const hasChartData = chartRows.some(row => row.costs > 0 || row.collected > 0);
+    const cashNet = cashRows.reduce((sum, row) => sum + row.balance, 0);
+    const quiet = Math.abs(cashNet) < 0.5, exposed = cashNet < -0.5;
+    const summary = !available ? 'Non disponibile' : quiet ? 'Costi coperti' : `${currency(Math.abs(cashNet))} ${exposed ? 'esposti' : 'in anticipo'}`;
+    const context = partial ? `${summary} · Dati parziali` : summary;
+    const title = `${coverageNote}. Saldo calcolato solo sulle commesse con incassi configurati e sugli incassi registrati.`;
+    const inline = document.getElementById('analytics-inline-week-cost');
+    const position = document.getElementById('analytics-cash-position');
+    for (const node of [inline, position]) {
+        if (!node) continue;
+        node.className = `${node === position ? 'analytics-status-chip ' : ''}${!available || quiet ? 'is-cash-neutral' : exposed ? 'is-cash-exposed' : 'is-cash-ahead'}`;
+        node.textContent = context; node.title = title;
+    }
+    const panel = document.getElementById('chart-risk')?.closest('.prototype-cash-comparison-panel');
+    const description = panel?.querySelector('.analytics-panel-heading p');
+    if (description) description.textContent = `${coverageNote}. Il confronto esclude le commesse senza incassi configurati.`;
+    const controls = document.getElementById('analytics-cash-controls');
+    if (controls) {
+        const filters = [['all','Tutte'], ['exposed','In esposizione'], ['ahead','In anticipo']];
+        controls.innerHTML = `<div class="prototype-cash-filters">${filters.map(([value,label]) => `<button type="button" data-prototype-cash-filter="${value}" class="${cashAnalyticsFilter === value ? 'is-active' : ''}" aria-pressed="${cashAnalyticsFilter === value}">${label}</button>`).join('')}</div>`
+            + (listRows.length > 6 ? `<button type="button" class="prototype-cash-expand" data-prototype-toggle-cash>${cashAnalyticsExpanded ? 'Riduci' : `Mostra tutte (${listRows.length})`}<i data-lucide="${cashAnalyticsExpanded ? 'chevron-up' : 'chevron-down'}"></i></button>` : '');
+    }
+    const list = document.getElementById('analytics-cash-exposure-list');
+    if (list) {
+        list.classList.toggle('force-hide', !visibleRows.length);
+        list.classList.toggle('is-expanded', cashAnalyticsExpanded && listRows.length > 6);
+        list.innerHTML = visibleRows.map(row => {
+            const unknown = row.balance === null, neutral = !unknown && Math.abs(row.balance) < 0.5;
+            const state = unknown ? 'Incassi non configurati' : neutral ? 'Costi coperti' : row.balance < 0 ? 'Esposizione finanziaria' : 'Anticipo di cassa';
+            const amount = unknown ? '—' : neutral ? currency(0) : `${row.balance > 0 ? '+' : '-'}${currency(Math.abs(row.balance))}`;
+            const note = unknown ? 'Incassi non disponibili' : `Incassato ${currency(row.collected)}`;
+            return `<button type="button" class="prototype-cash-exposure-row" data-ui-action="show-project-detail" data-project-id="${escapeAttr(row.project.id)}"><span><strong>${escapeHtml(row.project.name)}</strong><small>Costi ${escapeHtml(currency(row.costs))} · ${escapeHtml(note)}</small></span><span class="${unknown || neutral ? 'is-neutral' : row.balance < 0 ? 'is-exposed' : 'is-ahead'}"><strong>${escapeHtml(amount)}</strong><small>${state}</small></span><i data-lucide="chevron-right"></i></button>`;
+        }).join('');
+    }
+    const chartWrap = document.getElementById('chart-risk')?.parentElement;
+    const empty = document.getElementById('empty-risk');
+    if (empty?.querySelector('span')) empty.querySelector('span').textContent = !available
+        ? active.length ? 'Incassi non configurati: il confronto non è disponibile.' : 'Nessuna commessa attiva da confrontare.'
+        : filtered.length ? 'Registra costi o incassi sulle commesse configurate per visualizzare il grafico.' : 'Nessuna commessa configurata corrisponde al filtro selezionato.';
+    chartWrap?.classList.toggle('force-hide', !hasChartData);
+    empty?.classList.toggle('force-hide', hasChartData);
+    if (charts.risk) {
+        if (!hasChartData) { charts.risk.destroy(); charts.risk = null; }
+        else {
+            charts.risk.data.labels = chartRows.map(row => row.project.name);
+            charts.risk.data.datasets = [
+                { label: 'Costi sostenuti', data: chartRows.map(row => row.costs), backgroundColor: '#64748b', borderRadius: 4, barThickness: 10 },
+                { label: 'Incassato', data: chartRows.map(row => row.collected), backgroundColor: '#2563eb', borderRadius: 4, barThickness: 10 }
+            ];
+            charts.risk.options.plugins.tooltip.callbacks.footer = items => {
+                const row = chartRows[items[0].dataIndex];
+                return Math.abs(row.balance) < 0.5 ? 'Costi interamente coperti dagli incassi registrati' : row.balance < 0 ? `Esposizione: ${currency(Math.abs(row.balance))}` : `Anticipo di cassa: ${currency(row.balance)}`;
+            };
+            charts.risk.update('none');
+        }
+    }
+    decorateStudioBillingAlerts();
+    lucide.createIcons();
+}
 
     function decorateProjectFinancialChart(projectId) {
         const project = projects.find(item => String(item.id) === String(projectId));
