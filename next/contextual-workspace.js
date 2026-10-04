@@ -154,7 +154,7 @@
         };
         renderProfiles();
         const headerInvite = el('btn-header-invite');
-        el('btn-open-account').before(headerInvite);
+        el('next-header-separator').before(headerInvite);
         headerInvite.setAttribute('aria-label', 'Invita membro');
         headerInvite.title = 'Invita membro';
         headerInvite.querySelector('span').textContent = 'Invita membro';
@@ -318,7 +318,7 @@
         liveTimer.type = 'button';
         liveTimer.innerHTML = `${icon('timer')}<span></span>${icon('square')}`;
         liveTimer.setAttribute('aria-label', 'Ferma e registra il timer in corso');
-        el('btn-open-account').before(liveTimer);
+        el('btn-header-invite').before(liveTimer);
         liveTimer.addEventListener('click', () => el('btn-toggle-timer').click());
         const syncTimer = () => {
             const running = typeof timerRunning !== 'undefined' && timerRunning;

@@ -123,6 +123,11 @@
         clearUI(); closeQuick();
         activeKey = key();
         steps = buildSteps(); index = 0;
+        // Opening help starts on the current page; subsequent steps may tour others.
+        if (reset) {
+            const current = steps.findIndex(step => step.view === el('app-container').dataset.workflowView);
+            if (current > 0) steps = steps.slice(current).concat(steps.slice(0, current));
+        }
         if (!reset) {
             try { const saved = JSON.parse(localStorage.getItem(key()) || '{}'); if (!saved.finished) index = Math.min(saved.index || 0, steps.length - 1); } catch (_) {}
         }
@@ -137,7 +142,18 @@
         launcher.id = 'next-guide-launch'; launcher.type = 'button'; launcher.className = 'secondary-action';
         launcher.innerHTML = '<i data-lucide="circle-help" aria-hidden="true"></i><span>Guida rapida</span>';
         launcher.setAttribute('aria-label', 'Apri la guida rapida');
-        document.querySelector('.workflow-view-heading').append(launcher);
+        const placeLauncher = () => {
+            const desktop = document.querySelector('.workflow-nav-desktop');
+            const heading = document.querySelector('.workflow-view-heading');
+            const hadFocus = document.activeElement === launcher;
+            const host = wide() ? desktop : heading;
+            if (launcher.parentElement !== host) host.append(launcher);
+            launcher.classList.toggle('next-guide-nav-button', wide());
+            launcher.querySelector('span').className = wide() ? 'next-guide-nav-tooltip' : '';
+            if (hadFocus) launcher.focus({ preventScroll: true });
+        };
+        placeLauncher();
+        matchMedia('(min-width: 1024px)').addEventListener('change', placeLauncher);
         launcher.addEventListener('click', () => begin(true));
         window.lucide?.createIcons();
         new MutationObserver(() => { if (active && !navigating && !paused) stop(false); }).observe(el('app-container'), { attributes: true, attributeFilter: ['data-workflow-view'] });

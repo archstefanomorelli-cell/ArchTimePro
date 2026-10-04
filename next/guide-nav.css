@@ -1,0 +1,50 @@
+/* One help launcher: desktop rail, mobile page heading. */
+@media (min-width: 1024px) {
+    html.theme-pro body.workflow-contextual .workflow-nav-desktop #next-guide-launch {
+        position: relative;
+        width: 72px;
+        min-height: 44px;
+        padding: 9px 4px;
+        flex: 0 0 auto;
+        justify-content: center;
+        flex-direction: row;
+        border: 0;
+        border-radius: 9px;
+        background: transparent;
+        color: #64748b;
+        box-shadow: none;
+    }
+    html.theme-pro body.workflow-contextual .workflow-nav-desktop #next-guide-launch::before {
+        content: '';
+        position: absolute;
+        top: -5px;
+        left: 15px;
+        right: 15px;
+        height: 1px;
+        background: #e2e8f0;
+    }
+    html.theme-pro body.workflow-contextual .workflow-nav-desktop #next-guide-launch:hover,
+    html.theme-pro body.workflow-contextual .workflow-nav-desktop #next-guide-launch:focus-visible {
+        background: #f1f5f9;
+        color: #172033;
+    }
+    #next-guide-launch .next-guide-nav-tooltip {
+        position: absolute;
+        left: calc(100% + 12px);
+        top: 50%;
+        transform: translateY(-50%);
+        padding: 8px 11px;
+        border-radius: 8px;
+        background: #172033;
+        color: white;
+        font-size: 12px;
+        font-weight: 500;
+        white-space: nowrap;
+        pointer-events: none;
+        opacity: 0;
+        visibility: hidden;
+        box-shadow: 0 4px 14px rgba(15,23,42,.12);
+    }
+    #next-guide-launch:hover .next-guide-nav-tooltip,
+    #next-guide-launch:focus-visible .next-guide-nav-tooltip { opacity: 1; visibility: visible; }
+}
