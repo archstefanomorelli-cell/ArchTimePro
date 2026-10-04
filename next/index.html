@@ -22,6 +22,7 @@
         params.delete('videoDemo'); params.delete('onboarding'); params.delete('guide'); params.set('prototypeFlow','1');
         history.replaceState(null,'',location.pathname + '?' + params + location.hash);
         document.documentElement.classList.add('theme-pro');
+        document.documentElement.classList.add('next-layout-pending');
         if (params.get('typography') !== 'classic') document.documentElement.classList.add('next-type-refined');
     </script>
     <style>
@@ -45,9 +46,19 @@
     <link rel="stylesheet" href="next/contextual-workspace.css?v=2026-10-03-17">
     <link rel="stylesheet" href="next/live.css?v=2026-10-04-01">
     <link rel="stylesheet" href="next/typography.css?v=2026-10-04-01">
+    <style>
+        html.next-layout-pending #app-container { visibility: hidden !important; }
+        #next-layout-loader { display: none; }
+        html.next-layout-pending body:has(#app-container:not(.force-hide)) #next-layout-loader { display: grid; position: fixed; inset: 0; z-index: 100; place-content: center; padding: 24px; background: #f8fafc; text-align: center; color: #172033; }
+        #next-layout-loader strong { font-size: 18px; font-weight: 700; }
+        #next-layout-loader p { max-width: 360px; margin-top: 10px; font-size: 13px; line-height: 1.5; color: #64748b; }
+        #next-layout-loader button { margin-top: 16px; padding: 10px 16px; border-radius: 8px; background: #172033; color: white; }
+    </style>
+    <script src="next/boot.js?v=2026-10-04-01"></script>
 </head>
 <body class="text-slate-800 pb-20 lg:pb-0">
 
+    <div id="next-layout-loader" role="status" aria-live="polite"><strong>ArchTimePro Next</strong><p>Preparazione dello spazio di lavoro…</p><button type="button" hidden>Ricarica</button></div>
     <div id="auth-container" class="min-h-screen flex flex-col lg:flex-row bg-white">
         <div class="hidden lg:flex lg:w-1/2 bg-slate-900 flex-col justify-center px-20 relative overflow-hidden lg:h-screen lg:sticky lg:top-0">
             <div class="absolute inset-0 opacity-10"></div>
