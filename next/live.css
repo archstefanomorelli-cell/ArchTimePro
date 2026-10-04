@@ -2,3 +2,10 @@
 body.workflow-contextual #projects-list > .prototype-project-card { min-width: 0; max-width: 100%; }
 body.workflow-contextual .prototype-project-card .project-cost-mode-tag { white-space: normal; overflow-wrap: anywhere; }
 body.workflow-contextual .prototype-project-card p { overflow-wrap: anywhere; }
+body.workflow-contextual .analytics-kpi-costs > p,
+body.workflow-contextual #analytics-inline-week-cost,
+body.workflow-contextual #analytics-cash-position { white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; }
+@media (max-width: 639px) {
+    body.workflow-contextual .prototype-cash-comparison-panel .analytics-panel-heading { flex-direction: column; align-items: flex-start; gap: 10px; }
+    body.workflow-contextual #analytics-cash-position { max-width: 100%; }
+}

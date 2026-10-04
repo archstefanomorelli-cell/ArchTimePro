@@ -804,22 +804,68 @@ function decorateFinancialAnalytics() {
         + expenses.filter(expense => activeIds.has(expense.project_id)).reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
     const collected = totalCollected(configured);
     const activeBudget = active.reduce((sum, project) => sum + Number(project.budget || 0), 0);
+    const billingEnabled = ['pro', 'founder', 'premium'].includes(activePlan);
     const costCard = document.getElementById('card-profit');
     const costValue = document.getElementById('kpi-profit');
     const marginValue = document.getElementById('kpi-margin');
     const cashCard = document.querySelector('.analytics-primary-grid .analytics-kpi-costs');
     const cashValue = document.getElementById('kpi-active-costs');
-    document.getElementById('label-profit').textContent = 'Costi lavori attivi';
+    const marginText = marginValue?.textContent || '—';
+    const marginNote = document.getElementById('kpi-margin-note')?.textContent || '';
+    const marginClass = `analytics-kpi-value ${active.some(project => !getProjectCostSummary(project).economicReady) ? 'text-slate-500' : (activeBudget - costs < 0 ? 'text-red-600' : 'text-emerald-700')}`;
+    marginValue?.closest('.analytics-kpi')?.querySelector('h3')?.replaceChildren(document.createTextNode(billingEnabled ? 'Margine previsto' : 'Compenso previsto'));
+    document.getElementById('label-profit').textContent = 'Costi registrati';
     if (costValue) { costValue.textContent = currency(costs); costValue.className = 'analytics-kpi-value text-slate-800'; }
-    if (marginValue) marginValue.className = `analytics-kpi-value ${active.some(project => !getProjectCostSummary(project).economicReady) ? 'text-slate-500' : (activeBudget - costs < 0 ? 'text-red-600' : 'text-emerald-700')}`;
+    if (marginValue) marginValue.className = marginClass;
     if (costCard) { costCard.classList.remove('analytics-kpi-danger'); costCard.querySelector('p')?.replaceChildren(document.createTextNode('Ore e spese registrate')); }
     if (cashCard) {
-        cashCard.querySelector('h3').textContent = 'Incasso lavori attivi';
+        cashCard.querySelector('h3').textContent = 'Incassi registrati';
         cashCard.querySelector('p').textContent = coverageNote;
     }
     if (cashValue) { cashValue.textContent = available ? currency(collected) : '—'; cashValue.className = `analytics-kpi-value ${available ? 'text-blue-700' : 'text-slate-500'}`; }
     const costsFor = project => entries.filter(entry => entry.project_id === project.id).reduce((sum, entry) => sum + Number(entry.rate || 0), 0)
         + expenses.filter(expense => expense.project_id === project.id).reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
+    const comparisonPanel = document.getElementById('chart-risk')?.closest('.prototype-cash-comparison-panel');
+    const cashInline = document.getElementById('analytics-inline-week-cost')?.parentElement;
+    const cashPosition = document.getElementById('analytics-cash-position');
+    const cashControls = document.getElementById('analytics-cash-controls');
+    for (const node of [cashInline, cashPosition, cashControls]) node?.classList.toggle('force-hide', !billingEnabled);
+    comparisonPanel?.querySelector('h3')?.replaceChildren(document.createTextNode(billingEnabled ? 'Incassato vs costi sostenuti' : 'Compensi, costi e margini'));
+    if (!billingEnabled) {
+        marginValue.textContent = activeBudget > 0 ? currency(activeBudget) : '—';
+        marginValue.className = 'analytics-kpi-value text-slate-800';
+        document.getElementById('kpi-margin-note').textContent = active.some(project => Number(project.budget || 0) <= 0) ? 'Compensi da completare' : 'Totale delle commesse attive';
+        cashCard.querySelector('h3').textContent = 'Margine previsto';
+        cashCard.querySelector('p').textContent = marginNote;
+        cashValue.textContent = marginText;
+        cashValue.className = marginClass;
+        comparisonPanel.querySelector('.analytics-panel-heading p').textContent = 'Compensi previsti e costi registrati sulle commesse attive.';
+        const list = document.getElementById('analytics-cash-exposure-list');
+        list.replaceChildren(); list.classList.add('force-hide');
+        const priority = document.querySelector('.analytics-priority-panel');
+        priority?.querySelector('h3')?.replaceChildren(document.createTextNode('Priorità commesse'));
+        priority?.querySelector('.analytics-panel-heading p')?.replaceChildren(document.createTextNode('Budget, costi e ritmo di lavoro.'));
+        const rows = active.slice().sort((a,b) => a.name.localeCompare(b.name, 'it')).slice(0,6);
+        const hasData = rows.some(project => Number(project.budget || 0) > 0 || costsFor(project) > 0);
+        document.getElementById('chart-risk').parentElement.classList.toggle('force-hide', !hasData);
+        const empty = document.getElementById('empty-risk');
+        empty.classList.toggle('force-hide', hasData);
+        empty.querySelector('span').textContent = 'Imposta i compensi o registra costi per confrontare le commesse.';
+        if (!hasData && charts.risk) { charts.risk.destroy(); charts.risk = null; }
+        if (hasData) {
+            if (!charts.risk) charts.risk = new Chart(document.getElementById('chart-risk'), { type: 'bar', data: { labels: [], datasets: [] }, options: { responsive: true, maintainAspectRatio: false, scales: { x: { beginAtZero: true } }, plugins: { tooltip: { callbacks: {} } } } });
+            charts.risk.data.labels = rows.map(project => project.name);
+            charts.risk.data.datasets = [
+                { label: 'Compenso previsto', data: rows.map(project => Number(project.budget || 0) > 0 ? Number(project.budget) : null), backgroundColor: '#2563eb', borderRadius: 4, barThickness: 10 },
+                { label: 'Costi registrati', data: rows.map(costsFor), backgroundColor: '#64748b', borderRadius: 4, barThickness: 10 },
+                { label: 'Margine previsto', data: rows.map(project => getProjectCostSummary(project).economicReady ? Number(project.budget || 0) - costsFor(project) : null), backgroundColor: '#059669', borderRadius: 4, barThickness: 10 }
+            ];
+            charts.risk.options.plugins.tooltip.callbacks.footer = items => getProjectCostSummary(rows[items[0].dataIndex]).economicReady ? '' : 'Dati economici da completare';
+            charts.risk.update('none');
+        }
+        lucide.createIcons();
+        return;
+    }
     const cashRows = configured.map(project => {
         const projectCosts = costsFor(project), projectCollected = paymentTotals(project).collected;
         return { project, costs: projectCosts, collected: projectCollected, balance: projectCollected - projectCosts };
