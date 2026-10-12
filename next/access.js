@@ -26,9 +26,9 @@
         await baseInitApp();
         window.__ARCHTIME_NEXT_READY__ = true;
     };
-    // Existing account beta: no signup, demo seeding or local-only onboarding.
+    // Existing account beta: no signup and no demo seeding. The app's first-project
+    // onboarding stays on (it saves real data), so a studio without commesse can add one.
     checkAndGenerateDemoData = async () => {};
-    shouldShowOwnerOnboarding = () => false;
     const baseSwitchAuthTab = switchAuthTab;
     switchAuthTab = () => baseSwitchAuthTab('login');
     const baseHandleAuthAction = handleAuthAction;
