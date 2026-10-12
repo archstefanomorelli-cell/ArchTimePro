@@ -4,8 +4,9 @@
         async function fetchProfiles() { 
             const { data, error } = await supabaseClient.rpc('get_team_profiles_for_app');
             if (error) throw error;
-            profiles = data || []; 
-            renderProfiles(); 
+            profiles = data || [];
+            renderProfiles();
+            window.refreshPendingInvites?.();
         }
 
         function teamRoleBadgeHtml(profile) {

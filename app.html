@@ -99,8 +99,8 @@
                             <div id="trial-info-container" class="force-hide mt-4 p-3.5 bg-primary-50 border border-primary-100 rounded-xl flex gap-3 items-start"><i data-lucide="gift" class="w-5 h-5 text-primary-600 shrink-0"></i><p class="text-xs text-primary-900 leading-relaxed"><strong class="font-black">15 giorni di prova gratuita.</strong><br>Alla scadenza decidi tu se attivare un piano. Nessuna carta richiesta e nessun addebito automatico.</p></div>
                         </div>
                         <div id="invite-code-container" class="force-hide">
-                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Codice invito manager</label>
-                            <input type="text" id="invite-code-input" placeholder="Incolla codice" class="w-full border border-primary-200 bg-primary-50/30 rounded-xl p-3.5 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all">
+                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Codice invito</label>
+                            <input type="text" id="invite-code-input" placeholder="Incolla il link o il codice"class="w-full border border-primary-200 bg-primary-50/30 rounded-xl p-3.5 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all">
                         </div>
                         <input type="text" id="full-name" placeholder="Nome e cognome" class="w-full border border-slate-200 rounded-xl p-3.5 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all bg-white">
                     </div>
@@ -142,7 +142,7 @@
                 <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200">
                     <h3 class="text-sm font-black text-slate-800 mb-3 flex items-center gap-2"><i data-lucide="link" class="w-4 h-4 text-primary-500"></i> Unisciti a uno Studio</h3>
                     <div class="flex gap-2">
-                        <input type="text" id="limbo-invite-code" placeholder="Incolla codice invito" class="flex-1 border border-slate-200 rounded-xl p-3 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all bg-white">
+                        <input type="text" id="limbo-invite-code" placeholder="Incolla il link dell'invito" class="flex-1 border border-slate-200 rounded-xl p-3 text-sm outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all bg-white">
                         <button id="btn-limbo-join" class="bg-primary-600 text-white px-5 rounded-xl font-bold hover:bg-primary-700 transition-all shadow-sm active:scale-95 shrink-0 text-sm">Entra</button>
                     </div>
                 </div>
@@ -701,21 +701,18 @@
         <div class="w-full max-w-md p-6 lg:p-8 shadow-xl border border-slate-200 rounded-2xl relative bg-white">
             <button id="btn-close-team-invite" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
             <h2 class="text-lg font-black text-slate-800 tracking-tight mb-1 flex items-center gap-2 pr-10"><i data-lucide="mail-plus" class="text-primary-500 w-5 h-5"></i> Invita collaboratore</h2>
-            <p class="text-xs text-slate-500 font-medium mb-4 pr-10">Invia un link con il codice team già pronto per la registrazione.</p>
+            <p class="text-xs text-slate-500 font-medium mb-4 pr-10">Il link è personale: vale solo per questa email, per 7 giorni e una volta sola.</p>
             <div class="space-y-4">
                 <div>
                     <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5 ml-1">Email collaboratore</label>
                     <input type="email" id="team-invite-email" placeholder="nome@email.it" class="w-full border border-slate-200 rounded-xl p-3 text-sm bg-white outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all">
                 </div>
-                <div class="bg-slate-50 border border-slate-200 rounded-xl p-3">
-                    <div class="flex items-center justify-between gap-3 mb-1">
-                        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Codice team</p>
-                        <span class="text-[9px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-full">Incluso nel link</span>
-                    </div>
+                <div class="force-hide bg-slate-50 border border-slate-200 rounded-xl p-3">
+                    <p class="text-[11px] font-bold text-slate-500 mb-1">Link personale</p>
                     <p id="team-invite-code-preview" class="font-mono text-xs font-black text-slate-700 break-all"></p>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <button id="btn-copy-team-invite" class="bg-white text-slate-700 border border-slate-200 py-3 rounded-xl font-bold hover:bg-slate-50 transition-all active:scale-[0.98] flex items-center justify-center gap-2 text-sm"><i data-lucide="copy" class="w-4 h-4"></i> Copia codice</button>
+                    <button id="btn-copy-team-invite" class="bg-white text-slate-700 border border-slate-200 py-3 rounded-xl font-bold hover:bg-slate-50 transition-all active:scale-[0.98] flex items-center justify-center gap-2 text-sm"><i data-lucide="link" class="w-4 h-4"></i> Crea link da copiare</button>
                     <button id="btn-send-team-invite" class="bg-slate-900 text-white py-3 rounded-xl font-bold shadow-sm hover:bg-slate-800 transition-all active:scale-[0.98] flex items-center justify-center gap-2 text-sm"><i data-lucide="send" class="w-4 h-4"></i> Invia email</button>
                 </div>
             </div>
@@ -1253,8 +1250,8 @@
     <script src="assets/js/00-runtime-config.js?v=stripe-founder-2026-06-29"></script>
     <script src="assets/js/normative-engine.js?v=2026-08-01-01"></script>
     <script src="assets/js/01-core.js?v=trial-start-2026-09-24-01"></script>
-    <script src="assets/js/02-auth-account.js?v=project-cost-mode-2026-10-03-01"></script>
-    <script src="assets/js/03-team.js?v=economic-onboarding-2026-10-01-01"></script>
+    <script src="assets/js/02-auth-account.js?v=inviti-personali-2026-10-11-01"></script>
+    <script src="assets/js/03-team.js?v=inviti-personali-2026-10-11-01"></script>
     <script src="assets/js/04-projects.js?v=project-cost-mode-2026-10-03-01"></script>
     <script src="assets/js/05-time-entries.js?v=project-cost-mode-2026-10-03-01"></script>
     <script src="assets/js/06-reports.js?v=quote-format-modal-2026-08-12-01"></script>

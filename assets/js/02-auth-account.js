@@ -76,7 +76,7 @@ function switchAuthTab(mode) {
                 const roleCopy = document.getElementById('signup-role-copy');
                 if (roleTitle) roleTitle.textContent = inviteCode ? 'Unisciti allo studio' : 'Crea lo spazio del tuo studio';
                 if (roleCopy) roleCopy.textContent = inviteCode
-                    ? 'Il codice ricevuto dal responsabile è già pronto. Completa i tuoi dati per entrare nel team.'
+                    ? "Il tuo invito è già pronto. Registrati con l'email a cui è arrivato."
                     : 'Parti come responsabile. I collaboratori potranno unirsi in seguito tramite invito.';
                 toggleSignupOptions();
             }
@@ -115,8 +115,14 @@ function switchAuthTab(mode) {
             if (trialInfo) trialInfo.classList.toggle('force-hide', isStaff); 
         }
 
+        // L'invito si può incollare come codice o come link intero
+        function extractInviteToken(value) {
+            const text = String(value || '').trim();
+            try { return new URL(text).searchParams.get('invite') || text; } catch (e) { return text; }
+        }
+
         const urlParams = new URLSearchParams(window.location.search);
-        if(urlParams.get('invite')) { 
+        if(urlParams.get('invite')) {
             switchAuthTab('signup'); 
             document.querySelectorAll('input[name="main-role"]').forEach(input => { if(input.value === 'staff') input.checked = true; }); 
             document.getElementById('invite-code-input').value = urlParams.get('invite'); 
@@ -162,7 +168,7 @@ function switchAuthTab(mode) {
                     role: finalRole,
                     is_owner: isOwnerChoice,
                     business_type: businessType,
-                    studio_id: isStaff ? code : null,
+                    invite_token: isStaff ? extractInviteToken(code) : null,
                     signup_attribution: signupAttribution,
                     terms_version: CURRENT_TERMS_VERSION,
                     privacy_version: CURRENT_PRIVACY_VERSION,
@@ -379,10 +385,10 @@ function switchAuthTab(mode) {
 
         async function limboJoinStudio() {
             const code = document.getElementById('limbo-invite-code').value.trim();
-            if(!code) return await appAlert("Attenzione", "Inserisci un Codice Invito valido.", "danger");
-            
-            const { error } = await supabaseClient.rpc('join_studio_with_code', { invite_studio_id: code });
-            if(error) return await appAlert("Errore", "Impossibile unirsi allo studio. Controlla il codice.", "danger");
+            if(!code) return await appAlert("Attenzione", "Incolla il link o il codice dell'invito.", "danger");
+
+            const { error } = await supabaseClient.rpc('join_studio_with_invite', { invite_token: extractInviteToken(code) });
+            if(error) return await appAlert("Invito non valido", error.message || "Chiedi un nuovo invito al titolare dello studio.", "danger");
             
             await appAlert("Benvenuto", "Ti sei unito al nuovo team con successo!", "success");
             location.reload();
@@ -1247,14 +1253,30 @@ function switchAuthTab(mode) {
             window.scrollTo(0, 0); 
         }
 
-        function getTeamInviteUrl() {
-            return `${window.location.origin}${window.location.pathname}?invite=${encodeURIComponent(userProfile.studio_id)}`;
+        // Il collaboratore si registra sempre dall'app, anche quando l'invito parte dalla beta
+        function getTeamInviteUrl(token) {
+            return `${window.location.origin}/app.html?invite=${encodeURIComponent(token)}`;
+        }
+
+        function getReadableInviteError(message) {
+            const known = {
+                SUBSCRIPTION_REQUIRED: "L'abbonamento dello studio non è attivo: riattivalo per invitare collaboratori.",
+                LEGAL_ACCEPTANCE_REQUIRED: "Prima accetta i Termini di Servizio aggiornati, poi riprova.",
+                AUTHENTICATION_REQUIRED: "Accedi di nuovo e riprova."
+            };
+            return known[message] || message || "Non è stato possibile creare l'invito.";
+        }
+
+        function setTeamInviteLink(url) {
+            const preview = document.getElementById('team-invite-code-preview');
+            preview.innerText = url || '';
+            preview.parentElement.classList.toggle('force-hide', !url);
         }
 
         function openTeamInviteModal() {
             if (!userProfile?.studio_id) return;
             document.getElementById('team-invite-email').value = '';
-            document.getElementById('team-invite-code-preview').innerText = userProfile.studio_id;
+            setTeamInviteLink('');
             document.getElementById('modal-team-invite').classList.remove('force-hide');
             lucide.createIcons();
         }
@@ -1263,27 +1285,108 @@ function switchAuthTab(mode) {
             document.getElementById('modal-team-invite').classList.add('force-hide');
         }
 
+        // Crea un link personale (una email, 7 giorni, una volta sola) e lo copia negli appunti
         async function copyTeamInviteCode() {
-            await navigator.clipboard.writeText(userProfile.studio_id);
-            await appAlert("Fatto", "Codice invito copiato negli appunti.", "success");
+            const email = document.getElementById('team-invite-email').value.trim();
+            if (!email) return await appAlert("Attenzione", "Scrivi prima l'email del collaboratore: il link vale solo per quella persona.", "danger");
+
+            const linkRequest = supabaseClient.rpc('create_studio_invite', { invite_email: email }).then(({ data, error }) => {
+                const token = Array.isArray(data) ? data[0]?.invite_token : data?.invite_token;
+                if (error || !token) throw new Error(error?.message || "Non è stato possibile creare l'invito.");
+                return getTeamInviteUrl(token);
+            });
+
+            let copied = false;
+            try {
+                // Safari copia solo durante il clic: gli si passa subito la promessa del link
+                if (window.ClipboardItem && navigator.clipboard?.write) {
+                    const blobRequest = linkRequest.then(url => new Blob([url], { type: 'text/plain' }));
+                    blobRequest.catch(() => {}); // l'errore si mostra più sotto
+                    await navigator.clipboard.write([new ClipboardItem({ 'text/plain': blobRequest })]);
+                } else {
+                    await navigator.clipboard.writeText(await linkRequest);
+                }
+                copied = true;
+            } catch (e) {
+                // se la copia non riesce il link resta visibile nella finestra
+            }
+
+            let url;
+            try {
+                url = await linkRequest;
+            } catch (error) {
+                return await appAlert("Invito non creato", getReadableInviteError(error.message), "danger");
+            }
+
+            setTeamInviteLink(url);
+            refreshPendingInvites();
+            await appAlert(
+                copied ? "Link copiato" : "Link pronto",
+                `${copied ? 'Incollalo in un messaggio' : 'Copialo dalla finestra e mandalo'} a ${email}. Vale 7 giorni e si può usare una sola volta.`,
+                "success"
+            );
         }
 
         async function sendTeamInviteEmail() {
             const email = document.getElementById('team-invite-email').value.trim();
             if (!email) return await appAlert("Attenzione", "Inserisci l'email del collaboratore.", "danger");
 
-            const { error } = await supabaseClient.functions.invoke('send-team-invite', {
-                body: {
-                    email,
-                    inviteCode: userProfile.studio_id,
-                    inviteUrl: getTeamInviteUrl()
-                }
-            });
+            // L'invito personale lo crea la funzione email: qui si manda solo l'indirizzo
+            const { error } = await supabaseClient.functions.invoke('send-team-invite', { body: { email } });
 
-            if (error) return await appAlert("Errore", error.message || "Invio email non riuscito.", "danger");
+            if (error) {
+                let message = error.message;
+                try { message = (await error.context.json()).error || message; } catch (e) { /* risposta senza dettagli */ }
+                return await appAlert("Invito non inviato", getReadableInviteError(message || "Invio email non riuscito."), "danger");
+            }
 
             closeTeamInviteModal();
-            await appAlert("Invito inviato", "Il collaboratore riceverà una email con link e codice invito.", "success");
+            refreshPendingInvites();
+            await appAlert("Invito inviato", "Il collaboratore riceverà un'email con il suo link personale: vale 7 giorni e si può usare una sola volta.", "success");
+        }
+
+        // Inviti in attesa, sotto l'elenco delle persone (scheda Team, anche nella beta)
+        function getPendingInvitesBox() {
+            let box = document.getElementById('team-pending-invites');
+            const list = document.getElementById('team-list');
+            if (!box && list) {
+                box = document.createElement('div');
+                box.id = 'team-pending-invites';
+                box.className = 'force-hide mb-5';
+                box.addEventListener('click', event => {
+                    const button = event.target.closest('[data-revoke-invite]');
+                    if (button) revokePendingInvite(button.dataset.revokeInvite, button.dataset.inviteEmail);
+                });
+                list.after(box);
+            }
+            return box;
+        }
+
+        async function refreshPendingInvites() {
+            const box = getPendingInvitesBox();
+            if (!box || !document.body.classList.contains('is-admin')) return;
+            const { data, error } = await supabaseClient.rpc('list_studio_invites');
+            const pending = error ? [] : (data || []).filter(invite => invite.status === 'in attesa');
+            box.classList.toggle('force-hide', pending.length === 0);
+            box.innerHTML = pending.length === 0 ? '' : `
+                <p class="text-[11px] font-bold text-slate-500 mb-2 ml-1">Inviti in attesa</p>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                    ${pending.map(invite => `
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 flex justify-between items-center gap-3">
+                        <div class="min-w-0">
+                            <p class="font-bold text-slate-800 text-sm break-all">${escapeHtml(invite.email)}</p>
+                            <p class="text-xs text-slate-500 mt-0.5">Vale fino al ${new Date(invite.expires_at).toLocaleDateString('it-IT', { day: 'numeric', month: 'long' })}</p>
+                        </div>
+                        <button data-revoke-invite="${escapeAttr(invite.id)}" data-invite-email="${escapeAttr(invite.email)}" class="shrink-0 text-xs font-bold text-slate-500 hover:text-red-600 bg-slate-50 hover:bg-red-50 px-3 py-2 rounded-lg border border-slate-200 hover:border-red-200 transition-all">Revoca</button>
+                    </div>`).join('')}
+                </div>`;
+        }
+
+        async function revokePendingInvite(inviteId, email) {
+            if (!await appConfirm("Revocare l'invito?", `Il link mandato a ${email} smetterà di funzionare.`)) return;
+            const { error } = await supabaseClient.rpc('revoke_studio_invite', { invite_id: inviteId });
+            if (error) return await appAlert("Revoca non riuscita", getReadableInviteError(error.message), "danger");
+            await refreshPendingInvites();
         }
 
         async function generateInviteLink() { 

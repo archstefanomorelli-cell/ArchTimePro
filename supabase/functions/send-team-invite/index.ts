@@ -20,6 +20,10 @@ function requiredEnv(name: string) {
   return value;
 }
 
+function escapeHtml(value: string) {
+  return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
@@ -37,10 +41,9 @@ Deno.serve(async (req) => {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) return jsonResponse({ error: "Unauthorized" }, 401);
 
-    const { email, inviteCode, inviteUrl } = await req.json();
+    // Il browser manda solo l'email: l'invito personale viene creato qui, a nome di chi invita
+    const { email } = await req.json();
     const recipientEmail = String(email || "").trim().toLowerCase();
-    const code = String(inviteCode || "").trim();
-    const url = String(inviteUrl || "").trim();
 
     if (!isValidEmail(recipientEmail)) {
       return jsonResponse({ error: "Email non valida" }, 400);
@@ -57,35 +60,29 @@ Deno.serve(async (req) => {
     const { data: authData, error: authError } = await userClient.auth.getUser();
     if (authError || !authData.user) return jsonResponse({ error: "Unauthorized" }, 401);
 
+    // Crea l'invito con i permessi di chi invita: la funzione controlla ruolo, studio e abbonamento
+    const { data: invite, error: inviteError } = await userClient.rpc("create_studio_invite", {
+      invite_email: recipientEmail,
+    });
+    const token = Array.isArray(invite) ? invite[0]?.invite_token : invite?.invite_token;
+    if (inviteError || !token) {
+      return jsonResponse({ error: inviteError?.message || "Invito non creato" }, 400);
+    }
+
     const adminClient = createClient(supabaseUrl, supabaseServiceRoleKey);
-    const { data: profile, error: profileError } = await adminClient
+    const { data: profile } = await adminClient
       .from("profiles")
-      .select("id, full_name, studio_id, role, is_owner")
+      .select("full_name, studio_id")
       .eq("id", authData.user.id)
       .single();
-
-    if (profileError || !profile?.studio_id) {
-      return jsonResponse({ error: "Profilo non trovato" }, 404);
-    }
-
-    if (!(profile.is_owner || profile.role === "admin")) {
-      return jsonResponse({ error: "Solo admin e owner possono invitare collaboratori" }, 403);
-    }
-
-    if (code !== profile.studio_id) {
-      return jsonResponse({ error: "Codice invito non valido" }, 400);
-    }
-
     const { data: studio } = await adminClient
       .from("studios")
       .select("name")
-      .eq("id", profile.studio_id)
+      .eq("id", profile?.studio_id)
       .single();
 
     const appBaseUrl = Deno.env.get("APP_BASE_URL") || "https://www.archtimepro.it";
-    const safeInviteUrl = url.startsWith(appBaseUrl)
-      ? url
-      : `${appBaseUrl}/app.html?invite=${encodeURIComponent(code)}`;
+    const safeInviteUrl = `${appBaseUrl}/app.html?invite=${encodeURIComponent(token)}`;
 
     const smtpPort = Number(Deno.env.get("SMTP_PORT") || "465");
     const transporter = nodemailer.createTransport({
@@ -101,7 +98,7 @@ Deno.serve(async (req) => {
     const senderEmail = Deno.env.get("SMTP_FROM_EMAIL") || requiredEnv("SMTP_USER");
     const senderName = Deno.env.get("SMTP_FROM_NAME") || "Arch Time Pro";
     const studioName = studio?.name || "il team";
-    const inviterName = profile.full_name || "Il tuo manager";
+    const inviterName = profile?.full_name || "Il titolare dello studio";
 
     await transporter.sendMail({
       from: `"${senderName}" <${senderEmail}>`,
@@ -112,20 +109,19 @@ Deno.serve(async (req) => {
         ``,
         `${inviterName} ti ha invitato a entrare in ${studioName} su Arch Time Pro.`,
         ``,
-        `Apri questo link per registrarti come collaboratore:`,
+        `Apri questo link per registrarti come collaboratore con questo indirizzo email:`,
         safeInviteUrl,
         ``,
-        `Codice invito: ${code}`,
+        `Il link è personale, vale 7 giorni e si può usare una sola volta.`,
         ``,
         `A presto,`,
         `Il team di Arch Time Pro`,
       ].join("\n"),
       html: `
         <h2>Invito su Arch Time Pro</h2>
-        <p>${inviterName} ti ha invitato a entrare in <strong>${studioName}</strong>.</p>
+        <p>${escapeHtml(inviterName)} ti ha invitato a entrare in <strong>${escapeHtml(studioName)}</strong>.</p>
         <p><a href="${safeInviteUrl}">Registrati come collaboratore</a></p>
-        <p>Se il link non funziona, usa questo codice invito:</p>
-        <p><strong>${code}</strong></p>
+        <p>Usa questo indirizzo email per registrarti. Il link è personale, vale 7 giorni e si può usare una sola volta.</p>
         <p>A presto,<br>Il team di Arch Time Pro</p>
       `,
     });
