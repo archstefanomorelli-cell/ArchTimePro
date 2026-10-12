@@ -59,7 +59,7 @@
         const text = focus.querySelector('.workflow-focus-copy');
         if (todayEntries.length) {
             const amount = new Intl.NumberFormat('it-IT', { maximumFractionDigits: 1 }).format(hours);
-            text.innerHTML = `<strong>${staff ? 'Hai' : 'Lo studio ha'} registrato ${amount} ore oggi</strong><span>Controlla le attività della giornata prima di continuare.</span>`;
+            text.innerHTML = `<strong>${staff ? 'Hai' : 'Lo studio ha'} registrato ${amount} ore oggi</strong><span>${staff ? 'Puoi correggerle dal registro.' : ''}</span>`;
         } else {
             text.innerHTML = `<strong>${staff ? 'Non hai registrato ore oggi' : 'Nessuna ora registrata oggi'}</strong><span>Riprendi il timer o inserisci il lavoro già svolto.</span>`;
         }
@@ -175,8 +175,14 @@
         app.dataset.workflowView = view;
         const staff = document.body.classList.contains('workflow-staff');
         document.getElementById('workflow-title').textContent = view === 'studio' && staff ? 'Profilo' : views[view].title;
-        document.getElementById('workflow-subtitle').textContent = view === 'studio' && staff
-            ? 'Il tuo spazio nello studio e le informazioni di accesso.'
+        // il collaboratore non vede importi: sottotitoli senza compensi e costi
+        const staffSubtitles = {
+            projects: 'Le commesse dello studio su cui registri le ore.',
+            log: 'Le tue ore e note, organizzate per settimana.',
+            studio: 'Il tuo spazio nello studio e le informazioni di accesso.'
+        };
+        document.getElementById('workflow-subtitle').textContent = staff && staffSubtitles[view]
+            ? staffSubtitles[view]
             : views[view].subtitle;
         const sectionTitles = {
             finance: view === 'today' ? 'Sintesi dello studio' : 'Analisi finanziaria',
@@ -275,6 +281,14 @@
         persona.innerHTML = `${icon('refresh-cw')} Vista collaboratore`;
         header.querySelector('.max-w-7xl > div:last-child')?.insertBefore(persona, document.getElementById('btn-open-account'));
         persona.remove();
+        if (!isAdminUser()) {
+            document.body.classList.add('workflow-staff');
+            document.querySelectorAll('[data-workflow-target="studio"]').forEach(button => {
+                button.innerHTML = `${icon('user-round')}<span class="workflow-nav-label" aria-hidden="true">Profilo</span>`;
+                button.setAttribute('aria-label', 'Profilo');
+            });
+            renderStaffProjects();
+        }
 
         const heading = document.createElement('div');
         heading.className = 'workflow-view-heading';

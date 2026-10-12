@@ -226,6 +226,8 @@ function switchAuthTab(mode) {
                     if (!isStaff) {
                         window.archTimeAnalytics?.trackAdsConversion('AW-18190596284/RCALCNbqsdIcELzx-eFD');
                     }
+                    // Senza conferma dell'email Supabase apre subito la sessione: si entra direttamente
+                    if (data?.session) return checkUser();
                     await appAlert("Controlla la tua email", "Ti abbiamo inviato un link per confermare la registrazione. Se non lo trovi, controlla anche Spam o Posta indesiderata e cerca il mittente info@archtimepro.it. Dopo la conferma potrai accedere ad Arch Time Pro.", "success");
                     switchAuthTab('login');
                 }

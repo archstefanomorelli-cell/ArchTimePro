@@ -57,7 +57,11 @@
                 const summary = getProjectCostSummary(project);
                 const reasons = [];
                 const rhythm = summary.economicReady ? getProjectRhythmSummary(project, summary) : null;
-                if (rhythm && rhythm.statusTone !== 'healthy') reasons.push({ priority: rhythm.statusTone === 'danger' ? 50 : 40, tone: rhythm.statusTone, symbol: rhythm.statusTone === 'danger' ? 'activity' : 'circle-alert', text: rhythm.label, value: rhythm.description });
+                // Margine previsto (margine-previsto.js): quando c'è una previsione sostituisce l'avviso di ritmo
+                const prev = window.archTimeMarginePrevisto?.previsione(project, summary);
+                if (rhythm && rhythm.statusTone !== 'healthy' && !(prev && prev.stato === 'prevista')) reasons.push({ priority: rhythm.statusTone === 'danger' ? 50 : 40, tone: rhythm.statusTone, symbol: rhythm.statusTone === 'danger' ? 'activity' : 'circle-alert', text: rhythm.label, value: rhythm.description });
+                if (prev && prev.stato === 'prevista' && prev.margine < 0) reasons.push({ priority: 55, tone: 'danger', symbol: 'trending-down', text: 'Di questo passo chiude in perdita', value: window.archTimeMarginePrevisto.frase(project, summary) });
+                else if (prev && prev.stato === 'prevista' && prev.percentuale < 15) reasons.push({ priority: 45, tone: 'warning', symbol: 'circle-alert', text: 'Margine previsto basso', value: window.archTimeMarginePrevisto.frase(project, summary) });
                 if (flow?.hasPaymentPlan(project)) {
                     const payments = flow.projectMeta(project).payments;
                     const ready = payments.filter(payment => payment.status === 'pending' && flow.paymentMaturity(project, payment).ready);

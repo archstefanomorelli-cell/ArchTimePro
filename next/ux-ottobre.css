@@ -1,0 +1,17 @@
+/* Arch Time Pro Next · leggibilità e gerarchia (prototipo di ottobre) */
+
+/* Etichette leggibili: niente testo sotto gli 11px, meno maiuscolo spaziato */
+body.ux-ottobre :is(.text-\[8px\], .text-\[9px\], .text-\[10px\]) { font-size: 11px !important; line-height: 1.35; }
+body.ux-ottobre :is(.text-\[8px\], .text-\[9px\], .text-\[10px\]).uppercase { text-transform: none !important; letter-spacing: 0 !important; font-weight: 700; }
+body.ux-ottobre .project-list-metric small,
+body.ux-ottobre .project-list-progress small { font-size: 11px !important; text-transform: none !important; letter-spacing: 0 !important; }
+body.ux-ottobre .analytics-summary-metrics small { text-transform: none !important; letter-spacing: 0 !important; font-size: 11px !important; }
+
+/* Un solo pulsante principale per le ore: "Registra ore" pieno, il timer contornato */
+html.theme-pro body.ux-ottobre #app-container #timer-panel #btn-toggle-timer:not(.is-running) { background: #ffffff !important; color: #172033 !important; border: 1.5px solid #cbd5e1 !important; box-shadow: none !important; }
+html.theme-pro body.ux-ottobre #app-container #timer-panel #btn-toggle-timer:not(.is-running):hover { background: #f8fafc !important; border-color: #64748b !important; }
+html.theme-pro body.ux-ottobre #app-container #timer-panel #btn-open-manual-entry { margin-bottom: 10px; }
+
+/* Riga "ore di oggi": per il titolare non è un avviso, quindi non la mostriamo */
+body.ux-ottobre:not(.workflow-staff) #workflow-focus { display: none !important; }
+body.ux-ottobre.workflow-staff #workflow-focus { border-left-color: #cbd5e1 !important; }

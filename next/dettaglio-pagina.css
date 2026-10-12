@@ -1,0 +1,20 @@
+/* Arch Time Pro Next · la commessa come pagina con schede */
+html.theme-pro #modal-detail.dp-pagina { align-items: stretch !important; justify-content: stretch !important; padding: 0 !important; background: #f4f6f9 !important; backdrop-filter: none !important; }
+html.theme-pro #modal-detail.dp-pagina > div { width: 100% !important; max-width: none !important; height: 100% !important; max-height: none !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; background: #f4f6f9 !important; padding: 20px clamp(16px, 4vw, 48px) 48px !important; }
+html.theme-pro #modal-detail.dp-pagina #detail-content { max-width: 1080px; margin: 0 auto !important; }
+html.theme-pro #modal-detail.dp-pagina #btn-close-detail { display: none !important; }
+
+.dp-indietro { display: flex; align-items: center; gap: 6px; max-width: 1080px; width: 100%; margin: 0 auto 14px; padding: 6px 0; border: 0; background: none; color: #475569; font-size: 14px; font-weight: 600; cursor: pointer; }
+.dp-indietro:hover { color: #0f172a; }
+.dp-indietro svg { width: 16px; height: 16px; }
+
+.dp-schede { display: flex; gap: 4px; margin: 0 0 16px; border-bottom: 1px solid #dbe2ea; overflow-x: auto; }
+.dp-schede button { position: relative; border: 0; background: none; padding: 10px 14px 12px; font-size: 14px; font-weight: 700; color: #64748b; cursor: pointer; white-space: nowrap; }
+.dp-schede button:hover { color: #0f172a; }
+.dp-schede button[aria-selected="true"] { color: #0f172a; }
+.dp-schede button[aria-selected="true"]::after { content: ''; position: absolute; left: 10px; right: 10px; bottom: -1px; height: 2px; border-radius: 2px; background: #172033; }
+.dp-schede button:focus-visible { outline: 2px solid #4f46e5; outline-offset: -2px; border-radius: 6px; }
+.dp-pannello[hidden] { display: none !important; }
+.dp-attivita { background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 14px; }
+html.theme-pro #modal-detail.dp-pagina .project-detail-header { background: #fff !important; }
+html.theme-pro #modal-detail.dp-pagina .project-detail-header h2 { font-size: clamp(22px, 2.4vw, 28px) !important; letter-spacing: -0.01em; }

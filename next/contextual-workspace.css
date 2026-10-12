@@ -277,3 +277,29 @@ body.workflow-contextual .next-sprint-preview { margin-top: 18px; color: #64748b
     body.workflow-contextual #next-sprint-title { font-size: 22px; }
     body.workflow-contextual .next-sprint-guide-offer { flex-direction: column; align-items: flex-start; gap: 12px; }
 }
+
+/* Margine previsto (margine-previsto.js) */
+.project-metric-card .margine-previsto-nota { margin: 2px 0 0; font-size: 10px; font-weight: 600; color: #64748b; }
+.project-metric-card .margine-previsto-nota:empty { display: none; }
+
+/* Frase di stato e tratteggio dei costi previsti (margine-previsto.js) */
+.mp-frase { margin: 0 0 12px; font-size: 12.5px; line-height: 1.45; font-weight: 600; color: #334155; text-wrap: pretty; }
+.mp-frase-lg { font-size: 14px !important; color: #1e293b !important; margin: 6px 0 2px !important; max-width: 62ch; }
+.mp-proj { position: absolute; top: 0; bottom: 0; border-radius: 0 999px 999px 0; background: repeating-linear-gradient(135deg, var(--mp-c, #64748b) 0 1.5px, transparent 1.5px 5px); opacity: .9; }
+.mp-proj.is-bene { --mp-c: #059669; }
+.mp-proj.is-attenzione { --mp-c: #d97706; }
+.mp-proj.is-perdita { --mp-c: #dc2626; }
+.mp-over { position: absolute; right: -3px; top: 50%; width: 6px; height: 6px; margin-top: -3px; border-radius: 50%; background: #dc2626; box-shadow: 0 0 0 2px #fff; }
+.mp-legenda { display: flex; flex-wrap: wrap; gap: 4px 16px; margin: -4px 0 12px; font-size: 11px; font-weight: 600; color: #64748b; }
+.mp-legenda span { display: inline-flex; align-items: center; gap: 6px; }
+.mp-legenda i { display: inline-block; width: 16px; height: 8px; border-radius: 2px; }
+.mp-sw-fill { background: #334155; }
+.mp-sw-proj { background: repeating-linear-gradient(135deg, var(--mp-c, #64748b) 0 1.5px, transparent 1.5px 4px); box-shadow: inset 0 0 0 1px #cbd5e1; }
+.mp-sw-proj.is-bene { --mp-c: #059669; } .mp-sw-proj.is-attenzione { --mp-c: #d97706; } .mp-sw-proj.is-perdita { --mp-c: #dc2626; }
+.mp-sw-mark { width: 4px !important; height: 12px !important; border-radius: 2px; background: #334155; }
+
+/* Lo studio nel suo insieme: barra neutra al posto dell'arcobaleno */
+html.theme-pro .studio-health-strip.mp-studio .studio-health-track { background: #e8edf3; box-shadow: 0 0 0 1px #d8dee7; overflow: visible; }
+html.theme-pro .studio-health-strip.mp-studio .studio-health-track > .mp-fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px 0 0 999px; background: #334155; }
+html.theme-pro .studio-health-strip.mp-studio .studio-health-track > .mp-proj { border-radius: 0 999px 999px 0; }
+html.theme-pro .studio-health-strip.mp-studio .studio-health-heading > strong { font-size: 0.95rem; }
