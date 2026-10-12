@@ -370,8 +370,16 @@ function switchAuthTab(mode) {
             window.location.href = `${link}?client_reference_id=${userProfile.studio_id}`; 
         }
 
-        function showPaywall() { 
-            document.getElementById('auth-container').classList.add('force-hide'); 
+        function showPaywall() {
+            // Alla fine della prova il messaggio non parla di abbonamento "scaduto"
+            const trialEnded = (studioData?.subscription_status || 'trialing') === 'trialing';
+            const title = document.getElementById('paywall-title');
+            const message = document.getElementById('paywall-message');
+            if (title) title.textContent = trialEnded ? 'La prova è finita' : 'Abbonamento non attivo';
+            if (message) message.textContent = trialEnded
+                ? 'Le tue commesse e le ore sono al sicuro. Abbonati come fondatore per continuare a lavorare.'
+                : "L'abbonamento di questo studio non è attivo. Le tue commesse e le ore sono al sicuro: abbonati per continuare a lavorare.";
+            document.getElementById('auth-container').classList.add('force-hide');
             document.getElementById('app-container').classList.add('force-hide'); 
             document.getElementById('paywall-container').classList.remove('force-hide'); 
             lucide.createIcons(); 
