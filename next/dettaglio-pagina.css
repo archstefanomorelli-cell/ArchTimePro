@@ -31,16 +31,25 @@ html.theme-pro #modal-detail.dp-pagina { top: var(--workflow-header-height, 65px
 /* In "Commesse": una commessa per riga, larga tutto lo spazio, che si apre sul posto */
 html.theme-pro #app-container[data-workflow-view="projects"] #projects-list.grid { grid-template-columns: minmax(0, 1fr) !important; }
 #projects-list [data-ui-action="show-project-detail"] { scroll-margin-top: calc(var(--workflow-header-height, 65px) + 16px); }
-#projects-list .cm-scheda-aperta { border-color: #c7d2fe !important; border-bottom-left-radius: 0 !important; border-bottom-right-radius: 0 !important; box-shadow: none !important; }.cm-espansione { display: grid; grid-template-rows: 0fr; opacity: 0; margin-top: -16px; transition: grid-template-rows .32s ease, opacity .22s ease; }
+#projects-list .cm-scheda-aperta { border-color: #c7d2fe !important; border-bottom-left-radius: 0 !important; border-bottom-right-radius: 0 !important; box-shadow: none !important; }/* apertura "con rimbalzo": il dettaglio scende dall'alto e si assesta con un piccolo rimbalzo */
+.cm-espansione { display: grid; grid-template-rows: 0fr; opacity: 0; margin-top: -16px; transition: grid-template-rows .42s cubic-bezier(.2, .8, .2, 1), opacity .25s ease; }
 .cm-espansione.is-aperta { grid-template-rows: 1fr; opacity: 1; }
 .cm-espansione-interno { min-height: 0; overflow: hidden; }
-.cm-espansione #detail-content { margin: 0 !important; padding: 6px clamp(14px, 2vw, 24px) 22px; border: 1px solid #c7d2fe; border-top: 1px dashed #dbe2ea; border-radius: 0 0 16px 16px; background: #fff; }
+.cm-espansione #detail-content { margin: 0 !important; padding: 6px clamp(14px, 2vw, 24px) 22px; border: 1px solid #c7d2fe; border-top: 1px dashed #dbe2ea; border-radius: 0 0 16px 16px; background: #fff; transform: translateY(-14px) scale(.98); transform-origin: top center; transition: transform .5s cubic-bezier(.34, 1.45, .64, 1); }
+.cm-espansione.is-aperta #detail-content { transform: none; }
+#projects-list.grid > [data-ui-action="show-project-detail"] { transition: border-color .25s ease, box-shadow .25s ease; }
+/* freccetta al centro del bordo in basso: giù da chiusa, gira verso l'alto da aperta */
+#projects-list.grid > [data-ui-action="show-project-detail"]::after { content: ''; position: absolute; left: 50%; bottom: 7px; width: 8px; height: 8px; margin-left: -4px; border-right: 2px solid #94a3b8; border-bottom: 2px solid #94a3b8; transform: rotate(45deg); transition: transform .35s cubic-bezier(.34, 1.45, .64, 1), border-color .2s; pointer-events: none; }
+#projects-list.grid > [data-ui-action="show-project-detail"]:hover::after { border-color: #475569; }
+#projects-list.grid > .cm-scheda-aperta::after { transform: translateY(3px) rotate(225deg); border-color: #6366f1; }
 /* nome, cliente e stato sono già nella scheda: nel dettaglio restano costo delle ore e azioni */
 .cm-espansione .project-detail-header h2,
 .cm-espansione .project-detail-header h2 + p,
 .cm-espansione .project-detail-header .min-w-0 > span:first-child { display: none !important; }
 .cm-espansione .project-detail-header { margin-top: 10px; }
-@media (prefers-reduced-motion: reduce) { .cm-espansione { transition: none; } }
+@media (prefers-reduced-motion: reduce) {
+    .cm-espansione, .cm-espansione #detail-content, #projects-list.grid > [data-ui-action="show-project-detail"]::after { transition: none; }
+}
 .dp-pannello[hidden] { display: none !important; }
 .dp-attivita { background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 14px; }
 html.theme-pro #modal-detail.dp-pagina .project-detail-header { background: #fff !important; }
