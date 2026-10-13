@@ -3,17 +3,44 @@ html.theme-pro #modal-detail.dp-pagina { align-items: stretch !important; justif
 html.theme-pro #modal-detail.dp-pagina > div { width: 100% !important; max-width: none !important; height: 100% !important; max-height: none !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; background: #f4f6f9 !important; padding: 20px clamp(16px, 4vw, 48px) 48px !important; }
 html.theme-pro #modal-detail.dp-pagina #detail-content { max-width: 1080px; margin: 0 auto !important; }
 html.theme-pro #modal-detail.dp-pagina #btn-close-detail { display: none !important; }
+/* la pagina della commessa sta nello spazio dei contenuti: testata e barre di navigazione restano visibili */
+html.theme-pro #modal-detail.dp-pagina { top: var(--workflow-header-height, 65px) !important; z-index: 34 !important; }
+@media (min-width: 1024px) {
+    html.theme-pro #modal-detail.dp-pagina { left: 72px !important; }
+    html.theme-pro body.workflow-contextual #modal-detail.dp-pagina { left: 88px !important; }
+}
+@media (max-width: 1023px) {
+    html.theme-pro #modal-detail.dp-pagina { bottom: calc(70px + env(safe-area-inset-bottom, 0px)) !important; }
+}
 
 .dp-indietro { display: flex; align-items: center; gap: 6px; max-width: 1080px; width: 100%; margin: 0 auto 14px; padding: 6px 0; border: 0; background: none; color: #475569; font-size: 14px; font-weight: 600; cursor: pointer; }
 .dp-indietro:hover { color: #0f172a; }
 .dp-indietro svg { width: 16px; height: 16px; }
 
-.dp-schede { display: flex; gap: 4px; margin: 0 0 16px; border-bottom: 1px solid #dbe2ea; overflow-x: auto; }
-.dp-schede button { position: relative; border: 0; background: none; padding: 10px 14px 12px; font-size: 14px; font-weight: 700; color: #64748b; cursor: pointer; white-space: nowrap; }
-.dp-schede button:hover { color: #0f172a; }
-.dp-schede button[aria-selected="true"] { color: #0f172a; }
-.dp-schede button[aria-selected="true"]::after { content: ''; position: absolute; left: 10px; right: 10px; bottom: -1px; height: 2px; border-radius: 2px; background: #172033; }
-.dp-schede button:focus-visible { outline: 2px solid #4f46e5; outline-offset: -2px; border-radius: 6px; }
+/* Panoramica · Attività · Ore e spese: barra a pulsanti ben visibile */
+.dp-schede { display: flex; gap: 4px; width: max-content; max-width: 100%; margin: 4px 0 18px; padding: 4px; border: 1px solid #d8dee6; border-radius: 12px; background: #eef2f6; overflow-x: auto; }
+.dp-schede button { border: 0; background: none; padding: 9px 18px; border-radius: 9px; font-size: 15px; font-weight: 700; color: #475569; cursor: pointer; white-space: nowrap; transition: background .15s, color .15s; }
+.dp-schede button:hover { color: #0f172a; background: rgba(255,255,255,.65); }
+.dp-schede button[aria-selected="true"] { background: #fff; color: #3730a3; box-shadow: 0 1px 3px rgba(15,23,42,.14), 0 0 0 1px #c7d2fe; }
+.dp-schede button:focus-visible { outline: 2px solid #4f46e5; outline-offset: 1px; }
+@media (max-width: 639px) {
+    .dp-schede { width: 100%; }
+    .dp-schede button { flex: 1 1 0; padding: 9px 6px; font-size: 13.5px; }
+}
+
+/* In "Commesse": una commessa per riga, larga tutto lo spazio, che si apre sul posto */
+html.theme-pro #app-container[data-workflow-view="projects"] #projects-list.grid { grid-template-columns: minmax(0, 1fr) !important; }
+#projects-list [data-ui-action="show-project-detail"] { scroll-margin-top: calc(var(--workflow-header-height, 65px) + 16px); }
+#projects-list .cm-scheda-aperta { border-color: #c7d2fe !important; border-bottom-left-radius: 0 !important; border-bottom-right-radius: 0 !important; box-shadow: none !important; }.cm-espansione { display: grid; grid-template-rows: 0fr; opacity: 0; margin-top: -16px; transition: grid-template-rows .32s ease, opacity .22s ease; }
+.cm-espansione.is-aperta { grid-template-rows: 1fr; opacity: 1; }
+.cm-espansione-interno { min-height: 0; overflow: hidden; }
+.cm-espansione #detail-content { margin: 0 !important; padding: 6px clamp(14px, 2vw, 24px) 22px; border: 1px solid #c7d2fe; border-top: 1px dashed #dbe2ea; border-radius: 0 0 16px 16px; background: #fff; }
+/* nome, cliente e stato sono già nella scheda: nel dettaglio restano costo delle ore e azioni */
+.cm-espansione .project-detail-header h2,
+.cm-espansione .project-detail-header h2 + p,
+.cm-espansione .project-detail-header .min-w-0 > span:first-child { display: none !important; }
+.cm-espansione .project-detail-header { margin-top: 10px; }
+@media (prefers-reduced-motion: reduce) { .cm-espansione { transition: none; } }
 .dp-pannello[hidden] { display: none !important; }
 .dp-attivita { background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 14px; }
 html.theme-pro #modal-detail.dp-pagina .project-detail-header { background: #fff !important; }
